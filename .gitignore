@@ -18,6 +18,7 @@ video_cache/
 *.mp4
 *.m4a
 *.webm
+*.zip
 
 # OS & IDE Files
 .DS_Store

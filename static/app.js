@@ -1,3 +1,9 @@
+// Backend API Gateway Configuration
+// Auto-detects local vs Cloudflare Pages deployment
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '')
+    ? ''
+    : 'https://entries-thriller-despite-upload.trycloudflare.com';
+
 // SoundWave â€” Spotify Premium Audio Engine
 // Background Playback, MediaSession Lockscreen Control, YouTube Streams, Full Library & Tabs
 
@@ -345,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         loader.classList.remove('hidden');
                     }
 
-                    nativeVideo.src = `/api/video_stream?id=${encodeURIComponent(currentActiveVideoId)}&quality=${encodeURIComponent(newQuality)}`;
+                    nativeVideo.src = `${API_BASE}/api/video_stream?id=${encodeURIComponent(currentActiveVideoId)}&quality=${encodeURIComponent(newQuality)}`;
                     nativeVideo.load();
 
                     nativeVideo.onloadedmetadata = () => {
@@ -804,7 +810,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         try {
-            const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+            const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}`);
             const data = await res.json();
 
             if (data.results && data.results.length > 0) {
@@ -956,7 +962,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (searchResultsTitle) searchResultsTitle.textContent = `Results for "${query}"`;
 
         try {
-            const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+            const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}`);
             const data = await res.json();
 
             if (searchLoadingState) searchLoadingState.classList.add('hidden');
@@ -1028,7 +1034,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (svgPause) svgPause.classList.remove('hidden');
 
         try {
-            const res = await fetch(`/api/stream?id=${encodeURIComponent(track.id)}`);
+            const res = await fetch(`${API_BASE}/api/stream?id=${encodeURIComponent(track.id)}`);
             const data = await res.json();
 
             if (data.streamUrl) {
@@ -1426,7 +1432,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function downloadSongById(trackId, title) {
         if (!trackId) return;
         showToast(`Downloading: ${title || 'Audio'}...`);
-        const dlUrl = `/api/download?id=${encodeURIComponent(trackId)}`;
+        const dlUrl = `${API_BASE}/api/download?id=${encodeURIComponent(trackId)}`;
         const a = document.createElement('a');
         a.href = dlUrl;
         a.download = `${title || 'Song'}.m4a`;
@@ -1648,7 +1654,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+            const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}`);
             const data = await res.json();
 
             if (spinner) spinner.classList.add('hidden');
@@ -2412,7 +2418,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (moviesLoadingSpinner) moviesLoadingSpinner.classList.remove('hidden');
 
         try {
-            let url = `/api/movies?page=${page}`;
+            let url = `${API_BASE}/api/movies?page=${page}`;
             if (language) url += `&language=${encodeURIComponent(language)}`;
             else if (genre) url += `&genre=${encodeURIComponent(genre)}`;
 
@@ -2464,7 +2470,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Fetch detail in background to enrich synopsis & trailer for spotlight
         if (movie.slug) {
-            fetch(`/api/movies/detail?slug=${encodeURIComponent(movie.slug)}`)
+            fetch(`${API_BASE}/api/movies/detail?slug=${encodeURIComponent(movie.slug)}`)
                 .then(r => r.json())
                 .then(det => {
                     if (det && !det.error) {
@@ -2556,7 +2562,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!homeGrid) return;
 
         try {
-            const res = await fetch('/api/movies?genre=action&page=1');
+            const res = await fetch(`${API_BASE}/api/movies?genre=action&page=1`);
             const data = await res.json();
             const movies = (data.movies || []).slice(0, 6);
 
@@ -2615,7 +2621,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ytQualityBadge) ytQualityBadge.textContent = '1080p';
 
         try {
-            const res = await fetch(`/api/movies/detail?slug=${encodeURIComponent(slug)}`);
+            const res = await fetch(`${API_BASE}/api/movies/detail?slug=${encodeURIComponent(slug)}`);
             const detail = await res.json();
 
             if (detail && detail.trailer_id) {
@@ -2648,7 +2654,7 @@ document.addEventListener('DOMContentLoaded', () => {
         movieDetailModal.classList.remove('hidden');
 
         try {
-            const res = await fetch(`/api/movies/detail?slug=${encodeURIComponent(slug)}`);
+            const res = await fetch(`${API_BASE}/api/movies/detail?slug=${encodeURIComponent(slug)}`);
             const detail = await res.json();
 
             if (detail.error) throw new Error(detail.error);
@@ -2786,7 +2792,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (moviesLoadMoreWrap) moviesLoadMoreWrap.classList.add('hidden');
 
         try {
-            const res = await fetch(`/api/movies/search?q=${encodeURIComponent(query)}`);
+            const res = await fetch(`${API_BASE}/api/movies/search?q=${encodeURIComponent(query)}`);
             const data = await res.json();
             renderMovieCards(data.results || [], false);
 
@@ -2999,7 +3005,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast('♾️ Autoplay: Loading related tracks...');
 
             try {
-                const res = await fetch(`/api/search?q=${encodeURIComponent(seedQuery)}`);
+                const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(seedQuery)}`);
                 const data = await res.json();
                 if (data.results && data.results.length > 0) {
                     const newTracks = data.results.filter(r => !activeQueue.some(q => q.id === r.id));
@@ -3179,7 +3185,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast(`Loading: ${nextQuery}`);
 
             try {
-                const res = await fetch(`/api/search?q=${encodeURIComponent(nextQuery)}`);
+                const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(nextQuery)}`);
                 const data = await res.json();
                 const grid = document.getElementById('ytVideosGrid');
                 if (data.results && data.results.length > 0 && grid) {
