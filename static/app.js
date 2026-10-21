@@ -1680,14 +1680,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderYtVideoCards(videos, containerEl) {
+    function renderYtVideoCards(videos, containerEl, append = false) {
         if (!containerEl) return;
-        containerEl.innerHTML = '';
+        if (!append) containerEl.innerHTML = '';
 
         // Generate high-view viral badges for Internet top trending songs
         const viewBadges = ['🔥 850M+ Views', '⭐ 1.2B Views', '💥 420M Views', '👑 670M Views', '⚡ 310M Views', '🔥 Trending #1', '🌟 940M Views', '🚀 560M Views'];
+        const existingIds = new Set(Array.from(containerEl.querySelectorAll('.yt-video-card')).map(c => c.getAttribute('data-id')));
 
         videos.forEach((video, idx) => {
+            if (append && existingIds.has(video.id)) return;
             const card = document.createElement('div');
             card.className = 'yt-video-card';
             card.setAttribute('data-id', video.id);
@@ -3181,7 +3183,11 @@ document.addEventListener('DOMContentLoaded', () => {
         btnBrowseMore.addEventListener('click', async () => {
             currentTrendingQueryIndex = (currentTrendingQueryIndex + 1) % TRENDING_QUERIES.length;
             const nextQuery = TRENDING_QUERIES[currentTrendingQueryIndex];
-            btnBrowseMore.textContent = 'Loading more trending hits...';
+            const originalText = 'Browse More Trending Songs ▾';
+            btnBrowseMore.innerHTML = `
+                <div class="sp-spinner" style="width:16px;height:16px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px;"></div>
+                <span>Loading more viral hits...</span>
+            `;
             showToast(`Loading: ${nextQuery}`);
 
             try {
@@ -3189,15 +3195,96 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await res.json();
                 const grid = document.getElementById('ytVideosGrid');
                 if (data.results && data.results.length > 0 && grid) {
-                    renderYtVideoCards(data.results, grid);
-                    btnBrowseMore.textContent = 'Browse More Trending Songs ▾';
-                    showToast('Loaded more trending hits!');
+                    const firstNewIdx = grid.children.length;
+                    renderYtVideoCards(data.results, grid, true);
+                    btnBrowseMore.innerHTML = `<span>${originalText}</span>`;
+                    showToast(`Added ${data.results.length} more trending hits!`);
+                    if (grid.children[firstNewIdx]) {
+                        grid.children[firstNewIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
                 } else {
-                    btnBrowseMore.textContent = 'Browse More Trending Songs ▾';
+                    btnBrowseMore.innerHTML = `<span>${originalText}</span>`;
+                    showToast('No additional hits found.');
                 }
             } catch (err) {
                 console.warn('Browse more error:', err);
-                btnBrowseMore.textContent = 'Browse More Trending Songs ▾';
+                btnBrowseMore.innerHTML = `<span>${originalText}</span>`;
+                showToast('Unable to load more. Retrying...');
+            }
+        });
+    }
+
+    // -------------------------------------------------------------
+    // FEATURE: HOME BROWSE MORE TRENDING HITS (Endless Shelves)
+    // -------------------------------------------------------------
+    const HOME_BROWSE_QUERIES = [
+        { title: '🔥 Punjabi Viral Banger Hits', query: 'Top Punjabi Viral Songs 2024 Hits' },
+        { title: '⚡ Bollywood Dance Party Hits', query: 'Bollywood High Energy Dance Songs Party' },
+        { title: '👑 Global Viral Top 50', query: 'Global Viral Top 50 Songs 2024' },
+        { title: '🌸 90s Evergreen Bollywood Hits', query: 'Best of 90s Bollywood Evergreen Songs' },
+        { title: '🎧 Desi Hip-Hop & Rap Anthems', query: 'Top Indian Hip Hop Rap Songs Hits' },
+        { title: '🌙 Late Night Acoustic & Chill', query: 'Late Night Acoustic Hindi Songs Relax' }
+    ];
+    let homeBrowseIndex = 0;
+
+    const btnHomeBrowseMore = document.getElementById('btnHomeBrowseMore');
+    const homeDynamicShelves = document.getElementById('homeDynamicShelves');
+
+    if (btnHomeBrowseMore && homeDynamicShelves) {
+        btnHomeBrowseMore.addEventListener('click', async () => {
+            const currentItem = HOME_BROWSE_QUERIES[homeBrowseIndex % HOME_BROWSE_QUERIES.length];
+            homeBrowseIndex++;
+
+            const originalBtnContent = btnHomeBrowseMore.innerHTML;
+            btnHomeBrowseMore.innerHTML = `
+                <div class="sp-spinner" style="width:16px;height:16px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px;"></div>
+                <span>Loading ${currentItem.title}...</span>
+            `;
+            showToast(`Loading: ${currentItem.title}`);
+
+            try {
+                const shelfDiv = document.createElement('div');
+                shelfDiv.className = 'music-shelf';
+                shelfDiv.style.marginTop = '2rem';
+                shelfDiv.innerHTML = `
+                    <div class="shelf-head">
+                        <h2>${currentItem.title}</h2>
+                        <button class="shelf-more-btn" data-query="${escapeHtml(currentItem.query)}">Show all</button>
+                    </div>
+                    <div class="shelf-cards-grid">
+                        <div style="grid-column: 1/-1; padding: 2rem 0; text-align: center; color: var(--sp-text-mute);">
+                            <div class="sp-spinner" style="margin: 0 auto 10px;"></div>
+                            <span style="font-size: 0.85rem;">Loading tracks...</span>
+                        </div>
+                    </div>
+                `;
+                homeDynamicShelves.appendChild(shelfDiv);
+
+                const moreBtn = shelfDiv.querySelector('.shelf-more-btn');
+                if (moreBtn) {
+                    moreBtn.addEventListener('click', () => {
+                        switchTab('search');
+                        if (searchPageViewInput) searchPageViewInput.value = currentItem.query;
+                        triggerSearch(currentItem.query);
+                    });
+                }
+
+                const shelfGrid = shelfDiv.querySelector('.shelf-cards-grid');
+                const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(currentItem.query)}`);
+                const data = await res.json();
+
+                if (data.results && data.results.length > 0) {
+                    renderCardGrid(data.results.slice(0, 8), shelfGrid);
+                    showToast(`Added: ${currentItem.title}`);
+                    shelfDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    shelfGrid.innerHTML = `<p style="color: var(--sp-text-mute); font-size: 0.85rem;">No tracks found.</p>`;
+                }
+            } catch (err) {
+                console.error('Home browse more error:', err);
+                showToast('Failed to load shelf. Please retry.');
+            } finally {
+                btnHomeBrowseMore.innerHTML = `<span>Browse More Trending Hits ▾</span>`;
             }
         });
     }
