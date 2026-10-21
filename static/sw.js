@@ -1,5 +1,5 @@
-// SoundWave Service Worker v8 (Network-First with unstoppable background audio)
-const CACHE_NAME = 'soundwave-cache-v8';
+// SoundWave Service Worker v9 (Music Production Channels & Unstoppable Background Audio)
+const CACHE_NAME = 'soundwave-cache-v9';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();

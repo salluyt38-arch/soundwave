@@ -5644,3 +5644,140 @@ body {
     background: rgba(29, 185, 84, 0.12) !important;
     color: #1db954 !important;
 }
+
+
+/* ==========================================================================
+   TOP MUSIC PRODUCTION HOUSES & RECORD LABELS (T-SERIES, ZEE MUSIC, SONY, ETC.)
+   ========================================================================== */
+.music-labels-section {
+    margin-top: 2.8rem;
+    position: relative;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
+    border-radius: var(--radius-lg, 16px);
+    padding: 1.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.channel-section-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+    width: 100%;
+}
+
+.channel-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.channel-badge-pill {
+    background: linear-gradient(135deg, #ff0055, #ff5500) !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.6px;
+    box-shadow: 0 4px 15px rgba(255, 0, 85, 0.35);
+}
+
+.channel-section-tagline {
+    color: #a7a7a7;
+    font-size: 0.88rem;
+    margin: -4px 0 2px 0;
+    line-height: 1.4;
+}
+
+.channel-chips-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    width: 100%;
+    padding: 6px 2px 10px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.channel-chips-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.channel-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
+    color: #b3b3b3;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    user-select: none;
+}
+
+.channel-chip:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.channel-chip.active {
+    background: rgba(29, 185, 84, 0.18);
+    border-color: #1db954;
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(29, 185, 84, 0.3);
+}
+
+.channel-chip-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+/* Channel Load More Button */
+.channel-load-more-wrap {
+    text-align: center;
+    margin: 2.4rem 0 1rem;
+}
+
+.btn-channel-load-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 13px 34px;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+}
+
+.btn-channel-load-more:hover {
+    background: #1db954;
+    border-color: #1db954;
+    color: #000000;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(29, 185, 84, 0.4);
+}
+
+.btn-channel-load-more:hover svg {
+    stroke: #000000;
+}
+
+.btn-channel-load-more:active {
+    transform: translateY(0);
+}

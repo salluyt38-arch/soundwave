@@ -3451,3 +3451,184 @@ document.addEventListener('DOMContentLoaded', () => {
             loadYouTubeVideos('Trending Music Videos 2024');
         }
     }, 500);
+
+
+    // =========================================================================
+    // TOP MUSIC PRODUCTION CHANNELS & RECORD LABELS (T-Series, Zee, Sony, etc.)
+    // =========================================================================
+    let currentChannel = 'tseries';
+    let currentChannelPage = 1;
+    let currentChannelTracks = [];
+    let isChannelSongsLoading = false;
+
+    const channelNamesMap = {
+        'tseries': 'T-Series',
+        'zeemusic': 'Zee Music Co.',
+        'sonymusic': 'Sony Music India',
+        'saregama': 'Saregama Music',
+        'yrf': 'YRF (Yash Raj)',
+        'tips': 'Tips Official',
+        'speedrecords': 'Speed Records',
+        'all': 'All Music Labels'
+    };
+
+    async function loadChannelSongs(channel = 'tseries', page = 1, append = false) {
+        if (isChannelSongsLoading) return;
+        isChannelSongsLoading = true;
+
+        const channelGrid = document.getElementById('channelSongsGrid');
+        const loadMoreBtn = document.getElementById('btnChannelLoadMore');
+        const loadMoreText = document.getElementById('btnChannelLoadMoreText');
+        const countBadge = document.getElementById('channelSongsCountBadge');
+        const titleEl = document.getElementById('channelSectionTitle');
+        const taglineEl = document.getElementById('channelSectionTagline');
+        const channelName = channelNamesMap[channel] || 'Studio';
+
+        if (loadMoreBtn && loadMoreText) {
+            loadMoreText.innerHTML = `
+                <div class="sp-spinner" style="width:16px;height:16px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px;"></div>
+                <span>Loading ${channelName} tracks...</span>
+            `;
+        }
+
+        if (!append && channelGrid) {
+            channelGrid.innerHTML = `
+                <div style="grid-column: 1/-1; padding: 3rem 0; text-align: center; color: var(--sp-text-mute);">
+                    <div class="sp-spinner" style="margin: 0 auto 12px;"></div>
+                    <span style="font-size: 0.9rem;">Fetching official tracks from ${channelName}...</span>
+                </div>
+            `;
+        }
+
+        try {
+            const res = await fetch(`${API_BASE}/api/channel_songs?channel=${encodeURIComponent(channel)}&page=${page}`);
+            const data = await res.json();
+            const songs = data.songs || [];
+
+            if (titleEl && data.channel_name) {
+                titleEl.textContent = `${data.channel_name} Official Hits`;
+            }
+            if (taglineEl && data.tagline) {
+                taglineEl.textContent = data.tagline;
+            }
+
+            renderChannelCards(songs, append);
+
+            if (countBadge) {
+                countBadge.textContent = `${currentChannelTracks.length} Tracks Loaded`;
+            }
+
+            // Manage Load More button state
+            const loadMoreWrap = document.getElementById('channelLoadMoreWrap');
+            if (loadMoreWrap && loadMoreBtn && loadMoreText) {
+                if (data.has_next) {
+                    loadMoreWrap.classList.remove('hidden');
+                    loadMoreText.textContent = `Load More Songs from ${channelName}`;
+                } else {
+                    loadMoreText.textContent = `All ${channelName} tracks loaded`;
+                    setTimeout(() => {
+                        if (!data.has_next && loadMoreWrap) loadMoreWrap.classList.add('hidden');
+                    }, 3000);
+                }
+            }
+
+            if (append && songs.length > 0) {
+                showToast(`Loaded ${songs.length} more songs from ${channelName}`);
+            }
+        } catch (err) {
+            console.error('Failed to load channel songs:', err);
+            showToast(`Could not load ${channelName} tracks. Please retry.`);
+            if (loadMoreText) {
+                loadMoreText.textContent = `Retry Loading ${channelName} Songs`;
+            }
+        } finally {
+            isChannelSongsLoading = false;
+        }
+    }
+
+    function renderChannelCards(songs, append = false) {
+        const channelGrid = document.getElementById('channelSongsGrid');
+        if (!channelGrid) return;
+
+        if (!append) {
+            currentChannelTracks = [];
+            channelGrid.innerHTML = '';
+        }
+
+        if (!songs || songs.length === 0) {
+            if (!append) {
+                channelGrid.innerHTML = `
+                    <div style="grid-column: 1/-1; padding: 2.5rem 0; text-align: center; color: var(--sp-text-mute);">
+                        <p style="font-size: 1rem; margin-bottom: 6px;">No tracks found for this channel right now.</p>
+                        <span style="font-size: 0.85rem;">Try choosing another production label above.</span>
+                    </div>
+                `;
+            }
+            return;
+        }
+
+        // Filter duplicates
+        const existingIds = new Set(currentChannelTracks.map(t => t.id));
+        const newSongs = songs.filter(s => !existingIds.has(s.id));
+
+        newSongs.forEach(track => {
+            currentChannelTracks.push(track);
+            const card = document.createElement('div');
+            card.className = 'music-card';
+            card.setAttribute('data-id', track.id);
+
+            card.innerHTML = `
+                <div class="card-img-box" style="position:relative;">
+                    <img src="${track.thumbnail}" alt="${escapeHtml(track.title)}" loading="lazy">
+                    <div class="card-float-play" title="Play">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="black">
+                            <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                        </svg>
+                    </div>
+                    ${track.duration ? `<span style="position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.8); color:#fff; font-size:0.75rem; font-weight:600; padding:2px 6px; border-radius:4px;">${escapeHtml(track.duration)}</span>` : ''}
+                </div>
+                <div class="card-song-title" title="${escapeHtml(track.title)}">${escapeHtml(track.title)}</div>
+                <div class="card-song-artist" style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+                    <span title="${escapeHtml(track.channel)}" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; color:#1db954;">${escapeHtml(track.channel)}</span>
+                    ${track.views_str ? `<span style="font-size:0.72rem; color:#888; flex-shrink:0;">${escapeHtml(track.views_str)}</span>` : ''}
+                </div>
+            `;
+
+            card.addEventListener('click', () => {
+                activeQueue = currentChannelTracks;
+                const idx = currentChannelTracks.findIndex(t => t.id === track.id);
+                renderQueueDrawer();
+                playTrackByIndex(idx !== -1 ? idx : 0);
+            });
+
+            channelGrid.appendChild(card);
+        });
+    }
+
+    // Channel Chips Click Handler
+    const channelChips = document.querySelectorAll('.channel-chip');
+    channelChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            const targetChannel = chip.getAttribute('data-channel');
+            if (targetChannel === currentChannel) return;
+
+            channelChips.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+
+            currentChannel = targetChannel;
+            currentChannelPage = 1;
+            loadChannelSongs(currentChannel, 1, false);
+        });
+    });
+
+    // Channel Load More Button Click Handler
+    const btnChannelLoadMore = document.getElementById('btnChannelLoadMore');
+    if (btnChannelLoadMore) {
+        btnChannelLoadMore.addEventListener('click', () => {
+            currentChannelPage++;
+            loadChannelSongs(currentChannel, currentChannelPage, true);
+        });
+    }
+
+    // Auto-load T-Series on startup
+    loadChannelSongs('tseries', 1, false);

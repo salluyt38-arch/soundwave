@@ -41,6 +41,7 @@ search_cache = {}
 stream_cache = {}
 movies_cache = {}
 movie_detail_cache = {}
+channel_songs_cache = {}
 
 build_locks = {}
 build_locks_mutex = threading.Lock()
@@ -303,6 +304,115 @@ def fetch_legal_movies(genre="all", page=1, query_str=""):
             })
     return {"movies": movies, "has_next": len(entries) >= search_count, "page": page, "genre": genre}
 
+
+CHANNEL_MAP = {
+    "tseries": {
+        "name": "T-Series",
+        "tagline": "India's #1 Music Label • Official Bollywood Hits",
+        "query": "T-Series Official Hit Songs"
+    },
+    "zeemusic": {
+        "name": "Zee Music Company",
+        "tagline": "Latest Bollywood Blockbuster Songs & Soundtracks",
+        "query": "Zee Music Company Hit Songs"
+    },
+    "sonymusic": {
+        "name": "Sony Music India",
+        "tagline": "Arijit Singh, Badshah, Bollywood & Pop Melodies",
+        "query": "Sony Music India Latest Hit Songs"
+    },
+    "saregama": {
+        "name": "Saregama Music",
+        "tagline": "Golden Classics, Retro & New Superhit Songs",
+        "query": "Saregama Music Superhit Songs"
+    },
+    "yrf": {
+        "name": "YRF (Yash Raj Films)",
+        "tagline": "Iconic Bollywood Cinema Music & Romance",
+        "query": "YRF Yash Raj Films Song Hits"
+    },
+    "tips": {
+        "name": "Tips Official",
+        "tagline": "90s Romantic Hits & Modern Chartbusters",
+        "query": "Tips Official Superhit Bollywood Songs"
+    },
+    "speedrecords": {
+        "name": "Speed Records",
+        "tagline": "Top Punjabi Bhangra & Pop Anthems",
+        "query": "Speed Records Top Punjabi Hit Songs"
+    },
+    "all": {
+        "name": "All Music Labels",
+        "tagline": "T-Series, Zee Music, Sony Music & Saregama",
+        "query": "T-Series Zee Music Sony Music Top Bollywood Hits"
+    }
+}
+
+def fetch_channel_songs(channel_key="tseries", page=1):
+    info_meta = CHANNEL_MAP.get(channel_key, CHANNEL_MAP["tseries"])
+    query_str = info_meta["query"]
+    search_count = page * 12 + 6
+
+    js_dict = {"node": {"path": NODE_PATH}} if os.path.exists(NODE_PATH) else {}
+    ydl_opts = {
+        "quiet": True,
+        "extract_flat": True,
+        "js_runtimes": js_dict,
+    }
+    songs = []
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        res = ydl.extract_info(f"ytsearch{search_count}:{query_str}", download=False)
+        entries = res.get("entries", [])
+        start_idx = (page - 1) * 12
+        page_entries = entries[start_idx : start_idx + 12]
+
+        for entry in page_entries:
+            if not entry or not entry.get("id"):
+                continue
+            duration_sec = entry.get("duration") or 0
+            mins = int(duration_sec) // 60
+            secs = int(duration_sec) % 60
+            duration_str = f"{mins}:{secs:02d}"
+
+            video_id = entry.get("id")
+            raw_t = entry.get("title", "Unknown Title")
+            clean_t = clean_youtube_title(raw_t)
+            channel_name = entry.get("channel") or entry.get("uploader") or info_meta["name"]
+            thumb = entry.get("thumbnail") or f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
+
+            views = entry.get("view_count")
+            if views and isinstance(views, int) and views > 0:
+                if views >= 1_000_000_000:
+                    views_str = f"{views / 1_000_000_000:.1f}B views"
+                elif views >= 1_000_000:
+                    views_str = f"{views / 1_000_000:.1f}M views"
+                elif views >= 1_000:
+                    views_str = f"{views // 1_000}K views"
+                else:
+                    views_str = f"{views} views"
+            else:
+                views_str = "Studio Hit"
+
+            songs.append({
+                "id": video_id,
+                "title": clean_t,
+                "raw_title": raw_t,
+                "channel": channel_name,
+                "duration": duration_str,
+                "duration_sec": duration_sec,
+                "thumbnail": thumb,
+                "views_str": views_str
+            })
+
+    return {
+        "channel": channel_key,
+        "channel_name": info_meta["name"],
+        "tagline": info_meta["tagline"],
+        "page": page,
+        "songs": songs,
+        "has_next": len(entries) >= (start_idx + len(page_entries)) and len(page_entries) >= 12
+    }
+
 class MusicHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=STATIC_DIR, **kwargs)
@@ -504,6 +614,27 @@ class MusicHandler(SimpleHTTPRequestHandler):
                 except Exception as e:
                     print("Video build error:", e)
                     self.send_json({"error": str(e)}, status=500)
+
+            elif path == "/api/channel_songs":
+                channel = query.get("channel", ["tseries"])[0].strip().lower() or "tseries"
+                page = query.get("page", ["1"])[0].strip()
+                try:
+                    p_num = int(page)
+                except ValueError:
+                    p_num = 1
+
+                cache_key = f"cs_{channel}_{p_num}"
+                if cache_key in channel_songs_cache:
+                    self.send_json(channel_songs_cache[cache_key])
+                    return
+
+                try:
+                    data = fetch_channel_songs(channel, p_num)
+                    channel_songs_cache[cache_key] = data
+                    self.send_json(data)
+                except Exception as e:
+                    print(f"Error fetching channel songs ({channel}):", e)
+                    self.send_json({"error": str(e), "songs": [], "has_next": False}, status=500)
 
             elif path == "/api/movies":
                 genre = query.get("genre", ["all"])[0].strip().lower() or "all"
