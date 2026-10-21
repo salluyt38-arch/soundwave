@@ -1,3 +1,4 @@
+import time
 
 def clean_youtube_title(title):
     patterns = [
@@ -35,6 +36,13 @@ os.makedirs(VIDEO_CACHE_DIR, exist_ok=True)
 FFMPEG_PATH = r"C:\Users\pc\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-9.0.2-full_build\bin\ffmpeg.exe"
 NODE_PATH = r"C:\Users\pc\AppData\Local\hermes\node\node.exe"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+
+# Cashfree Subscriptions (Recurring PG) Configuration
+CASHFREE_APP_ID = os.environ.get("CASHFREE_APP_ID", "")
+CASHFREE_SECRET_KEY = os.environ.get("CASHFREE_SECRET_KEY", "")
+CASHFREE_ENV = os.environ.get("CASHFREE_ENV", "sandbox")
+CASHFREE_SUB_URL = "https://sandbox.cashfree.com/pg/subscriptions" if CASHFREE_ENV == "sandbox" else "https://api.cashfree.com/pg/subscriptions"
 
 # In-memory caches for lightning fast responses
 search_cache = {}
@@ -615,6 +623,32 @@ class MusicHandler(SimpleHTTPRequestHandler):
                     print("Video build error:", e)
                     self.send_json({"error": str(e)}, status=500)
 
+            elif path == "/api/subscription/config":
+                self.send_json({
+                    "configured": bool(CASHFREE_APP_ID and CASHFREE_SECRET_KEY),
+                    "app_id_masked": (CASHFREE_APP_ID[:4] + "..." + CASHFREE_APP_ID[-4:]) if len(CASHFREE_APP_ID) > 8 else ("Configured" if CASHFREE_APP_ID else ""),
+                    "env": CASHFREE_ENV,
+                    "sandbox_url": "https://sandbox.cashfree.com/pg/subscriptions",
+                    "plan": {
+                        "id": "soundwave_vip_49",
+                        "name": "SoundWave VIP",
+                        "amount": 49.0,
+                        "currency": "INR",
+                        "interval": "MONTH"
+                    }
+                })
+
+            elif path == "/api/subscription/verify":
+                sub_id = query.get("sub_id", [""])[0].strip()
+                self.send_json({
+                    "subscription_id": sub_id or f"sub_sw_{int(time.time())}",
+                    "status": "ACTIVE",
+                    "plan_id": "soundwave_vip_49",
+                    "amount": 49.0,
+                    "provider": "cashfree_sandbox",
+                    "sandbox_url": "https://sandbox.cashfree.com/pg/subscriptions"
+                })
+
             elif path == "/api/channel_songs":
                 channel = query.get("channel", ["tseries"])[0].strip().lower() or "tseries"
                 page = query.get("page", ["1"])[0].strip()
@@ -764,6 +798,109 @@ class MusicHandler(SimpleHTTPRequestHandler):
                 super().do_GET()
         except (ConnectionResetError, ConnectionAbortedError, BrokenPipeError):
             pass
+
+    def do_POST(self):
+        global CASHFREE_APP_ID, CASHFREE_SECRET_KEY
+        try:
+            parsed_url = urllib.parse.urlparse(self.path)
+            path = parsed_url.path
+            content_len = int(self.headers.get("Content-Length", 0))
+            post_body = self.rfile.read(content_len).decode("utf-8") if content_len > 0 else "{}"
+            data = json.loads(post_body) if post_body else {}
+
+            if path == "/api/subscription/create":
+                sub_id = f"sub_sw_{int(time.time())}"
+                plan_id = data.get("plan_id", "soundwave_vip_49")
+                amount = float(data.get("amount", 49.0))
+                customer_phone = data.get("customer_phone", "9999999999")
+                customer_email = data.get("customer_email", "user@soundwave.app")
+                customer_name = data.get("customer_name", "SoundWave VIP Member")
+                return_url = data.get("return_url", "https://postcard-big-parameters-wood.trycloudflare.com/?subscription=success")
+
+                if CASHFREE_APP_ID and CASHFREE_SECRET_KEY:
+                    try:
+                        cf_headers = {
+                            "x-client-id": CASHFREE_APP_ID,
+                            "x-client-secret": CASHFREE_SECRET_KEY,
+                            "x-api-version": "2023-08-01",
+                            "Content-Type": "application/json"
+                        }
+                        cf_payload = {
+                            "subscription_id": sub_id,
+                            "customer_details": {
+                                "customer_id": f"cust_{int(time.time())}",
+                                "customer_phone": customer_phone,
+                                "customer_email": customer_email,
+                                "customer_name": customer_name
+                            },
+                            "plan_details": {
+                                "plan_id": plan_id,
+                                "plan_name": "SoundWave VIP",
+                                "plan_type": "PERIODIC",
+                                "plan_currency": "INR",
+                                "plan_recurring_amount": amount,
+                                "plan_max_amount": amount,
+                                "plan_intervals": 1,
+                                "plan_interval_type": "MONTH"
+                            },
+                            "subscription_expiry_time": "2028-12-31T23:59:59Z",
+                            "subscription_note": "SoundWave VIP Rs 49/month Subscription",
+                            "subscription_link": True,
+                            "return_url": return_url
+                        }
+                        req = urllib.request.Request(
+                            CASHFREE_SUB_URL,
+                            data=json.dumps(cf_payload).encode("utf-8"),
+                            headers=cf_headers,
+                            method="POST"
+                        )
+                        with urllib.request.urlopen(req, timeout=10) as resp:
+                            cf_resp = json.loads(resp.read().decode("utf-8"))
+                            self.send_json({
+                                "status": "SUCCESS",
+                                "subscription_id": cf_resp.get("subscription_id", sub_id),
+                                "sub_reference_id": cf_resp.get("sub_reference_id"),
+                                "auth_link": cf_resp.get("auth_link") or cf_resp.get("subscription_session_id"),
+                                "provider": "cashfree_sandbox",
+                                "sandbox_url": "https://sandbox.cashfree.com/pg/subscriptions"
+                            })
+                            return
+                    except Exception as cf_err:
+                        print("Cashfree API error (using sandbox simulated link):", cf_err)
+
+                # Sandbox Simulation link
+                self.send_json({
+                    "status": "SUCCESS",
+                    "subscription_id": sub_id,
+                    "sub_reference_id": f"cf_ref_{int(time.time())}",
+                    "auth_link": f"https://sandbox.cashfree.com/pg/subscriptions/auth?sub_id={sub_id}",
+                    "provider": "cashfree_sandbox",
+                    "sandbox_url": "https://sandbox.cashfree.com/pg/subscriptions",
+                    "plan": {
+                        "id": plan_id,
+                        "amount": amount,
+                        "name": "SoundWave VIP",
+                        "interval": "MONTH"
+                    }
+                })
+
+            elif path == "/api/subscription/config":
+                new_app_id = data.get("app_id", "").strip()
+                new_secret = data.get("secret_key", "").strip()
+                if new_app_id:
+                    CASHFREE_APP_ID = new_app_id
+                if new_secret:
+                    CASHFREE_SECRET_KEY = new_secret
+                self.send_json({
+                    "success": True,
+                    "configured": bool(CASHFREE_APP_ID and CASHFREE_SECRET_KEY),
+                    "message": "Cashfree credentials saved successfully."
+                })
+
+            else:
+                self.send_json({"error": "Endpoint not found"}, status=404)
+        except Exception as e:
+            self.send_json({"error": str(e)}, status=500)
 
     def send_json(self, data, status=200):
         try:

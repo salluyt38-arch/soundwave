@@ -1127,93 +1127,120 @@
             </div>
         </div>
 
-        <!-- INTERACTIVE CHECKOUT & PAYMENT MODAL -->
+        <!-- INTERACTIVE CASHFREE SUBSCRIPTIONS CHECKOUT & PAYMENT MODAL -->
         <div class="checkout-modal-backdrop hidden" id="checkoutModal">
             <div class="checkout-modal-box">
                 <div class="checkout-header">
                     <div class="checkout-plan-info">
-                        <span class="checkout-sub-label">UPGRADE TO SOUNDWAVE</span>
-                        <h3 id="checkoutPlanTitle">Individual Premium</h3>
-                        <div class="checkout-price-tag" id="checkoutPriceTag">₹119 / month</div>
+                        <span class="checkout-sub-label">UPGRADE TO SOUNDWAVE VIP</span>
+                        <h3 id="checkoutPlanTitle">SoundWave VIP</h3>
+                        <div class="checkout-price-tag" id="checkoutPriceTag">₹49 / month</div>
                     </div>
                     <button class="checkout-close-btn" id="btnCloseCheckout">✕</button>
                 </div>
 
                 <div class="checkout-body">
+                    <!-- Cashfree Sandbox Security Banner -->
+                    <div style="background: rgba(29, 185, 84, 0.08); border: 1px solid rgba(29, 185, 84, 0.25); border-radius: 12px; padding: 12px 16px; margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 1.4rem;">🔒</span>
+                            <div>
+                                <div style="font-size: 0.88rem; font-weight: 700; color: #fff;">Cashfree Subscriptions Sandbox</div>
+                                <div style="font-size: 0.75rem; color: #a7a7a7;">https://sandbox.cashfree.com/pg/subscriptions</div>
+                            </div>
+                        </div>
+                        <span style="background: rgba(29, 185, 84, 0.2); color: #1db954; font-size: 0.72rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; letter-spacing: 0.5px;">SANDBOX VERIFIED</span>
+                    </div>
+
                     <div class="payment-tabs-row">
                         <button class="pay-tab active" data-method="upi">
                             <span class="pay-icon">⚡</span>
-                            <span>UPI (GPay/PhonePe/Paytm)</span>
+                            <span>UPI Autopay</span>
                         </button>
                         <button class="pay-tab" data-method="card">
                             <span class="pay-icon">💳</span>
-                            <span>Cards</span>
+                            <span>Cards Autopay</span>
                         </button>
-                        <button class="pay-tab" data-method="netbanking">
-                            <span class="pay-icon">🏦</span>
-                            <span>NetBanking</span>
+                        <button class="pay-tab" data-method="cashfree_hosted">
+                            <span class="pay-icon">🌐</span>
+                            <span>Cashfree Portal</span>
                         </button>
                     </div>
 
-                    <!-- Method 1: UPI -->
+                    <!-- Method 1: UPI Autopay -->
                     <div class="pay-panel active" id="payPanelUpi">
                         <div class="upi-apps-row">
                             <button class="upi-app-btn active" data-app="gpay">Google Pay</button>
                             <button class="upi-app-btn" data-app="phonepe">PhonePe</button>
                             <button class="upi-app-btn" data-app="paytm">Paytm</button>
-                            <button class="upi-app-btn" data-app="bhim">BHIM</button>
+                            <button class="upi-app-btn" data-app="bhim">BHIM UPI</button>
                         </div>
                         <div class="upi-input-box">
-                            <label>Enter UPI ID / VPA</label>
+                            <label>UPI ID for AutoPay Mandate (₹49/mo)</label>
                             <input type="text" id="upiIdInput" value="user@okhdfcbank" placeholder="e.g. mobile@upi">
-                            <span class="upi-verified-badge">✓ Verified VPA</span>
+                            <span class="upi-verified-badge">✓ Valid UPI AutoPay VPA</span>
                         </div>
                     </div>
 
-                    <!-- Method 2: Card -->
+                    <!-- Method 2: Card Autopay -->
                     <div class="pay-panel hidden" id="payPanelCard">
                         <div class="card-input-group">
-                            <label>Card Number</label>
-                            <input type="text" placeholder="4532 •••• •••• 8892" value="4532 8821 9912 8892">
+                            <label>Debit / Credit Card (Recurring e-Mandate)</label>
+                            <input type="text" id="cardNumInput" placeholder="4532 •••• •••• 8892" value="4532 8821 9912 8892">
                         </div>
                         <div class="card-row-split">
                             <div>
                                 <label>Expiry</label>
-                                <input type="text" placeholder="MM/YY" value="08/29">
+                                <input type="text" id="cardExpiryInput" placeholder="MM/YY" value="08/29">
                             </div>
                             <div>
                                 <label>CVV</label>
-                                <input type="password" placeholder="•••" value="789">
+                                <input type="password" id="cardCvvInput" placeholder="•••" value="789">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Method 3: NetBanking -->
-                    <div class="pay-panel hidden" id="payPanelNetbanking">
-                        <div class="bank-select-grid">
-                            <button class="bank-pill active">HDFC Bank</button>
-                            <button class="bank-pill">State Bank of India</button>
-                            <button class="bank-pill">ICICI Bank</button>
-                            <button class="bank-pill">Axis Bank</button>
-                            <button class="bank-pill">Kotak</button>
+                    <!-- Method 3: Cashfree Hosted -->
+                    <div class="pay-panel hidden" id="payPanelCashfree_hosted">
+                        <div style="padding: 1.2rem; text-align: center; background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 1px dashed rgba(255, 255, 255, 0.15);">
+                            <div style="font-size: 2rem; margin-bottom: 8px;">💳</div>
+                            <h4 style="margin: 0 0 6px 0; font-size: 0.95rem; color: #fff;">Direct Cashfree PG Hosted Checkout</h4>
+                            <p style="font-size: 0.8rem; color: #a7a7a7; margin: 0 0 12px 0;">Authorize recurring monthly mandate securely on Cashfree's hosted checkout page.</p>
+                            <span style="display: inline-block; background: rgba(59, 130, 246, 0.15); color: #60a5fa; font-size: 0.75rem; padding: 4px 10px; border-radius: 20px;">Redirects to sandbox.cashfree.com/pg/subscriptions</span>
                         </div>
                     </div>
 
                     <div class="checkout-summary-box">
                         <div class="summary-line">
                             <span>Today's Total:</span>
-                            <strong id="summaryTodayCost">₹0.00 (60-Day Free Trial - 2 Months Free)</strong>
+                            <strong id="summaryTodayCost" style="color: #1db954;">₹49.00 / month</strong>
                         </div>
-                        <div class="summary-sub" id="summaryNextBilling">Billed ₹119/month starting in 60 days (2 months free). Cancel anytime.</div>
+                        <div class="summary-sub" id="summaryNextBilling">Billed ₹49/month recurring via Cashfree Subscriptions. Cancel anytime with 1 click.</div>
                     </div>
 
-                    <button class="btn-confirm-payment" id="btnConfirmPayment">
-                        <span id="btnPayText">Start 2 Months Free Trial</span>
+                    <button class="btn-confirm-payment" id="btnConfirmPayment" style="background: linear-gradient(135deg, #1db954, #10b981); color: #000; font-weight: 800; font-size: 1rem; padding: 15px; border-radius: 30px; border: none; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 20px rgba(29, 185, 84, 0.35);">
+                        <span id="btnPayText">Subscribe for ₹49 via Cashfree</span>
                         <div class="pay-spinner hidden" id="paySpinner"></div>
                     </button>
-                    <div class="secure-badge">
+
+                    <!-- Cashfree Credentials Config Accordion (Collapsible for easy setup) -->
+                    <div style="margin-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 10px;">
+                        <button type="button" id="btnToggleCashfreeConfig" style="background: none; border: none; color: #888; font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 4px 0;">
+                            <span>⚙️ Cashfree Sandbox API Settings</span>
+                            <span id="cashfreeConfigArrow">▾</span>
+                        </button>
+                        <div id="cashfreeConfigPanel" class="hidden" style="margin-top: 8px; background: rgba(0, 0, 0, 0.4); padding: 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                            <div style="font-size: 0.75rem; color: #aaa; margin-bottom: 8px;">Enter your App ID & Secret from Cashfree Dashboard:</div>
+                            <input type="text" id="cfAppIdInput" placeholder="Cashfree App ID (e.g. TEST10...)" style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.06); border: 1px solid #444; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 6px;">
+                            <input type="password" id="cfSecretKeyInput" placeholder="Cashfree Secret Key (e.g. cfsk_...)" style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.06); border: 1px solid #444; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 8px;">
+                            <button type="button" id="btnSaveCashfreeConfig" style="background: #1db954; color: #000; font-weight: 700; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">Save Credentials</button>
+                            <span id="cfConfigStatus" style="font-size: 0.75rem; color: #1db954; margin-left: 8px;"></span>
+                        </div>
+                    </div>
+
+                    <div class="secure-badge" style="margin-top: 0.8rem;">
                         <svg viewBox="0 0 24 24" width="14" height="14" fill="#1DB954"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-                        <span>256-Bit SSL Encrypted • Instant 1-Click Activation</span>
+                        <span>256-Bit SSL Encrypted • Cashfree PG Subscriptions Sandbox</span>
                     </div>
                 </div>
             </div>

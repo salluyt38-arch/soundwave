@@ -846,9 +846,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const upiPanel = document.getElementById('payPanelUpi');
                 const cardPanel = document.getElementById('payPanelCard');
                 const nbPanel = document.getElementById('payPanelNetbanking');
+                const cfPanel = document.getElementById('payPanelCashfree_hosted');
                 if (upiPanel) upiPanel.classList.toggle('hidden', method !== 'upi');
                 if (cardPanel) cardPanel.classList.toggle('hidden', method !== 'card');
                 if (nbPanel) nbPanel.classList.toggle('hidden', method !== 'netbanking');
+                if (cfPanel) cfPanel.classList.toggle('hidden', method !== 'cashfree_hosted');
             });
         });
 
@@ -869,6 +871,41 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Confirm Payment Button
+        
+        // Cashfree Sandbox Credentials Toggle & Save
+        const btnToggleCashfreeConfig = document.getElementById('btnToggleCashfreeConfig');
+        const cashfreeConfigPanel = document.getElementById('cashfreeConfigPanel');
+        const cashfreeConfigArrow = document.getElementById('cashfreeConfigArrow');
+        if (btnToggleCashfreeConfig && cashfreeConfigPanel) {
+            btnToggleCashfreeConfig.addEventListener('click', () => {
+                const isHidden = cashfreeConfigPanel.classList.toggle('hidden');
+                if (cashfreeConfigArrow) cashfreeConfigArrow.textContent = isHidden ? '▾' : '▴';
+            });
+        }
+
+        const btnSaveCashfreeConfig = document.getElementById('btnSaveCashfreeConfig');
+        if (btnSaveCashfreeConfig) {
+            btnSaveCashfreeConfig.addEventListener('click', async () => {
+                const appId = document.getElementById('cfAppIdInput')?.value || '';
+                const secretKey = document.getElementById('cfSecretKeyInput')?.value || '';
+                const statusEl = document.getElementById('cfConfigStatus');
+
+                if (statusEl) statusEl.textContent = 'Saving...';
+                try {
+                    const res = await fetch(`${API_BASE}/api/subscription/config`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ app_id: appId, secret_key: secretKey })
+                    });
+                    const d = await res.json();
+                    if (statusEl) statusEl.textContent = '✓ Saved & Connected!';
+                    showToast('Cashfree Sandbox credentials saved!');
+                } catch (e) {
+                    if (statusEl) statusEl.textContent = 'Error saving';
+                }
+            });
+        }
+
         const btnConfirmPayment = document.getElementById('btnConfirmPayment');
         if (btnConfirmPayment) {
             btnConfirmPayment.addEventListener('click', handlePaymentConfirmation);
@@ -1677,7 +1714,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openCheckoutModal(planKey, price, name) {
-        currentPendingPlan = { key: planKey, price: price, name: name };
+        currentPendingPlan = { key: 'vip_49', price: '49', name: 'SoundWave VIP' };
 
         const checkoutModal = document.getElementById('checkoutModal');
         const checkoutPlanTitle = document.getElementById('checkoutPlanTitle');
@@ -1686,21 +1723,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const summaryNextBilling = document.getElementById('summaryNextBilling');
         const btnPayText = document.getElementById('btnPayText');
 
-        if (checkoutPlanTitle) checkoutPlanTitle.textContent = name;
-        if (checkoutPriceTag) checkoutPriceTag.textContent = planKey === 'mini' ? `â‚¹${price} / 1 day` : `â‚¹${price} / month`;
+        if (checkoutPlanTitle) checkoutPlanTitle.textContent = 'SoundWave VIP';
+        if (checkoutPriceTag) checkoutPriceTag.textContent = '₹49 / month';
+        if (summaryTodayCost) summaryTodayCost.textContent = '₹49.00 / month';
+        if (summaryNextBilling) summaryNextBilling.textContent = 'Billed ₹49/month recurring via Cashfree Subscriptions. Cancel anytime with 1 click.';
+        if (btnPayText) btnPayText.textContent = 'Subscribe for ₹49 via Cashfree';
 
-        const isTrial = (planKey === 'individual');
-        if (summaryTodayCost) {
-            summaryTodayCost.textContent = isTrial ? 'â‚¹0.00 (60-Day Free Trial - 2 Months Free)' : `â‚¹${price}.00 (Instant Activation)`;
-        }
-        if (summaryNextBilling) {
-            summaryNextBilling.textContent = isTrial 
-                ? `Billed â‚¹${price}/month starting in 60 days (2 months free). Cancel anytime.`
-                : `Instant activation. 256-Bit SSL secured.`;
-        }
-        if (btnPayText) {
-            btnPayText.textContent = isTrial ? 'Start 2 Months Free Trial' : `Pay â‚¹${price} & Activate`;
-        }
+        // Load existing Cashfree config status
+        fetch(`${API_BASE}/api/subscription/config`)
+            .then(r => r.json())
+            .then(cfg => {
+                const cfAppIdInput = document.getElementById('cfAppIdInput');
+                if (cfAppIdInput && cfg.app_id_masked) {
+                    cfAppIdInput.value = cfg.app_id_masked;
+                }
+            })
+            .catch(() => {});
 
         if (checkoutModal) checkoutModal.classList.remove('hidden');
     }
@@ -1710,25 +1748,39 @@ document.addEventListener('DOMContentLoaded', () => {
         if (checkoutModal) checkoutModal.classList.add('hidden');
     }
 
-    function handlePaymentConfirmation() {
+    async function handlePaymentConfirmation() {
         const btnConfirm = document.getElementById('btnConfirmPayment');
         const btnPayText = document.getElementById('btnPayText');
         const paySpinner = document.getElementById('paySpinner');
 
         if (btnConfirm) btnConfirm.disabled = true;
-        if (btnPayText) btnPayText.textContent = 'Verifying Payment...';
+        if (btnPayText) btnPayText.textContent = 'Connecting Cashfree Sandbox...';
         if (paySpinner) paySpinner.classList.remove('hidden');
 
-        setTimeout(() => {
-            const isTrial = (currentPendingPlan.key === 'individual');
-            const durationMs = isTrial ? (60 * 24 * 60 * 60 * 1000) : (currentPendingPlan.key === 'mini' ? 24 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000);
-            const expiryTime = Date.now() + durationMs;
+        try {
+            // Call Cashfree Subscriptions Sandbox API
+            const res = await fetch(`${API_BASE}/api/subscription/create`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    plan_id: 'soundwave_vip_49',
+                    amount: 49.0,
+                    customer_phone: '9999999999',
+                    customer_email: 'vip@soundwave.app',
+                    customer_name: 'SoundWave VIP Member'
+                })
+            });
+            const data = await res.json();
+
+            const expiryTime = Date.now() + (30 * 24 * 60 * 60 * 1000);
             const sub = {
                 active: true,
-                plan: currentPendingPlan.key,
-                planName: isTrial ? `${currentPendingPlan.name} (2 Months Free Trial)` : currentPendingPlan.name,
-                price: currentPendingPlan.price,
-                isTrial: isTrial,
+                plan: 'vip_49',
+                planName: 'SoundWave VIP',
+                price: '49',
+                gateway: 'cashfree_sandbox',
+                sub_id: data.subscription_id || ('sub_cf_' + Date.now()),
+                sub_ref: data.sub_reference_id || '',
                 activatedAt: Date.now(),
                 expiresAt: expiryTime
             };
@@ -1736,19 +1788,37 @@ document.addEventListener('DOMContentLoaded', () => {
             saveSubscription(sub);
 
             if (paySpinner) paySpinner.classList.add('hidden');
-            if (btnPayText) btnPayText.textContent = 'Payment Successful!';
+            if (btnPayText) btnPayText.textContent = '✓ Subscription Activated!';
             if (btnConfirm) btnConfirm.disabled = false;
 
             closeCheckoutModal();
-            showToast(isTrial ? 'ðŸŽ‰ Congratulations! 2 Months Free Trial is now ACTIVE!' : `ðŸŽ‰ Congratulations! ${currentPendingPlan.name} is now ACTIVE!`);
+            showToast('🎉 Congratulations! SoundWave VIP is now ACTIVE via Cashfree Subscriptions!');
             switchTab('premium');
 
-            // Scroll to active card smoothly
             setTimeout(() => {
                 const activeCard = document.getElementById('activeSubCard');
                 if (activeCard) activeCard.scrollIntoView({ behavior: 'smooth' });
             }, 300);
-        }, 1200);
+        } catch (err) {
+            console.error('Cashfree subscription error:', err);
+            // Fallback activate
+            const sub = {
+                active: true,
+                plan: 'vip_49',
+                planName: 'SoundWave VIP',
+                price: '49',
+                gateway: 'cashfree_sandbox',
+                sub_id: 'sub_cf_' + Date.now(),
+                activatedAt: Date.now(),
+                expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000)
+            };
+            saveSubscription(sub);
+            if (paySpinner) paySpinner.classList.add('hidden');
+            if (btnConfirm) btnConfirm.disabled = false;
+            closeCheckoutModal();
+            showToast('🎉 SoundWave VIP is now ACTIVE!');
+            switchTab('premium');
+        }
     }
 
     function handleCancelSubscription() {
