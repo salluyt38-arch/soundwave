@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tabName === 'movies') {
             const mGrid = document.getElementById('moviesGrid');
             if (mGrid && mGrid.children.length === 0) {
-                loadMovies('action', '', 1);
+                loadMovies('all', '', 1);
             }
         }
     }
@@ -2530,11 +2530,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="movie-card-rating">${ratingText}</span>
                     <span class="movie-hd-badge">1080p Full HD</span>
                     <div class="movie-card-hover-actions">
-                        <button class="btn-quick-trailer" title="Watch in 1080p Full HD">
+                        <button class="btn-quick-trailer" title="Play Full Movie in 1080p Full HD">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="white">
                                 <polygon points="6 3 20 12 6 21 6 3"></polygon>
                             </svg>
-                            <span>Play 1080p</span>
+                            <span>▶ Play Full Movie</span>
                         </button>
                         <button class="btn-quick-info">
                             <span>More Info</span>
@@ -2544,8 +2544,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="movie-card-info">
                     <h4 class="movie-card-title" title="${escapeHtml(movie.title)}">${escapeHtml(movie.title)}</h4>
                     <div class="movie-card-meta">
-                        <span>${movie.release || 'Movie'}</span>
-                        <span style="color: #e50914; font-weight: 700;">Cinema HD (1080p)</span>
+                        <span>${movie.duration ? `⏱️ ${movie.duration}` : 'Full Movie'}</span>
+                        <span style="color: #e50914; font-weight: 700;">${escapeHtml(movie.studio || 'Cinema HD')} • 1080p</span>
                     </div>
                 </div>
             `;
@@ -2855,11 +2855,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (type === 'language') {
                     currentMovieLanguage = val;
                     currentMovieGenre = '';
-                    if (moviesGridTitle) moviesGridTitle.textContent = `${chip.textContent.trim()} (Vegamovies)`;
+                    if (moviesGridTitle) moviesGridTitle.textContent = `${chip.textContent.trim()} (1080p Full Cinema)`;
                 } else {
                     currentMovieGenre = val;
                     currentMovieLanguage = '';
-                    if (moviesGridTitle) moviesGridTitle.textContent = `${chip.textContent.trim()} Movies (Vegamovies)`;
+                    if (moviesGridTitle) moviesGridTitle.textContent = `${chip.textContent.trim()} (1080p Full Cinema)`;
                 }
 
                 loadMovies(currentMovieGenre, currentMovieLanguage, 1);

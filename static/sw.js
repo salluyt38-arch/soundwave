@@ -1,5 +1,5 @@
 // SoundWave Service Worker v3 (Network-First for instant live updates)
-const CACHE_NAME = 'soundwave-cache-v6';
+const CACHE_NAME = 'soundwave-cache-v7';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
