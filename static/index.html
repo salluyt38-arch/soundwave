@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#08090d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>SoundWave — Music & Cinema HD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Firebase Web SDK (Compat v10 for Auth & Cloud Firestore) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script>
+    // Force service worker unregister/update to bust old cache
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(registrations => {
+        for (let r of registrations) r.update();
+      });
+      if ('caches' in window) {
+        caches.keys().then(names => {
+          for (let name of names) {
+            if (name.includes('soundwave-cache-v1') || name.includes('soundwave-cache-v2')) {
+              caches.delete(name);
+            }
+          }
+        });
+      }
+    }
+  </script>
+</head>
+<body>
+    <div class="sp-app-root">
+        <!-- AMBIENT GLOWS -->
+        <div class="bg-glow bg-glow-green"></div>
+        <div class="bg-glow bg-glow-purple"></div>
+
+        <!-- MAIN LAYOUT -->
+        <div class="sp-grid-container">
+            <!-- LEFT SIDEBAR (Desktop) -->
+            <aside class="sp-sidebar">
+                <div class="sidebar-brand">
+                    <div class="brand-logo">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                            <circle cx="12" cy="12" r="11" fill="#1DB954"/>
+                            <path d="M17.5 10.2c-2.8-.7-7.3-.6-9.9.9-.4.2-.9.1-1.1-.3-.2-.4-.1-.9.3-1.1 3-1.8 8-1.9 11.2-1 .4.1.7.6.5 1-.2.4-.6.6-1 .5zm-.3 2.7c-.2.3-.6.4-.9.2-2.3-1.4-5.8-1.8-8.5-1-.4.1-.7-.1-.9-.5-.1-.4.1-.7.5-.9 3.1-1 7-.5 9.6 1.1.4.3.4.7.2 1.1zm-1 2.7c-.2.2-.5.3-.8.2-2-1.2-4.5-1.5-7.4-.8-.3.1-.6-.1-.7-.4-.1-.3.1-.6.4-.7 3.2-.7 5.9-.4 8.2 1 .3.2.4.5.3.7z" fill="#000000"/>
+                        </svg>
+                        <span class="brand-name">Sound<span>Wave</span></span>
+                    </div>
+                </div>
+
+                <nav class="sidebar-menu">
+                    <button class="side-link active" data-tab="home" id="sideNavHome">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                        </svg>
+                        <span>Home</span>
+                    </button>
+                    <button class="side-link" data-tab="search" id="sideNavSearch">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <span>Search</span>
+                    </button>
+                    <button class="side-link" data-tab="library" id="sideNavLibrary">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                            <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/>
+                        </svg>
+                        <span>Your Library</span>
+                    </button>
+                    <button class="side-link" data-tab="video" id="sideNavVideo">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="#1DB954">
+                            <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4zM14 13h-3v3H9v-3H6v-2h3V8h2v3h3v2z"/>
+                        </svg>
+                        <span>SoundWave Videos</span>
+                    </button>
+                    <button class="side-link" data-tab="movies" id="sideNavMovies">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="#E50914">
+                            <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4zM8 17H6v-2h2v2zm0-4H6v-2h2v2zm0-4H6V7h2v2zm10 8h-8v-2h8v2zm0-4h-8v-2h8v2zm0-4h-8V7h8v2z"/>
+                        </svg>
+                        <span>Movies</span>
+                    </button>
+                    <button class="side-link" data-tab="sports" id="sideNavSports">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="#1DB954">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                        <span>Sports</span>
+                    </button>
+                    <button class="side-link" data-tab="premium" id="sideNavPremium">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                            <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
+                        </svg>
+                        <span>Premium</span>
+                    </button>
+                </nav>
+
+                <div class="sidebar-separator"></div>
+
+                <!-- Liked Songs Shortcut -->
+                <button class="side-liked-card" id="sideLikedBtn">
+                    <div class="liked-heart-box">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="white">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                    </div>
+                    <div class="liked-text-box">
+                        <span class="liked-main-text">Liked Songs</span>
+                        <span class="liked-sub-text" id="sideLikedBadge">0 tracks</span>
+                    </div>
+                </button>
+
+                <!-- Curated Playlists List -->
+                <div class="sidebar-playlists-scroll">
+                    <div class="side-section-label">CURATED PLAYLISTS</div>
+                    <div class="playlist-items-wrapper" id="curatedPlaylists">
+                        <div class="pl-item" data-query="Arijit Singh Best Songs">Arijit Singh Melodies</div>
+                        <div class="pl-item" data-query="Sidhu Moose Wala All Hit Songs">Punjabi Hype Hits</div>
+                        <div class="pl-item" data-query="Lo-Fi Chill Beats To Study Relax">Lo-Fi Chill Lounge</div>
+                        <div class="pl-item" data-query="Bollywood Acoustic Romance Unplugged">Bollywood Acoustic</div>
+                        <div class="pl-item" data-query="Gym Workout Phonk Bass Boosted">Gym Phonk & EDM</div>
+                        <div class="pl-item" data-query="Top Global Billboard Pop Hits 2024">Global Top 50</div>
+                    </div>
+                </div>
+
+                <!-- Sidebar Status Badge -->
+                <div class="sidebar-bottom-info">
+                    <div class="live-stream-badge">
+                        <span class="pulse-dot"></span>
+                        <span>Screen-Off Background Play</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- MAIN VIEWPORT -->
+            <section class="sp-main-view">
+                <!-- Top Sticky Header -->
+                <header class="sp-topbar">
+                    <div class="mobile-topbar-brand">
+                        <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+                            <circle cx="12" cy="12" r="11" fill="#1DB954"/>
+                            <path d="M17.5 10.2c-2.8-.7-7.3-.6-9.9.9-.4.2-.9.1-1.1-.3-.2-.4-.1-.9.3-1.1 3-1.8 8-1.9 11.2-1 .4.1.7.6.5 1-.2.4-.6.6-1 .5zm-.3 2.7c-.2.3-.6.4-.9.2-2.3-1.4-5.8-1.8-8.5-1-.4.1-.7-.1-.9-.5-.1-.4.1-.7.5-.9 3.1-1 7-.5 9.6 1.1.4.3.4.7.2 1.1zm-1 2.7c-.2.2-.5.3-.8.2-2-1.2-4.5-1.5-7.4-.8-.3.1-.6-.1-.7-.4-.1-.3.1-.6.4-.7 3.2-.7 5.9-.4 8.2 1 .3.2.4.5.3.7z" fill="#000000"/>
+                        </svg>
+                        <span class="brand-name">Sound<span>Wave</span></span>
+                    </div>
+
+                    <div class="topbar-nav">
+                        <button class="nav-circle-btn" id="btnHistoryBack" title="Back">‹</button>
+                        <button class="nav-circle-btn" id="btnHistoryForward" title="Forward">›</button>
+                    </div>
+
+                    <!-- Search Input (Interactive) -->
+                    <div class="topbar-search-bar" id="topbarSearchContainer">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="globalSearchInput" placeholder="What do you want to listen to?">
+                        <button class="search-clear-btn hidden" id="globalClearBtn">✕</button>
+                    </div>
+
+                    <div class="topbar-right">
+                        <!-- Firebase Cloud Sync Pill -->
+                        <button class="btn-firebase-pill" id="btnFirebasePill" title="Firebase Cloud Sync & Project Settings">
+                            <span class="fb-fire-icon">🔥</span>
+                            <span class="fb-pill-text" id="fbPillText">Firebase</span>
+                            <span class="fb-pill-dot" id="fbPillDot"></span>
+                        </button>
+                        <button class="btn-upgrade-premium" id="btnTopPremium" title="Explore SoundWave Premium">
+                            <span class="prem-crown-icon">👑</span>
+                            <span class="prem-top-label">Explore Premium</span>
+                        </button>
+                        <button class="btn-install-pwa" id="btnInstallPwa" title="Install SoundWave on Phone">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span>Install App</span>
+                        </button>
+                        <!-- Log In Trigger -->
+                        <button class="btn-top-login" id="btnTopLogin" title="Sign In with Google or Email">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                            </svg>
+                            <span>Log in</span>
+                        </button>
+                        <!-- Authenticated User Profile Badge -->
+                        <button class="user-profile-badge hidden" id="btnUserProfile" title="View Account, Sync & Settings">
+                            <img class="avatar-photo hidden" id="userAvatarImg" src="" alt="User">
+                            <span class="avatar-icon" id="userAvatarIcon">🎧</span>
+                            <span class="avatar-label" id="userAvatarLabel">Account</span>
+                            <span class="cloud-sync-mini-badge" title="Cloud Synced">☁️</span>
+                        </button>
+                    </div>
+                </header>
+
+                <!-- Scrollable View Area -->
+                <div class="sp-viewport-scroll" id="viewportScroll">
+                    
+                    <!-- TAB 1: HOME VIEW -->
+                    <div class="tab-panel active" id="tabHome">
+                        <!-- Hero Banner -->
+                        <div class="hero-jumbotron">
+                            <div class="jumbo-content">
+                                <span class="jumbo-tag">SOUNDWAVE HD AUDIO</span>
+                                <h1 id="greetingMessage">Good evening</h1>
+                                <p>Stream high-fidelity audio with background playback and zero interruptions.</p>
+                                <div class="jumbo-actions">
+                                    <button class="jumbo-play-btn" id="jumboQuickPlay">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                            <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                                        </svg>
+                                        <span>Play Today's Mix</span>
+                                    </button>
+                                    <button class="jumbo-play-btn btn-jumbo-movies" id="jumboMoviesBtn">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="#E50914">
+                                            <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
+                                        </svg>
+                                        <span>Cinema HD (1080p)</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Picks (6 Cards) -->
+                        <div class="quick-picks-shelf">
+                            <div class="quick-cards-grid" id="quickPicksContainer">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Shelf: Cinema Blockbusters (1080p Full HD) -->
+                        <div class="music-shelf" id="homeVegamoviesShelf">
+                            <div class="shelf-head">
+                                <div class="shelf-title-box">
+                                    <span class="shelf-badge-1080p">🎬 CINEMA 1080p</span>
+                                    <h2>Trending Cinema & Action (1080p Full HD)</h2>
+                                </div>
+                                <button class="shelf-more-btn" id="btnHomeViewAllMovies">Show all movies ›</button>
+                            </div>
+                            <div class="shelf-cards-grid" id="vegamoviesHomeGrid">
+                                <!-- Populated dynamically from Cinema API -->
+                            </div>
+                        </div>
+
+                        <!-- Shelf: Trending Hits -->
+                        <div class="music-shelf">
+                            <div class="shelf-head">
+                                <h2>Trending Now</h2>
+                                <button class="shelf-more-btn" data-query="Trending Songs 2024">Show all</button>
+                            </div>
+                            <div class="shelf-cards-grid" id="trendingShelfGrid">
+                                <!-- Cards populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Shelf: Bollywood Romance -->
+                        <div class="music-shelf">
+                            <div class="shelf-head">
+                                <h2>Bollywood Romantic Melodies</h2>
+                                <button class="shelf-more-btn" data-query="Arijit Singh Romantic Love Songs">Show all</button>
+                            </div>
+                            <div class="shelf-cards-grid" id="romanticShelfGrid">
+                                <!-- Cards populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Shelf: Lo-Fi Study Lounge -->
+                        <div class="music-shelf">
+                            <div class="shelf-head">
+                                <h2>Lo-Fi & Chill Lounge</h2>
+                                <button class="shelf-more-btn" data-query="Lo-Fi Relax Study Beats">Show all</button>
+                            </div>
+                            <div class="shelf-cards-grid" id="lofiShelfGrid">
+                                <!-- Cards populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: SEARCH VIEW -->
+                    <div class="tab-panel" id="tabSearch">
+                        <div class="search-view-container">
+                            <div class="search-hero-box">
+                                <h2>Search Music</h2>
+                                <div class="big-search-box">
+                                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </svg>
+                                    <input type="text" id="searchPageViewInput" placeholder="Songs, artists, genres, or paste video link...">
+                                    <button class="search-execute-btn" id="btnExecuteSearch">Search</button>
+                                </div>
+                            </div>
+
+                            <!-- Search Loader -->
+                            <div class="search-loading-state hidden" id="searchLoadingState">
+                                <div class="sp-spinner"></div>
+                                <p>Extracting high-quality audio streams...</p>
+                            </div>
+
+                            <!-- Search Results Grid -->
+                            <div class="search-results-wrapper hidden" id="searchResultsWrapper">
+                                <h3 class="search-section-title" id="searchResultsTitle">Top Results</h3>
+                                <div class="search-tracks-list" id="searchResultsGrid">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Browse Category Tiles (Spotify Style) -->
+                            <div class="browse-categories" id="browseCategories">
+                                <h3>Browse All Categories</h3>
+                                <div class="cat-tiles-grid" id="categoryTilesGrid">
+                                    <div class="cat-tile cat-tile-movies" style="--c-bg: #E50914;" data-category="movies">
+                                        <span>Cinema HD (1080p)</span>
+                                        <div class="cat-icon">🍿</div>
+                                    </div>
+                                    <div class="cat-tile" style="--c-bg: #E13300;" data-query="Top Bollywood Hits">
+                                        <span>Bollywood</span>
+                                        <div class="cat-icon">🎬</div>
+                                    </div>
+                                    <div class="cat-tile" style="--c-bg: #1E3264;" data-query="Top Punjabi Hits">
+                                        <span>Punjabi</span>
+                                        <div class="cat-icon">🔥</div>
+                                    </div>
+                                    <div class="cat-tile" style="--c-bg: #8D67AB;" data-query="Lo-Fi Chill Hop">
+                                        <span>Lo-Fi</span>
+                                        <div class="cat-icon">☕</div>
+                                    </div>
+                                    <div class="cat-tile" style="--c-bg: #E8115B;" data-query="Romantic Love Songs">
+                                        <span>Romance</span>
+                                        <div class="cat-icon">❤️</div>
+                                    </div>
+                                    <div class="cat-tile" style="--c-bg: #503750;" data-query="Gym Workout Phonk">
+                                        <span>Workout</span>
+                                        <div class="cat-icon">⚡</div>
+                                    </div>
+                                    <div class="cat-tile" style="--c-bg: #0D73EC;" data-query="English Pop Billboard 2024">
+                                        <span>Pop Hits</span>
+                                        <div class="cat-icon">🌟</div>
+                                    </div>
+                                    <div class="cat-tile" style="--c-bg: #283EA3;" data-query="EDM Dance Party Hits">
+                                        <span>Dance & EDM</span>
+                                        <div class="cat-icon">🎧</div>
+                                    </div>
+                                    <div class="cat-tile" style="--c-bg: #477D95;" data-query="Acoustic Unplugged Chill">
+                                        <span>Acoustic</span>
+                                        <div class="cat-icon">🎸</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: SOUNDWAVE VIDEO LOUNGE & PLAYER -->
+                    <div class="tab-panel" id="tabVideo">
+                        <div class="yt-browser-container">
+                            <!-- Top Video Search / URL Input -->
+                            <div class="yt-search-hero">
+                                <div class="yt-brand-header">
+                                    <div style="width:48px; height:48px; border-radius:14px; background:linear-gradient(135deg, #1db954, #10b981); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 20px rgba(29,185,84,0.45); flex-shrink:0;">
+                                        <svg viewBox="0 0 24 24" width="24" height="24" fill="#000">
+                                            <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h2 style="color:#fff; font-size:1.8rem; font-weight:800; margin:0; letter-spacing:-0.5px;">SoundWave Videos</h2>
+                                        <p style="color:#a7a7a7; font-size:0.9rem; margin-top:4px;">Watch 1080p full HD music videos, cinema & live sports stream</p>
+                                    </div>
+                                </div>
+
+                                <div class="yt-input-group">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </svg>
+                                    <input type="text" id="ytSearchInput" placeholder="Search SoundWave videos or paste any video link...">
+                                    <button class="yt-search-btn" id="btnYtSearch">Search</button>
+                                </div>
+
+                                <!-- Category Filter Chips -->
+                                <div class="yt-chips-row" id="ytChipsRow">
+                                    <button class="yt-chip active" data-q="Trending Music Videos 2024">🔥 Trending</button>
+                                    <button class="yt-chip" data-q="Latest Bollywood Hollywood Movies 4K">🎬 Movies</button>
+                                    <button class="yt-chip" data-q="Live Sports Cricket Football Highlights 4K">⚽ Sports</button>
+                                    <button class="yt-chip" data-q="Arijit Singh Official Music Video">Arijit Singh</button>
+                                    <button class="yt-chip" data-q="New Punjabi Songs Video Hits">Punjabi Hits</button>
+                                    <button class="yt-chip" data-q="Bollywood 4K Video Songs">Bollywood 4K</button>
+                                    <button class="yt-chip" data-q="Top Global Music Videos 2024">Global Top</button>
+                                    <button class="yt-chip" data-q="Lo-Fi Animation Video Music">Lofi Visuals</button>
+                                    <button class="yt-chip" data-q="Live Acoustic Concert 4K">Live Concerts</button>
+                                </div>
+                            </div>
+
+                            <!-- Theater Stage: Video Player Container -->
+                            <div class="yt-player-theater hidden" id="ytPlayerTheater">
+                                <div class="ambient-glow" id="ambientGlow"></div>
+                                    <div class="yt-iframe-wrapper" id="ytVideoWrapper">
+                                    <video id="ytNativeVideo" class="yt-native-video" playsinline controls controlslist="nodownload" preload="auto"></video>
+                                    <iframe id="ytVideoIframe" class="hidden" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                    <div class="yt-video-loader hidden" id="ytVideoLoader">
+                                        <div class="sp-spinner"></div>
+                                        <span>Loading video stream...</span>
+                                    </div>
+                                </div>
+                                <div class="yt-video-meta-bar">
+                                    <div class="yt-meta-left">
+                                        <h3 id="ytActiveTitle">Select a video to play</h3>
+                                        <div class="yt-channel-row">
+                                            <span class="yt-channel-name" id="ytActiveChannel">SoundWave Channel</span>
+                                            <span class="yt-hd-badge" id="ytQualityBadge">1080p</span>
+                                            <div class="yt-quality-picker">
+                                                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                                                    <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                                                </svg>
+                                                <select id="ytQualitySelect" class="yt-quality-select" title="Change video quality">
+                                                    <option value="1080p" selected>1080p Full HD</option>
+                                                    <option value="720p">720p HD</option>
+                                                    <option value="480p">480p High</option>
+                                                    <option value="360p">360p Standard</option>
+                                                    <option value="240p">240p Low Data</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="yt-meta-right">
+                                        <!-- Feature 1: Ambient Glow Toggle -->
+                                        <button class="btn-yt-action active-feature" id="btnAmbientToggle" title="Ambient Glow Mode">
+                                            <span>✨ Glow: ON</span>
+                                        </button>
+
+                                        <!-- Feature 4: Playback Speed -->
+                                        <button class="btn-yt-action" id="btnVideoSpeed" title="Video Playback Speed">
+                                            <span>⚡ 1.0x</span>
+                                        </button>
+
+                                        <!-- Feature 3: Picture-in-Picture -->
+                                        <button class="btn-yt-action" id="btnTogglePip" title="Picture-in-Picture Mini Player">
+                                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                                <path d="M19 7h-8v6h8V7zm2-4H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16.01H3V4.99h18v14.02z"/>
+                                            </svg>
+                                            <span>PiP</span>
+                                        </button>
+
+                                        <!-- Feature 2: Infinite Autoplay -->
+                                        <button class="btn-yt-action active-feature" id="btnAutoplayToggle" title="Continuous Autoplay Queue">
+                                            <span>♾️ Autoplay: ON</span>
+                                        </button>
+
+                                        <button class="btn-yt-action btn-switch-audio" id="btnSwitchAudio" title="Switch to Background Audio">
+                                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                                            </svg>
+                                            <span>Audio</span>
+                                        </button>
+
+                                        <button class="btn-yt-action" id="btnYtOpenApp" title="Share Video Link">
+                                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                                                <polyline points="16 6 12 2 8 6"></polyline>
+                                                <line x1="12" y1="2" x2="12" y2="15"></line>
+                                            </svg>
+                                            <span>Share</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <!-- SoundWave Videos & Trending Hits Section -->
+                            <div class="yt-results-section" style="margin-top: 2.5rem;">
+                                <div class="yt-results-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+                                    <div>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <span style="background: rgba(29, 185, 84, 0.15); color: #1db954; font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(29, 185, 84, 0.3);">🔥 INTERNET MOST-VIEWED HITS</span>
+                                            <span style="color: #a7a7a7; font-size: 0.8rem;">Crores of Views • 1080p HD</span>
+                                        </div>
+                                        <h2 id="ytSectionTitle" style="font-size: 1.5rem; font-weight: 800; color: #fff; margin: 6px 0 0 0;">Trending Songs & Viral Videos</h2>
+                                    </div>
+                                    <div class="yt-spinner-box hidden" id="ytLoadingSpinner">
+                                        <div class="sp-spinner"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Grid of Video Cards -->
+                                <div class="yt-videos-grid" id="ytVideosGrid">
+                                    <!-- Populated dynamically -->
+                                </div>
+
+                                <!-- Endless Browse / Load More Container -->
+                                <div class="yt-browse-more-box" style="text-align: center; margin: 3rem 0 5rem 0;">
+                                    <button class="btn-browse-more-videos" id="btnBrowseMoreVideos" style="background: linear-gradient(135deg, #1db954, #10b981); color: #000; font-size: 1rem; font-weight: 800; padding: 14px 36px; border-radius: 30px; border: none; cursor: pointer; box-shadow: 0 6px 25px rgba(29, 185, 84, 0.4); transition: transform 0.2s, box-shadow 0.2s;">
+                                        Browse More Trending Songs ▾
+                                    </button>
+                                    <p style="color: #a7a7a7; font-size: 0.85rem; margin-top: 10px;">Explore millions of viral hits, live concerts, and blockbuster cinema</p>
+                                </div>
+                            </div>
+
+</div>
+
+                    <!-- TAB: MOVIES (POWERED BY VEGAMOVIES) -->
+                    <div class="tab-panel" id="tabMovies">
+                        <div class="movies-container">
+                            <!-- Movie Hero Spotlight -->
+                            <div class="movie-hero-spotlight" id="movieSpotlightBanner">
+                                <div class="spotlight-backdrop-glow"></div>
+                                <div class="spotlight-content">
+                                    <div class="spotlight-badge">
+                                        <span class="spotlight-badge-dot"></span>
+                                        <span>CINEMA VAULT (1080p)</span>
+                                    </div>
+                                    <h1 class="spotlight-title" id="spotlightTitle">Colony</h1>
+                                    <div class="spotlight-meta">
+                                        <span class="spotlight-rating" id="spotlightRating">⭐ 8.1 / 10</span>
+                                        <span class="spotlight-sep">•</span>
+                                        <span class="spotlight-year" id="spotlightYear">2026</span>
+                                        <span class="spotlight-sep">•</span>
+                                        <span class="spotlight-genre" id="spotlightGenre">Action, Sci-Fi</span>
+                                    </div>
+                                    <p class="spotlight-desc" id="spotlightDesc">A breathtaking survival journey into an uncharted realm with relentless action and thrilling encounters.</p>
+                                    <div class="spotlight-actions">
+                                        <button class="btn-spotlight-trailer" id="btnSpotlightTrailer">
+                                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                                <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                                            </svg>
+                                            <span>Watch Official Trailer</span>
+                                        </button>
+                                        <button class="btn-spotlight-detail" id="btnSpotlightDetail">
+                                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                            </svg>
+                                            <span>Movie Details</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="spotlight-poster-box">
+                                    <img id="spotlightPosterImg" src="https://image.tmdb.org/t/p/w500/1I0E3f44UEsBmYpK6qkNLzvDQoN.jpg" alt="Spotlight Movie">
+                                </div>
+                            </div>
+
+                            <!-- Movie Search and Filter Controls -->
+                            <div class="movies-controls-bar">
+                                <div class="movie-search-box">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </svg>
+                                    <input type="text" id="movieSearchInput" placeholder="Search 1080p movies (e.g. Spider-Man, Avengers, Kalki, Colony)...">
+                                    <button class="movie-search-clear hidden" id="movieSearchClear">✕</button>
+                                </div>
+                            </div>
+
+                            <!-- Genre & Category Chips -->
+                            <div class="movie-chips-scroll" id="movieChipsRow">
+                                <button class="movie-chip active" data-type="genre" data-val="action">🔥 Action</button>
+                                <button class="movie-chip" data-type="language" data-val="hindi">🎬 Hindi Movies</button>
+                                <button class="movie-chip" data-type="language" data-val="english">🍿 Hollywood (English)</button>
+                                <button class="movie-chip" data-type="language" data-val="tamil">⚡ Tamil / South</button>
+                                <button class="movie-chip" data-type="language" data-val="telugu">🌟 Telugu</button>
+                                <button class="movie-chip" data-type="genre" data-val="thriller">🕵️ Thriller</button>
+                                <button class="movie-chip" data-type="genre" data-val="comedy">😂 Comedy</button>
+                                <button class="movie-chip" data-type="genre" data-val="sci-fi">🚀 Sci-Fi</button>
+                                <button class="movie-chip" data-type="genre" data-val="horror">👻 Horror</button>
+                                <button class="movie-chip" data-type="genre" data-val="drama">🎭 Drama</button>
+                                <button class="movie-chip" data-type="genre" data-val="romance">❤️ Romance</button>
+                                <button class="movie-chip" data-type="genre" data-val="adventure">🗡️ Adventure</button>
+                            </div>
+
+                            <!-- Movies Section Header -->
+                            <div class="movies-grid-header">
+                                <div class="movies-header-left">
+                                    <h3 id="moviesGridTitle">Action Movies</h3>
+                                    <span class="movies-count-badge" id="moviesCountBadge">Live catalog</span>
+                                </div>
+                                <div class="movies-loader hidden" id="moviesLoadingSpinner">
+                                    <div class="sp-spinner"></div>
+                                </div>
+                            </div>
+
+                            <!-- Movies Grid -->
+                            <div class="movies-grid" id="moviesGrid">
+                                <!-- Cards populated dynamically -->
+                            </div>
+
+                            <!-- Load More Button -->
+                            <div class="movies-load-more-wrap" id="moviesLoadMoreWrap">
+                                <button class="btn-movies-load-more" id="btnMoviesLoadMore">
+                                    <span>Load More Movies</span>
+                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: LIKED SONGS & LIBRARY -->
+                    <div class="tab-panel" id="tabLibrary">
+                        <div class="library-header-banner">
+                            <div class="library-art-box">
+                                <svg viewBox="0 0 24 24" width="70" height="70" fill="white">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                            </div>
+                            <div class="library-meta">
+                                <span class="lib-sub-tag">PLAYLIST</span>
+                                <h1>Liked Songs</h1>
+                                <p><span id="librarySongCount">0 songs</span> • Saved in your local library</p>
+                                <button class="btn-play-all-liked" id="btnPlayLikedPlaylist">
+                                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                                        <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                                    </svg>
+                                    <span>Play All</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Liked Songs Table List -->
+                        <div class="library-table-container">
+                            <div class="sp-table-header">
+                                <div class="th-num">#</div>
+                                <div class="th-title">Title</div>
+                                <div class="th-channel">Artist / Channel</div>
+                                <div class="th-duration">Duration</div>
+                                <div class="th-action"></div>
+                            </div>
+                            <div class="sp-table-body" id="libraryTableBody">
+                                <div class="empty-library">
+                                    <p>No liked songs yet.</p>
+                                    <span>Click the heart icon on any song while listening to save it here!</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 4: PREMIUM PLANS & SUBSCRIPTION -->
+                    <div class="tab-panel" id="tabPremium">
+                        <!-- Hero Header Banner -->
+                        <div class="premium-hero-banner">
+                            <div class="prem-hero-badge">⭐ SOUNDWAVE VIP PREMIUM</div>
+                            <h1 class="prem-hero-title">Listen Without Limits.<br>Get 2 Months of Premium for ₹0.</h1>
+                            <p class="prem-hero-subtitle">Only ₹119/month after. Zero ads, unlimited song downloads to your phone, screen-off background play, and Ultra HD 320 kbps studio audio. Cancel anytime with 1 tap.</p>
+                            <div class="prem-hero-buttons">
+                                <button class="btn-prem-cta" data-plan="individual" data-price="119" data-name="Individual Premium">Try 2 Months Free</button>
+                                <button class="btn-prem-view-plans" id="btnScrollToPlans">View All Plans</button>
+                            </div>
+                            <div class="prem-terms">2 months free for first-time subscribers. Cancel anytime. Terms apply.</div>
+                        </div>
+
+                        <!-- Active Subscription Status Card (Shown if User Subscribed) -->
+                        <div class="active-sub-card hidden" id="activeSubCard">
+                            <div class="sub-card-left">
+                                <span class="sub-crown-icon">👑</span>
+                                <div>
+                                    <div class="sub-plan-badge">PREMIUM ACTIVE</div>
+                                    <h3 id="activePlanName">Individual Premium</h3>
+                                    <p id="activePlanDetail">Ultra HD 320 kbps Studio Audio • Unlimited Device Downloads • Ad-Free</p>
+                                    <div class="sub-date" id="activePlanExpiry">Renews automatically on Nov 21, 2026</div>
+                                </div>
+                            </div>
+                            <div class="sub-card-right">
+                                <button class="btn-cancel-sub" id="btnCancelSub">Cancel Subscription</button>
+                            </div>
+                        </div>
+
+                        <!-- Perks Grid (4 Icon Cards) -->
+                        <div class="prem-perks-section">
+                            <h2 class="prem-section-title">The Power of SoundWave Premium</h2>
+                            <div class="prem-perks-grid">
+                                <div class="prem-perk-card">
+                                    <div class="perk-icon">⚡</div>
+                                    <h4>Ad-Free Music</h4>
+                                    <p>Enjoy uninterrupted music without sponsored breaks or audio ads.</p>
+                                </div>
+                                <div class="prem-perk-card">
+                                    <div class="perk-icon">⬇️</div>
+                                    <h4>Download to Device</h4>
+                                    <p>Save tracks directly to phone storage (.m4a) to listen anytime offline in any player.</p>
+                                </div>
+                                <div class="prem-perk-card">
+                                    <div class="perk-icon">🎧</div>
+                                    <h4>Ultra HD 320 kbps</h4>
+                                    <p>Hear every detail with pure studio bass and high-fidelity vocal clarity.</p>
+                                </div>
+                                <div class="prem-perk-card">
+                                    <div class="perk-icon">📱</div>
+                                    <h4>Screen-Off Playback</h4>
+                                    <p>Lock your phone screen or browse other apps without music stopping.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pricing Plans Section -->
+                        <div class="prem-plans-section" id="premPlansSection">
+                            <h2 class="prem-section-title">Pick Your Premium Plan</h2>
+                            <p class="prem-section-sub">Listen without limits on phone, tablet, and laptop. Cancel anytime.</p>
+
+                            <div class="prem-cards-grid">
+                                <!-- 1. Mini -->
+                                <div class="prem-card">
+                                    <div class="prem-card-top">
+                                        <span class="plan-tag">One-time pass</span>
+                                        <h3 class="plan-title">Mini</h3>
+                                        <div class="plan-price">₹7 <span>/ 1 day</span></div>
+                                        <div class="plan-account-info">1 mobile account</div>
+                                    </div>
+                                    <div class="prem-card-body">
+                                        <ul class="plan-features">
+                                            <li><span class="feat-check">✓</span> Ad-free music on mobile</li>
+                                            <li><span class="feat-check">✓</span> Download up to 30 songs</li>
+                                            <li><span class="feat-check">✓</span> 160 kbps audio quality</li>
+                                            <li><span class="feat-check">✓</span> 1-day pass for road trips & parties</li>
+                                        </ul>
+                                    </div>
+                                    <div class="prem-card-footer">
+                                        <button class="btn-select-plan" data-plan="mini" data-price="7" data-name="SoundWave Mini">Get Mini (₹7)</button>
+                                        <span class="plan-foot-note">One-time payment. No automatic charge.</span>
+                                    </div>
+                                </div>
+
+                                <!-- 2. Individual (Most Popular) -->
+                                <div class="prem-card featured">
+                                    <div class="featured-badge">MOST POPULAR • 2 MONTHS FREE</div>
+                                    <div class="prem-card-top">
+                                        <span class="plan-tag tag-green">Free for 2 months</span>
+                                        <h3 class="plan-title">Individual</h3>
+                                        <div class="plan-price">₹119 <span>/ month after</span></div>
+                                        <div class="plan-account-info">1 Premium account</div>
+                                    </div>
+                                    <div class="prem-card-body">
+                                        <ul class="plan-features">
+                                            <li><span class="feat-check">✓</span> Ad-free music listening</li>
+                                            <li><span class="feat-check">✓</span> <strong>Unlimited</strong> downloads to phone</li>
+                                            <li><span class="feat-check">✓</span> <strong>Ultra HD 320 kbps</strong> studio sound</li>
+                                            <li><span class="feat-check">✓</span> Full screen-off background play</li>
+                                            <li><span class="feat-check">✓</span> Unlimited skips & custom queue</li>
+                                            <li><span class="feat-check">✓</span> Cancel anytime with 1 click</li>
+                                        </ul>
+                                    </div>
+                                    <div class="prem-card-footer">
+                                        <button class="btn-select-plan btn-featured" data-plan="individual" data-price="119" data-name="Individual Premium">Try 2 Months Free</button>
+                                        <span class="plan-foot-note">₹119/month after trial. Cancel anytime.</span>
+                                    </div>
+                                </div>
+
+                                <!-- 3. Student -->
+                                <div class="prem-card">
+                                    <div class="prem-card-top">
+                                        <span class="plan-tag tag-purple">50% Student Discount</span>
+                                        <h3 class="plan-title">Student</h3>
+                                        <div class="plan-price">₹59 <span>/ month</span></div>
+                                        <div class="plan-account-info">1 verified student account</div>
+                                    </div>
+                                    <div class="prem-card-body">
+                                        <ul class="plan-features">
+                                            <li><span class="feat-check">✓</span> 50% discount for college students</li>
+                                            <li><span class="feat-check">✓</span> Ad-free music listening</li>
+                                            <li><span class="feat-check">✓</span> Unlimited downloads to phone</li>
+                                            <li><span class="feat-check">✓</span> Ultra HD 320 kbps sound quality</li>
+                                            <li><span class="feat-check">✓</span> Cancel anytime online</li>
+                                        </ul>
+                                    </div>
+                                    <div class="prem-card-footer">
+                                        <button class="btn-select-plan" data-plan="student" data-price="59" data-name="Student Premium">Get Student (₹59)</button>
+                                        <span class="plan-foot-note">Discount for eligible university students.</span>
+                                    </div>
+                                </div>
+
+                                <!-- 4. Family -->
+                                <div class="prem-card">
+                                    <div class="prem-card-top">
+                                        <span class="plan-tag tag-gold">Up to 6 accounts</span>
+                                        <h3 class="plan-title">Family</h3>
+                                        <div class="plan-price">₹179 <span>/ month</span></div>
+                                        <div class="plan-account-info">6 individual Premium accounts</div>
+                                    </div>
+                                    <div class="prem-card-body">
+                                        <ul class="plan-features">
+                                            <li><span class="feat-check">✓</span> 6 separate accounts for family members</li>
+                                            <li><span class="feat-check">✓</span> Block explicit music for kids</li>
+                                            <li><span class="feat-check">✓</span> Ad-free listening on all devices</li>
+                                            <li><span class="feat-check">✓</span> Unlimited downloads on all 6 phones</li>
+                                            <li><span class="feat-check">✓</span> Shared Family Mix playlist</li>
+                                        </ul>
+                                    </div>
+                                    <div class="prem-card-footer">
+                                        <button class="btn-select-plan" data-plan="family" data-price="179" data-name="Family Premium">Get Family (₹179)</button>
+                                        <span class="plan-foot-note">For family members living under one roof.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Comparison Table -->
+                        <div class="prem-compare-section">
+                            <h3 class="prem-compare-title">SoundWave Free vs SoundWave Premium</h3>
+                            <div class="prem-table-wrap">
+                                <table class="prem-table">
+                                    <thead>
+                                        <tr>
+                                            <th>What you get</th>
+                                            <th>Free</th>
+                                            <th class="th-prem">Premium 👑</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Ad-free music listening</td>
+                                            <td>No</td>
+                                            <td class="td-prem">✓ Yes (Zero ads)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Download songs to device storage</td>
+                                            <td>Limited</td>
+                                            <td class="td-prem">✓ Unlimited (.m4a)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Audio Bitrate Quality</td>
+                                            <td>128 kbps</td>
+                                            <td class="td-prem">✓ Ultra HD (320 kbps)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Screen-off background playback</td>
+                                            <td>Standard</td>
+                                            <td class="td-prem">✓ Enhanced Hi-Fi</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Song Skips & Custom Queue</td>
+                                            <td>Limited</td>
+                                            <td class="td-prem">✓ Unlimited</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <!-- RIGHT SLIDE-OUT QUEUE DRAWER -->
+        <aside class="queue-drawer-panel" id="queueDrawerPanel">
+            <div class="drawer-top">
+                <h3>Now Playing Queue</h3>
+                <button class="drawer-close-btn" id="btnCloseQueueDrawer">✕</button>
+            </div>
+            <div class="drawer-items-list" id="queueDrawerList">
+                <p class="drawer-empty-text">Queue is empty</p>
+            </div>
+        </aside>
+
+        <!-- SPOTIFY BOTTOM PLAYER BAR -->
+        <footer class="sp-bottom-player" id="spBottomPlayer">
+            <div class="mobile-player-progress-bar">
+                <div class="mob-prog-fill" id="mobProgFill"></div>
+            </div>
+
+            <!-- Left: Current Playing Meta -->
+            <div class="player-col-left">
+                <div class="player-cover-box">
+                    <img id="playerCoverImg" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100" alt="Current Track">
+                </div>
+                <div class="player-song-meta">
+                    <div class="song-title-text" id="playerSongTitle">Select a song</div>
+                    <div class="song-artist-text" id="playerSongArtist">SoundWave Player</div>
+                </div>
+                <button class="btn-heart-like" id="btnHeartLike" title="Save to Your Library">
+                    <svg id="svgHeartIcon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </button>
+                <button class="btn-download-song" id="btnDownloadSong" title="Download Audio to Phone">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                </button>
+                <button class="btn-player-video" id="btnPlayerWatchVideo" title="Watch SoundWave Video" style="color:#1db954; border-color:rgba(29,185,84,0.3);">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="#1DB954">
+                        <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                    </svg>
+                    <span>SoundWave Video</span>
+                </button>
+            </div>
+
+            <!-- Center: Controls & Scrubber -->
+            <div class="player-col-center">
+                <div class="center-buttons">
+                    <button class="ctrl-btn" id="btnShuffle" title="Shuffle">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
+                        </svg>
+                    </button>
+                    <button class="ctrl-btn" id="btnPrev" title="Previous">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                            <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5"></line>
+                        </svg>
+                    </button>
+                    <button class="btn-round-play" id="btnPlayPause" title="Play">
+                        <svg id="svgPlay" viewBox="0 0 24 24" width="20" height="20" fill="black">
+                            <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                        </svg>
+                        <svg id="svgPause" class="hidden" viewBox="0 0 24 24" width="20" height="20" fill="black">
+                            <rect x="6" y="4" width="4" height="16"></rect>
+                            <rect x="14" y="4" width="4" height="16"></rect>
+                        </svg>
+                    </button>
+                    <button class="ctrl-btn" id="btnNext" title="Next">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                            <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"></line>
+                        </svg>
+                    </button>
+                    <button class="ctrl-btn" id="btnLoop" title="Repeat">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="17 1 21 5 17 9"></polyline>
+                            <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                            <polyline points="7 23 3 19 7 15"></polyline>
+                            <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="progress-scrub-row">
+                    <span class="scrub-time" id="timeCurrent">0:00</span>
+                    <div class="scrub-track" id="scrubTrack">
+                        <div class="scrub-fill" id="scrubFill"></div>
+                        <div class="scrub-thumb" id="scrubThumb"></div>
+                    </div>
+                    <span class="scrub-time" id="timeTotal">0:00</span>
+                </div>
+            </div>
+
+            <!-- Right: Tools, Queue & Volume -->
+            <div class="player-col-right">
+                <div class="stream-quality-pill" title="Screen-off background playback ready">
+                    <span class="green-indicator"></span>
+                    <span>160k Audio</span>
+                </div>
+
+                <button class="ctrl-btn" id="btnToggleQueue" title="Queue">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                    </svg>
+                </button>
+
+                <button class="ctrl-btn btn-speed-indicator" id="btnAudioSpeed" title="Audio Playback Speed" style="font-size: 0.75rem; font-weight: 800; padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,0.08); color: #1db954; border: 1px solid rgba(29,185,84,0.3); margin-right: 8px;">1.0x</button>
+                <div class="volume-slider-box">
+                    <button class="ctrl-btn" id="btnVolumeMute" title="Mute/Unmute">
+                        <svg id="svgVolHigh" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                        <svg id="svgVolMute" class="hidden" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <line x1="23" y1="9" x2="17" y2="15"></line>
+                            <line x1="17" y1="9" x2="23" y2="15"></line>
+                        </svg>
+                    </button>
+                    <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.9" aria-label="Volume">
+                </div>
+            </div>
+        </footer>
+
+        <!-- MOBILE BOTTOM NAVIGATION (Native Spotify Mobile App Style) -->
+        <nav class="mobile-bottom-nav">
+            <button class="mob-tab-btn active" data-tab="home" id="mobTabHome">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                <span>Home</span>
+            </button>
+            <button class="mob-tab-btn" data-tab="search" id="mobTabSearch">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span>Search</span>
+            </button>
+            <button class="mob-tab-btn" data-tab="video" id="mobTabVideo">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="#FF0000">
+                    <path d="M21.58 7.19a2.5 2.5 0 0 0-1.76-1.77C18.26 5 12 5 12 5s-6.26 0-7.82.42c-.86.23-1.54.91-1.76 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.76 1.77C5.74 19 12 19 12 19s6.26 0 7.82-.42c.86-.23 1.54-.91 1.76-1.77.42-1.56.42-4.81.42-4.81s0-3.25-.42-4.81zM10 15V9l5.2 3-5.2 3z"/>
+                </svg>
+                <span>Videos</span>
+            </button>
+            <button class="mob-tab-btn" data-tab="movies" id="mobTabMovies">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="#E50914">
+                    <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
+                </svg>
+                <span>Movies</span>
+            </button>
+            <button class="mob-tab-btn" data-tab="library" id="mobTabLibrary">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                    <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/>
+                </svg>
+                <span>Library</span>
+            </button>
+            <button class="mob-tab-btn" data-tab="premium" id="mobTabPremium">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                    <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
+                </svg>
+                <span>Premium</span>
+            </button>
+        </nav>
+
+        <!-- Hidden Native Audio Engine -->
+        <audio id="audioPlaybackEngine" preload="auto"></audio>
+
+        <!-- MOBILE FULLSCREEN NOW PLAYING MODAL (Spotify Mobile Style) -->
+        <div class="mobile-player-modal hidden" id="mobileNowPlayingModal">
+            <div class="modal-glow-bg"></div>
+            <div class="modal-header">
+                <button class="modal-down-btn" id="btnModalClose" title="Collapse">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                    </svg>
+                </button>
+                <div class="modal-header-meta">
+                    <span class="modal-sub">SOUNDWAVE HD VIDEO</span>
+                    <span class="modal-head-title">SoundWave Premium</span>
+                </div>
+                <button class="modal-queue-btn" id="btnModalQueue" title="Queue">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="modal-art-container">
+                <img id="modalArtImg" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400" alt="">
+            </div>
+
+            <div class="modal-track-info">
+                <div class="modal-track-text">
+                    <h2 id="modalTrackTitle">Select a song</h2>
+                    <p id="modalTrackArtist">SoundWave</p>
+                </div>
+                <button class="btn-heart-like" id="btnModalHeartLike" title="Save to Your Library">
+                    <svg id="svgModalHeartIcon" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </button>
+                <button class="btn-download-song" id="btnModalDownload" title="Download Audio to Phone">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                </button>
+                <button class="btn-player-video" id="btnModalWatchVideo" title="Watch Official Video">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="#FF0000">
+                        <path d="M21.58 7.19a2.5 2.5 0 0 0-1.76-1.77C18.26 5 12 5 12 5s-6.26 0-7.82.42c-.86.23-1.54.91-1.76 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.76 1.77C5.74 19 12 19 12 19s6.26 0 7.82-.42c.86-.23 1.54-.91 1.76-1.77.42-1.56.42-4.81.42-4.81s0-3.25-.42-4.81zM10 15V9l5.2 3-5.2 3z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Scrubber Row -->
+            <div class="modal-scrub-section">
+                <div class="scrub-track" id="modalScrubTrack">
+                    <div class="scrub-fill" id="modalScrubFill"></div>
+                    <div class="scrub-thumb" id="modalScrubThumb"></div>
+                </div>
+                <div class="modal-time-row">
+                    <span id="modalTimeCurrent">0:00</span>
+                    <span id="modalTimeTotal">0:00</span>
+                </div>
+            </div>
+
+            <!-- Controls Row -->
+            <div class="modal-controls-row">
+                <button class="ctrl-btn" id="btnModalShuffle" title="Shuffle">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
+                    </svg>
+                </button>
+                <button class="ctrl-btn" id="btnModalPrev" title="Previous">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                        <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                        <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5"></line>
+                    </svg>
+                </button>
+                <button class="modal-play-btn" id="btnModalPlayPause" title="Play">
+                    <svg id="svgModalPlay" viewBox="0 0 24 24" width="28" height="28" fill="black">
+                        <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                    </svg>
+                    <svg id="svgModalPause" class="hidden" viewBox="0 0 24 24" width="28" height="28" fill="black">
+                        <rect x="6" y="4" width="4" height="16"></rect>
+                        <rect x="14" y="4" width="4" height="16"></rect>
+                    </svg>
+                </button>
+                <button class="ctrl-btn" id="btnModalNext" title="Next">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                        <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                        <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"></line>
+                    </svg>
+                </button>
+                <button class="ctrl-btn" id="btnModalLoop" title="Repeat">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="17 1 21 5 17 9"></polyline>
+                        <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                        <polyline points="7 23 3 19 7 15"></polyline>
+                        <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Bottom Audio Badge -->
+            <div class="modal-footer-badge">
+                <span class="pulse-dot"></span>
+                <span>High-Quality 160k Audio • Screen-Off Background Stream</span>
+            </div>
+        </div>
+
+        <!-- INTERACTIVE CHECKOUT & PAYMENT MODAL -->
+        <div class="checkout-modal-backdrop hidden" id="checkoutModal">
+            <div class="checkout-modal-box">
+                <div class="checkout-header">
+                    <div class="checkout-plan-info">
+                        <span class="checkout-sub-label">UPGRADE TO SOUNDWAVE</span>
+                        <h3 id="checkoutPlanTitle">Individual Premium</h3>
+                        <div class="checkout-price-tag" id="checkoutPriceTag">₹119 / month</div>
+                    </div>
+                    <button class="checkout-close-btn" id="btnCloseCheckout">✕</button>
+                </div>
+
+                <div class="checkout-body">
+                    <div class="payment-tabs-row">
+                        <button class="pay-tab active" data-method="upi">
+                            <span class="pay-icon">⚡</span>
+                            <span>UPI (GPay/PhonePe/Paytm)</span>
+                        </button>
+                        <button class="pay-tab" data-method="card">
+                            <span class="pay-icon">💳</span>
+                            <span>Cards</span>
+                        </button>
+                        <button class="pay-tab" data-method="netbanking">
+                            <span class="pay-icon">🏦</span>
+                            <span>NetBanking</span>
+                        </button>
+                    </div>
+
+                    <!-- Method 1: UPI -->
+                    <div class="pay-panel active" id="payPanelUpi">
+                        <div class="upi-apps-row">
+                            <button class="upi-app-btn active" data-app="gpay">Google Pay</button>
+                            <button class="upi-app-btn" data-app="phonepe">PhonePe</button>
+                            <button class="upi-app-btn" data-app="paytm">Paytm</button>
+                            <button class="upi-app-btn" data-app="bhim">BHIM</button>
+                        </div>
+                        <div class="upi-input-box">
+                            <label>Enter UPI ID / VPA</label>
+                            <input type="text" id="upiIdInput" value="user@okhdfcbank" placeholder="e.g. mobile@upi">
+                            <span class="upi-verified-badge">✓ Verified VPA</span>
+                        </div>
+                    </div>
+
+                    <!-- Method 2: Card -->
+                    <div class="pay-panel hidden" id="payPanelCard">
+                        <div class="card-input-group">
+                            <label>Card Number</label>
+                            <input type="text" placeholder="4532 •••• •••• 8892" value="4532 8821 9912 8892">
+                        </div>
+                        <div class="card-row-split">
+                            <div>
+                                <label>Expiry</label>
+                                <input type="text" placeholder="MM/YY" value="08/29">
+                            </div>
+                            <div>
+                                <label>CVV</label>
+                                <input type="password" placeholder="•••" value="789">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Method 3: NetBanking -->
+                    <div class="pay-panel hidden" id="payPanelNetbanking">
+                        <div class="bank-select-grid">
+                            <button class="bank-pill active">HDFC Bank</button>
+                            <button class="bank-pill">State Bank of India</button>
+                            <button class="bank-pill">ICICI Bank</button>
+                            <button class="bank-pill">Axis Bank</button>
+                            <button class="bank-pill">Kotak</button>
+                        </div>
+                    </div>
+
+                    <div class="checkout-summary-box">
+                        <div class="summary-line">
+                            <span>Today's Total:</span>
+                            <strong id="summaryTodayCost">₹0.00 (60-Day Free Trial - 2 Months Free)</strong>
+                        </div>
+                        <div class="summary-sub" id="summaryNextBilling">Billed ₹119/month starting in 60 days (2 months free). Cancel anytime.</div>
+                    </div>
+
+                    <button class="btn-confirm-payment" id="btnConfirmPayment">
+                        <span id="btnPayText">Start 2 Months Free Trial</span>
+                        <div class="pay-spinner hidden" id="paySpinner"></div>
+                    </button>
+                    <div class="secure-badge">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="#1DB954"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                        <span>256-Bit SSL Encrypted • Instant 1-Click Activation</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================== -->
+        <!-- FIREBASE AUTH MODAL (Google Sign-In, Email/Password Login & Sign Up) -->
+        <!-- ========================================================================== -->
+        <div class="sp-modal-overlay hidden" id="authModal">
+            <div class="modal-backdrop-blur" id="authBackdrop"></div>
+            <div class="auth-dialog">
+                <button class="modal-close-btn" id="btnAuthClose" title="Close">✕</button>
+                
+                <div class="auth-header">
+                    <div class="auth-brand-logo">
+                        <svg viewBox="0 0 24 24" width="36" height="36" fill="currentColor">
+                            <circle cx="12" cy="12" r="11" fill="#1DB954"/>
+                            <path d="M17.5 10.2c-2.8-.7-7.3-.6-9.9.9-.4.2-.9.1-1.1-.3-.2-.4-.1-.9.3-1.1 3-1.8 8-1.9 11.2-1 .4.1.7.6.5 1-.2.4-.6.6-1 .5zm-.3 2.7c-.2.3-.6.4-.9.2-2.3-1.4-5.8-1.8-8.5-1-.4.1-.7-.1-.9-.5-.1-.4.1-.7.5-.9 3.1-1 7-.5 9.6 1.1.4.3.4.7.2 1.1zm-1 2.7c-.2.2-.5.3-.8.2-2-1.2-4.5-1.5-7.4-.8-.3.1-.6-.1-.7-.4-.1-.3.1-.6.4-.7 3.2-.7 5.9-.4 8.2 1 .3.2.4.5.3.7z" fill="#000000"/>
+                        </svg>
+                    </div>
+                    <h2 class="auth-title" id="authDialogTitle">Log in to SoundWave</h2>
+                    <p class="auth-subtitle">Sync your Liked Songs, Playlists & Premium status across all devices</p>
+                </div>
+
+                <!-- Google Sign-In Button -->
+                <button class="btn-google-auth" id="btnGoogleSignIn">
+                    <svg viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                    </svg>
+                    <span>Continue with Google</span>
+                </button>
+
+                <div class="auth-divider">
+                    <span>or</span>
+                </div>
+
+                <!-- Email/Password Form -->
+                <form class="auth-form" id="authEmailForm" onsubmit="return false;">
+                    <div class="auth-field-group hidden" id="groupDisplayName">
+                        <label for="authDisplayName">Your Name</label>
+                        <input type="text" id="authDisplayName" placeholder="e.g. Alex Sharma">
+                    </div>
+
+                    <div class="auth-field-group">
+                        <label for="authEmailInput">Email address</label>
+                        <input type="email" id="authEmailInput" placeholder="name@domain.com" required>
+                    </div>
+
+                    <div class="auth-field-group">
+                        <div class="auth-label-row">
+                            <label for="authPasswordInput">Password</label>
+                            <button type="button" class="btn-toggle-password" id="btnTogglePassword">Show</button>
+                        </div>
+                        <input type="password" id="authPasswordInput" placeholder="••••••••" required>
+                    </div>
+
+                    <div class="auth-error-banner hidden" id="authErrorBanner"></div>
+
+                    <button type="submit" class="btn-auth-submit" id="btnAuthSubmit">
+                        <span id="authSubmitText">Log In</span>
+                        <div class="auth-spinner hidden" id="authSpinner"></div>
+                    </button>
+                </form>
+
+                <div class="auth-toggle-footer">
+                    <span id="authSwitchPrompt">Don't have an account?</span>
+                    <button class="auth-link-btn" id="btnSwitchAuthMode">Sign up for SoundWave</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================== -->
+        <!-- USER PROFILE & CLOUD SYNC DRAWER / MODAL -->
+        <!-- ========================================================================== -->
+        <div class="sp-modal-overlay hidden" id="userProfileModal">
+            <div class="modal-backdrop-blur" id="userProfileBackdrop"></div>
+            <div class="user-profile-dialog">
+                <button class="modal-close-btn" id="btnProfileClose" title="Close">✕</button>
+
+                <div class="profile-card-header">
+                    <div class="profile-avatar-big" id="profileAvatarBig">
+                        <img id="profileBigPhoto" class="hidden" src="" alt="Profile">
+                        <span id="profileBigEmoji">🎧</span>
+                    </div>
+                    <div class="profile-identity">
+                        <h3 id="profileNameDisplay">User</h3>
+                        <p id="profileEmailDisplay">user@example.com</p>
+                        <div class="profile-membership-pill" id="profileMembershipPill">
+                            <span>👑 2 Months Free VIP Active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-sync-status-box">
+                    <div class="sync-status-header">
+                        <div class="sync-status-title">
+                            <span class="sync-dot live"></span>
+                            <span>Cloud Sync Status</span>
+                        </div>
+                        <span class="sync-mode-pill" id="profileSyncModePill">Firestore Live</span>
+                    </div>
+                    <div class="sync-stats-row">
+                        <div class="sync-stat">
+                            <span class="stat-number" id="syncLikedCount">0</span>
+                            <span class="stat-label">Liked Songs</span>
+                        </div>
+                        <div class="sync-stat">
+                            <span class="stat-number" id="syncPlaylistsCount">1</span>
+                            <span class="stat-label">Playlists</span>
+                        </div>
+                        <div class="sync-stat">
+                            <span class="stat-number" id="syncDeviceCount">Cloud</span>
+                            <span class="stat-label">Realtime</span>
+                        </div>
+                    </div>
+                    <button class="btn-manual-sync" id="btnManualSync">
+                        <span>☁️ Sync All Data to Cloud Now</span>
+                    </button>
+                </div>
+
+                <div class="profile-actions-list">
+                    <button class="profile-action-btn" id="btnOpenFirebaseSettings">
+                        <span class="action-icon">🔥</span>
+                        <div class="action-meta">
+                            <strong>Firebase Project Settings</strong>
+                            <small>View or paste custom API credentials</small>
+                        </div>
+                        <span class="action-arrow">›</span>
+                    </button>
+                    <button class="profile-action-btn" id="btnProfileGoPremium">
+                        <span class="action-icon">👑</span>
+                        <div class="action-meta">
+                            <strong>Manage Subscription</strong>
+                            <small>Explore VIP plans & perks</small>
+                        </div>
+                        <span class="action-arrow">›</span>
+                    </button>
+                    <button class="profile-action-btn btn-danger" id="btnLogoutUser">
+                        <span class="action-icon">🚪</span>
+                        <div class="action-meta">
+                            <strong>Log Out</strong>
+                            <small>Sign out of this device</small>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================== -->
+        <!-- FIREBASE CONFIGURATION SETTINGS MODAL -->
+        <!-- ========================================================================== -->
+        <div class="sp-modal-overlay hidden" id="firebaseSettingsModal">
+            <div class="modal-backdrop-blur" id="fbSettingsBackdrop"></div>
+            <div class="fb-settings-dialog">
+                <button class="modal-close-btn" id="btnFbSettingsClose" title="Close">✕</button>
+
+                <div class="fb-settings-header">
+                    <div class="fb-logo-wrap">🔥</div>
+                    <div>
+                        <h2>Firebase Cloud Connection</h2>
+                        <p>Connect your Firebase project for real-time authentication and Firestore cloud sync.</p>
+                    </div>
+                </div>
+
+                <div class="fb-connection-banner" id="fbConnectionBanner">
+                    <div class="banner-status-dot" id="bannerDot"></div>
+                    <div class="banner-text">
+                        <strong id="bannerStatusTitle">Firebase Setup Ready</strong>
+                        <span id="bannerStatusDesc">Paste your Firebase Web App configuration below to connect your real Firebase project.</span>
+                    </div>
+                </div>
+
+                <!-- Tab toggles for config input -->
+                <div class="fb-input-tabs">
+                    <button class="fb-tab-btn active" id="fbTabPaste">Quick Paste Config</button>
+                    <button class="fb-tab-btn" id="fbTabManual">Field-by-Field</button>
+                </div>
+
+                <!-- Option A: Quick Paste -->
+                <div class="fb-tab-pane" id="fbPanePaste">
+                    <label for="fbSnippetTextarea">Paste Firebase Web App snippet from Firebase Console:</label>
+                    <textarea id="fbSnippetTextarea" class="fb-code-textarea" rows="7" placeholder="const firebaseConfig = {&#10;  apiKey: &quot;AIzaSy...&quot;,&#10;  authDomain: &quot;my-app.firebaseapp.com&quot;,&#10;  projectId: &quot;my-app&quot;,&#10;  storageBucket: &quot;my-app.appspot.com&quot;,&#10;  messagingSenderId: &quot;123456789&quot;,&#10;  appId: &quot;1:12345:web:abcd&quot;&#10;};"></textarea>
+                    <div class="fb-helper-hint">💡 Tip: You can paste the whole <code>const firebaseConfig = { ... };</code> snippet directly. It automatically extracts your keys!</div>
+                </div>
+
+                <!-- Option B: Manual Fields -->
+                <div class="fb-tab-pane hidden" id="fbPaneManual">
+                    <div class="fb-grid-2">
+                        <div class="fb-field">
+                            <label>API Key</label>
+                            <input type="text" id="fbInputApiKey" placeholder="AIzaSy...">
+                        </div>
+                        <div class="fb-field">
+                            <label>Project ID</label>
+                            <input type="text" id="fbInputProjectId" placeholder="my-soundwave-project">
+                        </div>
+                        <div class="fb-field">
+                            <label>Auth Domain</label>
+                            <input type="text" id="fbInputAuthDomain" placeholder="my-soundwave-project.firebaseapp.com">
+                        </div>
+                        <div class="fb-field">
+                            <label>App ID</label>
+                            <input type="text" id="fbInputAppId" placeholder="1:123456789:web:abcdef">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fb-instructions-card">
+                    <h4>How to get your Firebase configuration:</h4>
+                    <ol>
+                        <li>Go to <a href="https://console.firebase.google.com/" target="_blank" rel="noopener">console.firebase.google.com</a> and create a free project.</li>
+                        <li>Click <strong>Web (&lt;/&gt;)</strong> to register your app.</li>
+                        <li>Copy the <code>firebaseConfig</code> object and paste it above!</li>
+                        <li>Enable <strong>Google Sign-In / Email</strong> under <em>Build &gt; Authentication</em> and create a <strong>Firestore Database</strong> under <em>Build &gt; Firestore</em>.</li>
+                    </ol>
+                </div>
+
+                <div class="fb-settings-buttons">
+                    <button class="btn-reset-fb" id="btnResetFbConfig">Reset to Demo</button>
+                    <button class="btn-save-fb" id="btnSaveFbConfig">
+                        <span>Save & Connect Firebase 🔥</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================== -->
+        <!-- PWA INSTALL GUIDE MODAL (FOR MOBILE CHROME & SAFARI) -->
+        <!-- ========================================================================== -->
+        <div class="sp-modal-overlay hidden" id="pwaInstallModal">
+            <div class="modal-backdrop-blur" id="pwaInstallBackdrop"></div>
+            <div class="pwa-guide-dialog">
+                <button class="modal-close-btn" id="btnPwaClose" title="Close">✕</button>
+
+                <div class="pwa-guide-header">
+                    <div class="pwa-guide-icon-wrap">📲</div>
+                    <h2>Install SoundWave on Phone</h2>
+                    <p>Add SoundWave directly to your phone screen as a standalone app!</p>
+                </div>
+
+                <div class="pwa-step-card">
+                    <div class="pwa-step-num">1</div>
+                    <div class="pwa-step-content">
+                        <strong>Browser Menu kholein</strong>
+                        <p>Upar daayein kone (top-right) mein Chrome ke <span class="pwa-dots-badge">⋮</span> (3 dots) par tap karein.</p>
+                    </div>
+                </div>
+
+                <div class="pwa-step-card">
+                    <div class="pwa-step-num">2</div>
+                    <div class="pwa-step-content">
+                        <strong>"Add to Home screen" chunein</strong>
+                        <p>Menu mein <strong>"Add to Home screen"</strong> ya <strong>"Install app"</strong> par tap karein.</p>
+                    </div>
+                </div>
+
+                <div class="pwa-step-card">
+                    <div class="pwa-step-num">3</div>
+                    <div class="pwa-step-content">
+                        <strong>Ready & Installed! 🎉</strong>
+                        <p>Aapke phone ke home screen par SoundWave ka app icon ban jayega. Fullscreen high quality audio & cinema experience ke sath!</p>
+                    </div>
+                </div>
+
+                <div class="pwa-notice-box">
+                    💡 <strong>Song download karna hai?</strong><br>
+                    Har song ke aage jo <strong>⤓ (Download icon)</strong> hai, uspe tap karne se audio file aapke phone mein download ho jayegi!
+                </div>
+
+                <button class="btn-pwa-gotit" id="btnPwaGotIt">Samajh gaya! 👍</button>
+            </div>
+        </div>
+
+        <!-- ========================================================================== -->
+        <!-- VEGAMOVIES MOVIE DETAIL MODAL -->
+        <!-- ========================================================================== -->
+        <div class="sp-modal-overlay hidden" id="movieDetailModal">
+            <div class="modal-backdrop-blur" id="movieDetailBackdrop"></div>
+            <div class="movie-modal-dialog">
+                <button class="modal-close-btn" id="btnMovieDetailClose" title="Close">✕</button>
+
+                <div class="movie-detail-content" id="movieDetailBody">
+                    <!-- Populated dynamically by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Alert Notification -->
+        <div class="sp-toast hidden" id="spToastAlert">
+            <span id="toastAlertText">Added to Liked Songs</span>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+
+  <!-- DMCA & COPYRIGHT LEGAL MODAL -->
+  <div class="movie-modal-overlay hidden" id="dmcaModal">
+    <div class="movie-modal-box" style="max-width: 680px; max-height: 85vh; overflow-y: auto;">
+      <button class="movie-modal-close" id="btnCloseDmcaModal">&times;</button>
+      <div style="padding: 2rem;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(29, 185, 84, 0.15); display: flex; align-items: center; justify-content: center; color: #1db954; font-size: 24px;">🛡️</div>
+          <div>
+            <h2 style="font-size: 1.4rem; font-weight: 800; color: #fff; margin: 0;">Legal Notice & DMCA Safe Harbor</h2>
+            <p style="font-size: 0.85rem; color: #a7a7a7; margin: 2px 0 0 0;">Copyright Compliance & Fair Use Policy</p>
+          </div>
+        </div>
+
+        <div style="font-size: 0.9rem; line-height: 1.6; color: #d1d5db; space-y: 1rem;">
+          <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; border-left: 3px solid #1db954; margin-bottom: 1rem;">
+            <p style="margin: 0; font-weight: 600; color: #fff;">1. Content Indexing Disclaimer</p>
+            <p style="margin: 6px 0 0 0; color: #9ca3af; font-size: 0.85rem;">SoundWave operates strictly as a media search indexer and client. SoundWave does not host, store, copy, upload, or own any audio or video content on its servers. All streams and metadata are indexed from publicly accessible APIs, public web protocols, and public index engines.</p>
+          </div>
+
+          <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; border-left: 3px solid #3b82f6; margin-bottom: 1rem;">
+            <p style="margin: 0; font-weight: 600; color: #fff;">2. Trademark & Intellectual Property Rights</p>
+            <p style="margin: 6px 0 0 0; color: #9ca3af; font-size: 0.85rem;">All trademarks, service marks, logos, brand names, and copyrighted works appearing in this app are the property of their respective owners. Reference to any third-party brands is solely for identification and interoperability purposes.</p>
+          </div>
+
+          <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; border-left: 3px solid #ef4444; margin-bottom: 1rem;">
+            <p style="margin: 0; font-weight: 600; color: #fff;">3. DMCA Takedown & Content Removal</p>
+            <p style="margin: 6px 0 0 0; color: #9ca3af; font-size: 0.85rem;">We respect intellectual property rights and comply with the Digital Millennium Copyright Act (17 U.S.C. § 512) and international copyright legislation. If you are a copyright owner or authorized representative and wish to request removal of an index link, please email our designated agent at <strong style="color: #1db954;">copyright@soundwave.app</strong> with proof of ownership, and links will be disabled within 24 hours.</p>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.5rem; text-align: right;">
+          <button class="btn-prem-view-plans" id="btnAcknowledgeDmca" style="padding: 10px 24px; font-weight: 700;">I Understand & Agree</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- FLOATING IN-APP MINI PLAYER (PiP) -->
+    <div class="floating-mini-player hidden" id="floatingMiniPlayer">
+        <div class="mini-player-header">
+            <span class="mini-player-title" id="miniPlayerTitle">SoundWave Video</span>
+            <div class="mini-player-actions">
+                <button class="mini-btn" id="btnMiniExpand" title="Expand to Full Player">⤢</button>
+                <button class="mini-btn" id="btnMiniClose" title="Close Mini Player">✕</button>
+            </div>
+        </div>
+        <div class="mini-player-body" id="miniPlayerBody">
+            <!-- Video mirrored or moved here -->
+        </div>
+    </div>
+    
+</body>
+</html>

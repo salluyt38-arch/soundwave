@@ -1,0 +1,26 @@
+# Environment & Secrets
+.env
+.env.*
+*.env
+secrets.json
+*.key
+*.pem
+
+# Python & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+
+# Media / Streaming Chunks Cache
+static/video_cache/
+video_cache/
+*.mp4
+*.m4a
+*.webm
+
+# OS & IDE Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
