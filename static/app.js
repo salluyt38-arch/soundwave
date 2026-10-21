@@ -18,6 +18,81 @@ const API_BASE = isLocalNetwork
 // Background Playback, MediaSession Lockscreen Control, YouTube Streams, Full Library & Tabs
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    // =============================================================
+    // UNSTOPPABLE 1000% BACKGROUND AUDIO ENGINE (PRE-FETCH + KEEP-ALIVE)
+    // =============================================================
+    const streamUrlCache = new Map();
+    let bgAudioContext = null;
+    let isQueueRefilling = false;
+
+    // WebAudio Keep-Alive Loop: signals to Mobile OS (Android/iOS) to keep audio session alive
+    function ensureAudioKeepAlive() {
+        if (bgAudioContext) {
+            if (bgAudioContext.state === 'suspended') {
+                bgAudioContext.resume().catch(() => {});
+            }
+            return;
+        }
+        try {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return;
+            bgAudioContext = new AC();
+            const silentBuffer = bgAudioContext.createBuffer(1, 22050, 22050);
+            const source = bgAudioContext.createBufferSource();
+            source.buffer = silentBuffer;
+            source.loop = true;
+            source.connect(bgAudioContext.destination);
+            source.start(0);
+        } catch (e) {
+            console.warn('AudioContext keep-alive notice:', e);
+        }
+    }
+
+    // Pre-fetch upcoming track streams in memory so next song starts instantly with 0ms gap
+    async function prefetchTrackStream(track) {
+        if (!track || !track.id || streamUrlCache.has(track.id)) return;
+        try {
+            const res = await fetch(`${API_BASE}/api/stream?id=${encodeURIComponent(track.id)}`);
+            const data = await res.json();
+            if (data && data.streamUrl) {
+                streamUrlCache.set(track.id, data.streamUrl);
+            }
+        } catch (e) {}
+    }
+
+    function scheduleUpcomingPrefetch() {
+        if (!activeQueue || activeQueue.length <= 1) return;
+        const next1 = activeQueue[(currentTrackIndex + 1) % activeQueue.length];
+        const next2 = activeQueue[(currentTrackIndex + 2) % activeQueue.length];
+        if (next1) prefetchTrackStream(next1);
+        if (next2) prefetchTrackStream(next2);
+    }
+
+    // Infinite YouTube Recommendation Queue (Music Never Stops)
+    async function fillInfiniteQueue() {
+        if (isQueueRefilling) return;
+        const curr = activeQueue[currentTrackIndex] || activeQueue[0];
+        if (!curr) return;
+        isQueueRefilling = true;
+        const seedQuery = curr.channel ? `${curr.channel} top songs hits` : (curr.title ? curr.title.split('-')[0].trim() : 'Trending Hindi Songs 2024');
+        try {
+            const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(seedQuery)}`);
+            const data = await res.json();
+            if (data.results && data.results.length > 0) {
+                const existingIds = new Set(activeQueue.map(q => q.id));
+                const fresh = data.results.filter(r => !existingIds.has(r.id));
+                if (fresh.length > 0) {
+                    activeQueue.push(...fresh.slice(0, 10));
+                    renderQueueDrawer();
+                    scheduleUpcomingPrefetch();
+                }
+            }
+        } catch (e) {} finally {
+            isQueueRefilling = false;
+        }
+    }
+
     // --- 1. DOM REFERENCES ---
     // Tab Navigation
     const tabHome = document.getElementById('tabHome');
@@ -578,6 +653,31 @@ document.addEventListener('DOMContentLoaded', () => {
         // Audio Engine Events
         audio.addEventListener('timeupdate', updateAudioProgress);
         audio.addEventListener('ended', onTrackEnded);
+
+        // Auto-recover from any network stream error in background
+        audio.addEventListener('error', (e) => {
+            console.warn('Audio element error, auto-advancing to next song:', e);
+            setTimeout(playNext, 600);
+        });
+
+        // Trigger prefetch for next songs when current song reaches midway
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration && audio.currentTime > 8 && audio.currentTime % 15 < 0.5) {
+                scheduleUpcomingPrefetch();
+            }
+        });
+
+        // Keep-alive when tab goes to background or user locks screen
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (!audio.paused && audio.src) {
+                    audio.play().catch(() => {});
+                }
+                if (bgAudioContext && bgAudioContext.state === 'suspended') {
+                    bgAudioContext.resume().catch(() => {});
+                }
+            }
+        });
         audio.addEventListener('play', () => {
             const ytNative = document.getElementById('ytNativeVideo');
             if (ytNative && !ytNative.paused) ytNative.pause();
@@ -1007,11 +1107,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 10. AUDIO PLAYBACK & STREAM EXTRACTION ---
+    // --- 10. AUDIO PLAYBACK & STREAM EXTRACTION (1000% UNSTOPPABLE) ---
     async function playTrackByIndex(index) {
         if (index < 0 || index >= activeQueue.length) return;
+        ensureAudioKeepAlive();
         currentTrackIndex = index;
         const track = activeQueue[currentTrackIndex];
+
+        // Auto-refill queue with recommended songs when 3 songs remain
+        if (currentTrackIndex >= activeQueue.length - 3) {
+            fillInfiniteQueue();
+        }
 
         // Update Bottom Player UI
         if (playerCoverImg) playerCoverImg.src = track.thumbnail;
@@ -1039,26 +1145,43 @@ document.addEventListener('DOMContentLoaded', () => {
         renderQueueDrawer();
         highlightActiveCards(track.id);
 
-        // Show fetching feedback
         if (svgPlay) svgPlay.classList.add('hidden');
         if (svgPause) svgPause.classList.remove('hidden');
 
+        // INSTANT ZERO-GAP PLAYBACK IF STREAM WAS PRE-FETCHED
+        const cachedUrl = streamUrlCache.get(track.id);
+        if (cachedUrl) {
+            audio.src = cachedUrl;
+            const playPromise = audio.play();
+            if (playPromise) {
+                playPromise.catch(err => {
+                    console.warn('Playback resume retry:', err);
+                    setTimeout(() => audio.play().catch(() => {}), 80);
+                });
+            }
+            scheduleUpcomingPrefetch();
+            return;
+        }
+
+        // If not cached yet, fetch immediately and schedule prefetch
         try {
             const res = await fetch(`${API_BASE}/api/stream?id=${encodeURIComponent(track.id)}`);
             const data = await res.json();
 
             if (data.streamUrl) {
+                streamUrlCache.set(track.id, data.streamUrl);
                 audio.src = data.streamUrl;
                 audio.play().catch(err => {
-                    console.warn('Playback autoplay waiting for user interaction:', err);
+                    console.warn('Playback autoplay notice:', err);
                 });
+                scheduleUpcomingPrefetch();
             } else {
                 throw new Error(data.error || 'Direct stream URL not found');
             }
         } catch (err) {
             console.error('Failed to load audio stream:', err);
-            showToast('Failed to load audio. Skipping next...');
-            setTimeout(playNext, 1800);
+            showToast('Loading next song...');
+            setTimeout(playNext, 600);
         }
     }
 
@@ -1083,17 +1206,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function playNext() {
         if (activeQueue.length === 0) return;
+        let nextIndex = currentTrackIndex + 1;
         if (isShuffle) {
-            let nextIndex = Math.floor(Math.random() * activeQueue.length);
+            nextIndex = Math.floor(Math.random() * activeQueue.length);
             if (nextIndex === currentTrackIndex && activeQueue.length > 1) {
                 nextIndex = (nextIndex + 1) % activeQueue.length;
             }
-            playTrackByIndex(nextIndex);
-        } else {
-            let nextIndex = currentTrackIndex + 1;
-            if (nextIndex >= activeQueue.length) nextIndex = 0;
-            playTrackByIndex(nextIndex);
+        } else if (nextIndex >= activeQueue.length) {
+            // Queue reached the end: auto-fetch more and wrap seamlessly
+            fillInfiniteQueue();
+            nextIndex = 0;
         }
+        playTrackByIndex(nextIndex);
     }
 
     function playPrev() {
@@ -1360,10 +1484,27 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        navigator.mediaSession.setActionHandler('play', () => audio.play());
+        navigator.mediaSession.setActionHandler('play', () => {
+            ensureAudioKeepAlive();
+            audio.play().catch(() => {});
+        });
         navigator.mediaSession.setActionHandler('pause', () => audio.pause());
         navigator.mediaSession.setActionHandler('previoustrack', playPrev);
         navigator.mediaSession.setActionHandler('nexttrack', playNext);
+        try {
+            navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+                const skip = details.seekOffset || 10;
+                audio.currentTime = Math.max(audio.currentTime - skip, 0);
+            });
+            navigator.mediaSession.setActionHandler('seekforward', (details) => {
+                const skip = details.seekOffset || 10;
+                audio.currentTime = Math.min(audio.currentTime + skip, audio.duration || 0);
+            });
+            navigator.mediaSession.setActionHandler('stop', () => {
+                audio.pause();
+                audio.currentTime = 0;
+            });
+        } catch(e) {}
 
         try {
             navigator.mediaSession.setActionHandler('seekto', (details) => {

@@ -13,11 +13,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
 
-    <!-- Firebase Web SDK (Compat v10 for Auth & Cloud Firestore) -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="firebase-config.js"></script>
+
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -170,16 +166,7 @@
                     </div>
 
                     <div class="topbar-right">
-                        <!-- Firebase Cloud Sync Pill -->
-                        <button class="btn-firebase-pill" id="btnFirebasePill" title="Firebase Cloud Sync & Project Settings">
-                            <span class="fb-fire-icon">🔥</span>
-                            <span class="fb-pill-text" id="fbPillText">Firebase</span>
-                            <span class="fb-pill-dot" id="fbPillDot"></span>
-                        </button>
-                        <button class="btn-upgrade-premium" id="btnTopPremium" title="Explore SoundWave Premium">
-                            <span class="prem-crown-icon">👑</span>
-                            <span class="prem-top-label">Explore Premium</span>
-                        </button>
+
                         <button class="btn-install-pwa" id="btnInstallPwa" title="Install SoundWave on Phone">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -656,14 +643,13 @@
                     <div class="tab-panel" id="tabPremium">
                         <!-- Hero Header Banner -->
                         <div class="premium-hero-banner">
-                            <div class="prem-hero-badge">⭐ SOUNDWAVE VIP PREMIUM</div>
-                            <h1 class="prem-hero-title">Listen Without Limits.<br>Get 2 Months of Premium for ₹0.</h1>
-                            <p class="prem-hero-subtitle">Only ₹119/month after. Zero ads, unlimited song downloads to your phone, screen-off background play, and Ultra HD 320 kbps studio audio. Cancel anytime with 1 tap.</p>
+                            <div class="prem-hero-badge">SOUNDWAVE VIP ACCESS</div>
+                            <h1 class="prem-hero-title">Listen Without Limits.<br>Get SoundWave VIP for Only ₹49.</h1>
+                            <p class="prem-hero-subtitle">Zero ads, unlimited song downloads to your phone, screen-off background play, and Ultra HD 320 kbps studio audio. Cancel anytime with 1 tap.</p>
                             <div class="prem-hero-buttons">
-                                <button class="btn-prem-cta" data-plan="individual" data-price="119" data-name="Individual Premium">Try 2 Months Free</button>
-                                <button class="btn-prem-view-plans" id="btnScrollToPlans">View All Plans</button>
+                                <button class="btn-prem-cta" data-plan="vip" data-price="49" data-name="SoundWave VIP">Get VIP for ₹49</button>
                             </div>
-                            <div class="prem-terms">2 months free for first-time subscribers. Cancel anytime. Terms apply.</div>
+                            <div class="prem-terms">Cancel anytime. Zero hidden fees.</div>
                         </div>
 
                         <!-- Active Subscription Status Card (Shown if User Subscribed) -->
@@ -714,97 +700,30 @@
                             <h2 class="prem-section-title">Pick Your Premium Plan</h2>
                             <p class="prem-section-sub">Listen without limits on phone, tablet, and laptop. Cancel anytime.</p>
 
-                            <div class="prem-cards-grid">
-                                <!-- 1. Mini -->
-                                <div class="prem-card">
-                                    <div class="prem-card-top">
-                                        <span class="plan-tag">One-time pass</span>
-                                        <h3 class="plan-title">Mini</h3>
-                                        <div class="plan-price">₹7 <span>/ 1 day</span></div>
-                                        <div class="plan-account-info">1 mobile account</div>
+                            <div class="prem-cards-grid" style="display: flex; justify-content: center; max-width: 480px; margin: 0 auto;">
+                                <!-- Single VIP Plan: Only 49 -->
+                                <div class="prem-card featured" style="width: 100%; border: 2px solid #1db954; box-shadow: 0 10px 40px rgba(29, 185, 84, 0.25);">
+                                    <div class="featured-badge" style="background: linear-gradient(135deg, #1db954, #10b981); color: #000; font-weight: 800;">EXCLUSIVE OFFER • VIP ALL-ACCESS</div>
+                                    <div class="prem-card-top" style="text-align: center; padding-top: 1.5rem;">
+                                        <span class="plan-tag tag-green">Special Unlimited Pass</span>
+                                        <h3 class="plan-title" style="font-size: 1.8rem; margin: 8px 0;">SoundWave VIP</h3>
+                                        <div class="plan-price" style="font-size: 2.8rem; font-weight: 800; color: #fff;">₹49 <span style="font-size: 1rem; color: #a7a7a7;">/ month</span></div>
+                                        <div class="plan-account-info" style="color: #1db954; font-weight: 700;">Complete VIP Access on Mobile & Web</div>
                                     </div>
                                     <div class="prem-card-body">
-                                        <ul class="plan-features">
-                                            <li><span class="feat-check">✓</span> Ad-free music on mobile</li>
-                                            <li><span class="feat-check">✓</span> Download up to 30 songs</li>
-                                            <li><span class="feat-check">✓</span> 160 kbps audio quality</li>
-                                            <li><span class="feat-check">✓</span> 1-day pass for road trips & parties</li>
+                                        <ul class="plan-features" style="line-height: 1.8;">
+                                            <li><span class="feat-check" style="color: #1db954; font-weight: 800;">✓</span> 100% Ad-Free music streaming</li>
+                                            <li><span class="feat-check" style="color: #1db954; font-weight: 800;">✓</span> <strong>Unlimited song downloads (.m4a)</strong> to phone</li>
+                                            <li><span class="feat-check" style="color: #1db954; font-weight: 800;">✓</span> <strong>Ultra HD 320 kbps</strong> studio sound</li>
+                                            <li><span class="feat-check" style="color: #1db954; font-weight: 800;">✓</span> Screen-off background playback</li>
+                                            <li><span class="feat-check" style="color: #1db954; font-weight: 800;">✓</span> <strong>1080p Full HD</strong> Video & Cinema Vault</li>
+                                            <li><span class="feat-check" style="color: #1db954; font-weight: 800;">✓</span> Unlimited skips & custom queue</li>
+                                            <li><span class="feat-check" style="color: #1db954; font-weight: 800;">✓</span> Cancel anytime with 1 click</li>
                                         </ul>
                                     </div>
-                                    <div class="prem-card-footer">
-                                        <button class="btn-select-plan" data-plan="mini" data-price="7" data-name="SoundWave Mini">Get Mini (₹7)</button>
-                                        <span class="plan-foot-note">One-time payment. No automatic charge.</span>
-                                    </div>
-                                </div>
-
-                                <!-- 2. Individual (Most Popular) -->
-                                <div class="prem-card featured">
-                                    <div class="featured-badge">MOST POPULAR • 2 MONTHS FREE</div>
-                                    <div class="prem-card-top">
-                                        <span class="plan-tag tag-green">Free for 2 months</span>
-                                        <h3 class="plan-title">Individual</h3>
-                                        <div class="plan-price">₹119 <span>/ month after</span></div>
-                                        <div class="plan-account-info">1 Premium account</div>
-                                    </div>
-                                    <div class="prem-card-body">
-                                        <ul class="plan-features">
-                                            <li><span class="feat-check">✓</span> Ad-free music listening</li>
-                                            <li><span class="feat-check">✓</span> <strong>Unlimited</strong> downloads to phone</li>
-                                            <li><span class="feat-check">✓</span> <strong>Ultra HD 320 kbps</strong> studio sound</li>
-                                            <li><span class="feat-check">✓</span> Full screen-off background play</li>
-                                            <li><span class="feat-check">✓</span> Unlimited skips & custom queue</li>
-                                            <li><span class="feat-check">✓</span> Cancel anytime with 1 click</li>
-                                        </ul>
-                                    </div>
-                                    <div class="prem-card-footer">
-                                        <button class="btn-select-plan btn-featured" data-plan="individual" data-price="119" data-name="Individual Premium">Try 2 Months Free</button>
-                                        <span class="plan-foot-note">₹119/month after trial. Cancel anytime.</span>
-                                    </div>
-                                </div>
-
-                                <!-- 3. Student -->
-                                <div class="prem-card">
-                                    <div class="prem-card-top">
-                                        <span class="plan-tag tag-purple">50% Student Discount</span>
-                                        <h3 class="plan-title">Student</h3>
-                                        <div class="plan-price">₹59 <span>/ month</span></div>
-                                        <div class="plan-account-info">1 verified student account</div>
-                                    </div>
-                                    <div class="prem-card-body">
-                                        <ul class="plan-features">
-                                            <li><span class="feat-check">✓</span> 50% discount for college students</li>
-                                            <li><span class="feat-check">✓</span> Ad-free music listening</li>
-                                            <li><span class="feat-check">✓</span> Unlimited downloads to phone</li>
-                                            <li><span class="feat-check">✓</span> Ultra HD 320 kbps sound quality</li>
-                                            <li><span class="feat-check">✓</span> Cancel anytime online</li>
-                                        </ul>
-                                    </div>
-                                    <div class="prem-card-footer">
-                                        <button class="btn-select-plan" data-plan="student" data-price="59" data-name="Student Premium">Get Student (₹59)</button>
-                                        <span class="plan-foot-note">Discount for eligible university students.</span>
-                                    </div>
-                                </div>
-
-                                <!-- 4. Family -->
-                                <div class="prem-card">
-                                    <div class="prem-card-top">
-                                        <span class="plan-tag tag-gold">Up to 6 accounts</span>
-                                        <h3 class="plan-title">Family</h3>
-                                        <div class="plan-price">₹179 <span>/ month</span></div>
-                                        <div class="plan-account-info">6 individual Premium accounts</div>
-                                    </div>
-                                    <div class="prem-card-body">
-                                        <ul class="plan-features">
-                                            <li><span class="feat-check">✓</span> 6 separate accounts for family members</li>
-                                            <li><span class="feat-check">✓</span> Block explicit music for kids</li>
-                                            <li><span class="feat-check">✓</span> Ad-free listening on all devices</li>
-                                            <li><span class="feat-check">✓</span> Unlimited downloads on all 6 phones</li>
-                                            <li><span class="feat-check">✓</span> Shared Family Mix playlist</li>
-                                        </ul>
-                                    </div>
-                                    <div class="prem-card-footer">
-                                        <button class="btn-select-plan" data-plan="family" data-price="179" data-name="Family Premium">Get Family (₹179)</button>
-                                        <span class="plan-foot-note">For family members living under one roof.</span>
+                                    <div class="prem-card-footer" style="padding-bottom: 1.8rem;">
+                                        <button class="btn-select-plan btn-featured" data-plan="vip" data-price="49" data-name="SoundWave VIP" style="font-size: 1.1rem; padding: 14px 24px; font-weight: 800; background: linear-gradient(135deg, #1db954, #10b981); color: #000; border: none; border-radius: 30px; cursor: pointer; width: 100%; box-shadow: 0 4px 20px rgba(29, 185, 84, 0.4);">Get VIP Access for ₹49</button>
+                                        <span class="plan-foot-note" style="display: block; text-align: center; margin-top: 8px;">₹49/month. Zero hidden fees. Cancel anytime.</span>
                                     </div>
                                 </div>
                             </div>

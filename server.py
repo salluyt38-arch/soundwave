@@ -1,3 +1,19 @@
+
+def clean_youtube_title(title):
+    patterns = [
+        r'\s*[\(\[]\s*official\s*(music\s*)?(video|audio|track|song|lyric|lyrics|hd|4k)?\s*[\)\]]',
+        r'\s*[\(\[]\s*(full\s*)?(hd|4k|1080p|8k|ultra\s*hd)?\s*(video|song|audio)?\s*[\)\]]',
+        r'\s*[\(\[]\s*lyric(s)?\s*(video)?\s*[\)\]]',
+        r'\s*[\(\[]\s*audio\s*[\)\]]',
+        r'\s*\|\s*Official\s*.*$',
+        r'\s*\|\s*Full\s*Video\s*.*$'
+    ]
+    cleaned = title
+    for p in patterns:
+        cleaned = re.sub(p, '', cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+    return cleaned or title
+
 import json
 import urllib.parse
 import urllib.request
@@ -390,7 +406,7 @@ class MusicHandler(SimpleHTTPRequestHandler):
                         "js_runtimes": js_dict,
                     }
                     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                        res = ydl.extract_info(f"ytsearch15:{q}", download=False)
+                        res = ydl.extract_info(f"ytsearch25:{q}", download=False)
                         results = []
                         for entry in res.get("entries", []):
                             if not entry or not entry.get("id"):
@@ -402,15 +418,33 @@ class MusicHandler(SimpleHTTPRequestHandler):
                             duration_str = f"{mins}:{secs:02d}"
 
                             video_id = entry.get("id")
+                            raw_t = entry.get("title", "Unknown Title")
+                            clean_t = clean_youtube_title(raw_t)
+                            channel_name = entry.get("channel") or entry.get("uploader") or "SoundWave Artist"
                             thumb = entry.get("thumbnail") or f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
+                            
+                            views = entry.get("view_count")
+                            if views and isinstance(views, int) and views > 0:
+                                if views >= 1_000_000_000:
+                                    views_str = f"{views / 1_000_000_000:.1f}B views"
+                                elif views >= 1_000_000:
+                                    views_str = f"{views / 1_000_000:.1f}M views"
+                                elif views >= 1_000:
+                                    views_str = f"{views // 1_000}K views"
+                                else:
+                                    views_str = f"{views} views"
+                            else:
+                                views_str = "Viral Hit"
 
                             results.append({
                                 "id": video_id,
-                                "title": entry.get("title", "Unknown Title"),
-                                "channel": entry.get("channel") or entry.get("uploader") or "Artist",
+                                "title": clean_t,
+                                "raw_title": raw_t,
+                                "channel": channel_name,
                                 "duration": duration_str,
                                 "duration_sec": duration_sec,
-                                "thumbnail": thumb
+                                "thumbnail": thumb,
+                                "views_str": views_str
                             })
 
                         data = {"results": results}
