@@ -239,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Liked Songs from localStorage
     const STORAGE_KEY_LIKED = 'soundwave_liked_songs_v2';
+    const STORAGE_KEY_SUB = 'soundwave_subscription_data';
     let likedSongs = [];
     try {
         const stored = localStorage.getItem(STORAGE_KEY_LIKED);
@@ -337,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Auto-load trending videos when opening video tab for first time
         if (tabName === 'video') {
             const grid = document.getElementById('ytVideosGrid');
-            if (grid && grid.children.length === 0) {
+            if (grid && grid.children && grid.children.length === 0) {
                 loadYouTubeVideos('Trending Music Videos 2024');
             }
         }
@@ -1632,7 +1633,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 20. PREMIUM SUBSCRIPTION SYSTEM ---
-    const STORAGE_KEY_SUB = 'soundwave_subscription_data';
     let currentPendingPlan = { key: 'individual', price: '119', name: 'Individual Premium' };
 
     function getSubscription() {
@@ -3091,7 +3091,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (movieDetailModal) movieDetailModal.classList.add('hidden');
         });
     }
-});
 
 
 
@@ -3481,13 +3480,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Auto-load trending videos when page boots or when video tab is shown
-    document.addEventListener('DOMContentLoaded', () => {
-        loadYouTubeVideos('Trending Music Videos 2024');
-    });
+    loadYouTubeVideos('Trending Music Videos 2024');
     // Call immediately if DOM already loaded
     setTimeout(() => {
         const grid = document.getElementById('ytVideosGrid');
-        if (grid && grid.children.length === 0) {
+        if (grid && grid.children && grid.children.length === 0) {
             loadYouTubeVideos('Trending Music Videos 2024');
         }
     }, 500);
@@ -3667,7 +3664,9 @@ document.addEventListener('DOMContentLoaded', () => {
         btnChannelLoadMore.addEventListener('click', () => {
             currentChannelPage++;
             loadChannelSongs(currentChannel, currentChannelPage, true);
-        
+        });
+    }
+
     // ==============================================================================
     // SOUNDWAVE AI DJ & UNIVERSAL MULTI-LLM CONNECTOR ENGINE
     // Always-on Voice Listening, "DJ" Wake Word, TTS Feedback & Multi-Model Engine
@@ -4408,9 +4407,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Call setup for AI DJ
     setupAiDjModule();
 
-
-});
-    }
-
     // Auto-load T-Series on startup
     loadChannelSongs('tseries', 1, false);
+});
