@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const librarySongCount = document.getElementById('librarySongCount');
     const sideLikedBadge = document.getElementById('sideLikedBadge');
     const btnPlayLikedPlaylist = document.getElementById('btnPlayLikedPlaylist');
-    const libraryTableBody = document.getElementById('libraryTableBody');
+    const libraryTableBody = document.getElementById('libraryTableBody') || document.getElementById('likedSongsTableBody');
 
     // Player Bar Elements
     const audio = document.getElementById('audioPlaybackEngine');
@@ -254,15 +254,26 @@ document.addEventListener('DOMContentLoaded', () => {
     let tabHistoryIndex = 0;
     let toastTimeout = null;
 
-    // Liked Songs from localStorage
+    // Liked Songs from localStorage with instant hydration
     const STORAGE_KEY_LIKED = 'soundwave_liked_songs_v2';
     const STORAGE_KEY_SUB = 'soundwave_subscription_data';
+    const DEFAULT_LIKED_SONGS = [
+        { id: 'BddP6PYo2gs', title: 'Kesariya', channel: 'Arijit Singh, Pritam', duration: '4:28', thumbnail: 'https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg' },
+        { id: '34Na4j8AVgA', title: 'Starboy', channel: 'The Weeknd, Daft Punk', duration: '3:50', thumbnail: 'https://i.ytimg.com/vi/34Na4j8AVgA/hqdefault.jpg' },
+        { id: 'sY45iA7PFS8', title: 'BANGER', channel: 'Badshah x Sharvi x Hiten', duration: '2:53', thumbnail: 'https://i.ytimg.com/vi/sY45iA7PFS8/hqdefault.jpg' },
+        { id: 'vvN4bA_g3eI', title: 'Softly', channel: 'Karan Aujla, Ikky', duration: '2:36', thumbnail: 'https://i.ytimg.com/vi/vvN4bA_g3eI/hqdefault.jpg' },
+        { id: 'eVli-tstM5E', title: 'Espresso', channel: 'Sabrina Carpenter', duration: '2:55', thumbnail: 'https://i.ytimg.com/vi/eVli-tstM5E/hqdefault.jpg' },
+        { id: 'cWMxCE2HTag', title: 'Apna Bana Le', channel: 'Arijit Singh, Sachin-Jigar', duration: '4:21', thumbnail: 'https://i.ytimg.com/vi/cWMxCE2HTag/hqdefault.jpg' }
+    ];
     let likedSongs = [];
     try {
         const stored = localStorage.getItem(STORAGE_KEY_LIKED);
-        likedSongs = stored ? JSON.parse(stored) : [];
+        likedSongs = stored ? JSON.parse(stored) : DEFAULT_LIKED_SONGS;
+        if (!likedSongs || !Array.isArray(likedSongs) || likedSongs.length === 0) {
+            likedSongs = DEFAULT_LIKED_SONGS;
+        }
     } catch (e) {
-        likedSongs = [];
+        likedSongs = DEFAULT_LIKED_SONGS;
     }
 
     // Default curated seeds for quick initial hydration
@@ -2807,7 +2818,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await res.json();
             const movies = (data.movies || []).slice(0, 6);
 
-            homeGrid.innerHTML = '';
+            if (movies && movies.length > 0) {
+                homeGrid.innerHTML = '';
+            }
             movies.forEach(movie => {
                 const card = document.createElement('div');
                 card.className = 'sp-card';
@@ -5205,10 +5218,41 @@ document.addEventListener('DOMContentLoaded', () => {
             customPlaylists = [];
         }
 
-        if (customPlaylists.length === 0) {
+        if (customPlaylists.length === 0 || !customPlaylists[0].tracks || customPlaylists[0].tracks.length === 0) {
             customPlaylists = [
-                { id: 'pl_gym', name: '🔥 Punjabi Gym Boost', desc: 'High energy bangers & workout motivation', tracks: [] },
-                { id: 'pl_chill', name: '☕ Midnight Chill Lounge', desc: 'Peaceful lo-fi & romantic acoustic', tracks: [] }
+                {
+                    id: 'pl_gym',
+                    name: '🔥 Punjabi Gym Boost',
+                    desc: 'High energy bangers & workout motivation',
+                    tracks: [
+                        { id: 'sY45iA7PFS8', title: 'BANGER', channel: 'Badshah x Sharvi x Hiten', thumbnail: 'https://i.ytimg.com/vi/sY45iA7PFS8/hqdefault.jpg', duration: '2:53' },
+                        { id: 'vvN4bA_g3eI', title: 'Softly', channel: 'Karan Aujla, Ikky', thumbnail: 'https://i.ytimg.com/vi/vvN4bA_g3eI/hqdefault.jpg', duration: '2:36' },
+                        { id: 'PgKjt5Aygps', title: 'Chalre Chalre Waal', channel: 'ISAR MUSIC & Sufi Irfan', thumbnail: 'https://i.ytimg.com/vi/PgKjt5Aygps/hqdefault.jpg', duration: '4:28' },
+                        { id: 'xvT1jH8B9AM', title: 'Kalyani', channel: 'Shreya Ghoshal, ARJN', thumbnail: 'https://i.ytimg.com/vi/xvT1jH8B9AM/hqdefault.jpg', duration: '4:48' }
+                    ]
+                },
+                {
+                    id: 'pl_chill',
+                    name: '☕ Midnight Chill Lounge',
+                    desc: 'Peaceful lo-fi & romantic acoustic melodies',
+                    tracks: [
+                        { id: 'BddP6PYo2gs', title: 'Kesariya', channel: 'Arijit Singh, Pritam', thumbnail: 'https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg', duration: '4:28' },
+                        { id: 'cWMxCE2HTag', title: 'Apna Bana Le', channel: 'Arijit Singh, Sachin-Jigar', thumbnail: 'https://i.ytimg.com/vi/cWMxCE2HTag/hqdefault.jpg', duration: '4:21' },
+                        { id: '34Na4j8AVgA', title: 'Starboy', channel: 'The Weeknd, Daft Punk', thumbnail: 'https://i.ytimg.com/vi/34Na4j8AVgA/hqdefault.jpg', duration: '3:50' },
+                        { id: 'eVli-tstM5E', title: 'Espresso', channel: 'Sabrina Carpenter', thumbnail: 'https://i.ytimg.com/vi/eVli-tstM5E/hqdefault.jpg', duration: '2:55' }
+                    ]
+                },
+                {
+                    id: 'pl_bollywood',
+                    name: '👑 Bollywood 100M+ Classics',
+                    desc: 'Golden evergreen superhits and chart-toppers',
+                    tracks: [
+                        { id: 'gvyUuxdRdR4', title: 'Raataan Lambiyan', channel: 'Jubin Nautiyal, Asees Kaur', thumbnail: 'https://i.ytimg.com/vi/gvyUuxdRdR4/hqdefault.jpg', duration: '3:50' },
+                        { id: 'mevO4I0f5lg', title: 'Dil Diyan Gallan', channel: 'Atif Aslam, Vishal-Shekhar', thumbnail: 'https://i.ytimg.com/vi/mevO4I0f5lg/hqdefault.jpg', duration: '4:20' },
+                        { id: 'RLzC55ai0eo', title: 'Heeriye', channel: 'Jasleen Royal ft. Arijit Singh', thumbnail: 'https://i.ytimg.com/vi/RLzC55ai0eo/hqdefault.jpg', duration: '3:15' },
+                        { id: 'ElZfdU54Cp8', title: 'O Maahi', channel: 'Arijit Singh, Pritam', thumbnail: 'https://i.ytimg.com/vi/ElZfdU54Cp8/hqdefault.jpg', duration: '3:53' }
+                    ]
+                }
             ];
             try { localStorage.setItem('soundwave_custom_playlists', JSON.stringify(customPlaylists)); } catch (e) {}
         }
@@ -5361,4 +5405,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Auto-load T-Series on startup
     loadChannelSongs('tseries', 1, false);
+
+    // =============================================================
+    // GLOBAL DELEGATED INSTANT CLICK LISTENERS (HYDRATED & DYNAMIC)
+    // =============================================================
+    document.addEventListener('click', (e) => {
+        // Music Card or Song Row Click
+        const card = e.target.closest('.music-card, .table-song-row');
+        if (card) {
+            if (e.target.closest('.row-btn-heart') || e.target.closest('.row-btn-delete')) return;
+            const id = card.dataset.id;
+            if (id) {
+                const title = card.dataset.title || card.querySelector('.card-song-title, .row-title-text, .card-title')?.textContent?.trim() || 'Music Track';
+                const channel = card.dataset.channel || card.querySelector('.card-song-artist, .row-artist-sub, .card-channel')?.textContent?.trim() || 'Artist';
+                const thumbnail = card.dataset.thumb || card.querySelector('img')?.src || `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+                const duration = card.querySelector('.row-duration-text')?.textContent?.trim() || '--:--';
+                const track = { id, title, channel, thumbnail, duration };
+
+                const existingIdx = activeQueue.findIndex(t => t.id === id);
+                if (existingIdx !== -1) {
+                    playTrackByIndex(existingIdx);
+                } else {
+                    activeQueue = [track, ...activeQueue];
+                    renderQueueDrawer();
+                    playTrackByIndex(0);
+                }
+                return;
+            }
+        }
+
+        // Movie Card or Cinema Spotlight Click
+        const movieCard = e.target.closest('.movie-card, .movie-sp-card');
+        if (movieCard) {
+            const slug = movieCard.dataset.slug || movieCard.dataset.videoid;
+            if (slug && typeof openMovieModal === 'function') {
+                const title = movieCard.querySelector('.movie-card-title, .card-primary-title')?.textContent?.trim() || 'Cinema 1080p Movie';
+                const poster = movieCard.querySelector('img')?.src || `https://i.ytimg.com/vi/${slug}/hqdefault.jpg`;
+                openMovieModal({
+                    slug: slug,
+                    video_id: slug,
+                    trailer_id: slug,
+                    title: title,
+                    poster: poster,
+                    genres: 'Cinema Full Movie (1080p)',
+                    duration: '2h 15m'
+                });
+                return;
+            }
+        }
+    });
+
 });

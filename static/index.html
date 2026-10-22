@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20261022_browse_global_v7">
+    <link rel="stylesheet" href="style.css?v=20261023_v35_instant_hydrated">
     <link rel="manifest" href="manifest.json">
 
 
@@ -18,21 +18,23 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script>
-    // Force service worker unregister/update to bust old cache
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(registrations => {
-        for (let r of registrations) r.update();
-      });
-      if ('caches' in window) {
-        caches.keys().then(names => {
-          for (let name of names) {
-            if (name.includes('soundwave-cache-v1') || name.includes('soundwave-cache-v2')) {
-              caches.delete(name);
-            }
-          }
+    // Immediate Auto-Purge of Old Cached Bundles & Service Workers
+    try {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          for (let r of regs) r.unregister();
         });
       }
-    }
+      if ('caches' in window) {
+        caches.keys().then(keys => {
+          for (let k of keys) caches.delete(k);
+        });
+      }
+      const SW_VER = '20261023_v35';
+      if (localStorage.getItem('soundwave_app_ver') !== SW_VER) {
+        localStorage.setItem('soundwave_app_ver', SW_VER);
+      }
+    } catch(e) {}
   </script>
 </head>
 <body>
@@ -258,8 +260,121 @@
                                 <button class="shelf-more-btn" id="btnHomeViewAllMovies">Show all movies ›</button>
                             </div>
                             <div class="shelf-cards-grid" id="vegamoviesHomeGrid">
-                                <!-- Populated dynamically from Cinema API -->
-                            </div>
+    <div class="sp-card movie-sp-card" style="cursor: pointer;" data-slug="1gGdAsf5jgg" data-videoid="1gGdAsf5jgg">
+        <div class="card-art-box" style="position: relative;">
+            <img src="https://i.ytimg.com/vi/1gGdAsf5jgg/hqdefault.jpg" alt="Action - South Blockbuster" loading="lazy">
+            <span class="movie-hd-badge">1080p</span>
+            <div class="card-play-hover">
+                <button class="card-green-play" title="Play Full Movie">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <div class="card-info-box">
+            <div class="card-primary-title" title="Action - South Blockbuster Hindi Dubbed">Action - South Blockbuster</div>
+            <div class="card-meta-line">
+                <span class="rating-badge">⭐ 8.5</span>
+                <span>•</span>
+                <span>Full Movie (1080p)</span>
+            </div>
+        </div>
+    </div>
+    <div class="sp-card movie-sp-card" style="cursor: pointer;" data-slug="cI-Il6xzB0Y" data-videoid="cI-Il6xzB0Y">
+        <div class="card-art-box" style="position: relative;">
+            <img src="https://i.ytimg.com/vi/cI-Il6xzB0Y/hqdefault.jpg" alt="SOLO Dulquer Salmaan" loading="lazy">
+            <span class="movie-hd-badge">1080p</span>
+            <div class="card-play-hover">
+                <button class="card-green-play" title="Play Full Movie">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <div class="card-info-box">
+            <div class="card-primary-title" title="SOLO - Dulquer Salmaan Action Hit">SOLO - Dulquer Salmaan</div>
+            <div class="card-meta-line">
+                <span class="rating-badge">⭐ 8.6</span>
+                <span>•</span>
+                <span>Full Movie (1080p)</span>
+            </div>
+        </div>
+    </div>
+    <div class="sp-card movie-sp-card" style="cursor: pointer;" data-slug="oD4BJAqY-mw" data-videoid="oD4BJAqY-mw">
+        <div class="card-art-box" style="position: relative;">
+            <img src="https://i.ytimg.com/vi/oD4BJAqY-mw/hqdefault.jpg" alt="SHIVA TANDAV" loading="lazy">
+            <span class="movie-hd-badge">1080p</span>
+            <div class="card-play-hover">
+                <button class="card-green-play" title="Play Full Movie">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <div class="card-info-box">
+            <div class="card-primary-title" title="SHIVA TANDAV - Dhruva Sarja">SHIVA TANDAV - Dhruva Sarja</div>
+            <div class="card-meta-line">
+                <span class="rating-badge">⭐ 8.4</span>
+                <span>•</span>
+                <span>Full Movie (1080p)</span>
+            </div>
+        </div>
+    </div>
+    <div class="sp-card movie-sp-card" style="cursor: pointer;" data-slug="K-cJzYptGR8" data-videoid="K-cJzYptGR8">
+        <div class="card-art-box" style="position: relative;">
+            <img src="https://i.ytimg.com/vi/K-cJzYptGR8/hqdefault.jpg" alt="ROLEX 2" loading="lazy">
+            <span class="movie-hd-badge">1080p</span>
+            <div class="card-play-hover">
+                <button class="card-green-play" title="Play Full Movie">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <div class="card-info-box">
+            <div class="card-primary-title" title="ROLEX 2 - Thalapathy Vijay Action">ROLEX 2 - Thalapathy Vijay</div>
+            <div class="card-meta-line">
+                <span class="rating-badge">⭐ 8.8</span>
+                <span>•</span>
+                <span>Full Movie (1080p)</span>
+            </div>
+        </div>
+    </div>
+    <div class="sp-card movie-sp-card" style="cursor: pointer;" data-slug="mZkOoLz7PVQ" data-videoid="mZkOoLz7PVQ">
+        <div class="card-art-box" style="position: relative;">
+            <img src="https://i.ytimg.com/vi/mZkOoLz7PVQ/hqdefault.jpg" alt="POWER YODHA" loading="lazy">
+            <span class="movie-hd-badge">1080p</span>
+            <div class="card-play-hover">
+                <button class="card-green-play" title="Play Full Movie">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <div class="card-info-box">
+            <div class="card-primary-title" title="POWER YODHA - Ram Karthik">POWER YODHA - Ram Karthik</div>
+            <div class="card-meta-line">
+                <span class="rating-badge">⭐ 8.2</span>
+                <span>•</span>
+                <span>Full Movie (1080p)</span>
+            </div>
+        </div>
+    </div>
+    <div class="sp-card movie-sp-card" style="cursor: pointer;" data-slug="M-7hDFKeudY" data-videoid="M-7hDFKeudY">
+        <div class="card-art-box" style="position: relative;">
+            <img src="https://i.ytimg.com/vi/M-7hDFKeudY/hqdefault.jpg" alt="SECRET GUARD" loading="lazy">
+            <span class="movie-hd-badge">1080p</span>
+            <div class="card-play-hover">
+                <button class="card-green-play" title="Play Full Movie">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <div class="card-info-box">
+            <div class="card-primary-title" title="SECRET GUARD - Ram Pothineni">SECRET GUARD - Ram Pothineni</div>
+            <div class="card-meta-line">
+                <span class="rating-badge">⭐ 8.3</span>
+                <span>•</span>
+                <span>Full Movie (1080p)</span>
+            </div>
+        </div>
+    </div>
+</div>
                         </div>
 
                         <!-- Shelf: Top Music Production Houses & Record Labels (T-Series, Zee Music, Sony Music, Saregama, YRF, Tips, Speed Records) -->
@@ -313,8 +428,67 @@
 
                             <!-- Channel Songs Grid -->
                             <div class="shelf-cards-grid" id="channelSongsGrid">
-                                <!-- Cards populated dynamically from /api/channel_songs -->
-                            </div>
+    <div class="music-card" data-id="BddP6PYo2gs" data-title="Kesariya" data-channel="Arijit Singh, Pritam" data-thumb="https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg" alt="Kesariya" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Kesariya">Kesariya</div>
+        <div class="card-song-artist" title="Arijit Singh, Pritam">Arijit Singh, Pritam</div>
+    </div>
+    <div class="music-card" data-id="sY45iA7PFS8" data-title="BANGER" data-channel="Badshah x Sharvi x Hiten" data-thumb="https://i.ytimg.com/vi/sY45iA7PFS8/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/sY45iA7PFS8/hqdefault.jpg" alt="BANGER" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="BANGER">BANGER</div>
+        <div class="card-song-artist" title="Badshah x Sharvi x Hiten">Badshah x Sharvi x Hiten</div>
+    </div>
+    <div class="music-card" data-id="PgKjt5Aygps" data-title="Chalre Chalre Waal" data-channel="ISAR MUSIC & Sufi Irfan" data-thumb="https://i.ytimg.com/vi/PgKjt5Aygps/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/PgKjt5Aygps/hqdefault.jpg" alt="Chalre Chalre Waal" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Chalre Chalre Waal">Chalre Chalre Waal</div>
+        <div class="card-song-artist" title="ISAR MUSIC & Sufi Irfan">ISAR MUSIC & Sufi Irfan</div>
+    </div>
+    <div class="music-card" data-id="cWMxCE2HTag" data-title="Apna Bana Le" data-channel="Arijit Singh, Sachin-Jigar" data-thumb="https://i.ytimg.com/vi/cWMxCE2HTag/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/cWMxCE2HTag/hqdefault.jpg" alt="Apna Bana Le" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Apna Bana Le">Apna Bana Le</div>
+        <div class="card-song-artist" title="Arijit Singh, Sachin-Jigar">Arijit Singh, Sachin-Jigar</div>
+    </div>
+    <div class="music-card" data-id="gvyUuxdRdR4" data-title="Raataan Lambiyan" data-channel="Jubin Nautiyal, Asees Kaur" data-thumb="https://i.ytimg.com/vi/gvyUuxdRdR4/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/gvyUuxdRdR4/hqdefault.jpg" alt="Raataan Lambiyan" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Raataan Lambiyan">Raataan Lambiyan</div>
+        <div class="card-song-artist" title="Jubin Nautiyal, Asees Kaur">Jubin Nautiyal, Asees Kaur</div>
+    </div>
+    <div class="music-card" data-id="vvN4bA_g3eI" data-title="Softly" data-channel="Karan Aujla, Ikky" data-thumb="https://i.ytimg.com/vi/vvN4bA_g3eI/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/vvN4bA_g3eI/hqdefault.jpg" alt="Softly" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Softly">Softly</div>
+        <div class="card-song-artist" title="Karan Aujla, Ikky">Karan Aujla, Ikky</div>
+    </div>
+</div>
 
                             <!-- Load More Channel Songs Button -->
                             <div class="channel-load-more-wrap" id="channelLoadMoreWrap">
@@ -334,8 +508,67 @@
                                 <button class="shelf-more-btn" data-query="Trending Songs 2024">Show all</button>
                             </div>
                             <div class="shelf-cards-grid" id="trendingShelfGrid">
-                                <!-- Cards populated by JS -->
-                            </div>
+    <div class="music-card" data-id="xvT1jH8B9AM" data-title="Kalyani" data-channel="Shreya Ghoshal, ARJN" data-thumb="https://i.ytimg.com/vi/xvT1jH8B9AM/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/xvT1jH8B9AM/hqdefault.jpg" alt="Kalyani" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Kalyani">Kalyani</div>
+        <div class="card-song-artist" title="Shreya Ghoshal, ARJN">Shreya Ghoshal, ARJN</div>
+    </div>
+    <div class="music-card" data-id="34Na4j8AVgA" data-title="Starboy" data-channel="The Weeknd, Daft Punk" data-thumb="https://i.ytimg.com/vi/34Na4j8AVgA/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/34Na4j8AVgA/hqdefault.jpg" alt="Starboy" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Starboy">Starboy</div>
+        <div class="card-song-artist" title="The Weeknd, Daft Punk">The Weeknd, Daft Punk</div>
+    </div>
+    <div class="music-card" data-id="sY45iA7PFS8" data-title="BANGER" data-channel="Badshah x Sharvi x Hiten" data-thumb="https://i.ytimg.com/vi/sY45iA7PFS8/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/sY45iA7PFS8/hqdefault.jpg" alt="BANGER" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="BANGER">BANGER</div>
+        <div class="card-song-artist" title="Badshah x Sharvi x Hiten">Badshah x Sharvi x Hiten</div>
+    </div>
+    <div class="music-card" data-id="PgKjt5Aygps" data-title="Chalre Chalre Waal" data-channel="ISAR MUSIC & Sufi Irfan" data-thumb="https://i.ytimg.com/vi/PgKjt5Aygps/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/PgKjt5Aygps/hqdefault.jpg" alt="Chalre Chalre Waal" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Chalre Chalre Waal">Chalre Chalre Waal</div>
+        <div class="card-song-artist" title="ISAR MUSIC & Sufi Irfan">ISAR MUSIC & Sufi Irfan</div>
+    </div>
+    <div class="music-card" data-id="vvN4bA_g3eI" data-title="Softly" data-channel="Karan Aujla, Ikky" data-thumb="https://i.ytimg.com/vi/vvN4bA_g3eI/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/vvN4bA_g3eI/hqdefault.jpg" alt="Softly" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Softly">Softly</div>
+        <div class="card-song-artist" title="Karan Aujla, Ikky">Karan Aujla, Ikky</div>
+    </div>
+    <div class="music-card" data-id="eVli-tstM5E" data-title="Espresso" data-channel="Sabrina Carpenter" data-thumb="https://i.ytimg.com/vi/eVli-tstM5E/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/eVli-tstM5E/hqdefault.jpg" alt="Espresso" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Espresso">Espresso</div>
+        <div class="card-song-artist" title="Sabrina Carpenter">Sabrina Carpenter</div>
+    </div>
+</div>
                         </div>
 
                         <!-- Shelf: Bollywood Romance -->
@@ -345,8 +578,67 @@
                                 <button class="shelf-more-btn" data-query="Arijit Singh Romantic Love Songs">Show all</button>
                             </div>
                             <div class="shelf-cards-grid" id="romanticShelfGrid">
-                                <!-- Cards populated by JS -->
-                            </div>
+    <div class="music-card" data-id="BddP6PYo2gs" data-title="Kesariya" data-channel="Arijit Singh, Pritam" data-thumb="https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg" alt="Kesariya" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Kesariya">Kesariya</div>
+        <div class="card-song-artist" title="Arijit Singh, Pritam">Arijit Singh, Pritam</div>
+    </div>
+    <div class="music-card" data-id="cWMxCE2HTag" data-title="Apna Bana Le" data-channel="Arijit Singh, Sachin-Jigar" data-thumb="https://i.ytimg.com/vi/cWMxCE2HTag/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/cWMxCE2HTag/hqdefault.jpg" alt="Apna Bana Le" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Apna Bana Le">Apna Bana Le</div>
+        <div class="card-song-artist" title="Arijit Singh, Sachin-Jigar">Arijit Singh, Sachin-Jigar</div>
+    </div>
+    <div class="music-card" data-id="mevO4I0f5lg" data-title="Dil Diyan Gallan" data-channel="Atif Aslam, Vishal-Shekhar" data-thumb="https://i.ytimg.com/vi/mevO4I0f5lg/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/mevO4I0f5lg/hqdefault.jpg" alt="Dil Diyan Gallan" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Dil Diyan Gallan">Dil Diyan Gallan</div>
+        <div class="card-song-artist" title="Atif Aslam, Vishal-Shekhar">Atif Aslam, Vishal-Shekhar</div>
+    </div>
+    <div class="music-card" data-id="gvyUuxdRdR4" data-title="Raataan Lambiyan" data-channel="Jubin Nautiyal, Asees Kaur" data-thumb="https://i.ytimg.com/vi/gvyUuxdRdR4/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/gvyUuxdRdR4/hqdefault.jpg" alt="Raataan Lambiyan" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Raataan Lambiyan">Raataan Lambiyan</div>
+        <div class="card-song-artist" title="Jubin Nautiyal, Asees Kaur">Jubin Nautiyal, Asees Kaur</div>
+    </div>
+    <div class="music-card" data-id="RLzC55ai0eo" data-title="Heeriye" data-channel="Jasleen Royal ft. Arijit Singh" data-thumb="https://i.ytimg.com/vi/RLzC55ai0eo/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/RLzC55ai0eo/hqdefault.jpg" alt="Heeriye" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Heeriye">Heeriye</div>
+        <div class="card-song-artist" title="Jasleen Royal ft. Arijit Singh">Jasleen Royal ft. Arijit Singh</div>
+    </div>
+    <div class="music-card" data-id="ElZfdU54Cp8" data-title="O Maahi" data-channel="Arijit Singh, Pritam" data-thumb="https://i.ytimg.com/vi/ElZfdU54Cp8/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/ElZfdU54Cp8/hqdefault.jpg" alt="O Maahi" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="O Maahi">O Maahi</div>
+        <div class="card-song-artist" title="Arijit Singh, Pritam">Arijit Singh, Pritam</div>
+    </div>
+</div>
                         </div>
 
                         <!-- Shelf: Lo-Fi Study Lounge -->
@@ -356,8 +648,47 @@
                                 <button class="shelf-more-btn" data-query="Lo-Fi Relax Study Beats">Show all</button>
                             </div>
                             <div class="shelf-cards-grid" id="lofiShelfGrid">
-                                <!-- Cards populated by JS -->
-                            </div>
+    <div class="music-card" data-id="jfKfPfyJRdk" data-title="Midnight Chill Beats" data-channel="Lofi Girl" data-thumb="https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=400">
+        <div class="card-img-box">
+            <img src="https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=400" alt="Midnight Chill Beats" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Midnight Chill Beats">Midnight Chill Beats</div>
+        <div class="card-song-artist" title="Lofi Girl">Lofi Girl</div>
+    </div>
+    <div class="music-card" data-id="5qap5aO4i9A" data-title="Bollywood Lo-Fi Nostalgia" data-channel="Chill Hop Nation" data-thumb="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400">
+        <div class="card-img-box">
+            <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400" alt="Bollywood Lo-Fi Nostalgia" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Bollywood Lo-Fi Nostalgia">Bollywood Lo-Fi Nostalgia</div>
+        <div class="card-song-artist" title="Chill Hop Nation">Chill Hop Nation</div>
+    </div>
+    <div class="music-card" data-id="DWcJFNfaw9c" data-title="Late Night Rain Lofi" data-channel="Relaxation Station" data-thumb="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400">
+        <div class="card-img-box">
+            <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400" alt="Late Night Rain Lofi" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Late Night Rain Lofi">Late Night Rain Lofi</div>
+        <div class="card-song-artist" title="Relaxation Station">Relaxation Station</div>
+    </div>
+    <div class="music-card" data-id="rUxyKA_-nx4" data-title="Coffee Shop Acoustic Chill" data-channel="Study Vibes" data-thumb="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400">
+        <div class="card-img-box">
+            <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400" alt="Coffee Shop Acoustic Chill" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Coffee Shop Acoustic Chill">Coffee Shop Acoustic Chill</div>
+        <div class="card-song-artist" title="Study Vibes">Study Vibes</div>
+    </div>
+</div>
                         </div>
 
                         <!-- Dynamic Shelves Container for Home Browse More -->
@@ -731,8 +1062,167 @@
 
                                 <!-- Movies Grid with Endless Infinite Scrolling -->
                                 <div class="movies-grid" id="moviesGrid">
-                                    <!-- Cards populated dynamically -->
-                                </div>
+    <div class="movie-card" data-slug="1gGdAsf5jgg">
+        <div class="movie-card-thumb-wrap">
+            <img src="https://i.ytimg.com/vi/1gGdAsf5jgg/hqdefault.jpg" alt="Action - South Blockbuster" loading="lazy">
+            <span class="movie-card-rating">⭐ 8.5</span>
+            <span class="movie-hd-badge">1080p Full HD</span>
+            <div class="movie-card-play-hover">
+                <button class="movie-btn-play-action" title="Watch Movie">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <div class="movie-card-info">
+            <h4 class="movie-card-title" title="Action - South Blockbuster Full Movie">Action - South Blockbuster</h4>
+            <div class="movie-card-meta">
+                <span class="movie-card-year">2h 18m</span>
+                <span class="movie-card-dot">•</span>
+                <span class="movie-card-genres">Action, Thriller</span>
+            </div>
+        </div>
+    </div>
+    <div class="movie-card" data-slug="cI-Il6xzB0Y">
+        <div class="movie-card-thumb-wrap">
+            <img src="https://i.ytimg.com/vi/cI-Il6xzB0Y/hqdefault.jpg" alt="SOLO Dulquer Salmaan" loading="lazy">
+            <span class="movie-card-rating">⭐ 8.6</span>
+            <span class="movie-hd-badge">1080p Full HD</span>
+            <div class="movie-card-play-hover">
+                <button class="movie-btn-play-action" title="Watch Movie">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <div class="movie-card-info">
+            <h4 class="movie-card-title" title="SOLO - Dulquer Salmaan 4K">SOLO - Dulquer Salmaan</h4>
+            <div class="movie-card-meta">
+                <span class="movie-card-year">2h 15m</span>
+                <span class="movie-card-dot">•</span>
+                <span class="movie-card-genres">Action, Romance</span>
+            </div>
+        </div>
+    </div>
+    <div class="movie-card" data-slug="oD4BJAqY-mw">
+        <div class="movie-card-thumb-wrap">
+            <img src="https://i.ytimg.com/vi/oD4BJAqY-mw/hqdefault.jpg" alt="SHIVA TANDAV" loading="lazy">
+            <span class="movie-card-rating">⭐ 8.4</span>
+            <span class="movie-hd-badge">1080p Full HD</span>
+            <div class="movie-card-play-hover">
+                <button class="movie-btn-play-action" title="Watch Movie">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <div class="movie-card-info">
+            <h4 class="movie-card-title" title="SHIVA TANDAV - Dhruva Sarja">SHIVA TANDAV</h4>
+            <div class="movie-card-meta">
+                <span class="movie-card-year">2h 10m</span>
+                <span class="movie-card-dot">•</span>
+                <span class="movie-card-genres">South Action</span>
+            </div>
+        </div>
+    </div>
+    <div class="movie-card" data-slug="K-cJzYptGR8">
+        <div class="movie-card-thumb-wrap">
+            <img src="https://i.ytimg.com/vi/K-cJzYptGR8/hqdefault.jpg" alt="ROLEX 2" loading="lazy">
+            <span class="movie-card-rating">⭐ 8.8</span>
+            <span class="movie-hd-badge">1080p Full HD</span>
+            <div class="movie-card-play-hover">
+                <button class="movie-btn-play-action" title="Watch Movie">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <div class="movie-card-info">
+            <h4 class="movie-card-title" title="ROLEX 2 - Thalapathy Vijay">ROLEX 2 - Thalapathy Vijay</h4>
+            <div class="movie-card-meta">
+                <span class="movie-card-year">3h 04m</span>
+                <span class="movie-card-dot">•</span>
+                <span class="movie-card-genres">Action Drama</span>
+            </div>
+        </div>
+    </div>
+    <div class="movie-card" data-slug="mZkOoLz7PVQ">
+        <div class="movie-card-thumb-wrap">
+            <img src="https://i.ytimg.com/vi/mZkOoLz7PVQ/hqdefault.jpg" alt="POWER YODHA" loading="lazy">
+            <span class="movie-card-rating">⭐ 8.2</span>
+            <span class="movie-hd-badge">1080p Full HD</span>
+            <div class="movie-card-play-hover">
+                <button class="movie-btn-play-action" title="Watch Movie">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <div class="movie-card-info">
+            <h4 class="movie-card-title" title="POWER YODHA Blockbuster">POWER YODHA</h4>
+            <div class="movie-card-meta">
+                <span class="movie-card-year">1h 45m</span>
+                <span class="movie-card-dot">•</span>
+                <span class="movie-card-genres">Action Masala</span>
+            </div>
+        </div>
+    </div>
+    <div class="movie-card" data-slug="M-7hDFKeudY">
+        <div class="movie-card-thumb-wrap">
+            <img src="https://i.ytimg.com/vi/M-7hDFKeudY/hqdefault.jpg" alt="SECRET GUARD" loading="lazy">
+            <span class="movie-card-rating">⭐ 8.3</span>
+            <span class="movie-hd-badge">1080p Full HD</span>
+            <div class="movie-card-play-hover">
+                <button class="movie-btn-play-action" title="Watch Movie">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <div class="movie-card-info">
+            <h4 class="movie-card-title" title="SECRET GUARD - Ram Pothineni">SECRET GUARD</h4>
+            <div class="movie-card-meta">
+                <span class="movie-card-year">2h 05m</span>
+                <span class="movie-card-dot">•</span>
+                <span class="movie-card-genres">Action Thriller</span>
+            </div>
+        </div>
+    </div>
+    <div class="movie-card" data-slug="9aJJCo3TICg">
+        <div class="movie-card-thumb-wrap">
+            <img src="https://i.ytimg.com/vi/9aJJCo3TICg/hqdefault.jpg" alt="Enemy 2" loading="lazy">
+            <span class="movie-card-rating">⭐ 8.5</span>
+            <span class="movie-hd-badge">1080p Full HD</span>
+            <div class="movie-card-play-hover">
+                <button class="movie-btn-play-action" title="Watch Movie">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <div class="movie-card-info">
+            <h4 class="movie-card-title" title="Enemy 2 - Ram Charan">Enemy 2 - Ram Charan</h4>
+            <div class="movie-card-meta">
+                <span class="movie-card-year">1h 55m</span>
+                <span class="movie-card-dot">•</span>
+                <span class="movie-card-genres">Action Blockbuster</span>
+            </div>
+        </div>
+    </div>
+    <div class="movie-card" data-slug="gtY0qDaICWE">
+        <div class="movie-card-thumb-wrap">
+            <img src="https://i.ytimg.com/vi/gtY0qDaICWE/hqdefault.jpg" alt="Superhit Blockbuster" loading="lazy">
+            <span class="movie-card-rating">⭐ 8.5</span>
+            <span class="movie-hd-badge">1080p Full HD</span>
+            <div class="movie-card-play-hover">
+                <button class="movie-btn-play-action" title="Watch Movie">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <div class="movie-card-info">
+            <h4 class="movie-card-title" title="New Movie Blockbuster 2026">New Movie Blockbuster</h4>
+            <div class="movie-card-meta">
+                <span class="movie-card-year">2h 22m</span>
+                <span class="movie-card-dot">•</span>
+                <span class="movie-card-genres">Action & Drama</span>
+            </div>
+        </div>
+    </div>
+</div>
 
                                 <!-- Endless Movies Infinite Scroll Sentinel -->
                                 <div class="movies-infinite-footer" style="text-align: center; margin: 2rem 0 4rem;">
@@ -912,7 +1402,7 @@
                                     <div class="library-meta">
                                         <span class="lib-sub-tag">OFFICIAL PLAYLIST</span>
                                         <h1>Liked Songs</h1>
-                                        <p><span id="librarySongCount">0 songs</span> • Saved in your private offline library</p>
+                                        <p><span id="librarySongCount">6 songs</span> • Saved in your private offline library</p>
                                         <div class="lib-banner-actions">
                                             <button class="btn-play-all-liked" id="btnPlayLikedPlaylist">
                                                 <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
@@ -943,9 +1433,128 @@
                                         <div class="th-duration">Duration</div>
                                         <div class="th-actions">Action</div>
                                     </div>
-                                    <div class="sp-table-body" id="likedSongsTableBody">
-                                        <!-- Dynamically Populated -->
-                                    </div>
+                                    <div class="sp-table-body" id="libraryTableBody" data-alt-id="likedSongsTableBody">
+    <div class="table-song-row" data-id="BddP6PYo2gs" data-title="Kesariya" data-channel="Arijit Singh, Pritam" data-thumb="https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg">
+        <div class="row-index">1</div>
+        <div class="row-title-box">
+            <img src="https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg" alt="Kesariya" loading="lazy">
+            <div class="row-meta-col">
+                <span class="row-title-text">Kesariya</span>
+                <span class="row-artist-sub">Arijit Singh, Pritam</span>
+            </div>
+        </div>
+        <div class="row-channel-text">Brahmastra Official Soundtrack</div>
+        <div class="row-duration-text">4:28</div>
+        <div class="row-actions-box">
+            <button class="row-btn-play" title="Play">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </button>
+            <button class="row-btn-heart active" title="Liked">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="#1db954"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </button>
+        </div>
+    </div>
+    <div class="table-song-row" data-id="34Na4j8AVgA" data-title="Starboy" data-channel="The Weeknd, Daft Punk" data-thumb="https://i.ytimg.com/vi/34Na4j8AVgA/hqdefault.jpg">
+        <div class="row-index">2</div>
+        <div class="row-title-box">
+            <img src="https://i.ytimg.com/vi/34Na4j8AVgA/hqdefault.jpg" alt="Starboy" loading="lazy">
+            <div class="row-meta-col">
+                <span class="row-title-text">Starboy</span>
+                <span class="row-artist-sub">The Weeknd, Daft Punk</span>
+            </div>
+        </div>
+        <div class="row-channel-text">Starboy Album</div>
+        <div class="row-duration-text">3:50</div>
+        <div class="row-actions-box">
+            <button class="row-btn-play" title="Play">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </button>
+            <button class="row-btn-heart active" title="Liked">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="#1db954"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </button>
+        </div>
+    </div>
+    <div class="table-song-row" data-id="sY45iA7PFS8" data-title="BANGER" data-channel="Badshah x Sharvi x Hiten" data-thumb="https://i.ytimg.com/vi/sY45iA7PFS8/hqdefault.jpg">
+        <div class="row-index">3</div>
+        <div class="row-title-box">
+            <img src="https://i.ytimg.com/vi/sY45iA7PFS8/hqdefault.jpg" alt="BANGER" loading="lazy">
+            <div class="row-meta-col">
+                <span class="row-title-text">BANGER</span>
+                <span class="row-artist-sub">Badshah x Sharvi x Hiten</span>
+            </div>
+        </div>
+        <div class="row-channel-text">Badshah Official</div>
+        <div class="row-duration-text">2:53</div>
+        <div class="row-actions-box">
+            <button class="row-btn-play" title="Play">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </button>
+            <button class="row-btn-heart active" title="Liked">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="#1db954"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </button>
+        </div>
+    </div>
+    <div class="table-song-row" data-id="vvN4bA_g3eI" data-title="Softly" data-channel="Karan Aujla, Ikky" data-thumb="https://i.ytimg.com/vi/vvN4bA_g3eI/hqdefault.jpg">
+        <div class="row-index">4</div>
+        <div class="row-title-box">
+            <img src="https://i.ytimg.com/vi/vvN4bA_g3eI/hqdefault.jpg" alt="Softly" loading="lazy">
+            <div class="row-meta-col">
+                <span class="row-title-text">Softly</span>
+                <span class="row-artist-sub">Karan Aujla, Ikky</span>
+            </div>
+        </div>
+        <div class="row-channel-text">Making Memories</div>
+        <div class="row-duration-text">2:36</div>
+        <div class="row-actions-box">
+            <button class="row-btn-play" title="Play">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </button>
+            <button class="row-btn-heart active" title="Liked">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="#1db954"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </button>
+        </div>
+    </div>
+    <div class="table-song-row" data-id="eVli-tstM5E" data-title="Espresso" data-channel="Sabrina Carpenter" data-thumb="https://i.ytimg.com/vi/eVli-tstM5E/hqdefault.jpg">
+        <div class="row-index">5</div>
+        <div class="row-title-box">
+            <img src="https://i.ytimg.com/vi/eVli-tstM5E/hqdefault.jpg" alt="Espresso" loading="lazy">
+            <div class="row-meta-col">
+                <span class="row-title-text">Espresso</span>
+                <span class="row-artist-sub">Sabrina Carpenter</span>
+            </div>
+        </div>
+        <div class="row-channel-text">Short n' Sweet</div>
+        <div class="row-duration-text">2:55</div>
+        <div class="row-actions-box">
+            <button class="row-btn-play" title="Play">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </button>
+            <button class="row-btn-heart active" title="Liked">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="#1db954"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </button>
+        </div>
+    </div>
+    <div class="table-song-row" data-id="cWMxCE2HTag" data-title="Apna Bana Le" data-channel="Arijit Singh, Sachin-Jigar" data-thumb="https://i.ytimg.com/vi/cWMxCE2HTag/hqdefault.jpg">
+        <div class="row-index">6</div>
+        <div class="row-title-box">
+            <img src="https://i.ytimg.com/vi/cWMxCE2HTag/hqdefault.jpg" alt="Apna Bana Le" loading="lazy">
+            <div class="row-meta-col">
+                <span class="row-title-text">Apna Bana Le</span>
+                <span class="row-artist-sub">Arijit Singh, Sachin-Jigar</span>
+            </div>
+        </div>
+        <div class="row-channel-text">Bhediya Soundtrack</div>
+        <div class="row-duration-text">4:21</div>
+        <div class="row-actions-box">
+            <button class="row-btn-play" title="Play">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </button>
+            <button class="row-btn-heart active" title="Liked">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="#1db954"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </button>
+        </div>
+    </div>
+</div>
                                 </div>
                             </div>
 
@@ -961,8 +1570,46 @@
                                     </button>
                                 </div>
                                 <div class="custom-playlists-grid" id="customPlaylistsGrid">
-                                    <!-- Dynamic custom playlists -->
-                                </div>
+    <div class="custom-pl-card" data-playlist-id="pl_gym">
+        <div class="pl-card-art" style="background: linear-gradient(135deg, #e50914, #b20710);">
+            <span style="font-size: 2.5rem;">🔥</span>
+            <div class="pl-play-badge">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="white"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="pl-card-meta">
+            <h3>Punjabi Gym Boost</h3>
+            <p>High energy bangers & workout motivation</p>
+            <span class="pl-tracks-badge">4 Tracks • Ready to Play</span>
+        </div>
+    </div>
+    <div class="custom-pl-card" data-playlist-id="pl_chill">
+        <div class="pl-card-art" style="background: linear-gradient(135deg, #1db954, #128238);">
+            <span style="font-size: 2.5rem;">☕</span>
+            <div class="pl-play-badge">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="white"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="pl-card-meta">
+            <h3>Midnight Chill Lounge</h3>
+            <p>Peaceful lo-fi & romantic acoustic melodies</p>
+            <span class="pl-tracks-badge">4 Tracks • Ready to Play</span>
+        </div>
+    </div>
+    <div class="custom-pl-card" data-playlist-id="pl_bollywood">
+        <div class="pl-card-art" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+            <span style="font-size: 2.5rem;">👑</span>
+            <div class="pl-play-badge">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="white"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="pl-card-meta">
+            <h3>Bollywood 100M+ Classics</h3>
+            <p>Golden evergreen superhits and chart-toppers</p>
+            <span class="pl-tracks-badge">4 Tracks • Ready to Play</span>
+        </div>
+    </div>
+</div>
                             </div>
 
                             <!-- VIEW 3: RECENTLY PLAYED HISTORY -->
@@ -977,8 +1624,47 @@
                                     </button>
                                 </div>
                                 <div class="recent-tracks-grid" id="recentTracksGrid">
-                                    <!-- Populated dynamically -->
-                                </div>
+    <div class="music-card" data-id="sY45iA7PFS8" data-title="BANGER" data-channel="Badshah x Sharvi x Hiten" data-thumb="https://i.ytimg.com/vi/sY45iA7PFS8/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/sY45iA7PFS8/hqdefault.jpg" alt="BANGER" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="BANGER">BANGER</div>
+        <div class="card-song-artist" title="Badshah">Badshah</div>
+    </div>
+    <div class="music-card" data-id="BddP6PYo2gs" data-title="Kesariya" data-channel="Arijit Singh, Pritam" data-thumb="https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg" alt="Kesariya" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Kesariya">Kesariya</div>
+        <div class="card-song-artist" title="Arijit Singh">Arijit Singh</div>
+    </div>
+    <div class="music-card" data-id="34Na4j8AVgA" data-title="Starboy" data-channel="The Weeknd, Daft Punk" data-thumb="https://i.ytimg.com/vi/34Na4j8AVgA/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/34Na4j8AVgA/hqdefault.jpg" alt="Starboy" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Starboy">Starboy</div>
+        <div class="card-song-artist" title="The Weeknd">The Weeknd</div>
+    </div>
+    <div class="music-card" data-id="vvN4bA_g3eI" data-title="Softly" data-channel="Karan Aujla, Ikky" data-thumb="https://i.ytimg.com/vi/vvN4bA_g3eI/hqdefault.jpg">
+        <div class="card-img-box">
+            <img src="https://i.ytimg.com/vi/vvN4bA_g3eI/hqdefault.jpg" alt="Softly" loading="lazy">
+            <div class="card-float-play" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="black"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            </div>
+        </div>
+        <div class="card-song-title" title="Softly">Softly</div>
+        <div class="card-song-artist" title="Karan Aujla">Karan Aujla</div>
+    </div>
+</div>
                             </div>
 
                             <!-- VIEW 4: FOLLOWED ARTISTS -->
@@ -2086,7 +2772,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=20261022_browse_global_v7"></script>
+    <script src="app.js?v=20261023_v35_instant_hydrated"></script>
 
   <!-- DMCA & COPYRIGHT LEGAL MODAL -->
   <div class="movie-modal-overlay hidden" id="dmcaModal">
