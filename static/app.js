@@ -1197,6 +1197,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updateMediaSession(track);
         renderQueueDrawer();
         highlightActiveCards(track.id);
+        if (typeof recordRecentTrack === 'function') recordRecentTrack(track);
+        if (typeof prefetchUpcomingStreams === 'function') prefetchUpcomingStreams();
 
         if (svgPlay) svgPlay.classList.add('hidden');
         if (svgPause) svgPause.classList.remove('hidden');
@@ -4751,6 +4753,611 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupVideoSpotlightActions();
 
+
+    
+    // =========================================================================
+    // 1. RECENTLY PLAYED & UPCOMING PREFETCH ENGINE
+    // =========================================================================
+    let recentTracks = [];
+    try {
+        recentTracks = JSON.parse(localStorage.getItem('soundwave_recent_tracks') || '[]');
+    } catch (e) {
+        recentTracks = [];
+    }
+
+    function recordRecentTrack(track) {
+        if (!track || !track.id) return;
+        recentTracks = recentTracks.filter(t => t.id !== track.id);
+        recentTracks.unshift({
+            id: track.id,
+            title: track.title,
+            channel: track.channel,
+            thumbnail: track.thumbnail || `https://i.ytimg.com/vi/${track.id}/hqdefault.jpg`,
+            duration: track.duration || '--:--',
+            playedAt: Date.now()
+        });
+        if (recentTracks.length > 50) recentTracks.pop();
+        try {
+            localStorage.setItem('soundwave_recent_tracks', JSON.stringify(recentTracks));
+        } catch (e) {}
+        renderRecentTracks();
+    }
+
+    function renderRecentTracks() {
+        const grid = document.getElementById('recentTracksGrid');
+        if (!grid) return;
+        if (recentTracks.length === 0) {
+            grid.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 3rem 1rem; color: #a7a7a7;">
+                    <p style="font-size: 1.1rem; color: #fff; font-weight: 700; margin-bottom: 6px;">No Recently Played Songs</p>
+                    <p style="font-size: 0.85rem;">Play any song from Home, Search, or Videos to see it here.</p>
+                </div>
+            `;
+            return;
+        }
+        grid.innerHTML = '';
+        recentTracks.forEach(track => {
+            const card = document.createElement('div');
+            card.className = 'music-card';
+            card.innerHTML = `
+                <div class="card-art-box">
+                    <img src="${track.thumbnail}" alt="${escapeHtml(track.title)}" loading="lazy">
+                    <button class="card-play-btn" title="Play Now">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                        </svg>
+                    </button>
+                </div>
+                <div class="card-info">
+                    <div class="card-title" title="${escapeHtml(track.title)}">${escapeHtml(track.title)}</div>
+                    <div class="card-channel" title="${escapeHtml(track.channel)}">${escapeHtml(track.channel)}</div>
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                activeQueue = [track, ...activeQueue.filter(t => t.id !== track.id)];
+                renderQueueDrawer();
+                playTrackByIndex(0);
+            });
+            grid.appendChild(card);
+        });
+    }
+
+    const btnClearHistory = document.getElementById('btnClearHistory');
+    if (btnClearHistory) {
+        btnClearHistory.addEventListener('click', () => {
+            recentTracks = [];
+            localStorage.removeItem('soundwave_recent_tracks');
+            renderRecentTracks();
+            showToast('Playback history cleared');
+        });
+    }
+
+    function prefetchUpcomingStreams() {
+        if (!activeQueue || activeQueue.length === 0) return;
+        const nextList = activeQueue.slice(currentTrackIndex + 1, currentTrackIndex + 4);
+        nextList.forEach(t => {
+            if (t && t.id && !streamUrlCache.has(t.id)) {
+                fetch(`${API_BASE}/api/stream?id=${encodeURIComponent(t.id)}&title=${encodeURIComponent(t.title || '')}&channel=${encodeURIComponent(t.channel || '')}`)
+                    .then(r => r.json())
+                    .then(d => {
+                        if (d && d.streamUrl) streamUrlCache.set(t.id, d.streamUrl);
+                    })
+                    .catch(() => {});
+            }
+        });
+    }
+
+    // =========================================================================
+    // 2. SEARCH TAB INFINITE SCROLL & LONG LISTS
+    // =========================================================================
+    let searchPage = 1;
+    let isSearchPaginating = false;
+    let searchHasMore = true;
+    let currentActiveSearchQuery = '';
+
+    function setupSearchInfiniteScroll() {
+        const scrollContainer = document.getElementById('viewportScroll');
+        const tabSearch = document.getElementById('tabSearch');
+
+        const onSearchScroll = async () => {
+            if (!tabSearch || !tabSearch.classList.contains('active')) return;
+            if (isSearchPaginating || !searchHasMore || !currentActiveSearchQuery) return;
+
+            const sc = scrollContainer || document.documentElement;
+            const dist = sc.scrollHeight - (sc.scrollTop + sc.clientHeight);
+            if (dist < 600) {
+                isSearchPaginating = true;
+                searchPage++;
+                try {
+                    const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(currentActiveSearchQuery)}&page=${searchPage}&limit=30`);
+                    const data = await res.json();
+                    const results = data.results || [];
+                    const grid = document.getElementById('searchResultsGrid');
+                    if (results.length > 0 && grid) {
+                        const existingIds = new Set(Array.from(grid.querySelectorAll('.music-card')).map(c => c.getAttribute('data-id')));
+                        results.forEach(track => {
+                            if (existingIds.has(track.id)) return;
+                            const card = createMusicCard(track);
+                            grid.appendChild(card);
+                        });
+                        searchHasMore = data.hasMore !== false && results.length >= 15;
+                    } else {
+                        searchHasMore = false;
+                    }
+                } catch (e) {
+                    console.warn('Search pagination error:', e);
+                } finally {
+                    isSearchPaginating = false;
+                }
+            }
+        };
+
+        if (scrollContainer) scrollContainer.addEventListener('scroll', onSearchScroll, { passive: true });
+        window.addEventListener('scroll', onSearchScroll, { passive: true });
+    }
+
+    setupSearchInfiniteScroll();
+
+    // =========================================================================
+    // 3. AI DJ FULL KEYBOARD & VOICE SEARCH HUB
+    // =========================================================================
+    function setupAiDjSearchHub() {
+        const aidjInput = document.getElementById('aidjSearchInput');
+        const btnAidjSearch = document.getElementById('btnAidjSearchSubmit');
+        const btnVoice = document.getElementById('btnAidjVoiceSearch');
+        const resultsSection = document.getElementById('aidjResultsSection');
+        const tracksGrid = document.getElementById('aidjTracksGrid');
+        const spinner = document.getElementById('aidjSearchSpinner');
+        const resultsTitle = document.getElementById('aidjResultsTitle');
+        const chips = document.querySelectorAll('.aidj-prompt-chip');
+
+        async function executeAiDjSearch(q, shouldAutoPlay = false) {
+            const cleanQ = (q || '').trim();
+            if (!cleanQ) return;
+            if (aidjInput) aidjInput.value = cleanQ;
+
+            if (resultsTitle) resultsTitle.textContent = `DJ Results for "${cleanQ}"`;
+            if (spinner) spinner.classList.remove('hidden');
+            if (resultsSection) resultsSection.classList.remove('hidden');
+            if (tracksGrid) {
+                tracksGrid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 2rem 1rem; color: #a7a7a7;">
+                        <div class="sp-spinner" style="margin: 0 auto 10px;"></div>
+                        <span>DJ searching across global studio catalog...</span>
+                    </div>
+                `;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(cleanQ)}&limit=25`);
+                const data = await res.json();
+                const results = data.results || [];
+
+                if (spinner) spinner.classList.add('hidden');
+
+                if (results.length > 0 && tracksGrid) {
+                    tracksGrid.innerHTML = '';
+                    results.forEach((track, idx) => {
+                        const card = document.createElement('div');
+                        card.className = 'aidj-track-card';
+                        card.innerHTML = `
+                            <img src="${track.thumbnail}" alt="${escapeHtml(track.title)}" class="aidj-track-thumb" loading="lazy">
+                            <div class="aidj-track-info">
+                                <div class="aidj-track-title" title="${escapeHtml(track.title)}">${escapeHtml(track.title)}</div>
+                                <div class="aidj-track-artist">${escapeHtml(track.channel)} • ${track.duration || '3:30'}</div>
+                            </div>
+                            <button class="btn-aidj-play-track" title="Play Now">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="#000">
+                                    <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                                </svg>
+                            </button>
+                        `;
+
+                        card.addEventListener('click', () => {
+                            activeQueue = [track, ...results.filter(t => t.id !== track.id)];
+                            renderQueueDrawer();
+                            playTrackByIndex(0);
+                            showToast(`Playing ${track.title} 🎧`);
+                        });
+
+                        tracksGrid.appendChild(card);
+                    });
+
+                    // Auto-play first matching track if requested or "play" in prompt
+                    if (shouldAutoPlay || cleanQ.toLowerCase().includes('play')) {
+                        activeQueue = [...results];
+                        renderQueueDrawer();
+                        playTrackByIndex(0);
+                        showToast(`DJ Playing: ${results[0].title} 🔥`);
+                    }
+
+                    appendAiChatMessage('dj', `Here are the top tracks matching "${cleanQ}". Tap any song to play instantly!`);
+                } else if (tracksGrid) {
+                    tracksGrid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 2rem 1rem; color: #a7a7a7;">
+                            <p style="color: #fff; font-weight: 700;">No exact tracks found for "${cleanQ}"</p>
+                            <p style="font-size: 0.85rem;">Try another artist or song name.</p>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                console.warn('AI DJ search error:', err);
+                if (spinner) spinner.classList.add('hidden');
+            }
+        }
+
+        if (btnAidjSearch && aidjInput) {
+            btnAidjSearch.addEventListener('click', () => executeAiDjSearch(aidjInput.value));
+            aidjInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') executeAiDjSearch(aidjInput.value);
+            });
+        }
+
+        chips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                const prompt = chip.getAttribute('data-prompt');
+                if (prompt) executeAiDjSearch(prompt, true);
+            });
+        });
+
+        // Live Voice Search via Web Speech API
+        if (btnVoice) {
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRec) {
+                const rec = new SpeechRec();
+                rec.continuous = false;
+                rec.interimResults = false;
+                rec.lang = 'hi-IN';
+
+                btnVoice.addEventListener('click', () => {
+                    try {
+                        btnVoice.classList.add('listening');
+                        showToast('🎙️ AI DJ Listening... Speak now!');
+                        rec.start();
+                    } catch (e) {
+                        console.warn('Speech start error:', e);
+                        btnVoice.classList.remove('listening');
+                    }
+                });
+
+                rec.onresult = (evt) => {
+                    btnVoice.classList.remove('listening');
+                    const transcript = evt.results[0][0].transcript;
+                    if (transcript) {
+                        showToast(`Heard: "${transcript}"`);
+                        executeAiDjSearch(transcript, true);
+                    }
+                };
+
+                rec.onerror = () => {
+                    btnVoice.classList.remove('listening');
+                };
+
+                rec.onend = () => {
+                    btnVoice.classList.remove('listening');
+                };
+            } else {
+                btnVoice.addEventListener('click', () => {
+                    showToast('Voice search not supported in this browser. Please type in the search box.');
+                });
+            }
+        }
+    }
+
+    setupAiDjSearchHub();
+
+    // =========================================================================
+    // 4. MOVIES SECTION: 2 SUB-SECTIONS (YOUTUBE CINEMA & META REELS)
+    // =========================================================================
+    function setupMoviesSubSection() {
+        const btnCinema = document.getElementById('btnMovieSubTabCinema');
+        const btnReels = document.getElementById('btnMovieSubTabReels');
+        const cinemaView = document.getElementById('moviesCinemaView');
+        const reelsView = document.getElementById('moviesReelsView');
+        const moviesSentinel = document.getElementById('moviesScrollSentinel');
+        const reelsSentinel = document.getElementById('reelsScrollSentinel');
+        const scrollContainer = document.getElementById('viewportScroll');
+
+        if (btnCinema && btnReels) {
+            btnCinema.addEventListener('click', () => {
+                btnCinema.classList.add('active');
+                btnReels.classList.remove('active');
+                if (cinemaView) cinemaView.classList.remove('hidden');
+                if (reelsView) reelsView.classList.add('hidden');
+            });
+
+            btnReels.addEventListener('click', () => {
+                btnReels.classList.add('active');
+                btnCinema.classList.remove('active');
+                if (reelsView) reelsView.classList.remove('hidden');
+                if (cinemaView) cinemaView.classList.add('hidden');
+            });
+        }
+
+        // Infinite Scroll for Cinema Movies
+        if (moviesSentinel && 'IntersectionObserver' in window) {
+            const movieObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && activeTabName === 'movies' && cinemaView && !cinemaView.classList.contains('hidden')) {
+                        const btnMore = document.getElementById('btnMoviesLoadMore');
+                        if (btnMore && !btnMore.classList.contains('hidden')) {
+                            btnMore.click();
+                        }
+                    }
+                });
+            }, {
+                root: scrollContainer || null,
+                rootMargin: '500px'
+            });
+            movieObserver.observe(moviesSentinel);
+        }
+
+        // Infinite Scroll for Reels
+        const ADDITIONAL_REELS = [
+            {
+                id: 'reel_salaar',
+                embedUrl: 'https://www.youtube.com/embed/bUR_FKt7Iso?autoplay=0&loop=1&playlist=bUR_FKt7Iso&controls=1&modestbranding=1&rel=0',
+                sound: '🔥 Salaar Rebel Theme • Ravi Basrur',
+                title: 'Prabhas Monster Rampage Scene • Salaar',
+                desc: 'Violent Men entry fight sequence in 4K 120Hz'
+            },
+            {
+                id: 'reel_rrr',
+                embedUrl: 'https://www.youtube.com/embed/NgBoMJy386M?autoplay=0&loop=1&playlist=NgBoMJy386M&controls=1&modestbranding=1&rel=0',
+                sound: '⚡ Dosti • RRR Global Oscar Blockbuster',
+                title: 'Ram Charan & Jr NTR Stadium Stunt Scene',
+                desc: 'SS Rajamouli high-octane two-hero dynamic fight'
+            },
+            {
+                id: 'reel_fighter',
+                embedUrl: 'https://www.youtube.com/embed/9ms0zLrkKzM?autoplay=0&loop=1&playlist=9ms0zLrkKzM&controls=1&modestbranding=1&rel=0',
+                sound: '🚀 Vande Mataram • Fighter Air Combat',
+                title: 'Hrithik Roshan Sukhoi 30MKI Dogfight',
+                desc: 'Aerial combat cinema clip in 1080p Full HD'
+            }
+        ];
+        let reelIndex = 0;
+
+        if (reelsSentinel && 'IntersectionObserver' in window) {
+            const reelsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && activeTabName === 'movies' && reelsView && !reelsView.classList.contains('hidden')) {
+                        if (reelIndex < ADDITIONAL_REELS.length) {
+                            const reelData = ADDITIONAL_REELS[reelIndex++];
+                            const feed = document.getElementById('reelsScrollFeed');
+                            if (feed) {
+                                const card = document.createElement('div');
+                                card.className = 'clean-reel-card';
+                                card.innerHTML = `
+                                    <div class="reel-video-wrapper">
+                                        <iframe 
+                                            class="clean-reel-iframe" 
+                                            src="${reelData.embedUrl}" 
+                                            width="100%" 
+                                            height="100%" 
+                                            style="border:none;overflow:hidden;" 
+                                            scrolling="no" 
+                                            frameborder="0" 
+                                            allowfullscreen>
+                                        </iframe>
+                                    </div>
+                                    <div class="reel-meta-overlay">
+                                        <div class="reel-sound-tag">${reelData.sound}</div>
+                                        <h3 class="reel-title">${reelData.title}</h3>
+                                        <p class="reel-desc">${reelData.desc}</p>
+                                    </div>
+                                `;
+                                feed.appendChild(card);
+                            }
+                        }
+                    }
+                });
+            }, {
+                root: scrollContainer || null,
+                rootMargin: '400px'
+            });
+            reelsObserver.observe(reelsSentinel);
+        }
+    }
+
+    setupMoviesSubSection();
+
+    // =========================================================================
+    // 5. LIBRARY SECTION: 200% FUNCTIONALITY UPGRADE
+    // =========================================================================
+    function setupLibrarySuite() {
+        const btnLiked = document.getElementById('btnLibLiked');
+        const btnPlaylists = document.getElementById('btnLibPlaylists');
+        const btnRecent = document.getElementById('btnLibRecent');
+        const btnArtists = document.getElementById('btnLibArtists');
+
+        const viewLiked = document.getElementById('libViewLiked');
+        const viewPlaylists = document.getElementById('libViewPlaylists');
+        const viewRecent = document.getElementById('libViewRecent');
+        const viewArtists = document.getElementById('libViewArtists');
+
+        const pills = [btnLiked, btnPlaylists, btnRecent, btnArtists];
+        const views = [viewLiked, viewPlaylists, viewRecent, viewArtists];
+
+        function switchLibView(activeBtn, activeView) {
+            pills.forEach(p => p && p.classList.remove('active'));
+            views.forEach(v => v && v.classList.add('hidden'));
+            if (activeBtn) activeBtn.classList.add('active');
+            if (activeView) activeView.classList.remove('hidden');
+        }
+
+        if (btnLiked) btnLiked.addEventListener('click', () => switchLibView(btnLiked, viewLiked));
+        if (btnPlaylists) btnPlaylists.addEventListener('click', () => {
+            switchLibView(btnPlaylists, viewPlaylists);
+            renderCustomPlaylists();
+        });
+        if (btnRecent) btnRecent.addEventListener('click', () => {
+            switchLibView(btnRecent, viewRecent);
+            renderRecentTracks();
+        });
+        if (btnArtists) btnArtists.addEventListener('click', () => switchLibView(btnArtists, viewArtists));
+
+        // Custom Playlists State
+        let customPlaylists = [];
+        try {
+            customPlaylists = JSON.parse(localStorage.getItem('soundwave_custom_playlists') || '[]');
+        } catch (e) {
+            customPlaylists = [];
+        }
+
+        if (customPlaylists.length === 0) {
+            customPlaylists = [
+                { id: 'pl_gym', name: '🔥 Punjabi Gym Boost', desc: 'High energy bangers & workout motivation', tracks: [] },
+                { id: 'pl_chill', name: '☕ Midnight Chill Lounge', desc: 'Peaceful lo-fi & romantic acoustic', tracks: [] }
+            ];
+            try { localStorage.setItem('soundwave_custom_playlists', JSON.stringify(customPlaylists)); } catch (e) {}
+        }
+
+        function renderCustomPlaylists() {
+            const grid = document.getElementById('customPlaylistsGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            customPlaylists.forEach(pl => {
+                const card = document.createElement('div');
+                card.className = 'custom-pl-card';
+                card.innerHTML = `
+                    <div class="custom-pl-art">🎵</div>
+                    <div class="custom-pl-title">${escapeHtml(pl.name)}</div>
+                    <div class="custom-pl-meta">${escapeHtml(pl.desc || 'Custom playlist')} • ${pl.tracks ? pl.tracks.length : 0} tracks</div>
+                `;
+                card.addEventListener('click', () => {
+                    if (pl.tracks && pl.tracks.length > 0) {
+                        activeQueue = [...pl.tracks];
+                        renderQueueDrawer();
+                        playTrackByIndex(0);
+                        showToast(`Playing playlist: ${pl.name} 🎶`);
+                    } else {
+                        showToast(`Playlist "${pl.name}" is empty. Like or add songs to it!`);
+                    }
+                });
+                grid.appendChild(card);
+            });
+        }
+
+        // Modal for Creating Playlist
+        const btnOpenCreatePl = document.getElementById('btnOpenCreatePlaylistModal');
+        const modalCreatePl = document.getElementById('createPlaylistModal');
+        const btnCloseCreatePl = document.getElementById('btnCreatePlaylistClose');
+        const btnCancelCreatePl = document.getElementById('btnCancelCreatePlaylist');
+        const btnConfirmCreatePl = document.getElementById('btnConfirmCreatePlaylist');
+        const inputPlName = document.getElementById('playlistNameInput');
+        const inputPlDesc = document.getElementById('playlistDescInput');
+
+        if (btnOpenCreatePl && modalCreatePl) {
+            btnOpenCreatePl.addEventListener('click', () => modalCreatePl.classList.remove('hidden'));
+        }
+        if (btnCloseCreatePl && modalCreatePl) {
+            btnCloseCreatePl.addEventListener('click', () => modalCreatePl.classList.add('hidden'));
+        }
+        if (btnCancelCreatePl && modalCreatePl) {
+            btnCancelCreatePl.addEventListener('click', () => modalCreatePl.classList.add('hidden'));
+        }
+
+        if (btnConfirmCreatePl && inputPlName && modalCreatePl) {
+            btnConfirmCreatePl.addEventListener('click', () => {
+                const name = inputPlName.value.trim();
+                const desc = inputPlDesc ? inputPlDesc.value.trim() : '';
+                if (!name) {
+                    showToast('Please enter a playlist name');
+                    return;
+                }
+                const newPl = {
+                    id: 'pl_' + Date.now(),
+                    name: name,
+                    desc: desc,
+                    tracks: []
+                };
+                customPlaylists.push(newPl);
+                try { localStorage.setItem('soundwave_custom_playlists', JSON.stringify(customPlaylists)); } catch (e) {}
+                renderCustomPlaylists();
+                modalCreatePl.classList.add('hidden');
+                inputPlName.value = '';
+                if (inputPlDesc) inputPlDesc.value = '';
+                showToast(`Created playlist "${name}"! 🎉`);
+            });
+        }
+
+        // Shuffle Liked Songs
+        const btnShuffleLiked = document.getElementById('btnShuffleLiked');
+        if (btnShuffleLiked) {
+            btnShuffleLiked.addEventListener('click', () => {
+                if (!likedSongs || likedSongs.length === 0) {
+                    showToast('No liked songs to shuffle');
+                    return;
+                }
+                const shuffled = [...likedSongs].sort(() => Math.random() - 0.5);
+                activeQueue = shuffled;
+                renderQueueDrawer();
+                playTrackByIndex(0);
+                showToast('Shuffling Liked Songs 🔀');
+            });
+        }
+
+        // Followed Artists Click
+        document.querySelectorAll('.artist-bubble-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const artist = card.getAttribute('data-artist');
+                if (artist) {
+                    switchTab('search');
+                    const searchInput = document.getElementById('globalSearchInput');
+                    if (searchInput) searchInput.value = artist;
+                    currentActiveSearchQuery = artist;
+                    searchPage = 1;
+                    performGlobalSearch(artist);
+                }
+            });
+        });
+
+        renderRecentTracks();
+    }
+
+    setupLibrarySuite();
+
+    // =========================================================================
+    // 6. SUBSCRIPTION: SPECIAL LAUNCH OFFER ₹1 AUTOPAY MANDATE
+    // =========================================================================
+    function setupSubscriptionOffer() {
+        const btnClaim = document.getElementById('btnClaimOffer');
+        const modal = document.getElementById('autopayModal');
+        const btnClose = document.getElementById('btnAutopayClose');
+        const btnDismiss = document.getElementById('btnDismissAutopay');
+        const backdrop = document.getElementById('autopayBackdrop');
+        const btnConfirm = document.getElementById('btnConfirmAutopay');
+
+        function openModal() {
+            if (modal) modal.classList.remove('hidden');
+        }
+        function closeModal() {
+            if (modal) modal.classList.add('hidden');
+        }
+
+        if (btnClaim) btnClaim.addEventListener('click', openModal);
+        if (btnClose) btnClose.addEventListener('click', closeModal);
+        if (btnDismiss) btnDismiss.addEventListener('click', closeModal);
+        if (backdrop) backdrop.addEventListener('click', closeModal);
+
+        if (btnConfirm) {
+            btnConfirm.addEventListener('click', () => {
+                // Activate VIP access with 90-day validity
+                const expiryDate = new Date();
+                expiryDate.setDate(expiryDate.getDate() + 90);
+                try {
+                    localStorage.setItem('soundwave_vip_active', 'true');
+                    localStorage.setItem('soundwave_vip_expiry', expiryDate.toISOString());
+                } catch (e) {}
+
+                closeModal();
+                showToast('🎉 ₹1 AutoPay Mandate Authorized! Welcome to SoundWave VIP (3 Months Full Access)!');
+            });
+        }
+    }
+
+    setupSubscriptionOffer();
 
     // Auto-load T-Series on startup
     loadChannelSongs('tseries', 1, false);

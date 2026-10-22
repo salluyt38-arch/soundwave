@@ -143,11 +143,14 @@ def get_ydl_opts(extra=None):
     base = {
         "quiet": True,
         "no_warnings": True,
-        "socket_timeout": 8,
+        "socket_timeout": 6,
+        "check_formats": False,
+        "youtube_include_dash_manifest": False,
+        "youtube_include_hls_manifest": False,
         "js_runtimes": js_dict,
         "extractor_args": {
             "youtube": {
-                "player_client": ["ios", "mweb", "android"]
+                "player_client": ["android", "ios"]
             }
         }
     }
@@ -1246,37 +1249,66 @@ class MusicHandler(SimpleHTTPRequestHandler):
             elif path == "/api/search":
                 q = query.get("q", [""])[0].strip()
                 if not q:
-                    self.send_json({"results": []})
-                    return
-
-                if q in search_cache:
-                    self.send_json(search_cache[q])
+                    self.send_json({"results": [], "page": 1, "total": 0, "hasMore": False})
                     return
 
                 try:
+                    limit = int(query.get("limit", [40])[0])
+                    limit = max(10, min(limit, 60))
+                except Exception:
+                    limit = 40
+
+                try:
+                    page = int(query.get("page", [1])[0])
+                    page = max(1, page)
+                except Exception:
+                    page = 1
+
+                cache_key = f"{q.lower()}_{limit}_{page}"
+                if cache_key in search_cache:
+                    self.send_json(search_cache[cache_key])
+                    return
+
+                try:
+                    fetch_count = limit * page
                     ydl_opts = get_ydl_opts({
                         "format": "bestaudio/best",
                         "noplaylist": True,
                         "extract_flat": True,
                     })
                     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                        res = ydl.extract_info(f"ytsearch25:{q}", download=False)
+                        res = ydl.extract_info(f"ytsearch{fetch_count}:{q}", download=False)
+                        all_entries = res.get("entries", [])
+                        
+                        start_idx = (page - 1) * limit
+                        page_entries = all_entries[start_idx:start_idx + limit] if start_idx < len(all_entries) else []
+                        
                         results = []
-                        for entry in res.get("entries", []):
+                        seen_ids = set()
+                        for entry in page_entries:
                             if not entry or not entry.get("id"):
                                 continue
-                            
+                            video_id = entry.get("id")
+                            if video_id in seen_ids:
+                                continue
+                            seen_ids.add(video_id)
+
                             duration_sec = entry.get("duration") or 0
+                            # Filter out non-music spam (> 25 mins or < 30s) unless searching for full mix
+                            if "hour" not in q.lower() and "full" not in q.lower() and duration_sec > 1500:
+                                continue
+                            if duration_sec < 30 and "short" not in q.lower():
+                                continue
+
                             mins = int(duration_sec) // 60
                             secs = int(duration_sec) % 60
                             duration_str = f"{mins}:{secs:02d}"
 
-                            video_id = entry.get("id")
                             raw_t = entry.get("title", "Unknown Title")
                             clean_t = clean_youtube_title(raw_t)
                             channel_name = entry.get("channel") or entry.get("uploader") or "SoundWave Artist"
                             thumb = entry.get("thumbnail") or f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
-                            
+
                             views = entry.get("view_count")
                             if views and isinstance(views, int) and views > 0:
                                 if views >= 1_000_000_000:
@@ -1301,11 +1333,17 @@ class MusicHandler(SimpleHTTPRequestHandler):
                                 "views_str": views_str
                             })
 
-                        data = {"results": results}
-                        search_cache[q] = data
+                        data = {
+                            "results": results,
+                            "page": page,
+                            "limit": limit,
+                            "total": len(results),
+                            "hasMore": len(all_entries) >= fetch_count
+                        }
+                        search_cache[cache_key] = data
                         self.send_json(data)
                 except Exception as e:
-                    self.send_json({"error": str(e)}, status=500)
+                    self.send_json({"error": str(e), "results": [], "page": page, "hasMore": False}, status=500)
 
             elif path == "/api/stream":
                 video_id = query.get("id", [""])[0].strip()
@@ -1316,19 +1354,25 @@ class MusicHandler(SimpleHTTPRequestHandler):
                     self.send_json({"error": "Missing video ID or title"}, status=400)
                     return
 
-                cache_key = video_id or title
-                if cache_key in stream_cache:
-                    self.send_json(stream_cache[cache_key])
-                    return
+                # Check in-memory cache
+                for key in [video_id, title, f"{title}_{channel}"]:
+                    if key and key in stream_cache:
+                        self.send_json(stream_cache[key])
+                        return
 
                 stream_url = None
 
-                # 1. For exact YouTube videos (Travis Scott, The Weeknd, Drake, Badshah, All Artists Worldwide):
-                # Extract the 100% genuine original studio audio stream directly!
-                if video_id and not video_id.startswith("saavn_"):
+                # 1. Fast JioSaavn verified stream check (0.15s ultra-fast CDN for Indian/Bollywood/Punjabi)
+                if title:
+                    saavn_candidate = get_saavn_stream(f"{title} {channel}".strip())
+                    if saavn_candidate:
+                        stream_url = saavn_candidate
+
+                # 2. Extract genuine direct audio stream from YouTube
+                if not stream_url and video_id and not video_id.startswith("saavn_"):
                     try:
                         ydl_opts = get_ydl_opts({
-                            "format": "bestaudio[ext=m4a]/bestaudio/best",
+                            "format": "bestaudio[ext=m4a]/bestaudio/18/best",
                             "noplaylist": True,
                         })
                         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -1347,35 +1391,13 @@ class MusicHandler(SimpleHTTPRequestHandler):
                             if not title:
                                 title = info.get("title") or "SoundWave Audio"
                             if not channel:
-                                channel = info.get("channel") or info.get("uploader") or "Artist"
+                                channel = info.get("channel") or info.get("uploader") or "SoundWave Artist"
                     except Exception as yt_err:
                         print("Direct YouTube stream extraction notice:", yt_err)
 
-                # 2. For native Saavn IDs (saavn_...):
-                if not stream_url and video_id and video_id.startswith("saavn_"):
-                    clean_id = video_id.replace("saavn_", "")
-                    try:
-                        det_url = f"https://www.jiosaavn.com/api.php?__call=song.getDetails&_format=json&_marker=0&api_version=4&ctx=web6dot0&pids={clean_id}"
-                        req = urllib.request.Request(det_url, headers={"User-Agent": UA})
-                        with urllib.request.urlopen(req, timeout=4) as r:
-                            det = json.loads(r.read().decode("utf-8", errors="ignore"))
-                            more = det.get("songs", [{}])[0].get("more_info", {})
-                            enc = more.get("encrypted_media_url")
-                            if enc:
-                                from Crypto.Cipher import DES
-                                cipher = DES.new(b"38346591", DES.MODE_ECB)
-                                dec = cipher.decrypt(base64.b64decode(enc))
-                                pad = dec[-1]
-                                raw_url = dec[:-pad].decode("utf-8")
-                                stream_url = raw_url.replace("_96.mp4", "_160.mp4")
-                    except Exception as s_err:
-                        pass
-
-                # 3. Fallback to Saavn if direct extraction was not available
+                # 3. Fallback to Saavn
                 if not stream_url and title:
                     stream_url = get_saavn_stream(title)
-                if not stream_url and title and channel:
-                    stream_url = get_saavn_stream(f"{title} {channel}")
 
                 if stream_url:
                     data = {
@@ -1386,7 +1408,8 @@ class MusicHandler(SimpleHTTPRequestHandler):
                         "thumbnail": f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg" if (video_id and not video_id.startswith("saavn_")) else "",
                         "duration": 0
                     }
-                    stream_cache[cache_key] = data
+                    if video_id: stream_cache[video_id] = data
+                    if title: stream_cache[title] = data
                     self.send_json(data)
                 else:
                     self.send_json({"error": "Stream not available for this track"}, status=404)

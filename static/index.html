@@ -636,266 +636,485 @@
                     <!-- TAB: MOVIES (POWERED BY VEGAMOVIES) -->
                     <div class="tab-panel" id="tabMovies">
                         <div class="movies-container">
-                            <!-- Movie Hero Spotlight -->
-                            <div class="movie-hero-spotlight" id="movieSpotlightBanner">
-                                <div class="spotlight-backdrop-glow"></div>
-                                <div class="spotlight-content">
-                                    <div class="spotlight-badge">
-                                        <span class="spotlight-badge-dot"></span>
-                                        <span>CINEMA VAULT (1080p)</span>
-                                    </div>
-                                    <h1 class="spotlight-title" id="spotlightTitle">Colony</h1>
-                                    <div class="spotlight-meta">
-                                        <span class="spotlight-rating" id="spotlightRating">⭐ 8.1 / 10</span>
-                                        <span class="spotlight-sep">•</span>
-                                        <span class="spotlight-year" id="spotlightYear">2026</span>
-                                        <span class="spotlight-sep">•</span>
-                                        <span class="spotlight-genre" id="spotlightGenre">Action, Sci-Fi</span>
-                                    </div>
-                                    <p class="spotlight-desc" id="spotlightDesc">A breathtaking survival journey into an uncharted realm with relentless action and thrilling encounters.</p>
-                                    <div class="spotlight-actions">
-                                        <button class="btn-spotlight-trailer" id="btnSpotlightTrailer">
-                                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                                                <polygon points="6 3 20 12 6 21 6 3"></polygon>
-                                            </svg>
-                                            <span>▶ Watch Full Movie (1080p)</span>
-                                        </button>
-                                        <button class="btn-spotlight-detail" id="btnSpotlightDetail">
-                                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                            </svg>
-                                            <span>Movie Details</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="spotlight-poster-box">
-                                    <img id="spotlightPosterImg" src="https://image.tmdb.org/t/p/w500/1I0E3f44UEsBmYpK6qkNLzvDQoN.jpg" alt="Spotlight Movie">
-                                </div>
-                            </div>
-
-                            <!-- Movie Search and Filter Controls -->
-                            <div class="movies-controls-bar">
-                                <div class="movie-search-box">
-                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
-                                        <circle cx="11" cy="11" r="8"></circle>
-                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            
+                            <!-- Movies Top Sub-Navigation (YouTube Cinema vs Meta Reels) -->
+                            <div class="movies-subnav-bar">
+                                <button class="movies-subtab-btn active" id="btnMovieSubTabCinema" data-sub="cinema">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                        <polygon points="6 3 20 12 6 21 6 3"></polygon>
                                     </svg>
-                                    <input type="text" id="movieSearchInput" placeholder="Search full movies (e.g. Salman Khan, Allu Arjun, KGF, Pushpa, Comedy)...">
-                                    <button class="movie-search-clear hidden" id="movieSearchClear">✕</button>
-                                </div>
-                            </div>
-
-                            <!-- Genre & Category Chips -->
-                            <div class="movie-chips-scroll" id="movieChipsRow">
-                                <button class="movie-chip active" data-type="genre" data-val="all">🔥 All Full Movies</button>
-                                <button class="movie-chip" data-type="genre" data-val="south_hindi">⚡ South Hindi Dubbed</button>
-                                <button class="movie-chip" data-type="genre" data-val="bollywood">🍿 Bollywood Blockbusters</button>
-                                <button class="movie-chip" data-type="genre" data-val="action">💥 Action & Thriller</button>
-                                <button class="movie-chip" data-type="genre" data-val="comedy">😂 Comedy Hits</button>
-                                <button class="movie-chip" data-type="genre" data-val="hollywood">🚀 Hollywood Classics</button>
-                                <button class="movie-chip" data-type="genre" data-val="romance">❤️ Romantic Drama</button>
-                            </div>
-
-                            <!-- Movies Section Header -->
-                            <div class="movies-grid-header">
-                                <div class="movies-header-left">
-                                    <h3 id="moviesGridTitle">Action Movies</h3>
-                                    <span class="movies-count-badge" id="moviesCountBadge">Live catalog</span>
-                                </div>
-                                <div class="movies-loader hidden" id="moviesLoadingSpinner">
-                                    <div class="sp-spinner"></div>
-                                </div>
-                            </div>
-
-                            <!-- Movies Grid -->
-                            <div class="movies-grid" id="moviesGrid">
-                                <!-- Cards populated dynamically -->
-                            </div>
-
-                            <!-- Load More Button -->
-                            <div class="movies-load-more-wrap" id="moviesLoadMoreWrap">
-                                <button class="btn-movies-load-more" id="btnMoviesLoadMore">
-                                    <span>Load More Movies</span>
-                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
-                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    <span>🎬 1. Movies Only YouTube (1080p Cinema)</span>
+                                </button>
+                                <button class="movies-subtab-btn" id="btnMovieSubTabReels" data-sub="reels">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                        <polygon points="10 8 16 12 10 16 10 8" fill="#000"></polygon>
                                     </svg>
+                                    <span>📱 2. Meta Facebook Reels & Shorts (120Hz Smooth)</span>
                                 </button>
                             </div>
+
+                            <!-- SUB-SECTION 1: YOUTUBE FULL MOVIES & CINEMA -->
+                            <div class="movies-subview active" id="moviesCinemaView">
+                                <!-- Movie Hero Spotlight -->
+                                <div class="movie-hero-spotlight" id="movieSpotlightBanner">
+                                    <div class="spotlight-backdrop-glow"></div>
+                                    <div class="spotlight-content">
+                                        <div class="spotlight-badge">
+                                            <span class="spotlight-badge-dot"></span>
+                                            <span>CINEMA VAULT (1080p FULL HD)</span>
+                                        </div>
+                                        <h1 class="spotlight-title" id="spotlightTitle">Colony</h1>
+                                        <div class="spotlight-meta">
+                                            <span class="spotlight-rating" id="spotlightRating">⭐ 8.1 / 10</span>
+                                            <span class="spotlight-sep">•</span>
+                                            <span class="spotlight-year" id="spotlightYear">2026</span>
+                                            <span class="spotlight-sep">•</span>
+                                            <span class="spotlight-genre" id="spotlightGenre">Action, Sci-Fi</span>
+                                        </div>
+                                        <p class="spotlight-desc" id="spotlightDesc">A breathtaking survival journey into an uncharted realm with relentless action and thrilling encounters.</p>
+                                        <div class="spotlight-actions">
+                                            <button class="btn-spotlight-trailer" id="btnSpotlightTrailer">
+                                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                                    <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                                                </svg>
+                                                <span>▶ Watch Full Movie (1080p)</span>
+                                            </button>
+                                            <button class="btn-spotlight-detail" id="btnSpotlightDetail">
+                                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="10"></circle>
+                                                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                                </svg>
+                                                <span>Movie Details</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="spotlight-poster-box">
+                                        <img id="spotlightPosterImg" src="https://image.tmdb.org/t/p/w500/1I0E3f44UEsBmYpK6qkNLzvDQoN.jpg" alt="Spotlight Movie">
+                                    </div>
+                                </div>
+
+                                <!-- Movie Search and Filter Controls -->
+                                <div class="movies-controls-bar">
+                                    <div class="movie-search-box">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                        </svg>
+                                        <input type="text" id="movieSearchInput" placeholder="Search full movies (e.g. Salman Khan, Allu Arjun, KGF, Pushpa, Comedy)...">
+                                        <button class="movie-search-clear hidden" id="movieSearchClear">✕</button>
+                                    </div>
+                                </div>
+
+                                <!-- Genre & Category Chips -->
+                                <div class="movie-chips-scroll" id="movieChipsRow">
+                                    <button class="movie-chip active" data-type="genre" data-val="all">🔥 All Full Movies</button>
+                                    <button class="movie-chip" data-type="genre" data-val="south_hindi">⚡ South Hindi Dubbed</button>
+                                    <button class="movie-chip" data-type="genre" data-val="bollywood">👑 Bollywood Blockbusters</button>
+                                    <button class="movie-chip" data-type="genre" data-val="action">💥 Action & Thriller</button>
+                                    <button class="movie-chip" data-type="genre" data-val="comedy">😂 Comedy Hits</button>
+                                    <button class="movie-chip" data-type="genre" data-val="hollywood">🌟 Hollywood Classics</button>
+                                    <button class="movie-chip" data-type="genre" data-val="romance">💖 Romantic Drama</button>
+                                </div>
+
+                                <!-- Movies Section Header -->
+                                <div class="movies-grid-header">
+                                    <div class="movies-header-left">
+                                        <h3 id="moviesGridTitle">Action & Blockbuster Movies</h3>
+                                        <span class="movies-count-badge" id="moviesCountBadge">Live catalog</span>
+                                    </div>
+                                    <div class="movies-loader hidden" id="moviesLoadingSpinner">
+                                        <div class="sp-spinner"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Movies Grid with Endless Infinite Scrolling -->
+                                <div class="movies-grid" id="moviesGrid">
+                                    <!-- Cards populated dynamically -->
+                                </div>
+
+                                <!-- Endless Movies Infinite Scroll Sentinel -->
+                                <div class="movies-infinite-footer" style="text-align: center; margin: 2rem 0 4rem;">
+                                    <button class="btn-movies-load-more" id="btnMoviesLoadMore">
+                                        <span>Load More Movies ▾</span>
+                                    </button>
+                                    <div id="moviesScrollSentinel" style="height: 30px; width: 100%; pointer-events: none;"></div>
+                                </div>
+                            </div>
+
+                            <!-- SUB-SECTION 2: META FACEBOOK REELS & CINEMA SHORTS (120Hz Clean Feed) -->
+                            <div class="movies-subview hidden" id="moviesReelsView">
+                                <div class="reels-feed-container">
+                                    <div class="reels-header-card">
+                                        <div class="reels-live-tag">
+                                            <span class="pulse-dot"></span>
+                                            <span>META CINEMA REELS • ZERO ADS & UNRESTRICTED</span>
+                                        </div>
+                                        <h2>Cinematic Short Reels Stream</h2>
+                                        <p>Pure viral movie moments, thrilling clips & high-octane reels with smooth 120Hz scrolling.</p>
+                                    </div>
+
+                                    <!-- Reels Vertical Feed -->
+                                    <div class="reels-scroll-feed" id="reelsScrollFeed">
+                                        <!-- Primary Requested Meta Reel: 1837133837735304 (Frameless, Zero FB Branding) -->
+                                        <div class="clean-reel-card" data-reel-id="1837133837735304">
+                                            <div class="reel-video-wrapper">
+                                                <iframe 
+                                                    class="clean-reel-iframe" 
+                                                    src="https://www.facebook.com/plugins/video.php?height=720&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1837133837735304%2F&show_text=false&width=405&t=0" 
+                                                    width="100%" 
+                                                    height="100%" 
+                                                    style="border:none;overflow:hidden;" 
+                                                    scrolling="no" 
+                                                    frameborder="0" 
+                                                    allowfullscreen="true" 
+                                                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+                                                </iframe>
+                                                <div class="reel-clean-overlay"></div>
+                                            </div>
+                                            <div class="reel-meta-overlay">
+                                                <div class="reel-sound-tag">🎵 SoundWave Cinema Mix</div>
+                                                <h3 class="reel-title">Blockbuster Viral Cinema Reel #1</h3>
+                                                <p class="reel-desc">High-voltage action movie moment • Smooth 120Hz cinema stream</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Reel 2: KGF 2 Mass Monster Entry -->
+                                        <div class="clean-reel-card" data-reel-id="reel_kgf2">
+                                            <div class="reel-video-wrapper">
+                                                <iframe 
+                                                    class="clean-reel-iframe" 
+                                                    src="https://www.youtube.com/embed/JKa05nyUmuQ?autoplay=0&loop=1&playlist=JKa05nyUmuQ&controls=1&modestbranding=1&rel=0" 
+                                                    width="100%" 
+                                                    height="100%" 
+                                                    style="border:none;overflow:hidden;" 
+                                                    scrolling="no" 
+                                                    frameborder="0" 
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                    allowfullscreen>
+                                                </iframe>
+                                            </div>
+                                            <div class="reel-meta-overlay">
+                                                <div class="reel-sound-tag">🔥 Monster BGM • KGF Chapter 2</div>
+                                                <h3 class="reel-title">Rocky Bhai Gun Machine Mass Scene</h3>
+                                                <p class="reel-desc">Yash legendary Kalashnikov firing scene in 4K HDR</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Reel 3: Pushpa 2 The Rule Mass Teaser Reel -->
+                                        <div class="clean-reel-card" data-reel-id="reel_pushpa2">
+                                            <div class="reel-video-wrapper">
+                                                <iframe 
+                                                    class="clean-reel-iframe" 
+                                                    src="https://www.youtube.com/embed/1kVK0MZlbI4?autoplay=0&loop=1&playlist=1kVK0MZlbI4&controls=1&modestbranding=1&rel=0" 
+                                                    width="100%" 
+                                                    height="100%" 
+                                                    style="border:none;overflow:hidden;" 
+                                                    scrolling="no" 
+                                                    frameborder="0" 
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                    allowfullscreen>
+                                                </iframe>
+                                            </div>
+                                            <div class="reel-meta-overlay">
+                                                <div class="reel-sound-tag">💥 Pushpa Raj • Jaathara Entry</div>
+                                                <h3 class="reel-title">Pushpa 2 Rule Breaking Mass Entry</h3>
+                                                <p class="reel-desc">Allu Arjun sensational Jaathara look & high-speed action</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Reel 4: Animal Ranbir Kapoor Machine Gun Action -->
+                                        <div class="clean-reel-card" data-reel-id="reel_animal">
+                                            <div class="reel-video-wrapper">
+                                                <iframe 
+                                                    class="clean-reel-iframe" 
+                                                    src="https://www.youtube.com/embed/Dydmpfo68DA?autoplay=0&loop=1&playlist=Dydmpfo68DA&controls=1&modestbranding=1&rel=0" 
+                                                    width="100%" 
+                                                    height="100%" 
+                                                    style="border:none;overflow:hidden;" 
+                                                    scrolling="no" 
+                                                    frameborder="0" 
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                    allowfullscreen>
+                                                </iframe>
+                                            </div>
+                                            <div class="reel-meta-overlay">
+                                                <div class="reel-sound-tag">⚡ Arjan Vailly • Power Action</div>
+                                                <h3 class="reel-title">Ranbir Kapoor War Machine Rampage</h3>
+                                                <p class="reel-desc">Epic hallway battle scene with 500-bullet custom machine gun</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Reel 5: Jawan Vikram Rathore Cigar Entry -->
+                                        <div class="clean-reel-card" data-reel-id="reel_jawan">
+                                            <div class="reel-video-wrapper">
+                                                <iframe 
+                                                    class="clean-reel-iframe" 
+                                                    src="https://www.youtube.com/embed/COv52Qyctws?autoplay=0&loop=1&playlist=COv52Qyctws&controls=1&modestbranding=1&rel=0" 
+                                                    width="100%" 
+                                                    height="100%" 
+                                                    style="border:none;overflow:hidden;" 
+                                                    scrolling="no" 
+                                                    frameborder="0" 
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                    allowfullscreen>
+                                                </iframe>
+                                            </div>
+                                            <div class="reel-meta-overlay">
+                                                <div class="reel-sound-tag">👑 Vikram Rathore Theme • Anirudh</div>
+                                                <h3 class="reel-title">SRK Baap Entry Scene • Jawan</h3>
+                                                <p class="reel-desc">Bete ko haath lagane se pehle baap se baat kar</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Reels Infinite Scroll Trigger -->
+                                    <div class="reels-infinite-loader" style="text-align: center; padding: 2rem 0 5rem;">
+                                        <div class="sp-spinner" style="margin: 0 auto 10px;"></div>
+                                        <span style="color: #a7a7a7; font-size: 0.85rem;">Scroll down for endless viral movie reels...</span>
+                                        <div id="reelsScrollSentinel" style="height: 30px; width: 100%; pointer-events: none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
                     <!-- TAB 3: LIKED SONGS & LIBRARY -->
                     <div class="tab-panel" id="tabLibrary">
-                        <div class="library-header-banner">
-                            <div class="library-art-box">
-                                <svg viewBox="0 0 24 24" width="70" height="70" fill="white">
-                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                                </svg>
-                            </div>
-                            <div class="library-meta">
-                                <span class="lib-sub-tag">PLAYLIST</span>
-                                <h1>Liked Songs</h1>
-                                <p><span id="librarySongCount">0 songs</span> • Saved in your local library</p>
-                                <button class="btn-play-all-liked" id="btnPlayLikedPlaylist">
-                                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-                                        <polygon points="6 3 20 12 6 21 6 3"></polygon>
-                                    </svg>
-                                    <span>Play All</span>
+                        <div class="library-view-container">
+                            
+                            <!-- Library Top Navigation Pills -->
+                            <div class="library-nav-pills">
+                                <button class="lib-pill-btn active" data-libtab="liked" id="btnLibLiked">
+                                    ❤️ Liked Songs
+                                </button>
+                                <button class="lib-pill-btn" data-libtab="playlists" id="btnLibPlaylists">
+                                    📁 Custom Playlists
+                                </button>
+                                <button class="lib-pill-btn" data-libtab="recent" id="btnLibRecent">
+                                    🕒 Recently Played
+                                </button>
+                                <button class="lib-pill-btn" data-libtab="artists" id="btnLibArtists">
+                                    🌟 Followed Artists
                                 </button>
                             </div>
-                        </div>
 
-                        <!-- Liked Songs Table List -->
-                        <div class="library-table-container">
-                            <div class="sp-table-header">
-                                <div class="th-num">#</div>
-                                <div class="th-title">Title</div>
-                                <div class="th-channel">Artist / Channel</div>
-                                <div class="th-duration">Duration</div>
-                                <div class="th-action"></div>
-                            </div>
-                            <div class="sp-table-body" id="libraryTableBody">
-                                <div class="empty-library">
-                                    <p>No liked songs yet.</p>
-                                    <span>Click the heart icon on any song while listening to save it here!</span>
+                            <!-- VIEW 1: LIKED SONGS -->
+                            <div class="lib-sub-view active" id="libViewLiked">
+                                <div class="library-header-banner">
+                                    <div class="library-art-box">
+                                        <svg viewBox="0 0 24 24" width="70" height="70" fill="white">
+                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="library-meta">
+                                        <span class="lib-sub-tag">OFFICIAL PLAYLIST</span>
+                                        <h1>Liked Songs</h1>
+                                        <p><span id="librarySongCount">0 songs</span> • Saved in your private offline library</p>
+                                        <div class="lib-banner-actions">
+                                            <button class="btn-play-all-liked" id="btnPlayLikedPlaylist">
+                                                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                                                    <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                                                </svg>
+                                                <span>Play All</span>
+                                            </button>
+                                            <button class="btn-shuffle-liked" id="btnShuffleLiked">
+                                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <polyline points="16 3 21 3 21 8"></polyline>
+                                                    <line x1="4" y1="20" x2="21" y2="3"></line>
+                                                    <polyline points="21 16 21 21 16 21"></polyline>
+                                                    <line x1="15" y1="15" x2="21" y2="21"></line>
+                                                    <line x1="4" y1="4" x2="9" y2="9"></line>
+                                                </svg>
+                                                <span>Shuffle</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Liked Songs Table List -->
+                                <div class="library-table-container">
+                                    <div class="sp-table-header">
+                                        <div class="th-num">#</div>
+                                        <div class="th-title">Title</div>
+                                        <div class="th-channel">Artist / Channel</div>
+                                        <div class="th-duration">Duration</div>
+                                        <div class="th-actions">Action</div>
+                                    </div>
+                                    <div class="sp-table-body" id="likedSongsTableBody">
+                                        <!-- Dynamically Populated -->
+                                    </div>
                                 </div>
                             </div>
+
+                            <!-- VIEW 2: CUSTOM PLAYLISTS -->
+                            <div class="lib-sub-view hidden" id="libViewPlaylists">
+                                <div class="playlists-dash-header">
+                                    <div>
+                                        <h2>Your Playlists</h2>
+                                        <p>Create and curate custom playlists for gym, party, long drive, or work.</p>
+                                    </div>
+                                    <button class="btn-create-playlist-trigger" id="btnOpenCreatePlaylistModal">
+                                        <span>+ Create New Playlist</span>
+                                    </button>
+                                </div>
+                                <div class="custom-playlists-grid" id="customPlaylistsGrid">
+                                    <!-- Dynamic custom playlists -->
+                                </div>
+                            </div>
+
+                            <!-- VIEW 3: RECENTLY PLAYED HISTORY -->
+                            <div class="lib-sub-view hidden" id="libViewRecent">
+                                <div class="recent-dash-header">
+                                    <div>
+                                        <h2>Recently Played</h2>
+                                        <p>Quickly jump back into songs and videos you recently enjoyed.</p>
+                                    </div>
+                                    <button class="btn-clear-history" id="btnClearHistory">
+                                        <span>Clear History</span>
+                                    </button>
+                                </div>
+                                <div class="recent-tracks-grid" id="recentTracksGrid">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- VIEW 4: FOLLOWED ARTISTS -->
+                            <div class="lib-sub-view hidden" id="libViewArtists">
+                                <div class="artists-dash-header">
+                                    <h2>Top Artists & Creators</h2>
+                                    <p>Tap any artist to explore their entire catalog, bangers, and concert hits.</p>
+                                </div>
+                                <div class="followed-artists-grid" id="followedArtistsGrid">
+                                    <div class="artist-bubble-card" data-artist="Arijit Singh">
+                                        <img src="https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg" alt="Arijit Singh">
+                                        <h4>Arijit Singh</h4>
+                                        <span>Soulful & Romance</span>
+                                    </div>
+                                    <div class="artist-bubble-card" data-artist="Badshah">
+                                        <img src="https://i.ytimg.com/vi/dZ0fwJojhrs/hqdefault.jpg" alt="Badshah">
+                                        <h4>Badshah</h4>
+                                        <span>Party Bangers</span>
+                                    </div>
+                                    <div class="artist-bubble-card" data-artist="Travis Scott">
+                                        <img src="https://i.ytimg.com/vi/B9synWjqBn8/hqdefault.jpg" alt="Travis Scott">
+                                        <h4>Travis Scott</h4>
+                                        <span>Trap & Hip-Hop</span>
+                                    </div>
+                                    <div class="artist-bubble-card" data-artist="The Weeknd">
+                                        <img src="https://i.ytimg.com/vi/34Na4j8AVgA/hqdefault.jpg" alt="The Weeknd">
+                                        <h4>The Weeknd</h4>
+                                        <span>Global Pop & R&B</span>
+                                    </div>
+                                    <div class="artist-bubble-card" data-artist="Karan Aujla">
+                                        <img src="https://i.ytimg.com/vi/TaubaTauba/hqdefault.jpg" alt="Karan Aujla">
+                                        <h4>Karan Aujla</h4>
+                                        <span>Punjabi Hype</span>
+                                    </div>
+                                    <div class="artist-bubble-card" data-artist="Yo Yo Honey Singh">
+                                        <img src="https://i.ytimg.com/vi/Millionaire/hqdefault.jpg" alt="Honey Singh">
+                                        <h4>Yo Yo Honey Singh</h4>
+                                        <span>Desi Hip-Hop</span>
+                                    </div>
+                                    <div class="artist-bubble-card" data-artist="Shubh">
+                                        <img src="https://i.ytimg.com/vi/Cheques/hqdefault.jpg" alt="Shubh">
+                                        <h4>Shubh</h4>
+                                        <span>Global Chartbuster</span>
+                                    </div>
+                                    <div class="artist-bubble-card" data-artist="Diljit Dosanjh">
+                                        <img src="https://i.ytimg.com/vi/Diljit/hqdefault.jpg" alt="Diljit Dosanjh">
+                                        <h4>Diljit Dosanjh</h4>
+                                        <span>Stadium Vibes</span>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
                     <!-- TAB 4: PREMIUM PLANS & SUBSCRIPTION -->
                     <div class="tab-panel" id="tabPremium">
-                        <!-- Hero Header Banner -->
-                        <div class="premium-hero-banner">
-                            <div class="prem-hero-badge">SOUNDWAVE VIP ACCESS</div>
-                            <h1 class="prem-hero-title">Listen Without Limits.<br>Get SoundWave VIP for Only ₹49.</h1>
-                            <p class="prem-hero-subtitle">Zero ads, unlimited song downloads to your phone, screen-off background play, and Ultra HD 320 kbps studio audio. Cancel anytime with 1 tap.</p>
-                            <div class="prem-hero-buttons">
-                                <button class="btn-prem-cta" data-plan="vip" data-price="49" data-name="SoundWave VIP">Get VIP for ₹49</button>
-                            </div>
-                            <div class="prem-terms">Cancel anytime. Zero hidden fees.</div>
-                        </div>
+                        <div class="premium-wrapper">
+                            
+                            <!-- SPECIAL PROMOTIONAL LAUNCH OFFER BANNER -->
+                            <div class="promo-launch-hero">
+                                <div class="promo-launch-glow"></div>
+                                <div class="promo-launch-badge">
+                                    <span class="promo-badge-star">🎉</span>
+                                    <span>SPECIAL LAUNCH OFFER</span>
+                                </div>
 
-                        <!-- Active Subscription Status Card (Shown if User Subscribed) -->
-                        <div class="active-sub-card hidden" id="activeSubCard">
-                            <div class="sub-card-left">
-                                <span class="sub-crown-icon">👑</span>
-                                <div>
-                                    <div class="sub-plan-badge">PREMIUM ACTIVE</div>
-                                    <h3 id="activePlanName">Individual Premium</h3>
-                                    <p id="activePlanDetail">Ultra HD 320 kbps Studio Audio • Unlimited Device Downloads • Ad-Free</p>
-                                    <div class="sub-date" id="activePlanExpiry">Renews automatically on Nov 21, 2026</div>
-                                </div>
-                            </div>
-                            <div class="sub-card-right">
-                                <button class="btn-cancel-sub" id="btnCancelSub">Cancel Subscription</button>
-                            </div>
-                        </div>
-
-                        <!-- Perks Grid (4 Icon Cards) -->
-                        <div class="prem-perks-section">
-                            <h2 class="prem-section-title">The Power of SoundWave Premium</h2>
-                            <div class="prem-perks-grid">
-                                <div class="prem-perk-card">
-                                    <div class="perk-icon">⚡</div>
-                                    <h4>Ad-Free Music</h4>
-                                    <p>Enjoy uninterrupted music without sponsored breaks or audio ads.</p>
-                                </div>
-                                <div class="prem-perk-card">
-                                    <div class="perk-icon">⬇️</div>
-                                    <h4>Download to Device</h4>
-                                    <p>Save tracks directly to phone storage (.m4a) to listen anytime offline in any player.</p>
-                                </div>
-                                <div class="prem-perk-card">
-                                    <div class="perk-icon">🎧</div>
-                                    <h4>Ultra HD 320 kbps</h4>
-                                    <p>Hear every detail with pure studio bass and high-fidelity vocal clarity.</p>
-                                </div>
-                                <div class="prem-perk-card">
-                                    <div class="perk-icon">📱</div>
-                                    <h4>Screen-Off Playback</h4>
-                                    <p>Lock your phone screen or browse other apps without music stopping.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pricing Plans Section -->
-                        <div class="prem-plans-section" id="premPlansSection">
-                            <h2 class="prem-section-title">Pick Your Premium Plan</h2>
-                            <p class="prem-section-sub">Listen without limits on phone, tablet, and laptop. Cancel anytime.</p>
-
-                            <div class="prem-cards-grid" style="display: flex; justify-content: center; max-width: 480px; margin: 0 auto;">
-                                <!-- Single VIP Plan: Only 49 -->
-                                <div class="prem-card featured" style="width: 100%; border: 2px solid #1db954; box-shadow: 0 10px 40px rgba(29, 185, 84, 0.25);">
-                                    <div class="featured-badge" style="background: linear-gradient(135deg, #1db954, #10b981); color: #000; font-weight: 800;">EXCLUSIVE OFFER • VIP ALL-ACCESS</div>
-                                    <div class="prem-card-top" style="text-align: center; padding-top: 1.5rem;">
-                                        <span class="plan-tag tag-green">Special Unlimited Pass</span>
-                                        <h3 class="plan-title" style="font-size: 1.8rem; margin: 8px 0;">SoundWave VIP</h3>
-                                        <div class="plan-price" style="font-size: 2.8rem; font-weight: 800; color: #fff;">₹49 <span style="font-size: 1rem; color: #a7a7a7;">/ month</span></div>
-                                        <div class="plan-account-info" style="color: #1db954; font-weight: 700;">Complete VIP Access on Mobile & Web</div>
+                                <div class="promo-main-price-box">
+                                    <div class="promo-price-giant">₹1</div>
+                                    <div class="promo-price-period">
+                                        <span class="promo-period-title">AutoPay Subscription</span>
+                                        <span class="promo-period-highlight">3 MONTHS FULL ACCESS</span>
                                     </div>
-                                    <div class="prem-card-body">
-                                        <ul class="plan-features" style="line-height: 1.8;">
-                                            <li><span class="feat-check" style="color: #1db954; font-weight: 800;">✓</span> 100% Ad-Free music streaming</li>
-                                            <li><span class="feat-check" style="color: #1db954; font-weight: 800;">✓</span> <strong>Unlimited song downloads (.m4a)</strong> to phone</li>
-                                            <li><span class="feat-check" style="color: #1db954; font-weight: 800;">✓</span> <strong>Ultra HD 320 kbps</strong> studio sound</li>
-                                            <li><span class="feat-check" style="color: #1db954; font-weight: 800;">✓</span> Screen-off background playback</li>
-                                            <li><span class="feat-check" style="color: #1db954; font-weight: 800;">✓</span> <strong>1080p Full HD</strong> Video & Cinema Vault</li>
-                                            <li><span class="feat-check" style="color: #1db954; font-weight: 800;">✓</span> Unlimited skips & custom queue</li>
-                                            <li><span class="feat-check" style="color: #1db954; font-weight: 800;">✓</span> Cancel anytime with 1 click</li>
-                                        </ul>
-                                    </div>
-                                    <div class="prem-card-footer" style="padding-bottom: 1.8rem;">
-                                        <button class="btn-select-plan btn-featured" data-plan="vip" data-price="49" data-name="SoundWave VIP" style="font-size: 1.1rem; padding: 14px 24px; font-weight: 800; background: linear-gradient(135deg, #1db954, #10b981); color: #000; border: none; border-radius: 30px; cursor: pointer; width: 100%; box-shadow: 0 4px 20px rgba(29, 185, 84, 0.4);">Get VIP Access for ₹49</button>
-                                        <span class="plan-foot-note" style="display: block; text-align: center; margin-top: 8px;">₹49/month. Zero hidden fees. Cancel anytime.</span>
+                                </div>
+
+                                <div class="promo-attribution">
+                                    <span>Offer by <strong>SoundWave</strong></span>
+                                    <span class="promo-sep">•</span>
+                                    <span>Owner: <strong>Sallu</strong></span>
+                                </div>
+
+                                <div class="promo-perks-pills">
+                                    <span class="perk-pill">✨ 100% Ad-Free</span>
+                                    <span class="perk-pill">🎵 320 kbps Studio Audio</span>
+                                    <span class="perk-pill">📱 Screen-Off Play</span>
+                                    <span class="perk-pill">🎬 1080p Video Vault</span>
+                                    <span class="perk-pill">⬇️ Device Downloads</span>
+                                </div>
+
+                                <div class="promo-cta-box">
+                                    <button class="btn-claim-promo-offer" id="btnClaimOffer">
+                                        <span>Claim Offer for ₹1</span>
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                            <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <!-- Clear Transparent AutoPay Disclosure -->
+                                <div class="promo-autopay-disclosure">
+                                    <div class="disclosure-row">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-2h2v2h-2zm0-10v6h2V7h-2z"/>
+                                        </svg>
+                                        <span><strong>AutoPay Terms:</strong> Pay ₹1 today for complete 3-month VIP access. Renews automatically at ₹49/month after 90 days. You can cancel AutoPay anytime with 1 tap from your profile before renewal with zero cancellation charges. Zero hidden fees.</span>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Comparison Table -->
-                        <div class="prem-compare-section">
-                            <h3 class="prem-compare-title">SoundWave Free vs SoundWave Premium</h3>
-                            <div class="prem-table-wrap">
-                                <table class="prem-table">
-                                    <thead>
-                                        <tr>
-                                            <th>What you get</th>
-                                            <th>Free</th>
-                                            <th class="th-prem">Premium 👑</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Ad-free music listening</td>
-                                            <td>No</td>
-                                            <td class="td-prem">✓ Yes (Zero ads)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Download songs to device storage</td>
-                                            <td>Limited</td>
-                                            <td class="td-prem">✓ Unlimited (.m4a)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Audio Bitrate Quality</td>
-                                            <td>128 kbps</td>
-                                            <td class="td-prem">✓ Ultra HD (320 kbps)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Screen-off background playback</td>
-                                            <td>Standard</td>
-                                            <td class="td-prem">✓ Enhanced Hi-Fi</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Song Skips & Custom Queue</td>
-                                            <td>Limited</td>
-                                            <td class="td-prem">✓ Unlimited</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <!-- Perks Grid (4 Icon Cards) -->
+                            <div class="prem-perks-section">
+                                <h2 class="prem-section-title">The Power of SoundWave Premium</h2>
+                                <div class="prem-perks-grid">
+                                    <div class="prem-perk-card">
+                                        <div class="perk-icon">⚡</div>
+                                        <h4>Ad-Free Music</h4>
+                                        <p>Enjoy uninterrupted music without sponsored breaks or audio ads.</p>
+                                    </div>
+                                    <div class="prem-perk-card">
+                                        <div class="perk-icon">📱</div>
+                                        <h4>Download to Device</h4>
+                                        <p>Save tracks directly to phone storage (.m4a) to listen anytime offline in any player.</p>
+                                    </div>
+                                    <div class="prem-perk-card">
+                                        <div class="perk-icon">🎧</div>
+                                        <h4>Ultra HD 320 kbps</h4>
+                                        <p>Hear every detail with pure studio bass and high-fidelity vocal clarity.</p>
+                                    </div>
+                                    <div class="prem-perk-card">
+                                        <div class="perk-icon">🌙</div>
+                                        <h4>Screen-Off Playback</h4>
+                                        <p>Lock your phone screen or browse other apps without music stopping.</p>
+                                    </div>
+                                </div>
                             </div>
+
                         </div>
                     </div>
 
@@ -908,10 +1127,10 @@
                                 <div class="aidj-hero-meta">
                                     <div class="aidj-badge-live">
                                         <span class="aidj-dot-pulse"></span>
-                                        <span>SOUNDWAVE INTELLIGENCE 2.0</span>
+                                        <span>SOUNDWAVE INTELLIGENCE 2.0 • SEARCH & VOICE HUB</span>
                                     </div>
-                                    <h1 class="aidj-title">AI DJ & Voice Studio</h1>
-                                    <p class="aidj-subtitle">Always-on voice intelligence with Universal Multi-LLM Connectors. Speak to DJ or let AI curate the vibe.</p>
+                                    <h1 class="aidj-title">AI DJ & Universal Music Search</h1>
+                                    <p class="aidj-subtitle">Search any song, artist, mood or lyrics via keyboard or voice. AI DJ instantly finds and streams exact original tracks.</p>
                                 </div>
                                 <div class="aidj-header-actions">
                                     <div class="aidj-active-model-chip" id="aidjActiveModelDisplay" title="Active LLM Engine">
@@ -928,97 +1147,95 @@
                                 </div>
                             </div>
 
-                            <!-- Central DJ Interactive Orb Stage -->
-                            <div class="aidj-orb-stage">
-                                <div class="aidj-orb-visualizer" id="aidjOrbVisualizer">
-                                    <div class="orb-ring ring-outer"></div>
-                                    <div class="orb-ring ring-mid"></div>
-                                    <div class="orb-ring ring-inner"></div>
-                                    <div class="aidj-cyber-orb" id="aidjCyberOrb">
-                                        <div class="orb-core">
-                                            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" fill="url(#orbMicGrad)"></path>
-                                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                                                <line x1="12" y1="19" x2="12" y2="23"></line>
-                                                <line x1="8" y1="23" x2="16" y2="23"></line>
-                                                <defs>
-                                                    <linearGradient id="orbMicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                        <stop offset="0%" stop-color="#1db954" />
-                                                        <stop offset="100%" stop-color="#a855f7" />
-                                                    </linearGradient>
-                                                </defs>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <!-- Dynamic Wave Bars -->
-                                    <div class="aidj-wave-bars" id="aidjWaveBars">
-                                        <span class="wbar"></span><span class="wbar"></span><span class="wbar"></span>
-                                        <span class="wbar"></span><span class="wbar"></span><span class="wbar"></span>
-                                        <span class="wbar"></span><span class="wbar"></span><span class="wbar"></span>
-                                    </div>
-                                </div>
-
-                                <div class="aidj-status-display">
-                                    <h3 class="aidj-status-heading" id="aidjStatusText">Say "DJ" followed by any song or command</h3>
-                                    <p class="aidj-status-sub" id="aidjStatusSub">Microphone is listening in continuous background mode</p>
-                                </div>
-
-                                <div class="aidj-mic-controls">
-                                    <button class="btn-aidj-mic-toggle active" id="btnAiDjMicToggle" title="Toggle Always-on Microphone Listening">
-                                        <span class="mic-toggle-icon">🎙️</span>
-                                        <span id="aidjMicToggleLabel">Always-On Mic: ACTIVE</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Quick Action Chips -->
-                            <div class="aidj-quick-prompts">
-                                <span class="quick-prompts-label">TRY ASKING DJ:</span>
-                                <div class="aidj-chips-scroll">
-                                    <button class="aidj-prompt-chip" data-prompt="DJ play romantic Bollywood hits">💖 DJ romantic Bollywood hits</button>
-                                    <button class="aidj-prompt-chip" data-prompt="DJ high energy Punjabi workout mix">⚡ DJ Punjabi workout mix</button>
-                                    <button class="aidj-prompt-chip" data-prompt="DJ play Chaleya from Jawan">🔥 DJ play Chaleya Jawan</button>
-                                    <button class="aidj-prompt-chip" data-prompt="DJ chill lo-fi study beats">☕ DJ chill lo-fi study</button>
-                                    <button class="aidj-prompt-chip" data-prompt="DJ Arijit Singh sad melodies">💔 DJ Arijit Singh melodies</button>
-                                    <button class="aidj-prompt-chip" data-prompt="DJ play Tauba Tauba">🕺 DJ play Tauba Tauba</button>
-                                    <button class="aidj-prompt-chip" data-prompt="DJ pause the music">⏸️ DJ pause music</button>
-                                    <button class="aidj-prompt-chip" data-prompt="DJ play next song">⏭️ DJ next song</button>
-                                </div>
-                            </div>
-
-                            <!-- Live Chat & Action Feed -->
-                            <div class="aidj-chat-section">
-                                <div class="aidj-chat-feed" id="aidjChatFeed">
-                                    <div class="aidj-msg-bubble dj-bubble">
-                                        <div class="dj-avatar-badge">🎧 DJ</div>
-                                        <div class="dj-bubble-content">
-                                            <p>Welcome to SoundWave AI Studio! Mera microphone always-on hai — aap bas <strong>"DJ"</strong> boliye (jaise <em>"DJ play Kesariya"</em> ya <em>"DJ romantic gaane chalao"</em>) aur main turant gaana play kar dunga!</p>
-                                            <p class="dj-bubble-tip">💡 <strong>Tip:</strong> Aap upar <strong>"Connect LLMs"</strong> se apna <strong>Claude, GPT-4o, Gemini ya Groq</strong> account bhi bind kar sakte hain.</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Text & Voice Input Dock -->
-                                <div class="aidj-input-dock">
-                                    <button class="btn-dock-mic" id="btnDockMic" title="Click to speak immediately">
-                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <!-- DUAL KEYBOARD & VOICE SEARCH COMMAND CENTER -->
+                            <div class="aidj-search-hero-box">
+                                <div class="aidj-search-input-wrap">
+                                    <button class="btn-aidj-voice-search" id="btnAidjVoiceSearch" title="Speak to AI DJ">
+                                        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
                                             <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
                                             <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
                                         </svg>
+                                        <span class="mic-ripple-ring"></span>
                                     </button>
-                                    <input type="text" id="aidjTextInput" placeholder="Say 'DJ ...' or type any song, mood, or artist..." autocomplete="off">
-                                    <button class="btn-dock-send" id="btnDockSend" title="Send to DJ">
-                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                    <input type="text" id="aidjSearchInput" placeholder="Search songs, artists (Travis Scott, Badshah, Arijit), moods, or say 'DJ play'..." autocomplete="off">
+                                    <button class="btn-aidj-search-submit" id="btnAidjSearchSubmit">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                                         </svg>
+                                        <span>Search</span>
                                     </button>
+                                </div>
+
+                                <!-- Quick Smart Prompt Chips -->
+                                <div class="aidj-chips-scroll">
+                                    <button class="aidj-prompt-chip" data-prompt="DJ Badshah bangers">🔥 DJ Badshah Hits</button>
+                                    <button class="aidj-prompt-chip" data-prompt="Travis Scott FE!N">⚡ Travis Scott FE!N</button>
+                                    <button class="aidj-prompt-chip" data-prompt="The Weeknd Starboy">👑 The Weeknd Starboy</button>
+                                    <button class="aidj-prompt-chip" data-prompt="Arijit Singh romantic melodies">💖 Arijit Singh Romance</button>
+                                    <button class="aidj-prompt-chip" data-prompt="Karan Aujla Tauba Tauba">🏎️ Karan Aujla Tauba Tauba</button>
+                                    <button class="aidj-prompt-chip" data-prompt="Yo Yo Honey Singh Millionaire">💥 Honey Singh Millionaire</button>
+                                    <button class="aidj-prompt-chip" data-prompt="Shubh Cheques Baller">🚀 Shubh Global Mix</button>
+                                    <button class="aidj-prompt-chip" data-prompt="Chill lo-fi study beats">☕ Chill Lo-Fi Lounge</button>
+                                    <button class="aidj-prompt-chip" data-prompt="Gym workout high BPM bass">🏋️ Gym Workout Boost</button>
+                                </div>
+                            </div>
+
+                            <!-- AI DJ LIVE SEARCH RESULTS SECTION -->
+                            <div class="aidj-results-section" id="aidjResultsSection">
+                                <div class="aidj-results-header">
+                                    <div>
+                                        <h3 id="aidjResultsTitle">Instant Smart Search Results</h3>
+                                        <p id="aidjResultsSub">Tap any song to play instantly or add to queue</p>
+                                    </div>
+                                    <div class="aidj-search-spinner hidden" id="aidjSearchSpinner">
+                                        <div class="sp-spinner"></div>
+                                    </div>
+                                </div>
+                                <div class="aidj-tracks-grid" id="aidjTracksGrid">
+                                    <!-- Populated dynamically with playable cards -->
+                                </div>
+                            </div>
+
+                            <!-- Central DJ Orb Visualizer & Chat Console -->
+                            <div class="aidj-stage-dual">
+                                <div class="aidj-orb-stage">
+                                    <div class="aidj-orb-visualizer" id="aidjOrbVisualizer">
+                                        <div class="orb-ring ring-outer"></div>
+                                        <div class="orb-ring ring-mid"></div>
+                                        <div class="orb-ring ring-inner"></div>
+                                        <div class="aidj-cyber-orb" id="aidjCyberOrb">
+                                            <div class="orb-core">
+                                                <svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" fill="url(#orbMicGrad)"></path>
+                                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                                    <line x1="12" y1="19" x2="12" y2="23"></line>
+                                                    <line x1="8" y1="23" x2="16" y2="23"></line>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="aidj-stage-status">
+                                        <h3 id="aidjStatusTitle">AI DJ Standing By</h3>
+                                        <p id="aidjStatusSub">Microphone active • Say <strong>"DJ"</strong> or type any song above</p>
+                                    </div>
+                                </div>
+
+                                <!-- Live Chat & Response Console -->
+                                <div class="aidj-chat-section">
+                                    <div class="aidj-chat-feed" id="aidjChatFeed">
+                                        <div class="aidj-msg-bubble dj-bubble">
+                                            <div class="dj-avatar-badge">🤖 DJ</div>
+                                            <div class="dj-bubble-content">
+                                                <p>SoundWave AI Search & Voice Studio ready! You can type in the search bar above or click the mic button to speak. Say <strong>"DJ play Travis Scott"</strong> or <strong>"DJ Badshah bangers"</strong> for instant playback!</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                         </div>
-                    </div>
-
-                </div>
+                    </div></div>
             </section>
         </div>
 
@@ -1916,20 +2133,87 @@
                 <button class="mini-btn" id="btnMiniExpand" title="Expand to Full Player">⤢</button>
                 <button class="mini-btn" id="btnMiniClose" title="Close Mini Player">✕</button>
             </div>
-        </div>
-        <div class="mini-player-body" id="miniPlayerBody">
-            <!-- Video mirrored or moved here -->
+
+    <!-- AUTOPAY SUBSCRIPTION CONFIRMATION MODAL -->
+    <div class="sp-modal-overlay hidden" id="autopayModal">
+        <div class="sp-modal-backdrop" id="autopayBackdrop"></div>
+        <div class="autopay-modal-box">
+            <button class="sp-modal-close-btn" id="btnAutopayClose">&times;</button>
+            <div class="autopay-modal-header">
+                <div class="autopay-sparkle-badge">🎉 SPECIAL LAUNCH OFFER</div>
+                <h2 class="autopay-modal-title">Confirm ₹1 AutoPay Mandate</h2>
+                <p class="autopay-modal-sub">By SoundWave • Owner: <strong>Sallu</strong></p>
+            </div>
+
+            <div class="autopay-card-summary">
+                <div class="autopay-summary-row">
+                    <span class="sum-label">Subscription Plan</span>
+                    <span class="sum-val">SoundWave VIP (3 Months Pass)</span>
+                </div>
+                <div class="autopay-summary-row">
+                    <span class="sum-label">Today's Charge</span>
+                    <span class="sum-val highlight-green">₹1 (One Rupee Only)</span>
+                </div>
+                <div class="autopay-summary-row">
+                    <span class="sum-label">Validity</span>
+                    <span class="sum-val">90 Days Full Unrestricted VIP Access</span>
+                </div>
+                <div class="autopay-summary-row">
+                    <span class="sum-label">AutoPay Renewal Mandate</span>
+                    <span class="sum-val">₹49 / month starting Day 91</span>
+                </div>
+            </div>
+
+            <div class="autopay-terms-box">
+                <h4>Mandate Authorization Terms:</h4>
+                <ul>
+                    <li>✓ ₹1 will be debited today to authenticate your UPI / Card AutoPay mandate.</li>
+                    <li>✓ You enjoy 100% full VIP access (320kbps Studio Audio, Screen-Off Background Play, 1080p Video Vault, Unlimited Downloads) for 90 days.</li>
+                    <li>✓ AutoPay will automatically renew at the standard rate of ₹49/month after 90 days.</li>
+                    <li>✓ <strong>Cancellation Policy:</strong> You can cancel this AutoPay mandate anytime with 1 tap from your SoundWave Profile or directly in your UPI App (PhonePe, Google Pay, Paytm, BHIM) before renewal with zero charges.</li>
+                </ul>
+            </div>
+
+            <div class="autopay-gateway-status" id="autopayGatewayStatus">
+                <div class="status-indicator-dot ready"></div>
+                <span>UPI AutoPay & Card Mandate Engine Ready</span>
+            </div>
+
+            <div class="autopay-actions">
+                <button class="btn-confirm-autopay" id="btnConfirmAutopay">
+                    <span>Authorize ₹1 AutoPay Mandate</span>
+                </button>
+                <button class="btn-cancel-autopay" id="btnDismissAutopay">Cancel</button>
+            </div>
         </div>
     </div>
-    
 
-
-
-    
-        <span class="aidj-pill-text" id="floatingAiDjStatus">AI DJ: Standby</span>
-        <div class="aidj-pill-wave" id="floatingAiDjWave">
-            <span></span><span></span><span></span>
+    <!-- CREATE CUSTOM PLAYLIST MODAL -->
+    <div class="sp-modal-overlay hidden" id="createPlaylistModal">
+        <div class="sp-modal-backdrop" id="createPlaylistBackdrop"></div>
+        <div class="playlist-modal-box">
+            <button class="sp-modal-close-btn" id="btnCreatePlaylistClose">&times;</button>
+            <div class="playlist-modal-header">
+                <div class="playlist-art-preview">🎵</div>
+                <h3>Create New Playlist</h3>
+                <p>Curate your favorite tracks for gym, chill, or road trips</p>
+            </div>
+            <div class="playlist-form">
+                <div class="form-group">
+                    <label for="playlistNameInput">Playlist Name *</label>
+                    <input type="text" id="playlistNameInput" placeholder="e.g. Punjabi Gym Boost, Midnight Chill..." maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label for="playlistDescInput">Description (Optional)</label>
+                    <input type="text" id="playlistDescInput" placeholder="Give your playlist a vibe description..." maxlength="120">
+                </div>
+                <div class="playlist-form-actions">
+                    <button class="btn-confirm-create-pl" id="btnConfirmCreatePlaylist">Create Playlist</button>
+                    <button class="btn-cancel-create-pl" id="btnCancelCreatePlaylist">Cancel</button>
+                </div>
+            </div>
         </div>
     </div>
+
 </body>
 </html>
