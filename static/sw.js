@@ -1,5 +1,5 @@
-// SoundWave Service Worker v11 (Streamlined Clean Checkout)
-const CACHE_NAME = 'soundwave-cache-v11';
+// SoundWave Service Worker v12 (Cashfree Official Payment Link cfre.in/CSHFRE/o1xbhrj)
+const CACHE_NAME = 'soundwave-cache-v12';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();

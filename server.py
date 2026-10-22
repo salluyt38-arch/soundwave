@@ -43,6 +43,7 @@ CASHFREE_APP_ID = os.environ.get("CASHFREE_APP_ID", "")
 CASHFREE_SECRET_KEY = os.environ.get("CASHFREE_SECRET_KEY", "")
 CASHFREE_ENV = os.environ.get("CASHFREE_ENV", "sandbox")
 CASHFREE_SUB_URL = "https://sandbox.cashfree.com/pg/subscriptions" if CASHFREE_ENV == "sandbox" else "https://api.cashfree.com/pg/subscriptions"
+CASHFREE_PAYMENT_LINK = "https://cfre.in/CSHFRE/o1xbhrj"
 
 # In-memory caches for lightning fast responses
 search_cache = {}
@@ -911,7 +912,8 @@ class MusicHandler(SimpleHTTPRequestHandler):
                     "subscription_id": sub_id,
                     "cf_subscription_id": f"cf_{int(time.time())}",
                     "subscription_session_id": mock_sess_id,
-                    "auth_link": return_url,
+                    "auth_link": CASHFREE_PAYMENT_LINK,
+                    "payment_link": CASHFREE_PAYMENT_LINK,
                     "return_url": return_url,
                     "provider": "cashfree_sandbox",
                     "sandbox_url": "https://sandbox.cashfree.com/pg/subscriptions",

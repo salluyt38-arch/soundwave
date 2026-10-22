@@ -1710,23 +1710,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const paySpinner = document.getElementById('paySpinner');
 
         if (btnConfirm) btnConfirm.disabled = true;
-        if (btnPayText) btnPayText.textContent = 'Connecting Cashfree Sandbox...';
+        if (btnPayText) btnPayText.textContent = 'Opening Cashfree Payment...';
         if (paySpinner) paySpinner.classList.remove('hidden');
 
+        // Cashfree Payment Link provided by user
+        const cashfreePaymentUrl = 'https://cfre.in/CSHFRE/o1xbhrj';
+
+        // Open Cashfree official payment link in new window/tab immediately
+        window.open(cashfreePaymentUrl, '_blank');
+
         try {
-            // Call Cashfree Subscriptions Sandbox API
-            const res = await fetch(`${API_BASE}/api/subscription/create`, {
+            // Log subscription record on backend
+            fetch(`${API_BASE}/api/subscription/create`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    plan_id: 'soundwave_vip_49',
-                    amount: 49.0,
-                    customer_phone: '9999999999',
+                    plan_name: 'SoundWave VIP',
+                    amount: 49,
+                    customer_phone: '9512440440',
                     customer_email: 'vip@soundwave.app',
-                    customer_name: 'SoundWave VIP Member'
+                    customer_name: 'SoundWave VIP Member',
+                    return_url: cashfreePaymentUrl
                 })
-            });
-            const data = await res.json();
+            }).catch(() => {});
 
             const expiryTime = Date.now() + (30 * 24 * 60 * 60 * 1000);
             const sub = {
@@ -1734,9 +1740,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 plan: 'vip_49',
                 planName: 'SoundWave VIP',
                 price: '49',
-                gateway: 'cashfree_sandbox',
-                sub_id: data.subscription_id || ('sub_cf_' + Date.now()),
-                sub_ref: data.sub_reference_id || '',
+                gateway: 'cashfree',
+                payment_link: cashfreePaymentUrl,
+                sub_id: 'SoundWave_SUB_' + Date.now(),
                 activatedAt: Date.now(),
                 expiresAt: expiryTime
             };
@@ -1744,11 +1750,11 @@ document.addEventListener('DOMContentLoaded', () => {
             saveSubscription(sub);
 
             if (paySpinner) paySpinner.classList.add('hidden');
-            if (btnPayText) btnPayText.textContent = '✓ Subscription Activated!';
+            if (btnPayText) btnPayText.textContent = '✓ Redirected to Cashfree!';
             if (btnConfirm) btnConfirm.disabled = false;
 
             closeCheckoutModal();
-            showToast('🎉 Congratulations! SoundWave VIP is now ACTIVE via Cashfree Subscriptions!');
+            showToast('🎉 Cashfree Payment Page opened! Complete payment to activate SoundWave VIP!');
             switchTab('premium');
 
             setTimeout(() => {
@@ -1756,24 +1762,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (activeCard) activeCard.scrollIntoView({ behavior: 'smooth' });
             }, 300);
         } catch (err) {
-            console.error('Cashfree subscription error:', err);
-            // Fallback activate
-            const sub = {
-                active: true,
-                plan: 'vip_49',
-                planName: 'SoundWave VIP',
-                price: '49',
-                gateway: 'cashfree_sandbox',
-                sub_id: 'sub_cf_' + Date.now(),
-                activatedAt: Date.now(),
-                expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000)
-            };
-            saveSubscription(sub);
-            if (paySpinner) paySpinner.classList.add('hidden');
-            if (btnConfirm) btnConfirm.disabled = false;
-            closeCheckoutModal();
-            showToast('🎉 SoundWave VIP is now ACTIVE!');
-            switchTab('premium');
+            console.error('Cashfree link open error:', err);
+            window.location.href = cashfreePaymentUrl;
         }
     }
 
