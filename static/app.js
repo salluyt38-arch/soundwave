@@ -835,11 +835,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnInstallPwa) btnInstallPwa.style.display = 'flex';
         });
 
-        // PWA Install Guide Modal Controls
+        // PWA Install Guide & Download Modal Controls
         const pwaInstallModal = document.getElementById('pwaInstallModal');
         const pwaInstallBackdrop = document.getElementById('pwaInstallBackdrop');
         const btnPwaClose = document.getElementById('btnPwaClose');
         const btnPwaGotIt = document.getElementById('btnPwaGotIt');
+        const btnPwaDirectInstall = document.getElementById('btnPwaDirectInstall');
+        const linkDownloadApk = document.getElementById('linkDownloadApk');
 
         function openPwaInstallModal() {
             if (pwaInstallModal) pwaInstallModal.classList.remove('hidden');
@@ -854,17 +856,36 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btnPwaGotIt) btnPwaGotIt.addEventListener('click', closePwaInstallModal);
 
         if (btnInstallPwa) {
-            btnInstallPwa.addEventListener('click', async () => {
+            btnInstallPwa.addEventListener('click', (e) => {
+                e.preventDefault();
+                openPwaInstallModal();
+            });
+        }
+
+        if (btnPwaDirectInstall) {
+            btnPwaDirectInstall.addEventListener('click', async () => {
                 if (window.deferredInstallPrompt) {
                     window.deferredInstallPrompt.prompt();
                     const choice = await window.deferredInstallPrompt.userChoice;
                     if (choice.outcome === 'accepted') {
-                        showToast('Installing SoundWave...');
+                        showToast('Installing SoundWave App on your device...');
+                        closePwaInstallModal();
                     }
                     window.deferredInstallPrompt = null;
                 } else {
-                    openPwaInstallModal();
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                    if (isIOS) {
+                        showToast('iPhone Safari: Tap Share (⎋) -> "Add to Home Screen"');
+                    } else {
+                        showToast('Browser menu (⋮) -> "Add to Home screen" / "Install"');
+                    }
                 }
+            });
+        }
+
+        if (linkDownloadApk) {
+            linkDownloadApk.addEventListener('click', () => {
+                showToast('Starting SoundWave.apk download...');
             });
         }
 

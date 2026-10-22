@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20261023_v50_tab_nesting_fixed">
+    <link rel="stylesheet" href="style.css?v=20261023_v51_app_suite">
     <link rel="manifest" href="manifest.json">
 
 
@@ -2708,7 +2708,7 @@
         </div>
 
         <!-- ========================================================================== -->
-        <!-- PWA INSTALL GUIDE MODAL (FOR MOBILE CHROME & SAFARI) -->
+        <!-- PWA & APP DOWNLOAD / INSTALL MODAL -->
         <!-- ========================================================================== -->
         <div class="sp-modal-overlay hidden" id="pwaInstallModal">
             <div class="modal-backdrop-blur" id="pwaInstallBackdrop"></div>
@@ -2716,41 +2716,88 @@
                 <button class="modal-close-btn" id="btnPwaClose" title="Close">✕</button>
 
                 <div class="pwa-guide-header">
-                    <div class="pwa-guide-icon-wrap">📲</div>
-                    <h2>Install SoundWave on Phone</h2>
-                    <p>Add SoundWave directly to your phone screen as a standalone app!</p>
+                    <div class="pwa-guide-icon-wrap">
+                        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.3">
+                            <rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect>
+                            <line x1="12" y1="18" x2="12.01" y2="18" stroke-width="3"></line>
+                        </svg>
+                    </div>
+                    <h2>Install SoundWave App</h2>
+                    <p>Official SoundWave Mobile App for Android, iPhone & PC</p>
                 </div>
 
-                <div class="pwa-step-card">
-                    <div class="pwa-step-num">1</div>
-                    <div class="pwa-step-content">
-                        <strong>Browser Menu kholein</strong>
-                        <p>Upar daayein kone (top-right) mein Chrome ke <span class="pwa-dots-badge">⋮</span> (3 dots) par tap karein.</p>
+                <!-- OWNER MASTER CLOUD SYNC NOTICE -->
+                <div class="pwa-owner-sync-badge">
+                    <span class="sync-badge-icon">👑</span>
+                    <div class="sync-badge-text">
+                        <strong>100% Sallu Controlled & Cloud-Synced</strong>
+                        <p>Server par jo bhi naye gaane ya features add honge, aapke phone app me bina reinstall kiye real-time automatically update ho jayenge!</p>
                     </div>
                 </div>
 
-                <div class="pwa-step-card">
-                    <div class="pwa-step-num">2</div>
-                    <div class="pwa-step-content">
-                        <strong>"Add to Home screen" chunein</strong>
-                        <p>Menu mein <strong>"Add to Home screen"</strong> ya <strong>"Install app"</strong> par tap karein.</p>
+                <!-- ACTION 1: DIRECT ANDROID APK DOWNLOAD -->
+                <a href="/download/soundwave.apk" class="pwa-action-card apk-highlight" download="SoundWave.apk" id="linkDownloadApk">
+                    <div class="pwa-action-icon apk-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                            <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5802 8.411 13.8475 8.134 12 8.134c-1.8475 0-3.5802.277-5.1328.8157L4.8449 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396"/>
+                        </svg>
+                    </div>
+                    <div class="pwa-action-info">
+                        <div class="pwa-action-title">
+                            <span>Download Android APK</span>
+                            <span class="pwa-badge-pill">Direct APK</span>
+                        </div>
+                        <p class="pwa-action-desc">SoundWave.apk (1.65 MB) • Android phones par direct install karein</p>
+                    </div>
+                    <div class="pwa-action-cta">
+                        <span class="pwa-cta-btn green">⬇ Download</span>
+                    </div>
+                </a>
+
+                <!-- ACTION 2: 1-CLICK INSTANT INSTALL -->
+                <button class="pwa-action-card instant-highlight" id="btnPwaDirectInstall" type="button">
+                    <div class="pwa-action-icon instant-icon">⚡</div>
+                    <div class="pwa-action-info">
+                        <div class="pwa-action-title">
+                            <span>1-Click Fast Install</span>
+                            <span class="pwa-badge-pill gold">Instant App</span>
+                        </div>
+                        <p class="pwa-action-desc">Bina file download kiye direct Home Screen par app icon lagayein</p>
+                    </div>
+                    <div class="pwa-action-cta">
+                        <span class="pwa-cta-btn gold">📲 Install</span>
+                    </div>
+                </button>
+
+                <!-- IPHONE / IOS SAFARI GUIDE -->
+                <div class="pwa-ios-guide-box">
+                    <div class="pwa-ios-head">
+                        <span class="pwa-apple-logo">🍎</span>
+                        <strong>iPhone / iPad Users ke liye Guide:</strong>
+                    </div>
+                    <div class="pwa-ios-steps">
+                        <div class="pwa-ios-step">
+                            <span class="step-badge">1</span>
+                            <span>Agar Facebook/Instagram app me hain toh upar <span class="pwa-dots-badge">⋯</span> tap karke <strong>"Open in Safari"</strong> karein.</span>
+                        </div>
+                        <div class="pwa-ios-step">
+                            <span class="step-badge">2</span>
+                            <span>Safari me neeche <strong>Share button (⎋)</strong> par tap karein.</span>
+                        </div>
+                        <div class="pwa-ios-step">
+                            <span class="step-badge">3</span>
+                            <span>Menu me <strong>"Add to Home Screen" (+)</strong> chunein. Native app icon ban jayega!</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="pwa-step-card">
-                    <div class="pwa-step-num">3</div>
-                    <div class="pwa-step-content">
-                        <strong>Ready & Installed! 🎉</strong>
-                        <p>Aapke phone ke home screen par SoundWave ka app icon ban jayega. Fullscreen high quality audio & cinema experience ke sath!</p>
-                    </div>
+                <!-- OFFLINE BUNDLE LINK -->
+                <div class="pwa-zip-footer">
+                    <span>Developer / Standalone Backup:</span>
+                    <a href="/download/soundwave-app.zip" download="SoundWave-App.zip" class="pwa-zip-anchor">📦 Download soundwave-app.zip (112 KB)</a>
                 </div>
 
-                <div class="pwa-notice-box">
-                    💡 <strong>Song download karna hai?</strong><br>
-                    Har song ke aage jo <strong>⤓ (Download icon)</strong> hai, uspe tap karne se audio file aapke phone mein download ho jayegi!
-                </div>
-
-                <button class="btn-pwa-gotit" id="btnPwaGotIt">Samajh gaya! 👍</button>
+                <button class="btn-pwa-gotit" id="btnPwaGotIt">Theek Hai, Samajh Gaya! 👍</button>
             </div>
         </div>
 
@@ -2774,7 +2821,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=20261023_v50_tab_nesting_fixed"></script>
+    <script src="app.js?v=20261023_v51_app_suite"></script>
 
   <!-- DMCA & COPYRIGHT LEGAL MODAL -->
   <div class="movie-modal-overlay hidden" id="dmcaModal">

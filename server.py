@@ -1221,6 +1221,42 @@ class MusicHandler(SimpleHTTPRequestHandler):
                 })
                 return
 
+            if path in ("/download/soundwave.apk", "/soundwave.apk"):
+                apk_path = os.path.join(STATIC_DIR, "soundwave.apk")
+                if os.path.exists(apk_path):
+                    file_size = os.path.getsize(apk_path)
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/vnd.android.package-archive")
+                    self.send_header("Content-Disposition", 'attachment; filename="SoundWave.apk"')
+                    self.send_header("Content-Length", str(file_size))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(apk_path, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+                else:
+                    self.send_json({"error": "SoundWave APK file not found on server"}, status=404)
+                    return
+
+            if path in ("/download/soundwave-app.zip", "/soundwave-app.zip"):
+                zip_path = os.path.join(STATIC_DIR, "soundwave-app.zip")
+                if os.path.exists(zip_path):
+                    file_size = os.path.getsize(zip_path)
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="SoundWave-App.zip"')
+                    self.send_header("Content-Length", str(file_size))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(zip_path, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+                else:
+                    self.send_json({"error": "SoundWave App Zip not found on server"}, status=404)
+                    return
+
             if path == "/api/test_extract":
                 vid = query.get("id", ["BddP6PYo2gs"])[0].strip()
                 log_capture = []

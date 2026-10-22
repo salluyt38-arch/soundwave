@@ -25,3 +25,7 @@ video_cache/
 Thumbs.db
 .vscode/
 .idea/
+
+# Whitelist soundwave app downloads
+!static/soundwave.apk
+!static/soundwave-app.zip

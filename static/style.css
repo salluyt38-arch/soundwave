@@ -8298,3 +8298,223 @@ body {
     border-radius: 25px;
     cursor: pointer;
 }
+
+/* ==========================================================================
+   APP DOWNLOAD & PWA INSTALL COMPONENT STYLES
+   ========================================================================== */
+.pwa-guide-dialog {
+    max-width: 490px !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+}
+
+.pwa-owner-sync-badge {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: linear-gradient(135deg, rgba(29, 185, 84, 0.12) 0%, rgba(255, 215, 0, 0.08) 100%);
+    border: 1px solid rgba(29, 185, 84, 0.35);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 1rem;
+}
+.sync-badge-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    line-height: 1.2;
+}
+.sync-badge-text strong {
+    display: block;
+    font-size: 0.86rem;
+    color: #1ed760;
+    margin-bottom: 2px;
+}
+.sync-badge-text p {
+    font-size: 0.77rem;
+    color: #cccccc;
+    margin: 0;
+    line-height: 1.35;
+}
+
+.pwa-action-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    text-align: left;
+    outline: none;
+}
+.pwa-action-card:hover {
+    transform: translateY(-2px);
+}
+
+.pwa-action-card.apk-highlight {
+    background: linear-gradient(135deg, rgba(29, 185, 84, 0.18) 0%, rgba(18, 22, 34, 0.95) 100%);
+    border: 1.5px solid rgba(29, 185, 84, 0.45);
+    box-shadow: 0 4px 20px rgba(29, 185, 84, 0.15);
+}
+.pwa-action-card.apk-highlight:hover {
+    border-color: #1ed760;
+    box-shadow: 0 6px 24px rgba(29, 185, 84, 0.3);
+}
+
+.pwa-action-card.instant-highlight {
+    background: linear-gradient(135deg, rgba(255, 184, 0, 0.12) 0%, rgba(18, 22, 34, 0.95) 100%);
+    border: 1.5px solid rgba(255, 184, 0, 0.4);
+    box-shadow: 0 4px 20px rgba(255, 184, 0, 0.1);
+}
+.pwa-action-card.instant-highlight:hover {
+    border-color: #ffb800;
+    box-shadow: 0 6px 24px rgba(255, 184, 0, 0.25);
+}
+
+.pwa-action-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.apk-icon {
+    background: rgba(29, 185, 84, 0.22);
+    color: #1ed760;
+}
+.instant-icon {
+    background: rgba(255, 184, 0, 0.22);
+    color: #ffb800;
+    font-size: 1.4rem;
+}
+
+.pwa-action-info {
+    flex: 1;
+    min-width: 0;
+}
+.pwa-action-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 2px;
+}
+.pwa-action-desc {
+    font-size: 0.77rem;
+    color: #a7a7a7;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.pwa-badge-pill {
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 9999px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    background: rgba(29, 185, 84, 0.25);
+    color: #1ed760;
+    border: 1px solid rgba(29, 185, 84, 0.4);
+}
+.pwa-badge-pill.gold {
+    background: rgba(255, 184, 0, 0.25);
+    color: #ffb800;
+    border-color: rgba(255, 184, 0, 0.4);
+}
+
+.pwa-action-cta {
+    flex-shrink: 0;
+}
+.pwa-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 7px 13px;
+    border-radius: 9999px;
+    white-space: nowrap;
+}
+.pwa-cta-btn.green {
+    background: #1ed760;
+    color: #000000;
+}
+.pwa-cta-btn.gold {
+    background: #ffb800;
+    color: #000000;
+}
+
+.pwa-ios-guide-box {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin: 10px 0;
+}
+.pwa-ios-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+.pwa-apple-logo {
+    font-size: 1.1rem;
+}
+.pwa-ios-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.pwa-ios-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: #b3b3b3;
+    line-height: 1.35;
+}
+.step-badge {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.pwa-zip-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.74rem;
+    color: #888888;
+    margin: 10px 0 14px;
+    padding: 0 4px;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.pwa-zip-anchor {
+    color: #1ed760;
+    text-decoration: underline;
+    font-weight: 600;
+}
+.pwa-zip-anchor:hover {
+    color: #ffffff;
+}
