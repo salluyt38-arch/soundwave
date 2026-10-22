@@ -107,6 +107,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabMovies = document.getElementById('tabMovies');
     const tabLibrary = document.getElementById('tabLibrary');
     const tabPremium = document.getElementById('tabPremium');
+    const tabAiDj = document.getElementById('tabAiDj');
+    const sideNavAiDj = document.getElementById('sideNavAiDj');
+    const mobTabAiDj = document.getElementById('mobTabAiDj');
+    const btnTopbarAiDj = document.getElementById('btnTopbarAiDj');
     const viewportScroll = document.getElementById('viewportScroll');
 
     const sideNavHome = document.getElementById('sideNavHome');
@@ -292,7 +296,8 @@ document.addEventListener('DOMContentLoaded', () => {
             video: { panel: tabVideo, sideLink: sideNavVideo, mobBtn: mobTabVideo },
             movies: { panel: tabMovies, sideLink: sideNavMovies, mobBtn: mobTabMovies },
             library: { panel: tabLibrary, sideLink: sideNavLibrary, mobBtn: mobTabLibrary },
-            premium: { panel: tabPremium, sideLink: sideNavPremium, mobBtn: mobTabPremium }
+            premium: { panel: tabPremium, sideLink: sideNavPremium, mobBtn: mobTabPremium },
+            aidj: { panel: tabAiDj, sideLink: sideNavAiDj, mobBtn: mobTabAiDj }
         };
 
         if (!tabs[tabName]) return;
@@ -353,6 +358,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sideNavMovies) sideNavMovies.addEventListener('click', () => switchTab('movies'));
         if (sideNavLibrary) sideNavLibrary.addEventListener('click', () => switchTab('library'));
         if (sideNavPremium) sideNavPremium.addEventListener('click', () => switchTab('premium'));
+        if (sideNavAiDj) sideNavAiDj.addEventListener('click', () => switchTab('aidj'));
+        if (mobTabAiDj) mobTabAiDj.addEventListener('click', () => switchTab('aidj'));
+        if (btnTopbarAiDj) btnTopbarAiDj.addEventListener('click', () => {
+            switchTab('aidj');
+            if (typeof toggleAlwaysOnMic === 'function') toggleAlwaysOnMic(true);
+        });
         if (sideLikedBtn) sideLikedBtn.addEventListener('click', () => switchTab('library'));
 
         // Topbar & Profile Premium Links
@@ -3654,7 +3665,691 @@ document.addEventListener('DOMContentLoaded', () => {
         btnChannelLoadMore.addEventListener('click', () => {
             currentChannelPage++;
             loadChannelSongs(currentChannel, currentChannelPage, true);
+        
+    // ==============================================================================
+    // SOUNDWAVE AI DJ & UNIVERSAL MULTI-LLM CONNECTOR ENGINE
+    // Always-on Voice Listening, "DJ" Wake Word, TTS Feedback & Multi-Model Engine
+    // ==============================================================================
+
+    const PROVIDER_METAS = {
+        builtin: {
+            name: "Built-in Smart DJ",
+            model: "built-in",
+            free: true,
+            needsKey: false,
+            badge: "✨ Built-in Smart DJ (Free)",
+            keyUrl: "#",
+            hint: "Instant zero-latency music intent parser and voice DJ. No API key needed!"
+        },
+        groq: {
+            name: "Groq Cloud",
+            model: "llama-3.3-70b-versatile",
+            free: true,
+            needsKey: true,
+            badge: "⚡ Groq: Llama 3.3 Active",
+            keyUrl: "https://console.groq.com/keys",
+            hint: "Free tier gives lightning fast ~200ms latency. Get instant key from Groq Console."
+        },
+        openrouter: {
+            name: "OpenRouter AI",
+            model: "meta-llama/llama-3.3-70b-instruct:free",
+            free: true,
+            needsKey: true,
+            badge: "🌐 OpenRouter Active",
+            keyUrl: "https://openrouter.ai/keys",
+            hint: "Access 100+ AI models including free tier models (:free). Get key from OpenRouter."
+        },
+        anthropic: {
+            name: "Anthropic Claude",
+            model: "claude-3-5-sonnet-20241022",
+            free: false,
+            needsKey: true,
+            badge: "🟣 Claude 3.5 Sonnet Active",
+            keyUrl: "https://console.anthropic.com/",
+            hint: "Connect Claude 3.5 for world-class music taste, deep lyrics interpretation and curation."
+        },
+        openai: {
+            name: "OpenAI",
+            model: "gpt-4o-mini",
+            free: false,
+            needsKey: true,
+            badge: "🟢 OpenAI GPT-4o Active",
+            keyUrl: "https://platform.openai.com/api-keys",
+            hint: "Connect OpenAI GPT-4o-mini or GPT-4o for natural music conversation."
+        },
+        gemini: {
+            name: "Google Gemini",
+            model: "gemini-2.0-flash",
+            free: true,
+            needsKey: true,
+            badge: "🔵 Gemini 2.0 Flash Active",
+            keyUrl: "https://aistudio.google.com/app/apikey",
+            hint: "Get free API Key from Google AI Studio for Gemini 2.0 Flash."
+        }
+    };
+
+    // Load AI Config from localStorage
+    function getStoredAiConfig() {
+        try {
+            const raw = localStorage.getItem('soundwave_ai_config');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed.provider) return parsed;
+            }
+        } catch (e) {}
+        return {
+            provider: 'builtin',
+            apiKey: '',
+            model: 'built-in'
+        };
+    }
+
+    function saveStoredAiConfig(cfg) {
+        try {
+            localStorage.setItem('soundwave_ai_config', JSON.stringify(cfg));
+        } catch (e) {}
+    }
+
+    let currentAiConfig = getStoredAiConfig();
+    let isAlwaysOnMicActive = false;
+    let speechRecognitionInstance = null;
+    let isAiSpeakingNow = false;
+
+    // WebAudio Futuristic Chime Sound
+    function playDjChime() {
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            const ctx = new AudioCtx();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            const now = ctx.currentTime;
+            osc.frequency.setValueAtTime(587.33, now); // D5
+            osc.frequency.exponentialRampToValueAtTime(880.00, now + 0.12); // A5
+            gain.gain.setValueAtTime(0.14, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+            osc.start(now);
+            osc.stop(now + 0.28);
+        } catch (e) {}
+    }
+
+    // Text To Speech (TTS) Output
+    function speakDjVoice(text, onComplete) {
+        if (!('speechSynthesis' in window) || !text) {
+            if (onComplete) onComplete();
+            return;
+        }
+
+        try {
+            window.speechSynthesis.cancel();
+            isAiSpeakingNow = true;
+            setOrbVisualState('speaking');
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            const voices = window.speechSynthesis.getVoices();
+            // Prioritize natural Indian English / Hindi voices
+            const matchVoice = voices.find(v => v.lang.includes('hi') || v.lang.includes('IN')) ||
+                               voices.find(v => v.name.toLowerCase().includes('india') || v.name.toLowerCase().includes('hindi')) ||
+                               voices.find(v => v.lang.startsWith('en')) ||
+                               voices[0];
+            if (matchVoice) utterance.voice = matchVoice;
+            utterance.rate = 1.04;
+            utterance.pitch = 1.0;
+
+            utterance.onend = () => {
+                isAiSpeakingNow = false;
+                setOrbVisualState(isAlwaysOnMicActive ? 'listening' : 'idle');
+                if (onComplete) onComplete();
+            };
+
+            utterance.onerror = () => {
+                isAiSpeakingNow = false;
+                setOrbVisualState(isAlwaysOnMicActive ? 'listening' : 'idle');
+                if (onComplete) onComplete();
+            };
+
+            window.speechSynthesis.speak(utterance);
+        } catch (e) {
+            isAiSpeakingNow = false;
+            setOrbVisualState('idle');
+            if (onComplete) onComplete();
+        }
+    }
+
+    // Update Orb Visuals
+    function setOrbVisualState(state) {
+        const orb = document.getElementById('aidjCyberOrb');
+        const stage = document.querySelector('.aidj-orb-stage');
+        const statusHead = document.getElementById('aidjStatusText');
+        const statusSub = document.getElementById('aidjStatusSub');
+
+        if (!orb) return;
+
+        orb.classList.remove('listening', 'speaking');
+        if (stage) stage.classList.remove('active-wave');
+
+        if (state === 'listening') {
+            orb.classList.add('listening');
+            if (stage) stage.classList.add('active-wave');
+            if (statusHead) statusHead.textContent = 'Listening for "DJ..."';
+            if (statusSub) statusSub.textContent = 'Say "DJ play <song>", "DJ pause", or any entertainment command';
+        } else if (state === 'speaking') {
+            orb.classList.add('speaking');
+            if (stage) stage.classList.add('active-wave');
+            if (statusHead) statusHead.textContent = 'DJ is speaking...';
+            if (statusSub) statusSub.textContent = 'Playing response audio';
+        } else if (state === 'thinking') {
+            if (statusHead) statusHead.textContent = 'DJ is thinking & curating...';
+            if (statusSub) statusSub.textContent = `Connecting via ${currentAiConfig.provider.toUpperCase()}...`;
+        } else {
+            if (statusHead) statusHead.textContent = 'Say "DJ" followed by any song or command';
+            if (statusSub) statusSub.textContent = 'Microphone is standing by in background';
+        }
+    }
+
+    // Append Message to Chat Feed
+    function appendAiChatMessage(sender, text, trackData = null) {
+        const feed = document.getElementById('aidjChatFeed');
+        if (!feed) return;
+
+        const row = document.createElement('div');
+        row.className = `aidj-msg-bubble ${sender === 'user' ? 'user-bubble' : 'dj-bubble'}`;
+
+        if (sender === 'user') {
+            row.innerHTML = `
+                <div class="user-avatar-badge">YOU</div>
+                <div class="user-bubble-content">
+                    <p>${escapeHtml(text)}</p>
+                </div>
+            `;
+        } else {
+            let trackCardHtml = '';
+            if (trackData && trackData.title) {
+                trackCardHtml = `
+                    <div class="aidj-track-card">
+                        <img class="track-card-thumb" src="${escapeHtml(trackData.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100')}" alt="Cover">
+                        <div class="track-card-info">
+                            <div class="track-card-title">${escapeHtml(trackData.title)}</div>
+                            <div class="track-card-artist">${escapeHtml(trackData.channel || 'SoundWave HD')}</div>
+                        </div>
+                        <button class="btn-card-play-now" data-query="${escapeHtml(trackData.title)}">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                                <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                            </svg>
+                            <span>Play Now</span>
+                        </button>
+                    </div>
+                `;
+            }
+
+            row.innerHTML = `
+                <div class="dj-avatar-badge">🎧 DJ</div>
+                <div class="dj-bubble-content">
+                    <p>${escapeHtml(text)}</p>
+                    ${trackCardHtml}
+                </div>
+            `;
+        }
+
+        feed.appendChild(row);
+
+        // Bind Play Now button in card
+        const playBtn = row.querySelector('.btn-card-play-now');
+        if (playBtn) {
+            playBtn.addEventListener('click', () => {
+                const q = playBtn.getAttribute('data-query');
+                if (q) triggerSearch(q, true);
+            });
+        }
+
+        feed.scrollTop = feed.scrollHeight;
+    }
+
+    // Process DJ Query via Backend / Universal Connector
+    async function processAiDjQuery(userText, fromVoice = false) {
+        if (!userText || !userText.trim()) return;
+        const cleanMsg = userText.trim();
+
+        // Add user bubble
+        appendAiChatMessage('user', cleanMsg);
+        setOrbVisualState('thinking');
+
+        try {
+            const resp = await fetch(`${API_BASE}/api/ai/dj`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: cleanMsg,
+                    provider: currentAiConfig.provider,
+                    api_key: currentAiConfig.apiKey,
+                    model: currentAiConfig.model
+                })
+            });
+            const data = await resp.json();
+            const result = data.result || {};
+            const reply = result.reply || "Aapka gaana laga raha hoon, suniye!";
+            const action = result.action || "play";
+            const query = result.query || cleanMsg;
+
+            let trackCardMeta = null;
+            if (action === 'play' && query) {
+                trackCardMeta = {
+                    title: query,
+                    channel: 'SoundWave AI Recommendation',
+                    thumbnail: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100'
+                };
+            }
+
+            // Append DJ response
+            appendAiChatMessage('dj', reply, trackCardMeta);
+
+            // Speak Voice response
+            speakDjVoice(reply, () => {
+                // Execute action
+                executeAiAction(action, query);
+            });
+
+        } catch (err) {
+            console.error('AI DJ request error:', err);
+            const fallbackReply = `Aapke liye ${cleanMsg} search kar raha hoon!`;
+            appendAiChatMessage('dj', fallbackReply);
+            speakDjVoice(fallbackReply, () => {
+                triggerSearch(cleanMsg, true);
+            });
+        }
+    }
+
+    // Execute playback action
+    function executeAiAction(action, query) {
+        switch (action) {
+            case 'play':
+                if (query) triggerSearch(query, true);
+                break;
+            case 'pause':
+                if (activeAudio) activeAudio.pause();
+                break;
+            case 'resume':
+                if (activeAudio) activeAudio.play().catch(() => {});
+                break;
+            case 'next':
+                playNextTrack();
+                break;
+            case 'prev':
+                playPrevTrack();
+                break;
+            case 'search':
+                if (query) {
+                    switchTab('search');
+                    triggerSearch(query, false);
+                }
+                break;
+            default:
+                if (query) triggerSearch(query, true);
+                break;
+        }
+    }
+
+    // Continuous Always-on Microphone Listening Engine
+    function initAlwaysOnVoiceEngine() {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRec) {
+            console.warn('SpeechRecognition API not available in this browser.');
+            const statusSub = document.getElementById('aidjStatusSub');
+            if (statusSub) statusSub.textContent = 'Voice recognition is available on Chrome, Edge & Safari.';
+            return;
+        }
+
+        speechRecognitionInstance = new SpeechRec();
+        speechRecognitionInstance.continuous = true;
+        speechRecognitionInstance.interimResults = false;
+        speechRecognitionInstance.lang = 'hi-IN'; // Also catches English and Hinglish smoothly
+
+        speechRecognitionInstance.onstart = () => {
+            isAlwaysOnMicActive = true;
+            updateMicUi(true);
+            setOrbVisualState('listening');
+        };
+
+        speechRecognitionInstance.onresult = (event) => {
+            // Prevent hearing itself when AI is talking via TTS
+            if (isAiSpeakingNow || (window.speechSynthesis && window.speechSynthesis.speaking)) {
+                return;
+            }
+
+            const lastIdx = event.results.length - 1;
+            const transcript = event.results[lastIdx][0].transcript.trim();
+            console.log('🎤 Voice transcript:', transcript);
+
+            // Wake word regex: "DJ", "Deejay", "Hey DJ", "SoundWave"
+            const wakeWordRegex = /(dj|deejay|hey dj|soundwave)/i;
+            if (wakeWordRegex.test(transcript)) {
+                playDjChime();
+                let cleanCommand = transcript.replace(/.*?(dj|deejay|hey dj|soundwave)/i, '').trim();
+                if (!cleanCommand) {
+                    const greeting = "Haanji! SoundWave DJ sun raha hai, boliye kaunsa gaana bajau?";
+                    appendAiChatMessage('dj', greeting);
+                    speakDjVoice(greeting);
+                    return;
+                }
+                processAiDjQuery(cleanCommand, true);
+            }
+        };
+
+        speechRecognitionInstance.onerror = (e) => {
+            console.warn('Speech recognition error:', e.error);
+            if (e.error === 'not-allowed') {
+                isAlwaysOnMicActive = false;
+                updateMicUi(false);
+                setOrbVisualState('idle');
+            }
+        };
+
+        speechRecognitionInstance.onend = () => {
+            // Continuous auto-restart if always-on mic is enabled
+            if (isAlwaysOnMicActive) {
+                setTimeout(() => {
+                    if (isAlwaysOnMicActive) {
+                        try { speechRecognitionInstance.start(); } catch (err) {}
+                    }
+                }, 400);
+            } else {
+                updateMicUi(false);
+                setOrbVisualState('idle');
+            }
+        };
+    }
+
+    function toggleAlwaysOnMic(forceState = null) {
+        if (!speechRecognitionInstance) {
+            initAlwaysOnVoiceEngine();
+        }
+        if (!speechRecognitionInstance) return;
+
+        const nextState = forceState !== null ? forceState : !isAlwaysOnMicActive;
+        isAlwaysOnMicActive = nextState;
+
+        if (isAlwaysOnMicActive) {
+            try {
+                speechRecognitionInstance.start();
+            } catch (e) {
+                // Already started
+            }
+            updateMicUi(true);
+            setOrbVisualState('listening');
+        } else {
+            try {
+                speechRecognitionInstance.stop();
+            } catch (e) {}
+            updateMicUi(false);
+            setOrbVisualState('idle');
+        }
+    }
+
+    function updateMicUi(active) {
+        const toggleBtn = document.getElementById('btnAiDjMicToggle');
+        const toggleLabel = document.getElementById('aidjMicToggleLabel');
+        const topbarBtn = document.getElementById('btnTopbarAiDj');
+        const dockMic = document.getElementById('btnDockMic');
+
+        if (toggleBtn) {
+            toggleBtn.classList.toggle('active', active);
+            toggleBtn.classList.toggle('muted', !active);
+        }
+        if (toggleLabel) {
+            toggleLabel.textContent = active ? 'Always-On Mic: ACTIVE' : 'Always-On Mic: MUTED';
+        }
+        if (topbarBtn) {
+            const txt = topbarBtn.querySelector('.dj-topbar-label');
+            const orb = topbarBtn.querySelector('.dj-live-orb');
+            if (txt) txt.textContent = active ? 'DJ: ON' : 'DJ: OFF';
+            if (orb) orb.style.background = active ? '#1db954' : '#71717a';
+        }
+        if (dockMic) {
+            dockMic.classList.toggle('active', active);
+        }
+    }
+
+    // Update Header Active Model Display
+    function refreshActiveModelBadge() {
+        const badge = document.getElementById('aidjModelNameTxt');
+        if (!badge) return;
+        const meta = PROVIDER_METAS[currentAiConfig.provider] || PROVIDER_METAS.builtin;
+        badge.textContent = meta.badge;
+    }
+
+    // Setup Universal AI Connector Modal & Events
+    function setupAiDjModule() {
+        refreshActiveModelBadge();
+
+        // 1. Mic Controls
+        const btnAiDjMicToggle = document.getElementById('btnAiDjMicToggle');
+        if (btnAiDjMicToggle) {
+            btnAiDjMicToggle.addEventListener('click', () => toggleAlwaysOnMic());
+        }
+
+        const btnDockMic = document.getElementById('btnDockMic');
+        if (btnDockMic) {
+            btnDockMic.addEventListener('click', () => {
+                toggleAlwaysOnMic(true);
+            });
+        }
+
+        const aidjCyberOrb = document.getElementById('aidjCyberOrb');
+        if (aidjCyberOrb) {
+            aidjCyberOrb.addEventListener('click', () => {
+                playDjChime();
+                toggleAlwaysOnMic();
+            });
+        }
+
+        // 2. Chat Input Send
+        const aidjTextInput = document.getElementById('aidjTextInput');
+        const btnDockSend = document.getElementById('btnDockSend');
+        if (btnDockSend && aidjTextInput) {
+            const sendInput = () => {
+                const val = aidjTextInput.value.trim();
+                if (val) {
+                    aidjTextInput.value = '';
+                    processAiDjQuery(val, false);
+                }
+            };
+            btnDockSend.addEventListener('click', sendInput);
+            aidjTextInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') sendInput();
+            });
+        }
+
+        // 3. Quick Prompt Chips
+        const promptChips = document.querySelectorAll('.aidj-prompt-chip');
+        promptChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                const prompt = chip.getAttribute('data-prompt');
+                if (prompt) processAiDjQuery(prompt, false);
+            });
         });
+
+        // 4. Modal Open & Close
+        const btnOpenConnectorModal = document.getElementById('btnOpenConnectorModal');
+        const aiConnectorModal = document.getElementById('aiConnectorModal');
+        const btnAiConnectorClose = document.getElementById('btnAiConnectorClose');
+        const aiConnectorBackdrop = document.getElementById('aiConnectorBackdrop');
+
+        const openModal = () => {
+            if (aiConnectorModal) {
+                syncModalToCurrentConfig();
+                aiConnectorModal.classList.remove('hidden');
+            }
+        };
+
+        const closeModal = () => {
+            if (aiConnectorModal) aiConnectorModal.classList.add('hidden');
+        };
+
+        if (btnOpenConnectorModal) btnOpenConnectorModal.addEventListener('click', openModal);
+        if (btnAiConnectorClose) btnAiConnectorClose.addEventListener('click', closeModal);
+        if (aiConnectorBackdrop) aiConnectorBackdrop.addEventListener('click', closeModal);
+
+        // 5. Provider Card Selection
+        let selectedProvider = currentAiConfig.provider || 'builtin';
+        const providerCards = document.querySelectorAll('.provider-card');
+        const apiKeyGroup = document.getElementById('apiKeyGroup');
+        const aiApiKeyInput = document.getElementById('aiApiKeyInput');
+        const aiModelInput = document.getElementById('aiModelInput');
+        const getKeyLink = document.getElementById('getKeyLink');
+        const modelHint = document.getElementById('modelHint');
+        const connectorStatusBox = document.getElementById('connectorStatusBox');
+
+        function syncModalToCurrentConfig() {
+            selectedProvider = currentAiConfig.provider || 'builtin';
+            providerCards.forEach(c => {
+                c.classList.toggle('active', c.getAttribute('data-provider') === selectedProvider);
+            });
+            const meta = PROVIDER_METAS[selectedProvider] || PROVIDER_METAS.builtin;
+            if (aiApiKeyInput) aiApiKeyInput.value = currentAiConfig.apiKey || '';
+            if (aiModelInput) aiModelInput.value = currentAiConfig.model || meta.model;
+            if (getKeyLink) {
+                getKeyLink.href = meta.keyUrl;
+                getKeyLink.style.display = meta.needsKey ? 'inline' : 'none';
+            }
+            if (apiKeyGroup) {
+                apiKeyGroup.style.display = meta.needsKey ? 'block' : 'none';
+            }
+            if (modelHint) modelHint.textContent = meta.hint;
+            if (connectorStatusBox) connectorStatusBox.classList.add('hidden');
+        }
+
+        providerCards.forEach(card => {
+            card.addEventListener('click', () => {
+                providerCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                selectedProvider = card.getAttribute('data-provider');
+                const meta = PROVIDER_METAS[selectedProvider] || PROVIDER_METAS.builtin;
+
+                if (aiModelInput) aiModelInput.value = meta.model;
+                if (getKeyLink) {
+                    getKeyLink.href = meta.keyUrl;
+                    getKeyLink.style.display = meta.needsKey ? 'inline' : 'none';
+                }
+                if (apiKeyGroup) {
+                    apiKeyGroup.style.display = meta.needsKey ? 'block' : 'none';
+                }
+                if (modelHint) modelHint.textContent = meta.hint;
+                if (connectorStatusBox) connectorStatusBox.classList.add('hidden');
+            });
+        });
+
+        // 6. Toggle Eye
+        const btnToggleKeyEye = document.getElementById('btnToggleKeyEye');
+        if (btnToggleKeyEye && aiApiKeyInput) {
+            btnToggleKeyEye.addEventListener('click', () => {
+                const isPass = aiApiKeyInput.type === 'password';
+                aiApiKeyInput.type = isPass ? 'text' : 'password';
+                btnToggleKeyEye.textContent = isPass ? '🔒' : '👁️';
+            });
+        }
+
+        // 7. Test Connection Button
+        const btnTestConnection = document.getElementById('btnTestConnection');
+        if (btnTestConnection) {
+            btnTestConnection.addEventListener('click', async () => {
+                if (!connectorStatusBox) return;
+                const statusMsg = document.getElementById('connectorStatusMsg');
+                const statusIcon = document.getElementById('connectorStatusIcon');
+
+                connectorStatusBox.className = 'connector-test-status loading';
+                connectorStatusBox.classList.remove('hidden');
+                if (statusIcon) statusIcon.textContent = '⏳';
+                if (statusMsg) statusMsg.textContent = `Connecting to ${selectedProvider.toUpperCase()}...`;
+
+                const meta = PROVIDER_METAS[selectedProvider] || PROVIDER_METAS.builtin;
+                const keyVal = aiApiKeyInput ? aiApiKeyInput.value.trim() : '';
+                const modelVal = aiModelInput ? aiModelInput.value.trim() : meta.model;
+
+                try {
+                    const res = await fetch(`${API_BASE}/api/ai/test_connection`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            provider: selectedProvider,
+                            api_key: keyVal,
+                            model: modelVal
+                        })
+                    });
+                    const d = await res.json();
+                    if (d.success) {
+                        connectorStatusBox.className = 'connector-test-status success';
+                        if (statusIcon) statusIcon.textContent = '✅';
+                        if (statusMsg) statusMsg.textContent = d.message || 'Connected successfully!';
+                    } else {
+                        connectorStatusBox.className = 'connector-test-status error';
+                        if (statusIcon) statusIcon.textContent = '❌';
+                        if (statusMsg) statusMsg.textContent = d.message || 'Connection failed.';
+                    }
+                } catch (e) {
+                    connectorStatusBox.className = 'connector-test-status error';
+                    if (statusIcon) statusIcon.textContent = '❌';
+                    if (statusMsg) statusMsg.textContent = 'Network error testing model connection.';
+                }
+            });
+        }
+
+        // 8. Save & Activate Model Button
+        const btnSaveConnector = document.getElementById('btnSaveConnector');
+        if (btnSaveConnector) {
+            btnSaveConnector.addEventListener('click', () => {
+                const meta = PROVIDER_METAS[selectedProvider] || PROVIDER_METAS.builtin;
+                const keyVal = aiApiKeyInput ? aiApiKeyInput.value.trim() : '';
+                const modelVal = aiModelInput ? aiModelInput.value.trim() : meta.model;
+
+                currentAiConfig = {
+                    provider: selectedProvider,
+                    apiKey: keyVal,
+                    model: modelVal
+                };
+                saveStoredAiConfig(currentAiConfig);
+                refreshActiveModelBadge();
+                closeModal();
+
+                const announceMsg = `SoundWave AI DJ is now powered by ${meta.name} (${modelVal})! Direct music control active.`;
+                appendAiChatMessage('dj', announceMsg);
+                speakDjVoice(announceMsg);
+            });
+        }
+
+        // 9. Reset to Free Built-in DJ Button
+        const btnResetToFree = document.getElementById('btnResetToFree');
+        if (btnResetToFree) {
+            btnResetToFree.addEventListener('click', () => {
+                currentAiConfig = {
+                    provider: 'builtin',
+                    apiKey: '',
+                    model: 'built-in'
+                };
+                saveStoredAiConfig(currentAiConfig);
+                syncModalToCurrentConfig();
+                refreshActiveModelBadge();
+                closeModal();
+
+                const resetMsg = "Reset to Built-in Free Smart Music DJ! 100% free and zero setup.";
+                appendAiChatMessage('dj', resetMsg);
+                speakDjVoice(resetMsg);
+            });
+        }
+
+        // Initialize voice engine in background
+        setTimeout(() => {
+            initAlwaysOnVoiceEngine();
+        }, 1200);
+    }
+
+    // Call setup for AI DJ
+    setupAiDjModule();
+
+
+});
     }
 
     // Auto-load T-Series on startup

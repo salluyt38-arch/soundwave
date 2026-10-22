@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20261022_real_audio">
+    <link rel="stylesheet" href="style.css?v=20261022_aidj_v1">
     <link rel="manifest" href="manifest.json">
 
 
@@ -61,6 +61,16 @@
                             <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
                         </svg>
                         <span>Home</span>
+                    </button>
+                    <button class="side-link" data-tab="aidj" id="sideNavAiDj">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" fill="#a855f7"></path>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                            <line x1="12" y1="19" x2="12" y2="23"></line>
+                            <line x1="8" y1="23" x2="16" y2="23"></line>
+                        </svg>
+                        <span>AI DJ & Voice</span>
+                        <span class="nav-ai-glow-tag">DJ</span>
                     </button>
                     <button class="side-link" data-tab="search" id="sideNavSearch">
                         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -167,6 +177,10 @@
 
                     <div class="topbar-right">
 
+                        <button class="btn-topbar-aidj" id="btnTopbarAiDj" title="SoundWave AI DJ (Always-on Voice Assistant)">
+                            <span class="dj-live-orb"></span>
+                            <span class="dj-topbar-label">AI DJ Voice</span>
+                        </button>
                         <button class="btn-install-pwa" id="btnInstallPwa" title="Install SoundWave on Phone">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -838,6 +852,125 @@
                         </div>
                     </div>
 
+                    <!-- TAB: AI DJ & VOICE ASSISTANT -->
+                    <div class="tab-panel" id="tabAiDj">
+                        <div class="aidj-container">
+                            
+                            <!-- AI DJ Stage Header Banner -->
+                            <div class="aidj-hero-header">
+                                <div class="aidj-hero-meta">
+                                    <div class="aidj-badge-live">
+                                        <span class="aidj-dot-pulse"></span>
+                                        <span>SOUNDWAVE INTELLIGENCE 2.0</span>
+                                    </div>
+                                    <h1 class="aidj-title">AI DJ & Voice Studio</h1>
+                                    <p class="aidj-subtitle">Always-on voice intelligence with Universal Multi-LLM Connectors. Speak to DJ or let AI curate the vibe.</p>
+                                </div>
+                                <div class="aidj-header-actions">
+                                    <div class="aidj-active-model-chip" id="aidjActiveModelDisplay" title="Active LLM Engine">
+                                        <span class="model-status-indicator"></span>
+                                        <span class="model-chip-name" id="aidjModelNameTxt">✨ Built-in Smart DJ (Free)</span>
+                                    </div>
+                                    <button class="btn-aidj-connector" id="btnOpenConnectorModal" title="Connect Claude, OpenAI, Gemini, Groq, OpenRouter">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                        </svg>
+                                        <span>Connect LLMs</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Central DJ Interactive Orb Stage -->
+                            <div class="aidj-orb-stage">
+                                <div class="aidj-orb-visualizer" id="aidjOrbVisualizer">
+                                    <div class="orb-ring ring-outer"></div>
+                                    <div class="orb-ring ring-mid"></div>
+                                    <div class="orb-ring ring-inner"></div>
+                                    <div class="aidj-cyber-orb" id="aidjCyberOrb">
+                                        <div class="orb-core">
+                                            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" fill="url(#orbMicGrad)"></path>
+                                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                                <line x1="12" y1="19" x2="12" y2="23"></line>
+                                                <line x1="8" y1="23" x2="16" y2="23"></line>
+                                                <defs>
+                                                    <linearGradient id="orbMicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                        <stop offset="0%" stop-color="#1db954" />
+                                                        <stop offset="100%" stop-color="#a855f7" />
+                                                    </linearGradient>
+                                                </defs>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <!-- Dynamic Wave Bars -->
+                                    <div class="aidj-wave-bars" id="aidjWaveBars">
+                                        <span class="wbar"></span><span class="wbar"></span><span class="wbar"></span>
+                                        <span class="wbar"></span><span class="wbar"></span><span class="wbar"></span>
+                                        <span class="wbar"></span><span class="wbar"></span><span class="wbar"></span>
+                                    </div>
+                                </div>
+
+                                <div class="aidj-status-display">
+                                    <h3 class="aidj-status-heading" id="aidjStatusText">Say "DJ" followed by any song or command</h3>
+                                    <p class="aidj-status-sub" id="aidjStatusSub">Microphone is listening in continuous background mode</p>
+                                </div>
+
+                                <div class="aidj-mic-controls">
+                                    <button class="btn-aidj-mic-toggle active" id="btnAiDjMicToggle" title="Toggle Always-on Microphone Listening">
+                                        <span class="mic-toggle-icon">🎙️</span>
+                                        <span id="aidjMicToggleLabel">Always-On Mic: ACTIVE</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Quick Action Chips -->
+                            <div class="aidj-quick-prompts">
+                                <span class="quick-prompts-label">TRY ASKING DJ:</span>
+                                <div class="aidj-chips-scroll">
+                                    <button class="aidj-prompt-chip" data-prompt="DJ play romantic Bollywood hits">💖 DJ romantic Bollywood hits</button>
+                                    <button class="aidj-prompt-chip" data-prompt="DJ high energy Punjabi workout mix">⚡ DJ Punjabi workout mix</button>
+                                    <button class="aidj-prompt-chip" data-prompt="DJ play Chaleya from Jawan">🔥 DJ play Chaleya Jawan</button>
+                                    <button class="aidj-prompt-chip" data-prompt="DJ chill lo-fi study beats">☕ DJ chill lo-fi study</button>
+                                    <button class="aidj-prompt-chip" data-prompt="DJ Arijit Singh sad melodies">💔 DJ Arijit Singh melodies</button>
+                                    <button class="aidj-prompt-chip" data-prompt="DJ play Tauba Tauba">🕺 DJ play Tauba Tauba</button>
+                                    <button class="aidj-prompt-chip" data-prompt="DJ pause the music">⏸️ DJ pause music</button>
+                                    <button class="aidj-prompt-chip" data-prompt="DJ play next song">⏭️ DJ next song</button>
+                                </div>
+                            </div>
+
+                            <!-- Live Chat & Action Feed -->
+                            <div class="aidj-chat-section">
+                                <div class="aidj-chat-feed" id="aidjChatFeed">
+                                    <div class="aidj-msg-bubble dj-bubble">
+                                        <div class="dj-avatar-badge">🎧 DJ</div>
+                                        <div class="dj-bubble-content">
+                                            <p>Welcome to SoundWave AI Studio! Mera microphone always-on hai — aap bas <strong>"DJ"</strong> boliye (jaise <em>"DJ play Kesariya"</em> ya <em>"DJ romantic gaane chalao"</em>) aur main turant gaana play kar dunga!</p>
+                                            <p class="dj-bubble-tip">💡 <strong>Tip:</strong> Aap upar <strong>"Connect LLMs"</strong> se apna <strong>Claude, GPT-4o, Gemini ya Groq</strong> account bhi bind kar sakte hain.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Text & Voice Input Dock -->
+                                <div class="aidj-input-dock">
+                                    <button class="btn-dock-mic" id="btnDockMic" title="Click to speak immediately">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                                            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                                        </svg>
+                                    </button>
+                                    <input type="text" id="aidjTextInput" placeholder="Say 'DJ ...' or type any song, mood, or artist..." autocomplete="off">
+                                    <button class="btn-dock-send" id="btnDockSend" title="Send to DJ">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
             </section>
         </div>
@@ -980,6 +1113,12 @@
                     <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
                 </svg>
                 <span>Home</span>
+            </button>
+            <button class="mob-tab-btn" data-tab="aidj" id="mobTabAiDj">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                    <path d="M12 1a4 4 0 0 0-4 4v7a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4zm6 11a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93V22h2v-2.07A8 8 0 0 0 20 12h-2z"/>
+                </svg>
+                <span>AI DJ</span>
             </button>
             <button class="mob-tab-btn" data-tab="search" id="mobTabSearch">
                 <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -1234,6 +1373,120 @@
         </div>
 
         <!-- ========================================================================== -->
+
+        <!-- ========================================================================== -->
+        <!-- UNIVERSAL AI LLM CONNECTOR MODAL (Claude, OpenAI, Gemini, Groq, OpenRouter) -->
+        <!-- ========================================================================== -->
+        <div class="sp-modal-overlay hidden" id="aiConnectorModal">
+            <div class="modal-backdrop-blur" id="aiConnectorBackdrop"></div>
+            <div class="ai-connector-dialog">
+                <button class="modal-close-btn" id="btnAiConnectorClose" title="Close">✕</button>
+
+                <div class="ai-connector-header">
+                    <div class="connector-brand-icon">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#a855f7" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                            <path d="M2 12h20"></path>
+                        </svg>
+                    </div>
+                    <h2>Universal AI LLM Connector</h2>
+                    <p>Connect any state-of-the-art AI model to directly control SoundWave's music playback, voice DJ, and recommendations.</p>
+                </div>
+
+                <div class="connector-form">
+                    <!-- Provider Picker Cards -->
+                    <div class="form-group">
+                        <label class="connector-label">Choose AI Engine / Model Provider</label>
+                        <div class="provider-cards-grid" id="providerCardsGrid">
+                            <div class="provider-card active" data-provider="builtin">
+                                <div class="provider-card-icon">✨</div>
+                                <div class="provider-card-info">
+                                    <div class="provider-card-name">Built-in Smart DJ</div>
+                                    <div class="provider-card-badge free">100% Free / Zero Setup</div>
+                                </div>
+                            </div>
+                            <div class="provider-card" data-provider="groq">
+                                <div class="provider-card-icon">⚡</div>
+                                <div class="provider-card-info">
+                                    <div class="provider-card-name">Groq Cloud</div>
+                                    <div class="provider-card-badge free">Free Tier (0.2s Ultra Fast)</div>
+                                </div>
+                            </div>
+                            <div class="provider-card" data-provider="openrouter">
+                                <div class="provider-card-icon">🌐</div>
+                                <div class="provider-card-info">
+                                    <div class="provider-card-name">OpenRouter AI</div>
+                                    <div class="provider-card-badge free">Free & 100+ Models</div>
+                                </div>
+                            </div>
+                            <div class="provider-card" data-provider="anthropic">
+                                <div class="provider-card-icon">🟣</div>
+                                <div class="provider-card-info">
+                                    <div class="provider-card-name">Anthropic Claude</div>
+                                    <div class="provider-card-badge pro">Claude 3.5 Sonnet</div>
+                                </div>
+                            </div>
+                            <div class="provider-card" data-provider="openai">
+                                <div class="provider-card-icon">🟢</div>
+                                <div class="provider-card-info">
+                                    <div class="provider-card-name">OpenAI</div>
+                                    <div class="provider-card-badge pro">GPT-4o & GPT-4o-mini</div>
+                                </div>
+                            </div>
+                            <div class="provider-card" data-provider="gemini">
+                                <div class="provider-card-icon">🔵</div>
+                                <div class="provider-card-info">
+                                    <div class="provider-card-name">Google Gemini</div>
+                                    <div class="provider-card-badge free">Gemini 2.0 Flash</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- API Key Field -->
+                    <div class="form-group" id="apiKeyGroup">
+                        <div class="label-with-link">
+                            <label class="connector-label" for="aiApiKeyInput">API Key</label>
+                            <a href="#" target="_blank" class="get-key-link" id="getKeyLink">Get Free API Key ↗</a>
+                        </div>
+                        <div class="key-input-wrapper">
+                            <input type="password" id="aiApiKeyInput" placeholder="Enter your provider API Key..." autocomplete="off">
+                            <button class="btn-toggle-eye" id="btnToggleKeyEye" type="button" title="Show/Hide Key">👁️</button>
+                        </div>
+                        <span class="field-hint">Your API Key is saved privately in your local browser storage and never shared.</span>
+                    </div>
+
+                    <!-- Model Selection -->
+                    <div class="form-group" id="modelSelectGroup">
+                        <label class="connector-label" for="aiModelInput">Model Identifier</label>
+                        <input type="text" id="aiModelInput" placeholder="e.g. claude-3-5-sonnet-20241022 or llama-3.3-70b-versatile">
+                        <span class="field-hint" id="modelHint">Recommended default model prefilled automatically.</span>
+                    </div>
+
+                    <!-- Test Connection Status Box -->
+                    <div class="connector-test-status hidden" id="connectorStatusBox">
+                        <span class="status-icon" id="connectorStatusIcon">⏳</span>
+                        <span class="status-msg" id="connectorStatusMsg">Testing connection...</span>
+                    </div>
+
+                    <!-- Modal Actions -->
+                    <div class="connector-actions">
+                        <button class="btn-connector-test" id="btnTestConnection" type="button">
+                            <span>⚡ Test Connection</span>
+                        </button>
+                        <button class="btn-connector-save" id="btnSaveConnector" type="button">
+                            <span>💾 Save & Activate Model</span>
+                        </button>
+                    </div>
+
+                    <div class="connector-footer-note">
+                        <button class="btn-reset-free" id="btnResetToFree" type="button">Reset to Free Built-in DJ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- FIREBASE AUTH MODAL (Google Sign-In, Email/Password Login & Sign Up) -->
         <!-- ========================================================================== -->
         <div class="sp-modal-overlay hidden" id="authModal">
@@ -1524,7 +1777,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=20261022_real_audio"></script>
+    <script src="app.js?v=20261022_aidj_v1"></script>
 
   <!-- DMCA & COPYRIGHT LEGAL MODAL -->
   <div class="movie-modal-overlay hidden" id="dmcaModal">

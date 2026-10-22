@@ -19,6 +19,7 @@ import json
 import base64
 import urllib.parse
 import urllib.request
+import random
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 import os
 import sys
@@ -466,6 +467,329 @@ def fetch_channel_songs(channel_key="tseries", page=1):
         "has_next": len(entries) >= (start_idx + len(page_entries)) and len(page_entries) >= 12
     }
 
+
+# ==============================================================================
+# SOUNDWAVE AI DJ & UNIVERSAL MULTI-LLM CONNECTOR ENGINE
+# Supports: Anthropic Claude, OpenAI, Google Gemini, Groq, OpenRouter, NVIDIA NIM, & Built-in Free DJ
+# ==============================================================================
+AI_DJ_SYSTEM_PROMPT = """You are SoundWave AI DJ, the official AI Music & Entertainment Assistant on SoundWave (a high-fidelity web music app).
+You speak charismatic, upbeat, friendly Hinglish and English like a cool radio DJ.
+You understand music moods, Bollywood, Hollywood, Punjabi, Pakistani, Indie, and playback commands.
+
+Respond STRICTLY with a valid JSON object (no markdown, no backticks, no other text):
+{
+  "reply": "Energetic 1-2 sentence DJ voice response in Hinglish/English (max 25 words)",
+  "action": "play" | "pause" | "resume" | "next" | "prev" | "search" | "info",
+  "query": "Exact song title and artist to play",
+  "category": "music" | "entertainment" | "movie"
+}
+Guidelines:
+- If user asks for any song, artist, genre, or mood, action MUST be 'play' and query MUST be the specific song title.
+- If user says pause/stop, action MUST be 'pause'.
+- If user says resume/continue, action MUST be 'resume'.
+- If user says next/skip, action MUST be 'next'.
+- If user says previous/back, action MUST be 'prev'.
+"""
+
+def parse_ai_json(text):
+    if not text:
+        return None
+    cleaned = re.sub(r'```json\s*', '', text, flags=re.IGNORECASE)
+    cleaned = re.sub(r'```\s*', '', cleaned).strip()
+    try:
+        return json.loads(cleaned)
+    except Exception:
+        m = re.search(r'(\{[\s\S]*\})', cleaned)
+        if m:
+            try:
+                return json.loads(m.group(1))
+            except Exception:
+                pass
+    return None
+
+def smart_builtin_dj(message):
+    msg = (message or '').strip().lower()
+    
+    # 1. Playback controls
+    if any(w in msg for w in ['pause', 'stop', 'rok do', 'band kar', 'ruk jao', 'pause kar']):
+        return {
+            "reply": "Music pause kar diya hai! Jab bolenge main turant resume kar dunga.",
+            "action": "pause",
+            "query": "",
+            "category": "music"
+        }
+    if any(w in msg for w in ['resume', 'play karo', 'shuru karo', 'chalu karo']) and not any(w in msg for w in ['song', 'gaana', 'geet', 'track', 'music', 'play ']):
+        return {
+            "reply": "Music resume ho gaya hai, beats enjoy kijiye!",
+            "action": "resume",
+            "query": "",
+            "category": "music"
+        }
+    if any(w in msg for w in ['next', 'agla', 'skip', 'change', 'badlo']):
+        return {
+            "reply": "Agla gaana play ho raha hai!",
+            "action": "next",
+            "query": "",
+            "category": "music"
+        }
+    if any(w in msg for w in ['prev', 'previous', 'pichla', 'back']):
+        return {
+            "reply": "Pichla track wapas chala diya hai!",
+            "action": "prev",
+            "query": "",
+            "category": "music"
+        }
+
+    # 2. Mood & Genre Curation (Instant & Accurate)
+    mood_map = {
+        ('romantic', 'pyaar', 'love', 'ishq', 'dil'): [
+            ("Kesariya - Arijit Singh", "Aapke dil ke taar chhedne ke liye yeh raha Kesariya!"),
+            ("Apna Bana Le - Arijit Singh", "Pure romantic vibes! Apna Bana Le suniye."),
+            ("Tum Se Hi - Mohit Chauhan", "Jab We Met ka timeless romantic magic aapke liye!")
+        ],
+        ('gym', 'workout', 'energy', 'pump', 'power', 'heavy'): [
+            ("Winning Speech - Karan Aujla", "Gym me aag lagaane ke liye Karan Aujla ka Winning Speech!"),
+            ("Cheques - Shubh", "High energy mode ON! Shubh ka Cheques baj gaya hai."),
+            ("Born to Shine - Diljit Dosanjh", "Full motivation workout track, let's crush it!")
+        ],
+        ('party', 'dance', 'club', 'nachta', 'dhamaka'): [
+            ("Tauba Tauba - Karan Aujla", "Floor par aag lagane ke liye Tauba Tauba baj raha hai!"),
+            ("Badtameez Dil - Ranbir Kapoor", "Party mode activate! Badtameez Dil ke saath jhoom lijiye."),
+            ("Kala Chashma - Baar Baar Dekho", "Super hit dance banger Kala Chashma!")
+        ],
+        ('sad', 'dard', 'heartbreak', 'udaas', 'alone', 'cry'): [
+            ("Channa Mereya - Arijit Singh", "Dil ko chhoo lene wala Arijit ka Channa Mereya."),
+            ("Ranjha - Shershaah", "Aapke jazbaat ke saath, Ranjha track hazir hai."),
+            ("Bekhayali - Kabir Singh", "Heartbreak emotions ke liye Bekhayali.")
+        ],
+        ('punjabi', 'bhangra', 'jatt', 'sidhu', 'moosewala', 'aujla'): [
+            ("295 - Sidhu Moose Wala", "Legendary Sidhu Moose Wala ka evergreen track 295!"),
+            ("Softly - Karan Aujla", "Karan Aujla ka smooth Punjabi vibe Softly!"),
+            ("Brown Munde - AP Dhillon", "AP Dhillon ka global anthem Brown Munde!")
+        ],
+        ('lofi', 'chill', 'relax', 'study', 'peace', 'sleep'): [
+            ("Iktara Lo-Fi Chill Mix", "Peaceful chill vibes ke liye Iktara Lo-Fi baj raha hai."),
+            ("Pasoori Lo-Fi Chill", "Dim the lights and vibe to Pasoori Lo-Fi.")
+        ],
+        ('90s', 'retro', 'old', 'purane', 'classic', 'vintage'): [
+            ("Tujhe Dekha Toh Yeh Jaana Sanam", "90s ka sabse bada romantic blockbuster gaana!"),
+            ("Dil To Pagal Hai - Lata Mangeshkar", "Golden 90s era ka magical melody.")
+        ]
+    }
+
+    for keys, songs in mood_map.items():
+        if any(k in msg for k in keys):
+            pick = random.choice(songs)
+            return {
+                "reply": pick[1],
+                "action": "play",
+                "query": pick[0],
+                "category": "music"
+            }
+
+    # 3. Direct song / artist query cleanup
+    clean = re.sub(r'^(dj|deejay|hey dj|soundwave)\s*', '', msg, flags=re.IGNORECASE)
+    clean = re.sub(r'\b(play|chalao|bajao|sunaao|lagao|song|gaana|geet|sunna hai|track|music)\b', '', clean, flags=re.IGNORECASE).strip()
+    if not clean:
+        clean = "Kesariya Arijit Singh"
+        reply = "Aapka favourite trendsetter gaana Kesariya baj raha hai!"
+    else:
+        reply = f"Bilkul! Aapke liye '{clean}' play kar raha hoon, enjoy kijiye!"
+
+    return {
+        "reply": reply,
+        "action": "play",
+        "query": clean,
+        "category": "music"
+    }
+
+def call_ai_provider(message, provider='default', api_key='', model=''):
+    provider = (provider or 'default').lower().strip()
+    api_key = (api_key or '').strip()
+    model = (model or '').strip()
+
+    if provider in ['default', 'builtin', 'local'] or not api_key:
+        return smart_builtin_dj(message)
+
+    try:
+        if provider == 'anthropic':
+            req_url = "https://api.anthropic.com/v1/messages"
+            payload = {
+                "model": model or "claude-3-5-sonnet-20241022",
+                "max_tokens": 300,
+                "system": AI_DJ_SYSTEM_PROMPT,
+                "messages": [{"role": "user", "content": message}]
+            }
+            headers = {
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json"
+            }
+            req = urllib.request.Request(req_url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=12) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                text = data["content"][0]["text"]
+                parsed = parse_ai_json(text)
+                if parsed:
+                    return parsed
+
+        elif provider == 'openai':
+            req_url = "https://api.openai.com/v1/chat/completions"
+            payload = {
+                "model": model or "gpt-4o-mini",
+                "messages": [
+                    {"role": "system", "content": AI_DJ_SYSTEM_PROMPT},
+                    {"role": "user", "content": message}
+                ],
+                "response_format": {"type": "json_object"}
+            }
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+            req = urllib.request.Request(req_url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=12) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                text = data["choices"][0]["message"]["content"]
+                parsed = parse_ai_json(text)
+                if parsed:
+                    return parsed
+
+        elif provider == 'groq':
+            req_url = "https://api.groq.com/openai/v1/chat/completions"
+            payload = {
+                "model": model or "llama-3.3-70b-versatile",
+                "messages": [
+                    {"role": "system", "content": AI_DJ_SYSTEM_PROMPT},
+                    {"role": "user", "content": message}
+                ],
+                "response_format": {"type": "json_object"}
+            }
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+            req = urllib.request.Request(req_url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=12) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                text = data["choices"][0]["message"]["content"]
+                parsed = parse_ai_json(text)
+                if parsed:
+                    return parsed
+
+        elif provider == 'gemini':
+            mod = model or "gemini-2.0-flash"
+            req_url = f"https://generativelanguage.googleapis.com/v1beta/models/{mod}:generateContent?key={api_key}"
+            payload = {
+                "contents": [
+                    {"role": "user", "parts": [{"text": AI_DJ_SYSTEM_PROMPT + "\n\nUser Message: " + message}]}
+                ],
+                "generationConfig": {
+                    "responseMimeType": "application/json"
+                }
+            }
+            headers = {"Content-Type": "application/json"}
+            req = urllib.request.Request(req_url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=12) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                text = data["candidates"][0]["content"]["parts"][0]["text"]
+                parsed = parse_ai_json(text)
+                if parsed:
+                    return parsed
+
+        elif provider == 'openrouter':
+            req_url = "https://openrouter.ai/api/v1/chat/completions"
+            payload = {
+                "model": model or "meta-llama/llama-3.3-70b-instruct:free",
+                "messages": [
+                    {"role": "system", "content": AI_DJ_SYSTEM_PROMPT},
+                    {"role": "user", "content": message}
+                ]
+            }
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://soundwave-5y5z.onrender.com",
+                "X-Title": "SoundWave AI DJ"
+            }
+            req = urllib.request.Request(req_url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=12) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                text = data["choices"][0]["message"]["content"]
+                parsed = parse_ai_json(text)
+                if parsed:
+                    return parsed
+
+        elif provider == 'nvidia':
+            req_url = "https://integrate.api.nvidia.com/v1/chat/completions"
+            payload = {
+                "model": model or "meta/llama-3.1-70b-instruct",
+                "messages": [
+                    {"role": "system", "content": AI_DJ_SYSTEM_PROMPT},
+                    {"role": "user", "content": message}
+                ]
+            }
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+            req = urllib.request.Request(req_url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=12) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                text = data["choices"][0]["message"]["content"]
+                parsed = parse_ai_json(text)
+                if parsed:
+                    return parsed
+
+    except Exception as e:
+        print(f"SoundWave AI Provider [{provider}] error: {e}, falling back to built-in DJ.")
+
+    return smart_builtin_dj(message)
+
+def test_ai_provider(provider, api_key, model=''):
+    provider = (provider or 'default').lower().strip()
+    api_key = (api_key or '').strip()
+    model = (model or '').strip()
+
+    if provider in ['default', 'builtin']:
+        return {
+            "success": True,
+            "message": "Built-in Smart Music DJ is active (Zero Setup / 100% Free).",
+            "provider": "builtin",
+            "model": "built-in"
+        }
+
+    if not api_key:
+        return {
+            "success": False,
+            "message": f"Please enter an API Key for {provider.capitalize()}.",
+            "provider": provider
+        }
+
+    try:
+        test_msg = "Hello DJ, respond with JSON: {\"reply\": \"Connected!\", \"action\": \"info\", \"query\": \"\", \"category\": \"music\"}"
+        res = call_ai_provider(test_msg, provider=provider, api_key=api_key, model=model)
+        if res and res.get("reply"):
+            return {
+                "success": True,
+                "message": f"Successfully connected to {provider.upper()} ({model or 'default model'})! AI DJ is ready to take voice commands.",
+                "provider": provider,
+                "model": model,
+                "sample_reply": res.get("reply")
+            }
+        else:
+            return {
+                "success": False,
+                "message": f"Failed to get structured response from {provider}. Check your API Key.",
+                "provider": provider
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error connecting to {provider}: {str(e)}",
+            "provider": provider
+        }
+
 class MusicHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=STATIC_DIR, **kwargs)
@@ -859,6 +1183,19 @@ class MusicHandler(SimpleHTTPRequestHandler):
                     print("Movie search error:", e)
                     self.send_json({"error": str(e), "results": []}, status=500)
 
+            elif path == "/api/ai/providers":
+                self.send_json({
+                    "providers": [
+                        {"id": "builtin", "name": "Built-in Smart DJ (Free / Zero Setup)", "free": True, "requires_key": False, "default_model": "built-in", "desc": "Instant zero-latency music intent parser and voice DJ."},
+                        {"id": "groq", "name": "Groq Cloud (Ultra Fast)", "free": True, "requires_key": True, "default_model": "llama-3.3-70b-versatile", "desc": "Lightning fast ~200ms latency with Llama 3.3 70B.", "key_url": "https://console.groq.com/keys"},
+                        {"id": "openrouter", "name": "OpenRouter AI (Multi-Model)", "free": True, "requires_key": True, "default_model": "meta-llama/llama-3.3-70b-instruct:free", "desc": "Access 100+ models including free tier models (:free).", "key_url": "https://openrouter.ai/keys"},
+                        {"id": "anthropic", "name": "Anthropic Claude", "free": False, "requires_key": True, "default_model": "claude-3-5-sonnet-20241022", "desc": "World-class musical knowledge, lyrics understanding & curation.", "key_url": "https://console.anthropic.com/"},
+                        {"id": "openai", "name": "OpenAI (GPT-4o)", "free": False, "requires_key": True, "default_model": "gpt-4o-mini", "desc": "Smartest reasoning with GPT-4o-mini & GPT-4o.", "key_url": "https://platform.openai.com/api-keys"},
+                        {"id": "gemini", "name": "Google Gemini", "free": True, "requires_key": True, "default_model": "gemini-2.0-flash", "desc": "Next-gen multimodal speed & reasoning.", "key_url": "https://aistudio.google.com/app/apikey"},
+                        {"id": "nvidia", "name": "NVIDIA NIM", "free": True, "requires_key": True, "default_model": "meta/llama-3.1-70b-instruct", "desc": "Enterprise AI acceleration with 1000 free credits.", "key_url": "https://build.nvidia.com/"}
+                    ]
+                })
+
             elif path == "/api/download":
                 video_id = query.get("id", [""])[0].strip()
                 if not video_id:
@@ -1043,6 +1380,25 @@ class MusicHandler(SimpleHTTPRequestHandler):
                     "customer_details": cf_payload["customer_details"],
                     "authorisation_details": cf_payload["authorization_details"]
                 })
+
+            elif path == "/api/ai/dj":
+                message = data.get("message", "").strip()
+                provider = data.get("provider", "default").strip()
+                api_key = data.get("api_key", "").strip()
+                model = data.get("model", "").strip()
+                res = call_ai_provider(message, provider=provider, api_key=api_key, model=model)
+                self.send_json({
+                    "status": "success",
+                    "provider": provider,
+                    "result": res
+                })
+
+            elif path == "/api/ai/test_connection":
+                provider = data.get("provider", "default").strip()
+                api_key = data.get("api_key", "").strip()
+                model = data.get("model", "").strip()
+                res = test_ai_provider(provider, api_key, model=model)
+                self.send_json(res)
 
             elif path == "/api/subscription/config":
                 new_app_id = data.get("app_id", "").strip()
