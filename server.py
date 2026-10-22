@@ -1294,15 +1294,21 @@ class MusicHandler(SimpleHTTPRequestHandler):
                             seen_ids.add(video_id)
 
                             duration_sec = entry.get("duration") or 0
-                            # Filter out non-music spam (> 25 mins or < 30s) unless searching for full mix
-                            if "hour" not in q.lower() and "full" not in q.lower() and duration_sec > 1500:
-                                continue
-                            if duration_sec < 30 and "short" not in q.lower():
+                            # Only filter out corrupt items (< 10 seconds)
+                            if 0 < duration_sec < 10:
                                 continue
 
-                            mins = int(duration_sec) // 60
-                            secs = int(duration_sec) % 60
-                            duration_str = f"{mins}:{secs:02d}"
+                            if duration_sec >= 3600:
+                                hours = int(duration_sec) // 3600
+                                mins = (int(duration_sec) % 3600) // 60
+                                secs = int(duration_sec) % 60
+                                duration_str = f"{hours}:{mins:02d}:{secs:02d}"
+                            elif duration_sec > 0:
+                                mins = int(duration_sec) // 60
+                                secs = int(duration_sec) % 60
+                                duration_str = f"{mins}:{secs:02d}"
+                            else:
+                                duration_str = "LIVE / Radio"
 
                             raw_t = entry.get("title", "Unknown Title")
                             clean_t = clean_youtube_title(raw_t)
