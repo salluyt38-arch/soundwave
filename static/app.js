@@ -119,9 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 1. DOM REFERENCES ---
     // Tab Navigation
     const tabHome = document.getElementById('tabHome');
-    const tabBrowse = document.getElementById('tabBrowse');
-    const sideNavBrowse = document.getElementById('sideNavBrowse');
-    const mobTabBrowse = document.getElementById('mobTabBrowse');
     const tabSearch = document.getElementById('tabSearch');
     const tabVideo = document.getElementById('tabVideo');
     const tabMovies = document.getElementById('tabMovies');
@@ -315,7 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
         activeTabName = tabName;
         const tabs = {
             home: { panel: tabHome, sideLink: sideNavHome, mobBtn: mobTabHome },
-            browse: { panel: tabBrowse, sideLink: sideNavBrowse, mobBtn: mobTabBrowse },
             search: { panel: tabSearch, sideLink: sideNavSearch, mobBtn: mobTabSearch },
             video: { panel: tabVideo, sideLink: sideNavVideo, mobBtn: mobTabVideo },
             movies: { panel: tabMovies, sideLink: sideNavMovies, mobBtn: mobTabMovies },
@@ -377,8 +373,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupEventListeners() {
         // Desktop Sidebar Nav Buttons
         if (sideNavHome) sideNavHome.addEventListener('click', () => switchTab('home'));
-        if (sideNavBrowse) sideNavBrowse.addEventListener('click', () => switchTab('browse'));
-        if (mobTabBrowse) mobTabBrowse.addEventListener('click', () => switchTab('browse'));
         if (sideNavSearch) sideNavSearch.addEventListener('click', () => switchTab('search'));
         if (sideNavVideo) sideNavVideo.addEventListener('click', () => switchTab('video'));
         if (sideNavMovies) sideNavMovies.addEventListener('click', () => switchTab('movies'));
@@ -1871,11 +1865,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadYouTubeVideos(query) {
+        currentVideoQuery = query || 'Trending Music Videos 2024';
+        currentVideoPage = 0;
+        hasMoreVideos = true;
+        isVideoFeedLoading = false;
+
         const grid = document.getElementById('ytVideosGrid');
         const titleEl = document.getElementById('ytSectionTitle');
         const spinner = document.getElementById('ytLoadingSpinner');
+        const countEl = document.getElementById('ytLoadedCount');
+        const statsEl = document.getElementById('ytFeedStats');
 
-        if (titleEl) titleEl.textContent = `Results for "${query}"`;
+        if (titleEl) titleEl.textContent = `Results for "${currentVideoQuery}"`;
         if (spinner) spinner.classList.remove('hidden');
         if (grid) {
             grid.innerHTML = `
@@ -1887,13 +1888,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}`);
+            const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(currentVideoQuery)}`);
             const data = await res.json();
 
             if (spinner) spinner.classList.add('hidden');
 
             if (data.results && data.results.length > 0) {
-                renderYtVideoCards(data.results, grid);
+                renderYtVideoCards(data.results, grid, false);
+                const total = grid.querySelectorAll('.yt-video-card').length;
+                if (countEl) countEl.textContent = total;
+                if (statsEl) statsEl.innerHTML = `⚡ Showing <span style="color:#1db954;font-weight:800;">${total}</span> videos • Scroll down for endless hits`;
             } else {
                 if (grid) {
                     grid.innerHTML = `
@@ -3402,54 +3406,157 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // --- 25. BROWSE MORE TRENDING SONGS SYSTEM ---
-    const TRENDING_QUERIES = [
-        'Trending Hindi Punjabi Songs 2024 Hits',
-        'Top Bollywood Most Viewed Songs All Time',
-        'Arijit Singh Best Songs Hits',
-        'Top Global Viral Songs Billion Views',
+    // --- 25. ENDLESS INFINITE SCROLL & LOAD MORE VIDEO ENGINE ---
+    const INFINITE_VIDEO_POOLS = [
+        'Trending Music Videos 2024',
+        'Travis Scott Official Music Videos 4K',
+        'The Weeknd Greatest Hits 4K Music Videos',
+        'Top Bollywood 4K Video Songs 2024',
         'Latest Punjabi Video Songs 4K',
-        'Best Romantic Bollywood Songs 1080p',
-        'Top Lo-Fi Aesthetic Music Videos',
-        'Bhangra & Dance Party Hits Video'
+        'Global Viral Hip Hop Bangers 4K',
+        'Drake Official Music Videos 4K',
+        'Badshah All Hit Music Videos',
+        'Arijit Singh Best Video Hits Soulful',
+        'Karan Aujla All Song Videos 4K',
+        'Yo Yo Honey Singh Comeback Hits Video',
+        'Shubh Hits Music Videos Global',
+        'Top Global Billboard Hot 100 Videos',
+        'Coke Studio Pakistan Best Video Songs',
+        'MTV Unplugged India Best Video Performances',
+        'Lo-Fi Aesthetic Anime Music Videos Relax',
+        'EDM Tomorrowland Ultra Live Festival 4K',
+        'Hollywood Cinema 4K Soundtracks Video',
+        'Diljit Dosanjh Stadium Concert 4K',
+        'Sidhu Moose Wala Legendary Video Songs',
+        '90s Evergreen Bollywood 4K Video Hits',
+        'Live Acoustic Studio Concerts 4K',
+        'Bhangra Dance Party Hits 4K Video',
+        'Dua Lipa & Taylor Swift 4K Videos',
+        'AP Dhillon Official Music Videos',
+        'Post Malone Official Music Videos',
+        'Coldplay Live Concert 4K Stadium',
+        'Imagine Dragons Official Music Videos',
+        'Kendrick Lamar Official 4K Videos',
+        'Bruno Mars & Silk Sonic Hits'
     ];
-    let currentTrendingQueryIndex = 0;
 
-    const btnBrowseMore = document.getElementById('btnBrowseMoreVideos');
-    if (btnBrowseMore) {
-        btnBrowseMore.addEventListener('click', async () => {
-            currentTrendingQueryIndex = (currentTrendingQueryIndex + 1) % TRENDING_QUERIES.length;
-            const nextQuery = TRENDING_QUERIES[currentTrendingQueryIndex];
-            const originalText = 'Browse More Trending Songs ▾';
+    let currentVideoQuery = 'Trending Music Videos 2024';
+    let currentVideoPage = 0;
+    let isVideoFeedLoading = false;
+    let hasMoreVideos = true;
+
+    function getNextQueryForFeed() {
+        const qLower = (currentVideoQuery || '').toLowerCase();
+        if (!currentVideoQuery || qLower.includes('trending') || qLower.includes('viral')) {
+            const idx = currentVideoPage % INFINITE_VIDEO_POOLS.length;
+            return INFINITE_VIDEO_POOLS[idx];
+        } else {
+            const expansions = [
+                `${currentVideoQuery}`,
+                `${currentVideoQuery} official video 4k`,
+                `${currentVideoQuery} live concert hd`,
+                `${currentVideoQuery} greatest hits songs`,
+                `${currentVideoQuery} top popular video`,
+                `${currentVideoQuery} performance 1080p`,
+                `${currentVideoQuery} acoustic collection`
+            ];
+            return expansions[currentVideoPage % expansions.length];
+        }
+    }
+
+    async function loadNextVideoBatch() {
+        if (isVideoFeedLoading || !hasMoreVideos) return;
+        const grid = document.getElementById('ytVideosGrid');
+        if (!grid) return;
+
+        const infiniteLoader = document.getElementById('ytInfiniteLoader');
+        const btnBrowseMore = document.getElementById('btnBrowseMoreVideos');
+        const countEl = document.getElementById('ytLoadedCount');
+        const statsEl = document.getElementById('ytFeedStats');
+
+        isVideoFeedLoading = true;
+        if (infiniteLoader) infiniteLoader.classList.remove('hidden');
+        if (btnBrowseMore) {
             btnBrowseMore.innerHTML = `
                 <div class="sp-spinner" style="width:16px;height:16px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px;"></div>
-                <span>Loading more viral hits...</span>
+                <span>Loading more videos...</span>
             `;
-            showToast(`Loading: ${nextQuery}`);
+        }
 
-            try {
-                const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(nextQuery)}`);
-                const data = await res.json();
-                const grid = document.getElementById('ytVideosGrid');
-                if (data.results && data.results.length > 0 && grid) {
-                    const firstNewIdx = grid.children.length;
-                    renderYtVideoCards(data.results, grid, true);
-                    btnBrowseMore.innerHTML = `<span>${originalText}</span>`;
-                    showToast(`Added ${data.results.length} more trending hits!`);
-                    if (grid.children[firstNewIdx]) {
-                        grid.children[firstNewIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }
-                } else {
-                    btnBrowseMore.innerHTML = `<span>${originalText}</span>`;
-                    showToast('No additional hits found.');
-                }
-            } catch (err) {
-                console.warn('Browse more error:', err);
-                btnBrowseMore.innerHTML = `<span>${originalText}</span>`;
-                showToast('Unable to load more. Retrying...');
+        currentVideoPage++;
+        const nextQ = getNextQueryForFeed();
+
+        try {
+            const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(nextQ)}`);
+            const data = await res.json();
+            const results = data.results || [];
+
+            if (results.length > 0) {
+                renderYtVideoCards(results, grid, true);
+                const totalCards = grid.querySelectorAll('.yt-video-card').length;
+                if (countEl) countEl.textContent = totalCards;
+                if (statsEl) statsEl.innerHTML = `⚡ Showing <span style="color:#1db954;font-weight:800;">${totalCards}</span> videos • Keep scrolling for more!`;
             }
-        });
+        } catch (err) {
+            console.warn('Infinite video load error:', err);
+        } finally {
+            isVideoFeedLoading = false;
+            if (infiniteLoader) infiniteLoader.classList.add('hidden');
+            if (btnBrowseMore) {
+                btnBrowseMore.innerHTML = `<span>Load More Videos ▾</span>`;
+            }
+        }
     }
+
+    function setupVideoInfiniteScroll() {
+        const sentinel = document.getElementById('ytScrollSentinel');
+        const scrollContainer = document.getElementById('viewportScroll');
+        const btnBrowseMore = document.getElementById('btnBrowseMoreVideos');
+
+        if (btnBrowseMore) {
+            btnBrowseMore.addEventListener('click', () => {
+                loadNextVideoBatch();
+            });
+        }
+
+        if (sentinel && 'IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const tabVideo = document.getElementById('tabVideo');
+                        if (tabVideo && tabVideo.classList.contains('active')) {
+                            loadNextVideoBatch();
+                        }
+                    }
+                });
+            }, {
+                root: scrollContainer || null,
+                rootMargin: '600px 0px 600px 0px'
+            });
+            observer.observe(sentinel);
+        }
+
+        // Scroll listener fallback for high responsiveness on mouse & touch scroll
+        let scrollTimeout = null;
+        const handleScroll = () => {
+            if (scrollTimeout) return;
+            scrollTimeout = setTimeout(() => {
+                scrollTimeout = null;
+                const tabVideo = document.getElementById('tabVideo');
+                if (!tabVideo || !tabVideo.classList.contains('active')) return;
+                const sc = scrollContainer || document.documentElement;
+                const distanceFromBottom = sc.scrollHeight - (sc.scrollTop + sc.clientHeight);
+                if (distanceFromBottom < 750) {
+                    loadNextVideoBatch();
+                }
+            }, 100);
+        };
+
+        if (scrollContainer) scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('scroll', handleScroll, { passive: true });
+    }
+
+    setupVideoInfiniteScroll();
 
     // -------------------------------------------------------------
     // FEATURE: HOME BROWSE MORE TRENDING HITS (Endless Shelves)
@@ -4612,60 +4719,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Call setup for AI DJ
     setupAiDjModule();
 
-    // --- BROWSE ALL GENRES & WORLD CHARTS ENGINE ---
-    function setupBrowseModule() {
-        const tiles = document.querySelectorAll('.browse-tile');
-        const resultsSection = document.getElementById('browseResultsSection');
-        const resultsTitle = document.getElementById('browseResultsTitle');
-        const tracksGrid = document.getElementById('browseTracksGrid');
-        const btnPlayAll = document.getElementById('btnBrowsePlayAll');
-        let currentBrowseTracks = [];
-
-        tiles.forEach(tile => {
-            tile.addEventListener('click', async () => {
-                const query = tile.getAttribute('data-q') || 'Global Top 50 Hits';
-                const titleName = tile.querySelector('.browse-tile-title')?.textContent || 'Curated Hits';
-
-                if (resultsTitle) resultsTitle.textContent = `${titleName} • Trending Hits`;
-                if (resultsSection) resultsSection.classList.remove('hidden');
-                if (tracksGrid) {
-                    tracksGrid.innerHTML = `
-                        <div style="grid-column: 1/-1; text-align: center; padding: 2.5rem 0; color: var(--sp-text-mute);">
-                            <div class="sp-spinner" style="margin: 0 auto 10px;"></div>
-                            <span>Loading ${titleName}...</span>
-                        </div>
-                    `;
-                }
-
-                try {
-                    const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}`);
-                    const data = await res.json();
-                    if (data.results && data.results.length > 0) {
-                        currentBrowseTracks = data.results;
-                        renderCardGrid(data.results.slice(0, 16), tracksGrid);
-                        if (resultsSection) resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    } else {
-                        if (tracksGrid) tracksGrid.innerHTML = `<p style="grid-column: 1/-1; color: var(--sp-text-mute); padding: 1.5rem; text-align: center;">No tracks found for this genre.</p>`;
-                    }
-                } catch (err) {
-                    console.warn('Browse load error:', err);
-                    if (tracksGrid) tracksGrid.innerHTML = `<p style="grid-column: 1/-1; color: var(--sp-text-mute); padding: 1.5rem; text-align: center;">Could not load items.</p>`;
-                }
-            });
-        });
-
-        if (btnPlayAll) {
-            btnPlayAll.addEventListener('click', () => {
-                if (currentBrowseTracks && currentBrowseTracks.length > 0) {
-                    activeQueue = [...currentBrowseTracks];
-                    renderQueueDrawer();
-                    playTrackByIndex(0);
-                    showToast(`Playing ${currentBrowseTracks.length} curated tracks! 🎧`);
-                }
-            });
-        }
-
-        // Video Spotlight Banner Actions
+    // --- VIDEO SPOTLIGHT BANNER & SCREEN-OFF AUDIO ACTIONS ---
+    function setupVideoSpotlightActions() {
         const btnSpotlightPlayVideo = document.getElementById('btnSpotlightPlayVideo');
         const btnSpotlightBgListen = document.getElementById('btnSpotlightBgListen');
         const btnTheaterBgAudio = document.getElementById('btnTheaterBgAudio');
@@ -4694,7 +4749,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    setupBrowseModule();
+    setupVideoSpotlightActions();
 
 
     // Auto-load T-Series on startup
