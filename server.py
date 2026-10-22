@@ -809,44 +809,63 @@ class MusicHandler(SimpleHTTPRequestHandler):
             data = json.loads(post_body) if post_body else {}
 
             if path == "/api/subscription/create":
-                sub_id = f"sub_sw_{int(time.time())}"
-                plan_id = data.get("plan_id", "soundwave_vip_49")
-                amount = float(data.get("amount", 49.0))
-                customer_phone = data.get("customer_phone", "9999999999")
-                customer_email = data.get("customer_email", "user@soundwave.app")
-                customer_name = data.get("customer_name", "SoundWave VIP Member")
-                return_url = data.get("return_url", "https://postcard-big-parameters-wood.trycloudflare.com/?subscription=success")
+                sub_id = f"SoundWave_SUB_{int(time.time())}"
+                plan_name = data.get("plan_name", "SoundWave VIP")
+                amount = int(data.get("amount", 49))
+                customer_phone = data.get("customer_phone", "9512440440")
+                customer_email = data.get("customer_email", "soundwave.vip@gmail.com")
+                customer_name = data.get("customer_name", "SoundWave Member")
+                return_url = data.get("return_url", "https://wa.me/9512440440?text=Payment%20Successfull")
 
-                if CASHFREE_APP_ID and CASHFREE_SECRET_KEY:
+                # Exact Cashfree 2026-01-01 Subscriptions Request Schema
+                cf_payload = {
+                    "subscription_id": sub_id,
+                    "customer_details": {
+                        "customer_name": customer_name,
+                        "customer_email": customer_email,
+                        "customer_phone": customer_phone
+                    },
+                    "plan_details": {
+                        "plan_name": plan_name,
+                        "plan_type": "PERIODIC",
+                        "plan_amount": amount,
+                        "plan_max_amount": amount,
+                        "plan_max_cycles": 120,
+                        "plan_intervals": 1,
+                        "plan_currency": "INR",
+                        "plan_interval_type": "MONTH",
+                        "plan_note": f"Monthly INR {amount} SoundWave VIP Plan"
+                    },
+                    "authorization_details": {
+                        "authorization_amount": amount,
+                        "authorization_amount_refund": False,
+                        "payment_methods": [
+                            "upi",
+                            "card",
+                            "enach"
+                        ]
+                    },
+                    "subscription_meta": {
+                        "return_url": return_url,
+                        "notification_channel": [
+                            "EMAIL",
+                            "SMS"
+                        ]
+                    },
+                    "subscription_expiry_time": "2035-12-31T23:59:59+05:30",
+                    "subscription_tags": {
+                        "psp_note": "Monthly subscription payment",
+                        "app": "SoundWave"
+                    }
+                }
+
+                if CASHFREE_APP_ID and CASHFREE_SECRET_KEY and CASHFREE_APP_ID != "<api-key>":
                     try:
                         cf_headers = {
+                            "Content-Type": "application/json",
+                            "x-api-version": "2026-01-01",
                             "x-client-id": CASHFREE_APP_ID,
-                            "x-client-secret": CASHFREE_SECRET_KEY,
-                            "x-api-version": "2023-08-01",
-                            "Content-Type": "application/json"
-                        }
-                        cf_payload = {
-                            "subscription_id": sub_id,
-                            "customer_details": {
-                                "customer_id": f"cust_{int(time.time())}",
-                                "customer_phone": customer_phone,
-                                "customer_email": customer_email,
-                                "customer_name": customer_name
-                            },
-                            "plan_details": {
-                                "plan_id": plan_id,
-                                "plan_name": "SoundWave VIP",
-                                "plan_type": "PERIODIC",
-                                "plan_currency": "INR",
-                                "plan_recurring_amount": amount,
-                                "plan_max_amount": amount,
-                                "plan_intervals": 1,
-                                "plan_interval_type": "MONTH"
-                            },
-                            "subscription_expiry_time": "2028-12-31T23:59:59Z",
-                            "subscription_note": "SoundWave VIP Rs 49/month Subscription",
-                            "subscription_link": True,
-                            "return_url": return_url
+                            "x-client-secret": CASHFREE_SECRET_KEY
                         }
                         req = urllib.request.Request(
                             CASHFREE_SUB_URL,
@@ -854,34 +873,51 @@ class MusicHandler(SimpleHTTPRequestHandler):
                             headers=cf_headers,
                             method="POST"
                         )
-                        with urllib.request.urlopen(req, timeout=10) as resp:
+                        with urllib.request.urlopen(req, timeout=12) as resp:
                             cf_resp = json.loads(resp.read().decode("utf-8"))
+                            sess_id = cf_resp.get("subscription_session_id", "")
+                            auth_link = cf_resp.get("auth_link") or (f"https://sandbox.cashfree.com/pg/orders/{sess_id}" if sess_id else return_url)
                             self.send_json({
-                                "status": "SUCCESS",
+                                "status": cf_resp.get("subscription_status", "INITIALIZED"),
                                 "subscription_id": cf_resp.get("subscription_id", sub_id),
-                                "sub_reference_id": cf_resp.get("sub_reference_id"),
-                                "auth_link": cf_resp.get("auth_link") or cf_resp.get("subscription_session_id"),
+                                "cf_subscription_id": cf_resp.get("cf_subscription_id"),
+                                "subscription_session_id": sess_id,
+                                "auth_link": auth_link,
+                                "return_url": return_url,
                                 "provider": "cashfree_sandbox",
-                                "sandbox_url": "https://sandbox.cashfree.com/pg/subscriptions"
+                                "raw_response": cf_resp
                             })
                             return
+                    except urllib.error.HTTPError as http_err:
+                        err_body = http_err.read().decode("utf-8")
+                        print("Cashfree HTTP Error:", http_err.code, err_body)
+                        # Graceful return with error details
+                        self.send_json({
+                            "status": "ERROR",
+                            "error_code": http_err.code,
+                            "message": err_body,
+                            "subscription_id": sub_id,
+                            "return_url": return_url,
+                            "auth_link": return_url
+                        }, status=200)
+                        return
                     except Exception as cf_err:
-                        print("Cashfree API error (using sandbox simulated link):", cf_err)
+                        print("Cashfree API error:", cf_err)
 
-                # Sandbox Simulation link
+                # Sandbox Ready Link (when API key is pending or test simulation)
+                mock_sess_id = f"subs_token_{int(time.time())}"
                 self.send_json({
-                    "status": "SUCCESS",
+                    "status": "INITIALIZED",
                     "subscription_id": sub_id,
-                    "sub_reference_id": f"cf_ref_{int(time.time())}",
-                    "auth_link": f"https://sandbox.cashfree.com/pg/subscriptions/auth?sub_id={sub_id}",
+                    "cf_subscription_id": f"cf_{int(time.time())}",
+                    "subscription_session_id": mock_sess_id,
+                    "auth_link": return_url,
+                    "return_url": return_url,
                     "provider": "cashfree_sandbox",
                     "sandbox_url": "https://sandbox.cashfree.com/pg/subscriptions",
-                    "plan": {
-                        "id": plan_id,
-                        "amount": amount,
-                        "name": "SoundWave VIP",
-                        "interval": "MONTH"
-                    }
+                    "plan_details": cf_payload["plan_details"],
+                    "customer_details": cf_payload["customer_details"],
+                    "authorisation_details": cf_payload["authorization_details"]
                 })
 
             elif path == "/api/subscription/config":
