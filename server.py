@@ -143,10 +143,11 @@ def get_ydl_opts(extra=None):
     base = {
         "quiet": True,
         "no_warnings": True,
+        "socket_timeout": 8,
         "js_runtimes": js_dict,
         "extractor_args": {
             "youtube": {
-                "player_client": ["android"]
+                "player_client": ["ios", "mweb", "android"]
             }
         }
     }
