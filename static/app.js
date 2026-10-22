@@ -1,18 +1,23 @@
 // Backend API Gateway Configuration
-// Auto-detects local Wi-Fi / LAN vs Cloudflare Pages deployment
-const isLocalNetwork = (
+// Auto-detects local host vs online cloud server deployment
+const isSameOriginBackend = (
     window.location.hostname === 'localhost' ||
     window.location.hostname === '127.0.0.1' ||
     window.location.hostname === '' ||
     window.location.port === '5000' ||
+    window.location.hostname.endsWith('onrender.com') ||
+    window.location.hostname.endsWith('koyeb.app') ||
+    window.location.hostname.endsWith('railway.app') ||
+    window.location.hostname.endsWith('hf.space') ||
+    window.location.hostname.endsWith('trycloudflare.com') ||
     /^10\./.test(window.location.hostname) ||
     /^192\.168\./.test(window.location.hostname) ||
     /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(window.location.hostname)
 );
 
-const API_BASE = isLocalNetwork
+const API_BASE = isSameOriginBackend
     ? ''
-    : 'https://keeping-circuits-draws-ratings.trycloudflare.com';
+    : (localStorage.getItem('soundwave_backend_url') || 'https://keeping-circuits-draws-ratings.trycloudflare.com');
 
 // SoundWave â€” Spotify Premium Audio Engine
 // Background Playback, MediaSession Lockscreen Control, YouTube Streams, Full Library & Tabs

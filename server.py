@@ -27,14 +27,15 @@ import re
 from html import unescape
 import yt_dlp
 
-PORT = 5000
+import shutil
+PORT = int(os.environ.get("PORT", 5000))
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 VIDEO_CACHE_DIR = os.path.join(STATIC_DIR, "video_cache")
 os.makedirs(VIDEO_CACHE_DIR, exist_ok=True)
 
-FFMPEG_PATH = r"C:\Users\pc\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-9.0.2-full_build\bin\ffmpeg.exe"
-NODE_PATH = r"C:\Users\pc\AppData\Local\hermes\node\node.exe"
+FFMPEG_PATH = shutil.which("ffmpeg") or r"C:\Users\pc\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-9.0.2-full_build\bin\ffmpeg.exe"
+NODE_PATH = shutil.which("node") or r"C:\Users\pc\AppData\Local\hermes\node\node.exe"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
 

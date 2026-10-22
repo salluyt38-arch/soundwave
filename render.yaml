@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: soundwave-backend
+    env: docker
+    plan: free
+    region: singapore
+    envVars:
+      - key: PORT
+        value: 5000
