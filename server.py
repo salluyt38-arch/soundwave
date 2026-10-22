@@ -26,6 +26,7 @@ import threading
 import re
 from html import unescape
 import yt_dlp
+import yt_dlp.version
 
 import shutil
 PORT = int(os.environ.get("PORT", 5000))
@@ -514,7 +515,6 @@ class MusicHandler(SimpleHTTPRequestHandler):
             query = urllib.parse.parse_qs(parsed_url.query)
 
             if path == "/api/debug":
-                import yt_dlp.version
                 self.send_json({
                     "yt_dlp_version": yt_dlp.version.__version__,
                     "python_version": sys.version,
