@@ -470,6 +470,14 @@ class MusicHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=STATIC_DIR, **kwargs)
 
+    def end_headers(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
+        if self.path.endswith(".html") or self.path.endswith(".js") or self.path == "/" or "?" in self.path:
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
+        super().end_headers()
+
     def do_OPTIONS(self):
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")

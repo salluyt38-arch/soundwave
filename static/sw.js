@@ -1,32 +1,20 @@
-// SoundWave Service Worker v12 (Cashfree Official Payment Link cfre.in/CSHFRE/o1xbhrj)
-const CACHE_NAME = 'soundwave-cache-v12';
+// SoundWave Progressive Web App Service Worker
+const CACHE_NAME = 'soundwave-cache-v1';
 
-self.addEventListener('install', (e) => {
-  self.skipWaiting();
+self.addEventListener('install', (event) => {
+    self.skipWaiting();
 });
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) return caches.delete(key);
-        })
-      );
-    })
-  );
-  self.clients.claim();
+self.addEventListener('activate', (event) => {
+    event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener('fetch', (e) => {
-  if (e.request.url.includes('/api/')) return;
-  e.respondWith(
-    fetch(e.request).then((resp) => {
-      if (resp && resp.status === 200) {
-        const copy = resp.clone();
-        caches.open(CACHE_NAME).then((c) => c.put(e.request, copy));
-      }
-      return resp;
-    }).catch(() => caches.match(e.request))
-  );
+self.addEventListener('fetch', (event) => {
+    // Let audio and dynamic API calls stream directly from network
+    if (event.request.url.includes('/api/') || event.request.url.includes('.mp4') || event.request.url.includes('.m4a') || event.request.url.includes('saavncdn')) {
+        return;
+    }
+    event.respondWith(
+        fetch(event.request).catch(() => caches.match(event.request))
+    );
 });

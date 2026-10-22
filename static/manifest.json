@@ -1,21 +1,21 @@
 {
-  "name": "SoundWave — Music & Cinema",
+  "name": "SoundWave — Music & Cinema HD",
   "short_name": "SoundWave",
-  "description": "Stream high-quality audio and HD videos with background and screen-off playback.",
+  "description": "Stream unlimited Bollywood, Punjabi, and International music with zero background interruptions.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#08090d",
-  "theme_color": "#08090d",
-  "orientation": "portrait-primary",
+  "orientation": "portrait",
+  "background_color": "#121212",
+  "theme_color": "#1db954",
   "icons": [
     {
-      "src": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=192",
+      "src": "https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg",
       "sizes": "192x192",
       "type": "image/jpeg",
       "purpose": "any maskable"
     },
     {
-      "src": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=512",
+      "src": "https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg",
       "sizes": "512x512",
       "type": "image/jpeg",
       "purpose": "any maskable"
