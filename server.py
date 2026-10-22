@@ -55,7 +55,7 @@ def get_ydl_opts(extra=None):
         "js_runtimes": js_dict,
         "extractor_args": {
             "youtube": {
-                "player_client": ["android", "ios", "tv", "web"]
+                "player_client": ["android"]
             }
         }
     }
