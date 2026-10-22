@@ -31,8 +31,23 @@ document.addEventListener('DOMContentLoaded', () => {
     let bgAudioContext = null;
     let isQueueRefilling = false;
 
-    // WebAudio Keep-Alive Loop: signals to Mobile OS (Android/iOS) to keep audio session alive
+    // Screen Wake Lock & Background Audio Keep-Alive Engine
+    let wakeLockSentinel = null;
+    async function requestAppWakeLock() {
+        try {
+            if ('wakeLock' in navigator && !wakeLockSentinel) {
+                wakeLockSentinel = await navigator.wakeLock.request('screen');
+                wakeLockSentinel.addEventListener('release', () => {
+                    wakeLockSentinel = null;
+                });
+            }
+        } catch (err) {}
+    }
+
+    // WebAudio Keep-Alive: Continuous inaudible sub-bass carrier (5Hz at 0.0001 gain)
+    // Ensures mobile OS (Android/iOS) keeps the audio session and tab active even when screen is locked!
     function ensureAudioKeepAlive() {
+        requestAppWakeLock();
         if (bgAudioContext) {
             if (bgAudioContext.state === 'suspended') {
                 bgAudioContext.resume().catch(() => {});
@@ -43,12 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const AC = window.AudioContext || window.webkitAudioContext;
             if (!AC) return;
             bgAudioContext = new AC();
-            const silentBuffer = bgAudioContext.createBuffer(1, 22050, 22050);
-            const source = bgAudioContext.createBufferSource();
-            source.buffer = silentBuffer;
-            source.loop = true;
-            source.connect(bgAudioContext.destination);
-            source.start(0);
+            const osc = bgAudioContext.createOscillator();
+            const gain = bgAudioContext.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(5, bgAudioContext.currentTime);
+            gain.gain.setValueAtTime(0.0001, bgAudioContext.currentTime);
+            osc.connect(gain);
+            gain.connect(bgAudioContext.destination);
+            osc.start(0);
         } catch (e) {
             console.warn('AudioContext keep-alive notice:', e);
         }
@@ -1261,9 +1278,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function onTrackEnded() {
+        // PREVENT 3-SECOND PREMATURE SKIP BUG:
+        // Only advance if song has legitimately finished (within 4s of duration).
+        // If fired prematurely due to network buffer glitch, auto-recover seamlessly!
+        if (audio.duration && audio.duration > 10 && (audio.duration - audio.currentTime) > 4) {
+            console.warn(`Premature stream ended at ${audio.currentTime.toFixed(1)}s of ${audio.duration.toFixed(1)}s. Auto-resuming...`);
+            audio.play().catch(() => {});
+            return;
+        }
+
         if (isLoop) {
             audio.currentTime = 0;
-            audio.play();
+            audio.play().catch(() => {});
         } else {
             playNext();
         }
@@ -1975,7 +2001,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (iframe) {
             if (nativeVideo) nativeVideo.classList.add('hidden');
             iframe.classList.remove('hidden');
-            const cleanEmbedUrl = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&origin=${encodeURIComponent(window.location.origin)}`;
+            const cleanEmbedUrl = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&playsinline=1&rel=0&modestbranding=1`;
             iframe.src = cleanEmbedUrl;
             showToast(`Streaming ${currentActiveVideoTitle} in 1080p HD...`);
         } else if (iframe) {
@@ -3223,6 +3249,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (ytNativeVideoForAutoplay) {
         ytNativeVideoForAutoplay.addEventListener('ended', () => {
             if (!isAutoplayEnabled) return;
+            // Guard against premature skip
+            if (ytNativeVideoForAutoplay.duration && ytNativeVideoForAutoplay.duration > 10 && 
+                (ytNativeVideoForAutoplay.duration - ytNativeVideoForAutoplay.currentTime) > 4) {
+                return;
+            }
             const videoCards = document.querySelectorAll('.yt-video-card');
             if (videoCards.length > 1) {
                 const randomNext = videoCards[Math.floor(Math.random() * videoCards.length)];
@@ -4087,29 +4118,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (query) triggerSearch(query, true);
                 break;
             case 'pause':
-                if (activeAudio) activeAudio.pause();
+                if (audio) audio.pause();
                 break;
             case 'resume':
-                if (activeAudio) activeAudio.play().catch(() => {});
+                if (audio) audio.play().catch(() => {});
                 break;
             case 'next':
-                playNextTrack();
+                playNext();
                 break;
             case 'prev':
-                playPrevTrack();
+                playPrev();
                 break;
             case 'volume_up':
-                if (activeAudio) {
-                    activeAudio.volume = Math.min(1.0, activeAudio.volume + 0.15);
+                if (audio) {
+                    audio.volume = Math.min(1.0, audio.volume + 0.15);
                     const volRange = document.getElementById('volumeRange');
-                    if (volRange) volRange.value = activeAudio.volume;
+                    if (volRange) volRange.value = audio.volume;
                 }
                 break;
             case 'volume_down':
-                if (activeAudio) {
-                    activeAudio.volume = Math.max(0.0, activeAudio.volume - 0.15);
+                if (audio) {
+                    audio.volume = Math.max(0.0, audio.volume - 0.15);
                     const volRange = document.getElementById('volumeRange');
-                    if (volRange) volRange.value = activeAudio.volume;
+                    if (volRange) volRange.value = audio.volume;
                 }
                 break;
             case 'wake':

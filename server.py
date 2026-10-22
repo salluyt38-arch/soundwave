@@ -447,53 +447,85 @@ def fetch_channel_songs(channel_key="tseries", page=1):
     info_meta = CHANNEL_MAP.get(channel_key, CHANNEL_MAP["tseries"])
     query_str = info_meta["query"]
     search_count = page * 12 + 6
-    ydl_opts = get_ydl_opts({
-        "extract_flat": True,
-    })
     songs = []
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        res = ydl.extract_info(f"ytsearch{search_count}:{query_str}", download=False)
-        entries = res.get("entries", [])
-        start_idx = (page - 1) * 12
-        page_entries = entries[start_idx : start_idx + 12]
 
-        for entry in page_entries:
-            if not entry or not entry.get("id"):
-                continue
-            duration_sec = entry.get("duration") or 0
-            mins = int(duration_sec) // 60
-            secs = int(duration_sec) % 60
-            duration_str = f"{mins}:{secs:02d}"
+    try:
+        ydl_opts = get_ydl_opts({
+            "extract_flat": True,
+            "socket_timeout": 6
+        })
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            res = ydl.extract_info(f"ytsearch{search_count}:{query_str}", download=False)
+            entries = res.get("entries", [])
+            start_idx = (page - 1) * 12
+            page_entries = entries[start_idx : start_idx + 12]
 
-            video_id = entry.get("id")
-            raw_t = entry.get("title", "Unknown Title")
-            clean_t = clean_youtube_title(raw_t)
-            channel_name = entry.get("channel") or entry.get("uploader") or info_meta["name"]
-            thumb = entry.get("thumbnail") or f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
+            for entry in page_entries:
+                if not entry or not entry.get("id"):
+                    continue
+                duration_sec = entry.get("duration") or 0
+                mins = int(duration_sec) // 60
+                secs = int(duration_sec) % 60
+                duration_str = f"{mins}:{secs:02d}"
 
-            views = entry.get("view_count")
-            if views and isinstance(views, int) and views > 0:
-                if views >= 1_000_000_000:
-                    views_str = f"{views / 1_000_000_000:.1f}B views"
-                elif views >= 1_000_000:
-                    views_str = f"{views / 1_000_000:.1f}M views"
-                elif views >= 1_000:
-                    views_str = f"{views // 1_000}K views"
+                video_id = entry.get("id")
+                raw_t = entry.get("title", "Unknown Title")
+                clean_t = clean_youtube_title(raw_t)
+                channel_name = entry.get("channel") or entry.get("uploader") or info_meta["name"]
+                thumb = entry.get("thumbnail") or f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
+
+                views = entry.get("view_count")
+                if views and isinstance(views, int) and views > 0:
+                    if views >= 1_000_000_000:
+                        views_str = f"{views / 1_000_000_000:.1f}B views"
+                    elif views >= 1_000_000:
+                        views_str = f"{views / 1_000_000:.1f}M views"
+                    elif views >= 1_000:
+                        views_str = f"{views // 1_000}K views"
+                    else:
+                        views_str = f"{views} views"
                 else:
-                    views_str = f"{views} views"
-            else:
-                views_str = "Studio Hit"
+                    views_str = "Studio Hit"
 
-            songs.append({
-                "id": video_id,
-                "title": clean_t,
-                "raw_title": raw_t,
-                "channel": channel_name,
-                "duration": duration_str,
-                "duration_sec": duration_sec,
-                "thumbnail": thumb,
-                "views_str": views_str
-            })
+                songs.append({
+                    "id": video_id,
+                    "title": clean_t,
+                    "raw_title": raw_t,
+                    "channel": channel_name,
+                    "duration": duration_str,
+                    "duration_sec": duration_sec,
+                    "thumbnail": thumb,
+                    "views_str": views_str
+                })
+    except Exception as yt_err:
+        print(f"YouTube channel search fallback for {channel_key}:", yt_err)
+
+    # High-speed fallback if yt_dlp failed or timed out
+    if not songs:
+        try:
+            encoded = urllib.parse.quote(query_str)
+            saavn_url = f"https://www.jiosaavn.com/api.php?__call=search.getResults&_format=json&_marker=0&api_version=4&ctx=web6dot0&q={encoded}&p={page}&n=12"
+            req = urllib.request.Request(saavn_url, headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=5) as r:
+                data = json.loads(r.read().decode("utf-8", errors="ignore"))
+                for item in data.get("results", []):
+                    title = clean_youtube_title(item.get("title", "Hit Song"))
+                    singers = item.get("more_info", {}).get("singers") or info_meta["name"]
+                    dur_sec = int(item.get("more_info", {}).get("duration", 210))
+                    m, s = divmod(dur_sec, 60)
+                    thumb = item.get("image", "").replace("150x150", "500x500") or "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400"
+                    songs.append({
+                        "id": f"saavn_{item.get('id')}",
+                        "title": title,
+                        "raw_title": title,
+                        "channel": singers,
+                        "duration": f"{m}:{s:02d}",
+                        "duration_sec": dur_sec,
+                        "thumbnail": thumb,
+                        "views_str": "Trending Now"
+                    })
+        except Exception as saavn_err:
+            print("Saavn fallback error:", saavn_err)
 
     return {
         "channel": channel_key,
@@ -501,7 +533,7 @@ def fetch_channel_songs(channel_key="tseries", page=1):
         "tagline": info_meta["tagline"],
         "page": page,
         "songs": songs,
-        "has_next": len(entries) >= (start_idx + len(page_entries)) and len(page_entries) >= 12
+        "has_next": len(songs) >= 12
     }
 
 
