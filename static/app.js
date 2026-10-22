@@ -873,39 +873,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Confirm Payment Button
         
         // Cashfree Sandbox Credentials Toggle & Save
-        const btnToggleCashfreeConfig = document.getElementById('btnToggleCashfreeConfig');
-        const cashfreeConfigPanel = document.getElementById('cashfreeConfigPanel');
-        const cashfreeConfigArrow = document.getElementById('cashfreeConfigArrow');
-        if (btnToggleCashfreeConfig && cashfreeConfigPanel) {
-            btnToggleCashfreeConfig.addEventListener('click', () => {
-                const isHidden = cashfreeConfigPanel.classList.toggle('hidden');
-                if (cashfreeConfigArrow) cashfreeConfigArrow.textContent = isHidden ? '▾' : '▴';
-            });
-        }
-
-        const btnSaveCashfreeConfig = document.getElementById('btnSaveCashfreeConfig');
-        if (btnSaveCashfreeConfig) {
-            btnSaveCashfreeConfig.addEventListener('click', async () => {
-                const appId = document.getElementById('cfAppIdInput')?.value || '';
-                const secretKey = document.getElementById('cfSecretKeyInput')?.value || '';
-                const statusEl = document.getElementById('cfConfigStatus');
-
-                if (statusEl) statusEl.textContent = 'Saving...';
-                try {
-                    const res = await fetch(`${API_BASE}/api/subscription/config`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ app_id: appId, secret_key: secretKey })
-                    });
-                    const d = await res.json();
-                    if (statusEl) statusEl.textContent = '✓ Saved & Connected!';
-                    showToast('Cashfree Sandbox credentials saved!');
-                } catch (e) {
-                    if (statusEl) statusEl.textContent = 'Error saving';
-                }
-            });
-        }
-
         const btnConfirmPayment = document.getElementById('btnConfirmPayment');
         if (btnConfirmPayment) {
             btnConfirmPayment.addEventListener('click', handlePaymentConfirmation);
@@ -1728,17 +1695,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (summaryTodayCost) summaryTodayCost.textContent = '₹49.00 / month';
         if (summaryNextBilling) summaryNextBilling.textContent = 'Billed ₹49/month recurring via Cashfree Subscriptions. Cancel anytime with 1 click.';
         if (btnPayText) btnPayText.textContent = 'Subscribe for ₹49 via Cashfree';
-
-        // Load existing Cashfree config status
-        fetch(`${API_BASE}/api/subscription/config`)
-            .then(r => r.json())
-            .then(cfg => {
-                const cfAppIdInput = document.getElementById('cfAppIdInput');
-                if (cfAppIdInput && cfg.app_id_masked) {
-                    cfAppIdInput.value = cfg.app_id_masked;
-                }
-            })
-            .catch(() => {});
 
         if (checkoutModal) checkoutModal.classList.remove('hidden');
     }

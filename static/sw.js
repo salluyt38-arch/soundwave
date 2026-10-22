@@ -1,5 +1,5 @@
-// SoundWave Service Worker v10 (Cashfree Subscriptions Sandbox & Unstoppable Audio)
-const CACHE_NAME = 'soundwave-cache-v10';
+// SoundWave Service Worker v11 (Streamlined Clean Checkout)
+const CACHE_NAME = 'soundwave-cache-v11';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
