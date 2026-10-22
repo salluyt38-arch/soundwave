@@ -525,6 +525,31 @@ class MusicHandler(SimpleHTTPRequestHandler):
                 })
                 return
 
+            if path == "/api/test_extract":
+                vid = query.get("id", ["BddP6PYo2gs"])[0].strip()
+                log_capture = []
+                class MyLogger:
+                    def debug(self, msg): log_capture.append(f"DBG: {msg}")
+                    def warning(self, msg): log_capture.append(f"WARN: {msg}")
+                    def error(self, msg): log_capture.append(f"ERR: {msg}")
+                opts = {
+                    "format": "bestaudio/best",
+                    "logger": MyLogger(),
+                    "verbose": True,
+                    "extractor_args": {
+                        "youtube": {
+                            "player_client": ["android"]
+                        }
+                    }
+                }
+                try:
+                    with yt_dlp.YoutubeDL(opts) as ydl:
+                        inf = ydl.extract_info(f"https://www.youtube.com/watch?v={vid}", download=False)
+                        self.send_json({"success": True, "url": bool(inf.get("url")), "logs": log_capture[:40]})
+                except Exception as e:
+                    self.send_json({"success": False, "error": str(e), "logs": log_capture[:40]})
+                return
+
             elif path == "/api/search":
                 q = query.get("q", [""])[0].strip()
                 if not q:
