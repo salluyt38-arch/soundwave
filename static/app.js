@@ -119,6 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 1. DOM REFERENCES ---
     // Tab Navigation
     const tabHome = document.getElementById('tabHome');
+    const tabBrowse = document.getElementById('tabBrowse');
+    const sideNavBrowse = document.getElementById('sideNavBrowse');
+    const mobTabBrowse = document.getElementById('mobTabBrowse');
     const tabSearch = document.getElementById('tabSearch');
     const tabVideo = document.getElementById('tabVideo');
     const tabMovies = document.getElementById('tabMovies');
@@ -312,6 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activeTabName = tabName;
         const tabs = {
             home: { panel: tabHome, sideLink: sideNavHome, mobBtn: mobTabHome },
+            browse: { panel: tabBrowse, sideLink: sideNavBrowse, mobBtn: mobTabBrowse },
             search: { panel: tabSearch, sideLink: sideNavSearch, mobBtn: mobTabSearch },
             video: { panel: tabVideo, sideLink: sideNavVideo, mobBtn: mobTabVideo },
             movies: { panel: tabMovies, sideLink: sideNavMovies, mobBtn: mobTabMovies },
@@ -373,6 +377,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupEventListeners() {
         // Desktop Sidebar Nav Buttons
         if (sideNavHome) sideNavHome.addEventListener('click', () => switchTab('home'));
+        if (sideNavBrowse) sideNavBrowse.addEventListener('click', () => switchTab('browse'));
+        if (mobTabBrowse) mobTabBrowse.addEventListener('click', () => switchTab('browse'));
         if (sideNavSearch) sideNavSearch.addEventListener('click', () => switchTab('search'));
         if (sideNavVideo) sideNavVideo.addEventListener('click', () => switchTab('video'));
         if (sideNavMovies) sideNavMovies.addEventListener('click', () => switchTab('movies'));
@@ -709,12 +715,22 @@ document.addEventListener('DOMContentLoaded', () => {
         // Keep-alive when tab goes to background or user locks screen
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
+                // If user was watching video in theater stage, auto-continue video audio in background!
+                const theater = document.getElementById('ytPlayerTheater');
+                const iframe = document.getElementById('ytVideoIframe');
+                if (theater && !theater.classList.contains('hidden') && currentActiveVideoId) {
+                    if (iframe && iframe.src) {
+                        switchToAudioFromVideo(currentActiveVideoId, currentActiveVideoTitle, currentActiveVideoChannel);
+                    }
+                }
                 if (!audio.paused && audio.src) {
                     audio.play().catch(() => {});
                 }
                 if (bgAudioContext && bgAudioContext.state === 'suspended') {
                     bgAudioContext.resume().catch(() => {});
                 }
+            } else {
+                requestAppWakeLock();
             }
         });
         audio.addEventListener('play', () => {
@@ -4047,13 +4063,14 @@ document.addEventListener('DOMContentLoaded', () => {
         feed.scrollTop = feed.scrollHeight;
     }
 
-    // Process DJ Query via Backend / Universal Connector
+    // Process DJ Query via Backend (Silent Instant Direct Action)
     async function processAiDjQuery(userText, fromVoice = false) {
         if (!userText || !userText.trim()) return;
         const cleanMsg = userText.trim();
 
         appendAiChatMessage('user', cleanMsg);
         updateAllDjUi('thinking');
+        playDjChime();
 
         try {
             const resp = await fetch(`${API_BASE}/api/ai/dj`, {
@@ -4083,31 +4100,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             appendAiChatMessage('dj', reply, trackCardMeta);
 
-            speakDjVoice(reply, () => {
-                executeAiAction(action, query);
-                // After executing action, return to passive standby ("automatic off" to let user enjoy music)
-                // while background microphone stays active for the next "DJ" call!
-                if (action === 'wake') {
-                    isDjEngaged = true;
-                    updateAllDjUi('listening');
-                } else if (action === 'sleep') {
-                    isDjEngaged = false;
-                    updateAllDjUi('sleep');
-                } else {
-                    isDjEngaged = false;
-                    updateAllDjUi(isAlwaysOnMicActive ? 'standby' : 'idle');
-                }
-            });
+            // SILENT DIRECT ACTION (Zero voice chatter, immediate playback)
+            executeAiAction(action, query);
+            showToast(action === 'play' ? `🎧 AI DJ: Playing "${query}"` : `🎧 AI DJ: Action executed`);
+
+            isDjEngaged = false;
+            updateAllDjUi(isAlwaysOnMicActive ? 'standby' : 'idle');
 
         } catch (err) {
             console.error('AI DJ request error:', err);
-            const fallbackReply = `Aapke liye ${cleanMsg} search kar raha hoon!`;
-            appendAiChatMessage('dj', fallbackReply);
-            speakDjVoice(fallbackReply, () => {
-                triggerSearch(cleanMsg, true);
-                isDjEngaged = false;
-                updateAllDjUi(isAlwaysOnMicActive ? 'standby' : 'idle');
-            });
+            executeAiAction('play', cleanMsg);
+            showToast(`🎧 AI DJ: Playing "${cleanMsg}"`);
+            isDjEngaged = false;
+            updateAllDjUi(isAlwaysOnMicActive ? 'standby' : 'idle');
         }
     }
 
@@ -4272,7 +4277,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Wake up & activate DJ from any screen button (HomeScreen hero, Floating pill, Player bar, Modal)
+    // Wake up & activate DJ (Silent instant listening)
     function wakeAndTriggerDj() {
         if (!isAlwaysOnMicActive) {
             toggleAlwaysOnMic(true);
@@ -4280,12 +4285,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isDjEngaged = true;
         playDjChime();
         updateAllDjUi('listening');
-
-        const greeting = "SoundWave DJ active ho gaya hai! Boliye kaunsa banger gaana bajana hai?";
-        appendAiChatMessage('dj', greeting);
-        speakDjVoice(greeting, () => {
-            updateAllDjUi('listening');
-        });
+        showToast('🎙️ AI DJ listening... Say any song name');
     }
 
     function refreshActiveModelBadge() {
@@ -4611,6 +4611,91 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Call setup for AI DJ
     setupAiDjModule();
+
+    // --- BROWSE ALL GENRES & WORLD CHARTS ENGINE ---
+    function setupBrowseModule() {
+        const tiles = document.querySelectorAll('.browse-tile');
+        const resultsSection = document.getElementById('browseResultsSection');
+        const resultsTitle = document.getElementById('browseResultsTitle');
+        const tracksGrid = document.getElementById('browseTracksGrid');
+        const btnPlayAll = document.getElementById('btnBrowsePlayAll');
+        let currentBrowseTracks = [];
+
+        tiles.forEach(tile => {
+            tile.addEventListener('click', async () => {
+                const query = tile.getAttribute('data-q') || 'Global Top 50 Hits';
+                const titleName = tile.querySelector('.browse-tile-title')?.textContent || 'Curated Hits';
+
+                if (resultsTitle) resultsTitle.textContent = `${titleName} • Trending Hits`;
+                if (resultsSection) resultsSection.classList.remove('hidden');
+                if (tracksGrid) {
+                    tracksGrid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 2.5rem 0; color: var(--sp-text-mute);">
+                            <div class="sp-spinner" style="margin: 0 auto 10px;"></div>
+                            <span>Loading ${titleName}...</span>
+                        </div>
+                    `;
+                }
+
+                try {
+                    const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}`);
+                    const data = await res.json();
+                    if (data.results && data.results.length > 0) {
+                        currentBrowseTracks = data.results;
+                        renderCardGrid(data.results.slice(0, 16), tracksGrid);
+                        if (resultsSection) resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    } else {
+                        if (tracksGrid) tracksGrid.innerHTML = `<p style="grid-column: 1/-1; color: var(--sp-text-mute); padding: 1.5rem; text-align: center;">No tracks found for this genre.</p>`;
+                    }
+                } catch (err) {
+                    console.warn('Browse load error:', err);
+                    if (tracksGrid) tracksGrid.innerHTML = `<p style="grid-column: 1/-1; color: var(--sp-text-mute); padding: 1.5rem; text-align: center;">Could not load items.</p>`;
+                }
+            });
+        });
+
+        if (btnPlayAll) {
+            btnPlayAll.addEventListener('click', () => {
+                if (currentBrowseTracks && currentBrowseTracks.length > 0) {
+                    activeQueue = [...currentBrowseTracks];
+                    renderQueueDrawer();
+                    playTrackByIndex(0);
+                    showToast(`Playing ${currentBrowseTracks.length} curated tracks! 🎧`);
+                }
+            });
+        }
+
+        // Video Spotlight Banner Actions
+        const btnSpotlightPlayVideo = document.getElementById('btnSpotlightPlayVideo');
+        const btnSpotlightBgListen = document.getElementById('btnSpotlightBgListen');
+        const btnTheaterBgAudio = document.getElementById('btnTheaterBgAudio');
+
+        if (btnSpotlightPlayVideo) {
+            btnSpotlightPlayVideo.addEventListener('click', () => {
+                loadYouTubeVideos('Travis Scott The Weeknd Global Top Music Videos 4K');
+                playYouTubeVideo('B9synWjqBn8', 'Travis Scott - FE!N ft. Playboi Carti', 'Travis Scott');
+            });
+        }
+
+        if (btnSpotlightBgListen) {
+            btnSpotlightBgListen.addEventListener('click', () => {
+                switchToAudioFromVideo('B9synWjqBn8', 'Travis Scott - FE!N ft. Playboi Carti', 'Travis Scott');
+            });
+        }
+
+        if (btnTheaterBgAudio) {
+            btnTheaterBgAudio.addEventListener('click', () => {
+                if (currentActiveVideoId) {
+                    switchToAudioFromVideo(currentActiveVideoId, currentActiveVideoTitle, currentActiveVideoChannel);
+                } else {
+                    showToast('Select a video first to listen in background');
+                }
+            });
+        }
+    }
+
+    setupBrowseModule();
+
 
     // Auto-load T-Series on startup
     loadChannelSongs('tseries', 1, false);

@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20261022_aidj_v6_rocksolid">
+    <link rel="stylesheet" href="style.css?v=20261022_browse_global_v7">
     <link rel="manifest" href="manifest.json">
 
 
@@ -71,6 +71,12 @@
                         </svg>
                         <span>AI DJ & Voice</span>
                         <span class="nav-ai-glow-tag">DJ</span>
+                    </button>
+                    <button class="side-link" data-tab="browse" id="sideNavBrowse">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                        <span>Browse</span>
                     </button>
                     <button class="side-link" data-tab="search" id="sideNavSearch">
                         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -375,6 +381,95 @@
                     </div>
 
                     <!-- TAB 2: SEARCH VIEW -->
+                    
+                    <!-- TAB: BROWSE ALL GENRES & WORLD CHARTS -->
+                    <div class="tab-panel" id="tabBrowse">
+                        <div class="browse-view-container">
+                            <div class="browse-hero-header">
+                                <div class="browse-hero-meta">
+                                    <span class="browse-tag-badge">EXPLORE SOUNDWAVE</span>
+                                    <h1 class="browse-title">Browse All Genres & Charts</h1>
+                                    <p class="browse-subtitle">Explore top hits, international hip-hop, Travis Scott, The Weeknd, Bollywood & curated world playlists.</p>
+                                </div>
+                            </div>
+
+                            <!-- Browse Category Tiles Grid -->
+                            <div class="browse-categories-grid" id="browseCategoriesGrid">
+                                <div class="browse-tile" data-q="Global Top 50 Hits The Weeknd Travis Scott Drake" style="--tile-bg: linear-gradient(135deg, #4f46e5, #06b6d4);">
+                                    <span class="browse-tile-title">Global Top 50</span>
+                                    <span class="browse-tile-sub">The Weeknd, Travis Scott, Drake</span>
+                                    <div class="browse-tile-art">🌍</div>
+                                </div>
+                                <div class="browse-tile" data-q="Travis Scott SICKO MODE FE!N Hip Hop Hits" style="--tile-bg: linear-gradient(135deg, #e11d48, #f59e0b);">
+                                    <span class="browse-tile-title">Hip-Hop & Trap</span>
+                                    <span class="browse-tile-sub">Travis Scott, Kendrick, Metro</span>
+                                    <div class="browse-tile-art">⚡</div>
+                                </div>
+                                <div class="browse-tile" data-q="The Weeknd Starboy Blinding Lights Pop Hits" style="--tile-bg: linear-gradient(135deg, #7c3aed, #ec4899);">
+                                    <span class="browse-tile-title">The Weeknd & Pop</span>
+                                    <span class="browse-tile-sub">Starboy, Blinding Lights</span>
+                                    <div class="browse-tile-art">👑</div>
+                                </div>
+                                <div class="browse-tile" data-q="Bollywood Superhit Party Dance Songs 2024" style="--tile-bg: linear-gradient(135deg, #f97316, #ec4899);">
+                                    <span class="browse-tile-title">Bollywood Bangers</span>
+                                    <span class="browse-tile-sub">Badshah, Honey Singh, Karan Aujla</span>
+                                    <div class="browse-tile-art">🔥</div>
+                                </div>
+                                <div class="browse-tile" data-q="Arijit Singh Romantic Soulful Melodies" style="--tile-bg: linear-gradient(135deg, #ec4899, #8b5cf6);">
+                                    <span class="browse-tile-title">Romantic Melodies</span>
+                                    <span class="browse-tile-sub">Arijit Singh, Jasleen Royal</span>
+                                    <div class="browse-tile-art">💖</div>
+                                </div>
+                                <div class="browse-tile" data-q="Lofi Chill Beats Study Relax Night" style="--tile-bg: linear-gradient(135deg, #10b981, #06b6d4);">
+                                    <span class="browse-tile-title">Lo-Fi Chill & Study</span>
+                                    <span class="browse-tile-sub">Peaceful beats & relax vibes</span>
+                                    <div class="browse-tile-art">☕</div>
+                                </div>
+                                <div class="browse-tile" data-q="Gym Workout Motivation Beast Mode 2024" style="--tile-bg: linear-gradient(135deg, #dc2626, #f97316);">
+                                    <span class="browse-tile-title">Gym & Workout</span>
+                                    <span class="browse-tile-sub">High BPM power motivation</span>
+                                    <div class="browse-tile-art">🏋️</div>
+                                </div>
+                                <div class="browse-tile" data-q="Late Night Drive Songs Synthwave Vibe" style="--tile-bg: linear-gradient(135deg, #6366f1, #a855f7);">
+                                    <span class="browse-tile-title">Late Night Drive</span>
+                                    <span class="browse-tile-sub">Synthwave, bass & night mood</span>
+                                    <div class="browse-tile-art">🚗</div>
+                                </div>
+                                <div class="browse-tile" data-q="90s Bollywood Evergreen Superhit Songs" style="--tile-bg: linear-gradient(135deg, #d97706, #b45309);">
+                                    <span class="browse-tile-title">90s Golden Retro</span>
+                                    <span class="browse-tile-sub">Kumar Sanu, Alka Yagnik, Udit</span>
+                                    <div class="browse-tile-art">📻</div>
+                                </div>
+                                <div class="browse-tile" data-q="Top Punjabi Bangers Shubh Sidhu Moose Wala" style="--tile-bg: linear-gradient(135deg, #eab308, #ea580c);">
+                                    <span class="browse-tile-title">Punjabi Bangers</span>
+                                    <span class="browse-tile-sub">Shubh, Sidhu, AP Dhillon</span>
+                                    <div class="browse-tile-art">🏎️</div>
+                                </div>
+                                <div class="browse-tile" data-q="Top Pop Rock Anthems Coldplay Imagine Dragons" style="--tile-bg: linear-gradient(135deg, #2563eb, #7c3aed);">
+                                    <span class="browse-tile-title">Pop & Rock</span>
+                                    <span class="browse-tile-sub">Coldplay, Imagine Dragons, Queen</span>
+                                    <div class="browse-tile-art">🎸</div>
+                                </div>
+                                <div class="browse-tile" data-q="Top EDM Club Party Dance Floor Hits" style="--tile-bg: linear-gradient(135deg, #9333ea, #c026d3);">
+                                    <span class="browse-tile-title">EDM & Dance Floor</span>
+                                    <span class="browse-tile-sub">Martin Garrix, David Guetta, Avicii</span>
+                                    <div class="browse-tile-art">🕺</div>
+                                </div>
+                            </div>
+
+                            <!-- Browse Curated Results Section -->
+                            <div class="browse-results-section" id="browseResultsSection">
+                                <div class="browse-results-header">
+                                    <h2 id="browseResultsTitle">Featured Hits</h2>
+                                    <button class="btn-browse-play-all" id="btnBrowsePlayAll">▶ Play All</button>
+                                </div>
+                                <div class="browse-tracks-grid" id="browseTracksGrid">
+                                    <!-- Populated on category click -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="tab-panel" id="tabSearch">
                         <div class="search-view-container">
                             <div class="search-hero-box">
@@ -451,6 +546,32 @@
                     <!-- TAB: SOUNDWAVE VIDEO LOUNGE & PLAYER -->
                     <div class="tab-panel" id="tabVideo">
                         <div class="yt-browser-container">
+                            <!-- Video Hero Spotlight (Cinema style) -->
+                            <div class="video-hero-spotlight" id="videoSpotlightBanner">
+                                <div class="video-spotlight-backdrop-glow"></div>
+                                <div class="video-spotlight-content">
+                                    <div class="spotlight-badge">
+                                        <span class="spotlight-badge-dot"></span>
+                                        <span>1080p FULL HD MUSIC VIDEOS & CONCERTS</span>
+                                    </div>
+                                    <h1 class="video-spotlight-title" id="videoSpotlightTitle">Travis Scott & The Weeknd - Global 4K Concerts</h1>
+                                    <p class="video-spotlight-desc">Watch official high-definition music videos, live stadium concerts, and cinema soundtracks with screen-off background audio.</p>
+                                    <div class="video-spotlight-actions">
+                                        <button class="btn-spotlight-play-video" id="btnSpotlightPlayVideo">
+                                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                                <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                                            </svg>
+                                            <span>▶ Watch in 1080p HD</span>
+                                        </button>
+                                        <button class="btn-spotlight-bg-listen" id="btnSpotlightBgListen">
+                                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                                            </svg>
+                                            <span>🎧 Listen in Background (Screen-Off)</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                             <!-- Top Video Search / URL Input -->
                             <div class="yt-search-hero">
                                 <div class="yt-brand-header">
@@ -521,6 +642,12 @@
                                     </div>
                                     <div class="yt-meta-right">
                                         <!-- Feature 1: Ambient Glow Toggle -->
+                                        <button class="btn-yt-action btn-theater-bg-audio" id="btnTheaterBgAudio" title="Play video audio in background when screen is locked">
+                                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                                            </svg>
+                                            <span>🎧 Screen-Off Audio</span>
+                                        </button>
                                         <button class="btn-yt-action active-feature" id="btnAmbientToggle" title="Ambient Glow Mode">
                                             <span>✨ Glow: ON</span>
                                         </button>
@@ -1133,6 +1260,12 @@
                     <path d="M12 1a4 4 0 0 0-4 4v7a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4zm6 11a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93V22h2v-2.07A8 8 0 0 0 20 12h-2z"/>
                 </svg>
                 <span>AI DJ</span>
+            </button>
+            <button class="mob-tab-btn" data-tab="browse" id="mobTabBrowse">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                </svg>
+                <span>Browse</span>
             </button>
             <button class="mob-tab-btn" data-tab="search" id="mobTabSearch">
                 <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -1829,7 +1962,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=20261022_aidj_v6_rocksolid"></script>
+    <script src="app.js?v=20261022_browse_global_v7"></script>
 
   <!-- DMCA & COPYRIGHT LEGAL MODAL -->
   <div class="movie-modal-overlay hidden" id="dmcaModal">
@@ -1885,15 +2018,7 @@
 
 
 
-    <!-- Floating AI DJ Quick Pill (Universal 1-click & live status) -->
-    <div class="floating-aidj-pill" id="floatingAiDjPill" title="AI DJ: Tap to speak or say 'DJ'">
-        <div class="aidj-pill-mic">
-            <span class="pill-pulse-ring"></span>
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
-                <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-            </svg>
-        </div>
+    
         <span class="aidj-pill-text" id="floatingAiDjStatus">AI DJ: Standby</span>
         <div class="aidj-pill-wave" id="floatingAiDjWave">
             <span></span><span></span><span></span>

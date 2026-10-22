@@ -96,14 +96,31 @@ def get_saavn_stream(query):
         words = clean_q.split()[:4]
         search_seed = " ".join(words)
         encoded = urllib.parse.quote(search_seed)
-        url = f"https://www.jiosaavn.com/api.php?__call=search.getResults&_format=json&_marker=0&api_version=4&ctx=web6dot0&q={encoded}&p=1&n=1"
+        url = f"https://www.jiosaavn.com/api.php?__call=search.getResults&_format=json&_marker=0&api_version=4&ctx=web6dot0&q={encoded}&p=1&n=5"
         req = urllib.request.Request(url, headers={"User-Agent": UA})
         with urllib.request.urlopen(req, timeout=4) as r:
             data = json.loads(r.read().decode("utf-8", errors="ignore"))
             results = data.get("results", [])
             if not results:
                 return None
-            song_id = results[0]["id"]
+            
+            # Select best official track (filter out unwanted covers or karaoke)
+            q_lower = query.lower()
+            best_item = None
+            for item in results:
+                t_lower = (item.get("title") or "").lower()
+                if "karaoke" not in q_lower and "karaoke" in t_lower:
+                    continue
+                if "cover" not in q_lower and "cover" in t_lower:
+                    continue
+                if "tribute" not in q_lower and "tribute" in t_lower:
+                    continue
+                best_item = item
+                break
+            if not best_item:
+                best_item = results[0]
+
+            song_id = best_item["id"]
             det_url = f"https://www.jiosaavn.com/api.php?__call=song.getDetails&_format=json&_marker=0&api_version=4&ctx=web6dot0&pids={song_id}"
             req2 = urllib.request.Request(det_url, headers={"User-Agent": UA})
             with urllib.request.urlopen(req2, timeout=4) as r2:
@@ -1305,14 +1322,9 @@ class MusicHandler(SimpleHTTPRequestHandler):
 
                 stream_url = None
 
-                # 1. First, try unblocked high-speed CDN stream via Saavn (Works 100% on Render & Mobile Background)
-                if title:
-                    stream_url = get_saavn_stream(title)
-                if not stream_url and title and channel:
-                    stream_url = get_saavn_stream(f"{title} {channel}")
-
-                # 2. Fall back to yt-dlp if direct stream not yet found (e.g. video_id provided without title or indie track)
-                if not stream_url and video_id:
+                # 1. For exact YouTube videos (Travis Scott, The Weeknd, Drake, Badshah, All Artists Worldwide):
+                # Extract the 100% genuine original studio audio stream directly!
+                if video_id and not video_id.startswith("saavn_"):
                     try:
                         ydl_opts = get_ydl_opts({
                             "format": "bestaudio[ext=m4a]/bestaudio/best",
@@ -1335,9 +1347,34 @@ class MusicHandler(SimpleHTTPRequestHandler):
                                 title = info.get("title") or "SoundWave Audio"
                             if not channel:
                                 channel = info.get("channel") or info.get("uploader") or "Artist"
-                    except Exception as e:
-                        if not stream_url and title:
-                            stream_url = get_saavn_stream(title)
+                    except Exception as yt_err:
+                        print("Direct YouTube stream extraction notice:", yt_err)
+
+                # 2. For native Saavn IDs (saavn_...):
+                if not stream_url and video_id and video_id.startswith("saavn_"):
+                    clean_id = video_id.replace("saavn_", "")
+                    try:
+                        det_url = f"https://www.jiosaavn.com/api.php?__call=song.getDetails&_format=json&_marker=0&api_version=4&ctx=web6dot0&pids={clean_id}"
+                        req = urllib.request.Request(det_url, headers={"User-Agent": UA})
+                        with urllib.request.urlopen(req, timeout=4) as r:
+                            det = json.loads(r.read().decode("utf-8", errors="ignore"))
+                            more = det.get("songs", [{}])[0].get("more_info", {})
+                            enc = more.get("encrypted_media_url")
+                            if enc:
+                                from Crypto.Cipher import DES
+                                cipher = DES.new(b"38346591", DES.MODE_ECB)
+                                dec = cipher.decrypt(base64.b64decode(enc))
+                                pad = dec[-1]
+                                raw_url = dec[:-pad].decode("utf-8")
+                                stream_url = raw_url.replace("_96.mp4", "_160.mp4")
+                    except Exception as s_err:
+                        pass
+
+                # 3. Fallback to Saavn if direct extraction was not available
+                if not stream_url and title:
+                    stream_url = get_saavn_stream(title)
+                if not stream_url and title and channel:
+                    stream_url = get_saavn_stream(f"{title} {channel}")
 
                 if stream_url:
                     data = {
@@ -1345,7 +1382,7 @@ class MusicHandler(SimpleHTTPRequestHandler):
                         "title": title or "SoundWave Audio",
                         "channel": channel or "Artist",
                         "streamUrl": stream_url,
-                        "thumbnail": f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg" if video_id else "",
+                        "thumbnail": f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg" if (video_id and not video_id.startswith("saavn_")) else "",
                         "duration": 0
                     }
                     stream_cache[cache_key] = data
