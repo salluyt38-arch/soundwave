@@ -29,3 +29,6 @@ Thumbs.db
 # Whitelist soundwave app downloads
 !static/soundwave.apk
 !static/soundwave-app.zip
+
+*.keystore
+
