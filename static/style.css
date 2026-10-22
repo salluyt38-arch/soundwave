@@ -6674,3 +6674,96 @@ body {
 .btn-reset-free:hover {
     color: #e4e4e7;
 }
+
+
+/* Render Environment Guide Box */
+.render-env-guide-box {
+    background: rgba(168, 85, 247, 0.08);
+    border: 1px solid rgba(168, 85, 247, 0.25);
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+}
+
+.env-guide-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.env-guide-icon {
+    font-size: 1.1rem;
+}
+
+.env-guide-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.env-guide-sub {
+    font-size: 0.78rem;
+    color: var(--sp-text-sub);
+    line-height: 1.4;
+    margin-bottom: 10px;
+}
+
+.env-vars-chips-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.env-var-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 0.76rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.env-var-chip:hover {
+    border-color: #a855f7;
+    background: rgba(168, 85, 247, 0.15);
+}
+
+.env-var-chip code {
+    color: #a855f7;
+    font-weight: 700;
+    font-family: monospace;
+}
+
+.env-tag {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.env-tag.free {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.env-tag.pro {
+    background: rgba(168, 85, 247, 0.2);
+    color: #c084fc;
+}
+
+.provider-env-status {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--sp-text-mute);
+    margin-top: 3px;
+}
+
+.provider-env-status.active {
+    color: #10b981;
+    font-weight: 800;
+}

@@ -49,6 +49,43 @@ CASHFREE_ENV = os.environ.get("CASHFREE_ENV", "sandbox")
 CASHFREE_SUB_URL = "https://sandbox.cashfree.com/pg/subscriptions" if CASHFREE_ENV == "sandbox" else "https://api.cashfree.com/pg/subscriptions"
 CASHFREE_PAYMENT_LINK = "https://cfre.in/CSHFRE/o1xbhrj"
 
+# ==============================================================================
+# SIMPLE AI MODEL CONNECTOR ENVIRONMENT VARIABLES (Render / .env / Local)
+# You can set these in Render Dashboard -> Environment Variables:
+#   GROQ_API_KEY         : Free, lightning fast Llama 3.3 70B (~200ms)
+#   OPENROUTER_API_KEY   : DeepSeek, Llama 3, Free tier (:free) & 100+ models
+#   ANTHROPIC_API_KEY    : Claude 3.5 Sonnet / Haiku (or CLAUDE_API_KEY)
+#   OPENAI_API_KEY       : GPT-4o / GPT-4o-mini
+#   GEMINI_API_KEY       : Google Gemini 2.0 Flash
+#   NVIDIA_API_KEY       : NVIDIA NIM Nemotron / Llama 3.1
+#   DEFAULT_AI_PROVIDER  : auto | groq | claude | openrouter | gemini | openai | builtin
+# ==============================================================================
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "").strip()
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "").strip()
+ANTHROPIC_API_KEY = (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("CLAUDE_API_KEY", "")).strip()
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "").strip()
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
+NVIDIA_API_KEY = os.environ.get("NVIDIA_API_KEY", "").strip()
+DEFAULT_AI_PROVIDER = os.environ.get("DEFAULT_AI_PROVIDER", "").strip().lower()
+
+def get_default_provider():
+    if DEFAULT_AI_PROVIDER and DEFAULT_AI_PROVIDER not in ["auto", "default"]:
+        return DEFAULT_AI_PROVIDER
+    if GROQ_API_KEY:
+        return "groq"
+    if OPENROUTER_API_KEY:
+        return "openrouter"
+    if ANTHROPIC_API_KEY:
+        return "anthropic"
+    if GEMINI_API_KEY:
+        return "gemini"
+    if OPENAI_API_KEY:
+        return "openai"
+    if NVIDIA_API_KEY:
+        return "nvidia"
+    return "builtin"
+
+
 # Fast Unblocked Direct Stream Extractor via CDN (0.15s, 160kbps high quality)
 def get_saavn_stream(query):
     if not query:
@@ -604,15 +641,35 @@ def smart_builtin_dj(message):
     }
 
 def call_ai_provider(message, provider='default', api_key='', model=''):
+    global GROQ_API_KEY, OPENROUTER_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY, GEMINI_API_KEY, NVIDIA_API_KEY
     provider = (provider or 'default').lower().strip()
     api_key = (api_key or '').strip()
     model = (model or '').strip()
 
-    if provider in ['default', 'builtin', 'local'] or not api_key:
+    if provider in ['default', 'auto', '']:
+        provider = get_default_provider()
+
+    # Automatically use server environment variables if no client key is provided
+    if not api_key:
+        if provider in ['anthropic', 'claude']:
+            api_key = ANTHROPIC_API_KEY
+        elif provider == 'groq':
+            api_key = GROQ_API_KEY
+        elif provider == 'openrouter':
+            api_key = OPENROUTER_API_KEY
+        elif provider == 'openai':
+            api_key = OPENAI_API_KEY
+        elif provider == 'gemini':
+            api_key = GEMINI_API_KEY
+        elif provider == 'nvidia':
+            api_key = NVIDIA_API_KEY
+
+    # If provider is builtin or key is still missing, fallback smoothly to built-in smart DJ
+    if provider in ['builtin', 'local'] or not api_key:
         return smart_builtin_dj(message)
 
     try:
-        if provider == 'anthropic':
+        if provider in ['anthropic', 'claude']:
             req_url = "https://api.anthropic.com/v1/messages"
             payload = {
                 "model": model or "claude-3-5-sonnet-20241022",
@@ -746,10 +803,29 @@ def call_ai_provider(message, provider='default', api_key='', model=''):
 
     return smart_builtin_dj(message)
 
-def test_ai_provider(provider, api_key, model=''):
+def test_ai_provider(provider, api_key='', model=''):
+    global GROQ_API_KEY, OPENROUTER_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY, GEMINI_API_KEY, NVIDIA_API_KEY
     provider = (provider or 'default').lower().strip()
     api_key = (api_key or '').strip()
     model = (model or '').strip()
+
+    if provider in ['default', 'auto', '']:
+        provider = get_default_provider()
+
+    using_env = False
+    if not api_key:
+        if provider in ['anthropic', 'claude'] and ANTHROPIC_API_KEY:
+            api_key = ANTHROPIC_API_KEY; using_env = True
+        elif provider == 'groq' and GROQ_API_KEY:
+            api_key = GROQ_API_KEY; using_env = True
+        elif provider == 'openrouter' and OPENROUTER_API_KEY:
+            api_key = OPENROUTER_API_KEY; using_env = True
+        elif provider == 'openai' and OPENAI_API_KEY:
+            api_key = OPENAI_API_KEY; using_env = True
+        elif provider == 'gemini' and GEMINI_API_KEY:
+            api_key = GEMINI_API_KEY; using_env = True
+        elif provider == 'nvidia' and NVIDIA_API_KEY:
+            api_key = NVIDIA_API_KEY; using_env = True
 
     if provider in ['default', 'builtin']:
         return {
@@ -760,21 +836,33 @@ def test_ai_provider(provider, api_key, model=''):
         }
 
     if not api_key:
+        env_names = {
+            "groq": "GROQ_API_KEY",
+            "openrouter": "OPENROUTER_API_KEY",
+            "anthropic": "ANTHROPIC_API_KEY",
+            "gemini": "GEMINI_API_KEY",
+            "openai": "OPENAI_API_KEY",
+            "nvidia": "NVIDIA_API_KEY"
+        }
+        needed_var = env_names.get(provider, f"{provider.upper()}_API_KEY")
         return {
             "success": False,
-            "message": f"Please enter an API Key for {provider.capitalize()}.",
-            "provider": provider
+            "message": f"API Key required for {provider.upper()}. Enter key below or set '{needed_var}' in Render Environment Variables.",
+            "provider": provider,
+            "env_var": needed_var
         }
 
     try:
         test_msg = "Hello DJ, respond with JSON: {\"reply\": \"Connected!\", \"action\": \"info\", \"query\": \"\", \"category\": \"music\"}"
         res = call_ai_provider(test_msg, provider=provider, api_key=api_key, model=model)
         if res and res.get("reply"):
+            source_txt = "Render Environment Variable" if using_env else "Custom API Key"
             return {
                 "success": True,
-                "message": f"Successfully connected to {provider.upper()} ({model or 'default model'})! AI DJ is ready to take voice commands.",
+                "message": f"Connected to {provider.upper()} ({model or 'default'}) via {source_txt}! AI DJ is ready to take voice commands.",
                 "provider": provider,
                 "model": model,
+                "using_env": using_env,
                 "sample_reply": res.get("reply")
             }
         else:
@@ -1185,14 +1273,22 @@ class MusicHandler(SimpleHTTPRequestHandler):
 
             elif path == "/api/ai/providers":
                 self.send_json({
+                    "default_provider": get_default_provider(),
+                    "server_env_status": {
+                        "GROQ_API_KEY": bool(GROQ_API_KEY),
+                        "OPENROUTER_API_KEY": bool(OPENROUTER_API_KEY),
+                        "ANTHROPIC_API_KEY": bool(ANTHROPIC_API_KEY),
+                        "OPENAI_API_KEY": bool(OPENAI_API_KEY),
+                        "GEMINI_API_KEY": bool(GEMINI_API_KEY),
+                        "NVIDIA_API_KEY": bool(NVIDIA_API_KEY)
+                    },
                     "providers": [
-                        {"id": "builtin", "name": "Built-in Smart DJ (Free / Zero Setup)", "free": True, "requires_key": False, "default_model": "built-in", "desc": "Instant zero-latency music intent parser and voice DJ."},
-                        {"id": "groq", "name": "Groq Cloud (Ultra Fast)", "free": True, "requires_key": True, "default_model": "llama-3.3-70b-versatile", "desc": "Lightning fast ~200ms latency with Llama 3.3 70B.", "key_url": "https://console.groq.com/keys"},
-                        {"id": "openrouter", "name": "OpenRouter AI (Multi-Model)", "free": True, "requires_key": True, "default_model": "meta-llama/llama-3.3-70b-instruct:free", "desc": "Access 100+ models including free tier models (:free).", "key_url": "https://openrouter.ai/keys"},
-                        {"id": "anthropic", "name": "Anthropic Claude", "free": False, "requires_key": True, "default_model": "claude-3-5-sonnet-20241022", "desc": "World-class musical knowledge, lyrics understanding & curation.", "key_url": "https://console.anthropic.com/"},
-                        {"id": "openai", "name": "OpenAI (GPT-4o)", "free": False, "requires_key": True, "default_model": "gpt-4o-mini", "desc": "Smartest reasoning with GPT-4o-mini & GPT-4o.", "key_url": "https://platform.openai.com/api-keys"},
-                        {"id": "gemini", "name": "Google Gemini", "free": True, "requires_key": True, "default_model": "gemini-2.0-flash", "desc": "Next-gen multimodal speed & reasoning.", "key_url": "https://aistudio.google.com/app/apikey"},
-                        {"id": "nvidia", "name": "NVIDIA NIM", "free": True, "requires_key": True, "default_model": "meta/llama-3.1-70b-instruct", "desc": "Enterprise AI acceleration with 1000 free credits.", "key_url": "https://build.nvidia.com/"}
+                        {"id": "builtin", "name": "Built-in Smart DJ (Free / Zero Setup)", "free": True, "env_var": "None (Always Active)", "is_configured": True, "default_model": "built-in", "desc": "Instant zero-latency music intent parser and voice DJ."},
+                        {"id": "groq", "name": "Groq Cloud (Llama 3.3 70B)", "free": True, "env_var": "GROQ_API_KEY", "is_configured": bool(GROQ_API_KEY), "default_model": "llama-3.3-70b-versatile", "desc": "Lightning fast ~200ms latency with Llama 3.3 70B.", "key_url": "https://console.groq.com/keys"},
+                        {"id": "openrouter", "name": "OpenRouter AI (Multi-Model)", "free": True, "env_var": "OPENROUTER_API_KEY", "is_configured": bool(OPENROUTER_API_KEY), "default_model": "meta-llama/llama-3.3-70b-instruct:free", "desc": "Access 100+ models including free tier models (:free).", "key_url": "https://openrouter.ai/keys"},
+                        {"id": "anthropic", "name": "Anthropic Claude (Claude 3.5 Sonnet)", "free": False, "env_var": "ANTHROPIC_API_KEY", "is_configured": bool(ANTHROPIC_API_KEY), "default_model": "claude-3-5-sonnet-20241022", "desc": "World-class musical knowledge, lyrics understanding & curation.", "key_url": "https://console.anthropic.com/"},
+                        {"id": "gemini", "name": "Google Gemini (Gemini 2.0 Flash)", "free": True, "env_var": "GEMINI_API_KEY", "is_configured": bool(GEMINI_API_KEY), "default_model": "gemini-2.0-flash", "desc": "Next-gen multimodal speed & reasoning.", "key_url": "https://aistudio.google.com/app/apikey"},
+                        {"id": "openai", "name": "OpenAI (GPT-4o)", "free": False, "env_var": "OPENAI_API_KEY", "is_configured": bool(OPENAI_API_KEY), "default_model": "gpt-4o-mini", "desc": "Smartest reasoning with GPT-4o-mini & GPT-4o.", "key_url": "https://platform.openai.com/api-keys"}
                     ]
                 })
 
@@ -1391,6 +1487,34 @@ class MusicHandler(SimpleHTTPRequestHandler):
                     "status": "success",
                     "provider": provider,
                     "result": res
+                })
+
+            elif path == "/api/ai/save_env":
+                global GROQ_API_KEY, OPENROUTER_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY, GEMINI_API_KEY, NVIDIA_API_KEY, DEFAULT_AI_PROVIDER
+                new_groq = data.get("GROQ_API_KEY", "").strip()
+                new_openrouter = data.get("OPENROUTER_API_KEY", "").strip()
+                new_claude = data.get("ANTHROPIC_API_KEY", "").strip()
+                new_openai = data.get("OPENAI_API_KEY", "").strip()
+                new_gemini = data.get("GEMINI_API_KEY", "").strip()
+                new_default = data.get("DEFAULT_AI_PROVIDER", "").strip().lower()
+                if new_groq: GROQ_API_KEY = new_groq
+                if new_openrouter: OPENROUTER_API_KEY = new_openrouter
+                if new_claude: ANTHROPIC_API_KEY = new_claude
+                if new_openai: OPENAI_API_KEY = new_openai
+                if new_gemini: GEMINI_API_KEY = new_gemini
+                if new_default: DEFAULT_AI_PROVIDER = new_default
+                self.send_json({
+                    "success": True,
+                    "message": "Server AI environment variables updated successfully!",
+                    "active_provider": get_default_provider(),
+                    "server_env_status": {
+                        "GROQ_API_KEY": bool(GROQ_API_KEY),
+                        "OPENROUTER_API_KEY": bool(OPENROUTER_API_KEY),
+                        "ANTHROPIC_API_KEY": bool(ANTHROPIC_API_KEY),
+                        "OPENAI_API_KEY": bool(OPENAI_API_KEY),
+                        "GEMINI_API_KEY": bool(GEMINI_API_KEY),
+                        "NVIDIA_API_KEY": bool(NVIDIA_API_KEY)
+                    }
                 })
 
             elif path == "/api/ai/test_connection":

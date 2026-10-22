@@ -289,7 +289,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 5. TAB NAVIGATION SYSTEM ---
+    let activeTabName = 'home';
     function switchTab(tabName, addToHistory = true) {
+        activeTabName = tabName;
         const tabs = {
             home: { panel: tabHome, sideLink: sideNavHome, mobBtn: mobTabHome },
             search: { panel: tabSearch, sideLink: sideNavSearch, mobBtn: mobTabSearch },
@@ -3677,58 +3679,66 @@ document.addEventListener('DOMContentLoaded', () => {
             model: "built-in",
             free: true,
             needsKey: false,
+            envVar: "None (Always Active)",
             badge: "✨ Built-in Smart DJ (Free)",
             keyUrl: "#",
-            hint: "Instant zero-latency music intent parser and voice DJ. No API key needed!"
+            hint: "Instant zero-latency music intent parser and voice DJ. 100% Free!"
         },
         groq: {
-            name: "Groq Cloud",
+            name: "Groq Cloud (Llama 3.3)",
             model: "llama-3.3-70b-versatile",
             free: true,
             needsKey: true,
+            envVar: "GROQ_API_KEY",
             badge: "⚡ Groq: Llama 3.3 Active",
             keyUrl: "https://console.groq.com/keys",
-            hint: "Free tier gives lightning fast ~200ms latency. Get instant key from Groq Console."
+            hint: "Free tier gives lightning-fast ~200ms latency. Set GROQ_API_KEY in Render."
         },
         openrouter: {
             name: "OpenRouter AI",
             model: "meta-llama/llama-3.3-70b-instruct:free",
             free: true,
             needsKey: true,
+            envVar: "OPENROUTER_API_KEY",
             badge: "🌐 OpenRouter Active",
             keyUrl: "https://openrouter.ai/keys",
-            hint: "Access 100+ AI models including free tier models (:free). Get key from OpenRouter."
+            hint: "Access 100+ AI models including free models (:free). Set OPENROUTER_API_KEY."
         },
         anthropic: {
-            name: "Anthropic Claude",
+            name: "Anthropic Claude (Claude 3.5)",
             model: "claude-3-5-sonnet-20241022",
             free: false,
             needsKey: true,
+            envVar: "ANTHROPIC_API_KEY",
             badge: "🟣 Claude 3.5 Sonnet Active",
             keyUrl: "https://console.anthropic.com/",
-            hint: "Connect Claude 3.5 for world-class music taste, deep lyrics interpretation and curation."
+            hint: "Connect Claude 3.5 Sonnet for world-class musical knowledge. Set ANTHROPIC_API_KEY."
         },
         openai: {
-            name: "OpenAI",
+            name: "OpenAI (GPT-4o)",
             model: "gpt-4o-mini",
             free: false,
             needsKey: true,
+            envVar: "OPENAI_API_KEY",
             badge: "🟢 OpenAI GPT-4o Active",
             keyUrl: "https://platform.openai.com/api-keys",
-            hint: "Connect OpenAI GPT-4o-mini or GPT-4o for natural music conversation."
+            hint: "Connect GPT-4o-mini or GPT-4o for natural music conversation. Set OPENAI_API_KEY."
         },
         gemini: {
-            name: "Google Gemini",
+            name: "Google Gemini (Gemini 2.0)",
             model: "gemini-2.0-flash",
             free: true,
             needsKey: true,
+            envVar: "GEMINI_API_KEY",
             badge: "🔵 Gemini 2.0 Flash Active",
             keyUrl: "https://aistudio.google.com/app/apikey",
-            hint: "Get free API Key from Google AI Studio for Gemini 2.0 Flash."
+            hint: "Get free API Key from Google AI Studio. Set GEMINI_API_KEY in Render."
         }
     };
 
-    // Load AI Config from localStorage
+    let serverEnvStatus = {};
+    let serverDefaultProvider = 'builtin';
+
     function getStoredAiConfig() {
         try {
             const raw = localStorage.getItem('soundwave_ai_config');
@@ -3769,7 +3779,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const now = ctx.currentTime;
             osc.frequency.setValueAtTime(587.33, now); // D5
             osc.frequency.exponentialRampToValueAtTime(880.00, now + 0.12); // A5
-            gain.gain.setValueAtTime(0.14, now);
+            gain.gain.setValueAtTime(0.15, now);
             gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
             osc.start(now);
             osc.stop(now + 0.28);
@@ -3790,26 +3800,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const utterance = new SpeechSynthesisUtterance(text);
             const voices = window.speechSynthesis.getVoices();
-            // Prioritize natural Indian English / Hindi voices
             const matchVoice = voices.find(v => v.lang.includes('hi') || v.lang.includes('IN')) ||
                                voices.find(v => v.name.toLowerCase().includes('india') || v.name.toLowerCase().includes('hindi')) ||
                                voices.find(v => v.lang.startsWith('en')) ||
                                voices[0];
             if (matchVoice) utterance.voice = matchVoice;
-            utterance.rate = 1.04;
+            utterance.rate = 1.05;
             utterance.pitch = 1.0;
 
-            utterance.onend = () => {
+            const handleDone = () => {
                 isAiSpeakingNow = false;
                 setOrbVisualState(isAlwaysOnMicActive ? 'listening' : 'idle');
                 if (onComplete) onComplete();
             };
 
-            utterance.onerror = () => {
-                isAiSpeakingNow = false;
-                setOrbVisualState(isAlwaysOnMicActive ? 'listening' : 'idle');
-                if (onComplete) onComplete();
-            };
+            utterance.onend = handleDone;
+            utterance.onerror = handleDone;
 
             window.speechSynthesis.speak(utterance);
         } catch (e) {
@@ -3835,12 +3841,12 @@ document.addEventListener('DOMContentLoaded', () => {
             orb.classList.add('listening');
             if (stage) stage.classList.add('active-wave');
             if (statusHead) statusHead.textContent = 'Listening for "DJ..."';
-            if (statusSub) statusSub.textContent = 'Say "DJ play <song>", "DJ pause", or any entertainment command';
+            if (statusSub) statusSub.textContent = 'Say "DJ play <song>", "DJ pause", or any music command';
         } else if (state === 'speaking') {
             orb.classList.add('speaking');
             if (stage) stage.classList.add('active-wave');
             if (statusHead) statusHead.textContent = 'DJ is speaking...';
-            if (statusSub) statusSub.textContent = 'Playing response audio';
+            if (statusSub) statusSub.textContent = 'Playing voice response';
         } else if (state === 'thinking') {
             if (statusHead) statusHead.textContent = 'DJ is thinking & curating...';
             if (statusSub) statusSub.textContent = `Connecting via ${currentAiConfig.provider.toUpperCase()}...`;
@@ -3873,7 +3879,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <img class="track-card-thumb" src="${escapeHtml(trackData.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100')}" alt="Cover">
                         <div class="track-card-info">
                             <div class="track-card-title">${escapeHtml(trackData.title)}</div>
-                            <div class="track-card-artist">${escapeHtml(trackData.channel || 'SoundWave HD')}</div>
+                            <div class="track-card-artist">${escapeHtml(trackData.channel || 'SoundWave HD Audio')}</div>
                         </div>
                         <button class="btn-card-play-now" data-query="${escapeHtml(trackData.title)}">
                             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
@@ -3896,7 +3902,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         feed.appendChild(row);
 
-        // Bind Play Now button in card
         const playBtn = row.querySelector('.btn-card-play-now');
         if (playBtn) {
             playBtn.addEventListener('click', () => {
@@ -3913,7 +3918,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!userText || !userText.trim()) return;
         const cleanMsg = userText.trim();
 
-        // Add user bubble
         appendAiChatMessage('user', cleanMsg);
         setOrbVisualState('thinking');
 
@@ -3938,17 +3942,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (action === 'play' && query) {
                 trackCardMeta = {
                     title: query,
-                    channel: 'SoundWave AI Recommendation',
+                    channel: 'SoundWave AI Track',
                     thumbnail: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100'
                 };
             }
 
-            // Append DJ response
             appendAiChatMessage('dj', reply, trackCardMeta);
 
-            // Speak Voice response
             speakDjVoice(reply, () => {
-                // Execute action
                 executeAiAction(action, query);
             });
 
@@ -4005,7 +4006,7 @@ document.addEventListener('DOMContentLoaded', () => {
         speechRecognitionInstance = new SpeechRec();
         speechRecognitionInstance.continuous = true;
         speechRecognitionInstance.interimResults = false;
-        speechRecognitionInstance.lang = 'hi-IN'; // Also catches English and Hinglish smoothly
+        speechRecognitionInstance.lang = 'hi-IN';
 
         speechRecognitionInstance.onstart = () => {
             isAlwaysOnMicActive = true;
@@ -4014,7 +4015,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         speechRecognitionInstance.onresult = (event) => {
-            // Prevent hearing itself when AI is talking via TTS
             if (isAiSpeakingNow || (window.speechSynthesis && window.speechSynthesis.speaking)) {
                 return;
             }
@@ -4023,11 +4023,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const transcript = event.results[lastIdx][0].transcript.trim();
             console.log('🎤 Voice transcript:', transcript);
 
-            // Wake word regex: "DJ", "Deejay", "Hey DJ", "SoundWave"
-            const wakeWordRegex = /(dj|deejay|hey dj|soundwave)/i;
-            if (wakeWordRegex.test(transcript)) {
+            // Robust wake word regex: matches "DJ", "Deejay", "Hey DJ", "SoundWave" anywhere as a word
+            const wakeWordRegex = /(^|\s)(dj|deejay|hey\s*dj|soundwave)($|\s)/i;
+            const hasWakeWord = wakeWordRegex.test(transcript);
+            const isInAiDjTab = (typeof activeTabName !== 'undefined' && activeTabName === 'aidj');
+
+            if (hasWakeWord || isInAiDjTab) {
                 playDjChime();
-                let cleanCommand = transcript.replace(/.*?(dj|deejay|hey dj|soundwave)/i, '').trim();
+                let cleanCommand = transcript.replace(/(^|\s)(dj|deejay|hey\s*dj|soundwave)($|\s)/gi, ' ').trim();
                 if (!cleanCommand) {
                     const greeting = "Haanji! SoundWave DJ sun raha hai, boliye kaunsa gaana bajau?";
                     appendAiChatMessage('dj', greeting);
@@ -4048,7 +4051,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         speechRecognitionInstance.onend = () => {
-            // Continuous auto-restart if always-on mic is enabled
             if (isAlwaysOnMicActive) {
                 setTimeout(() => {
                     if (isAlwaysOnMicActive) {
@@ -4074,9 +4076,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isAlwaysOnMicActive) {
             try {
                 speechRecognitionInstance.start();
-            } catch (e) {
-                // Already started
-            }
+            } catch (e) {}
             updateMicUi(true);
             setOrbVisualState('listening');
         } else {
@@ -4112,7 +4112,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Update Header Active Model Display
     function refreshActiveModelBadge() {
         const badge = document.getElementById('aidjModelNameTxt');
         if (!badge) return;
@@ -4120,9 +4119,54 @@ document.addEventListener('DOMContentLoaded', () => {
         badge.textContent = meta.badge;
     }
 
+    // Fetch server environment variables on boot
+    async function syncServerAiProviders() {
+        try {
+            const res = await fetch(`${API_BASE}/api/ai/providers`);
+            const data = await res.json();
+            serverEnvStatus = data.server_env_status || {};
+            serverDefaultProvider = data.default_provider || 'builtin';
+
+            // Update badge text on provider cards in modal
+            const envKeyMap = {
+                groq: 'GROQ_API_KEY',
+                openrouter: 'OPENROUTER_API_KEY',
+                anthropic: 'ANTHROPIC_API_KEY',
+                gemini: 'GEMINI_API_KEY',
+                openai: 'OPENAI_API_KEY'
+            };
+
+            Object.keys(envKeyMap).forEach(provId => {
+                const varName = envKeyMap[provId];
+                const badgeEl = document.getElementById(`envBadge_${provId}`);
+                if (badgeEl) {
+                    if (serverEnvStatus[varName]) {
+                        badgeEl.textContent = `🟢 Server Env: ACTIVE (${varName})`;
+                        badgeEl.classList.add('active');
+                    } else {
+                        badgeEl.textContent = `Env: ${varName}`;
+                        badgeEl.classList.remove('active');
+                    }
+                }
+            });
+
+            // If user has not explicitly configured a model in localStorage, adopt server default!
+            const stored = localStorage.getItem('soundwave_ai_config');
+            if (!stored && serverDefaultProvider && serverDefaultProvider !== 'builtin') {
+                currentAiConfig.provider = serverDefaultProvider;
+                const meta = PROVIDER_METAS[serverDefaultProvider];
+                if (meta) currentAiConfig.model = meta.model;
+                refreshActiveModelBadge();
+            }
+        } catch (e) {
+            console.warn('Failed to load server AI providers:', e);
+        }
+    }
+
     // Setup Universal AI Connector Modal & Events
     function setupAiDjModule() {
         refreshActiveModelBadge();
+        syncServerAiProviders();
 
         // 1. Mic Controls
         const btnAiDjMicToggle = document.getElementById('btnAiDjMicToggle');
@@ -4179,6 +4223,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const openModal = () => {
             if (aiConnectorModal) {
+                syncServerAiProviders();
                 syncModalToCurrentConfig();
                 aiConnectorModal.classList.remove('hidden');
             }
@@ -4208,7 +4253,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 c.classList.toggle('active', c.getAttribute('data-provider') === selectedProvider);
             });
             const meta = PROVIDER_METAS[selectedProvider] || PROVIDER_METAS.builtin;
-            if (aiApiKeyInput) aiApiKeyInput.value = currentAiConfig.apiKey || '';
+            if (aiApiKeyInput) {
+                aiApiKeyInput.value = currentAiConfig.apiKey || '';
+                const envVarName = meta.envVar;
+                if (serverEnvStatus[envVarName]) {
+                    aiApiKeyInput.placeholder = `(Already set on server via ${envVarName} - leave blank to use)`;
+                } else {
+                    aiApiKeyInput.placeholder = `Enter your ${meta.name} API Key...`;
+                }
+            }
             if (aiModelInput) aiModelInput.value = currentAiConfig.model || meta.model;
             if (getKeyLink) {
                 getKeyLink.href = meta.keyUrl;
@@ -4229,6 +4282,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const meta = PROVIDER_METAS[selectedProvider] || PROVIDER_METAS.builtin;
 
                 if (aiModelInput) aiModelInput.value = meta.model;
+                if (aiApiKeyInput) {
+                    const envVarName = meta.envVar;
+                    if (serverEnvStatus[envVarName]) {
+                        aiApiKeyInput.placeholder = `(Already set on server via ${envVarName} - leave blank to use)`;
+                    } else {
+                        aiApiKeyInput.placeholder = `Enter your ${meta.name} API Key...`;
+                    }
+                }
                 if (getKeyLink) {
                     getKeyLink.href = meta.keyUrl;
                     getKeyLink.style.display = meta.needsKey ? 'inline' : 'none';
@@ -4313,7 +4374,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 refreshActiveModelBadge();
                 closeModal();
 
-                const announceMsg = `SoundWave AI DJ is now powered by ${meta.name} (${modelVal})! Direct music control active.`;
+                const announceMsg = `SoundWave AI DJ is now powered by ${meta.name}! Voice commands and playback ready.`;
                 appendAiChatMessage('dj', announceMsg);
                 speakDjVoice(announceMsg);
             });
@@ -4339,7 +4400,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Initialize voice engine in background
         setTimeout(() => {
             initAlwaysOnVoiceEngine();
         }, 1200);

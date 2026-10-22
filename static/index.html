@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20261022_aidj_v1">
+    <link rel="stylesheet" href="style.css?v=20261022_aidj_v2">
     <link rel="manifest" href="manifest.json">
 
 
@@ -1395,6 +1395,32 @@
                 </div>
 
                 <div class="connector-form">
+                                        <!-- Render Environment Variables Guide -->
+                    <div class="render-env-guide-box">
+                        <div class="env-guide-head">
+                            <span class="env-guide-icon">⚡</span>
+                            <span class="env-guide-title">Render Environment Variables (Server-Wide)</span>
+                        </div>
+                        <p class="env-guide-sub">Render Dashboard -> Environment Variables me inme se koi bhi variable paste kar dijiye. Website sabhi users ke liye automatically us model se connect ho jayegi:</p>
+                        <div class="env-vars-chips-list">
+                            <div class="env-var-chip" title="Click to select Groq">
+                                <code>GROQ_API_KEY</code> <span class="env-tag free">Free (~200ms)</span>
+                            </div>
+                            <div class="env-var-chip" title="Click to select Claude">
+                                <code>ANTHROPIC_API_KEY</code> <span class="env-tag pro">Claude 3.5</span>
+                            </div>
+                            <div class="env-var-chip" title="Click to select OpenRouter">
+                                <code>OPENROUTER_API_KEY</code> <span class="env-tag free">100+ Models</span>
+                            </div>
+                            <div class="env-var-chip" title="Click to select Gemini">
+                                <code>GEMINI_API_KEY</code> <span class="env-tag free">Gemini 2.0</span>
+                            </div>
+                            <div class="env-var-chip" title="Click to select OpenAI">
+                                <code>OPENAI_API_KEY</code> <span class="env-tag pro">GPT-4o</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Provider Picker Cards -->
                     <div class="form-group">
                         <label class="connector-label">Choose AI Engine / Model Provider</label>
@@ -1404,20 +1430,23 @@
                                 <div class="provider-card-info">
                                     <div class="provider-card-name">Built-in Smart DJ</div>
                                     <div class="provider-card-badge free">100% Free / Zero Setup</div>
+                                    <div class="provider-env-status active" id="envBadge_builtin">🟢 Ready (No Key Required)</div>
                                 </div>
                             </div>
                             <div class="provider-card" data-provider="groq">
                                 <div class="provider-card-icon">⚡</div>
                                 <div class="provider-card-info">
-                                    <div class="provider-card-name">Groq Cloud</div>
-                                    <div class="provider-card-badge free">Free Tier (0.2s Ultra Fast)</div>
+                                    <div class="provider-card-name">Groq Cloud (Llama 3.3)</div>
+                                    <div class="provider-card-badge free">Free (~200ms ultra fast)</div>
+                                    <div class="provider-env-status" id="envBadge_groq">Env: GROQ_API_KEY</div>
                                 </div>
                             </div>
                             <div class="provider-card" data-provider="openrouter">
                                 <div class="provider-card-icon">🌐</div>
                                 <div class="provider-card-info">
                                     <div class="provider-card-name">OpenRouter AI</div>
-                                    <div class="provider-card-badge free">Free & 100+ Models</div>
+                                    <div class="provider-card-badge free">Free Models & 100+ AIs</div>
+                                    <div class="provider-env-status" id="envBadge_openrouter">Env: OPENROUTER_API_KEY</div>
                                 </div>
                             </div>
                             <div class="provider-card" data-provider="anthropic">
@@ -1425,6 +1454,7 @@
                                 <div class="provider-card-info">
                                     <div class="provider-card-name">Anthropic Claude</div>
                                     <div class="provider-card-badge pro">Claude 3.5 Sonnet</div>
+                                    <div class="provider-env-status" id="envBadge_anthropic">Env: ANTHROPIC_API_KEY</div>
                                 </div>
                             </div>
                             <div class="provider-card" data-provider="openai">
@@ -1432,6 +1462,7 @@
                                 <div class="provider-card-info">
                                     <div class="provider-card-name">OpenAI</div>
                                     <div class="provider-card-badge pro">GPT-4o & GPT-4o-mini</div>
+                                    <div class="provider-env-status" id="envBadge_openai">Env: OPENAI_API_KEY</div>
                                 </div>
                             </div>
                             <div class="provider-card" data-provider="gemini">
@@ -1439,6 +1470,7 @@
                                 <div class="provider-card-info">
                                     <div class="provider-card-name">Google Gemini</div>
                                     <div class="provider-card-badge free">Gemini 2.0 Flash</div>
+                                    <div class="provider-env-status" id="envBadge_gemini">Env: GEMINI_API_KEY</div>
                                 </div>
                             </div>
                         </div>
@@ -1777,7 +1809,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=20261022_aidj_v1"></script>
+    <script src="app.js?v=20261022_aidj_v2"></script>
 
   <!-- DMCA & COPYRIGHT LEGAL MODAL -->
   <div class="movie-modal-overlay hidden" id="dmcaModal">
