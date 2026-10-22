@@ -12,7 +12,7 @@ const isLocalNetwork = (
 
 const API_BASE = isLocalNetwork
     ? ''
-    : 'https://postcard-big-parameters-wood.trycloudflare.com';
+    : 'https://keeping-circuits-draws-ratings.trycloudflare.com';
 
 // SoundWave â€” Spotify Premium Audio Engine
 // Background Playback, MediaSession Lockscreen Control, YouTube Streams, Full Library & Tabs
