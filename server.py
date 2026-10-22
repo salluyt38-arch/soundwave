@@ -1221,7 +1221,7 @@ class MusicHandler(SimpleHTTPRequestHandler):
                 })
                 return
 
-            if path in ("/download/soundwave.apk", "/soundwave.apk"):
+            if path in ("/download/soundwave.apk", "/soundwave.apk", "/download", "/app", "/install") or path.endswith("/soundwave.apk"):
                 apk_path = os.path.join(STATIC_DIR, "soundwave.apk")
                 if os.path.exists(apk_path):
                     file_size = os.path.getsize(apk_path)

@@ -857,8 +857,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (btnInstallPwa) {
             btnInstallPwa.addEventListener('click', (e) => {
-                e.preventDefault();
-                openPwaInstallModal();
+                const ua = navigator.userAgent || '';
+                const isFB = /FBAN|FBAV|Instagram|FB_IAB/i.test(ua);
+                const isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+                if (isFB) {
+                    e.preventDefault();
+                    showToast('⚠️ Facebook download block karta hai! Upar ⋯ tap karke "Open in Safari/Chrome" karein.');
+                    openPwaInstallModal();
+                    return;
+                }
+
+                if (isIOS) {
+                    showToast('🍎 iPhone ke liye: Safari Share (⎋) -> "Add to Home Screen" (+) karein!');
+                    openPwaInstallModal();
+                    return;
+                }
+
+                // On Android / Desktop:
+                showToast('⬇ SoundWave.apk download shuru ho gaya!');
             });
         }
 
