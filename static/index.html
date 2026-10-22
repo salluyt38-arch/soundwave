@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20261022_aidj_v3_fixed">
+    <link rel="stylesheet" href="style.css?v=20261022_aidj_v5_super_smart">
     <link rel="manifest" href="manifest.json">
 
 
@@ -223,6 +223,13 @@
                                             <polygon points="6 3 20 12 6 21 6 3"></polygon>
                                         </svg>
                                         <span>Play Today's Mix</span>
+                                    </button>
+                                    <button class="jumbo-play-btn btn-jumbo-aidj" id="jumboAiDjBtn" title="Activate Voice AI DJ">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                                            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                                        </svg>
+                                        <span id="jumboAiDjLabel">🎧 AI DJ: Tap to Speak</span>
                                     </button>
                                     <button class="jumbo-play-btn btn-jumbo-movies" id="jumboMoviesBtn">
                                         <svg viewBox="0 0 24 24" width="20" height="20" fill="#E50914">
@@ -1050,6 +1057,13 @@
                             <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"></line>
                         </svg>
                     </button>
+                    <button class="ctrl-btn btn-player-aidj" id="btnPlayerAiDjTrigger" title="Voice AI DJ (Tap or say 'DJ')">
+                        <span class="dj-pulse-dot"></span>
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                        </svg>
+                    </button>
                     <button class="ctrl-btn" id="btnLoop" title="Repeat">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="17 1 21 5 17 9"></polyline>
@@ -1247,6 +1261,12 @@
                     <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
                         <polygon points="5 4 15 12 5 20 5 4"></polygon>
                         <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"></line>
+                    </svg>
+                </button>
+                <button class="ctrl-btn btn-modal-aidj" id="btnModalAiDj" title="Voice AI DJ">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="#1db954">
+                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
                     </svg>
                 </button>
                 <button class="ctrl-btn" id="btnModalLoop" title="Repeat">
@@ -1809,7 +1829,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=20261022_aidj_v3_fixed"></script>
+    <script src="app.js?v=20261022_aidj_v5_super_smart"></script>
 
   <!-- DMCA & COPYRIGHT LEGAL MODAL -->
   <div class="movie-modal-overlay hidden" id="dmcaModal">
@@ -1864,5 +1884,20 @@
     
 
 
+
+    <!-- Floating AI DJ Quick Pill (Universal 1-click & live status) -->
+    <div class="floating-aidj-pill" id="floatingAiDjPill" title="AI DJ: Tap to speak or say 'DJ'">
+        <div class="aidj-pill-mic">
+            <span class="pill-pulse-ring"></span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+            </svg>
+        </div>
+        <span class="aidj-pill-text" id="floatingAiDjStatus">AI DJ: Standby</span>
+        <div class="aidj-pill-wave" id="floatingAiDjWave">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
 </body>
 </html>

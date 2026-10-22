@@ -544,89 +544,276 @@ def parse_ai_json(text):
                 pass
     return None
 
+
+def fetch_realistic_tts_stream(text):
+    if not text:
+        return None
+    clean_text = text.strip()[:240]
+    encoded = urllib.parse.quote(clean_text)
+    tts_url = f"https://translate.google.com/translate_tts?ie=UTF-8&q={encoded}&tl=hi&client=tw-ob"
+    req = urllib.request.Request(tts_url, headers={
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Referer": "https://translate.google.com/"
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=6) as resp:
+            return resp.read()
+    except Exception as e:
+        print("TTS fetch error:", e)
+        return None
+
 def smart_builtin_dj(message):
-    msg = (message or '').strip().lower()
-    
-    # 1. Playback controls
-    if any(w in msg for w in ['pause', 'stop', 'rok do', 'band kar', 'ruk jao', 'pause kar']):
+    msg = (message or "").strip().lower()
+
+    # 1. State / Trigger On-Off Commands
+    if any(w in msg for w in ["dj on", "turn on dj", "dj start", "wake up", "chalu ho jao", "uth jao", "activate dj"]):
+        return {
+            "reply": "SoundWave DJ active ho gaya hai! Boliye kaunsa banger gaana bajana hai?",
+            "action": "wake",
+            "query": "",
+            "category": "system"
+        }
+    if any(w in msg for w in ["dj off", "turn off dj", "dj sleep", "sleep mode", "chup ho jao", "band ho jao", "mute ho jao", "shant ho jao"]):
+        return {
+            "reply": "Theek hai, DJ sleep mode me jaa raha hai. Jab bhi gaana badalna ho, bas 'DJ' boliye!",
+            "action": "sleep",
+            "query": "",
+            "category": "system"
+        }
+
+    # 2. Playback & Volume controls
+    if any(w in msg for w in ["pause", "stop", "rok do", "band kar", "ruk jao", "pause kar"]):
         return {
             "reply": "Music pause kar diya hai! Jab bolenge main turant resume kar dunga.",
             "action": "pause",
             "query": "",
             "category": "music"
         }
-    if any(w in msg for w in ['resume', 'play karo', 'shuru karo', 'chalu karo']) and not any(w in msg for w in ['song', 'gaana', 'geet', 'track', 'music', 'play ']):
+    if any(w in msg for w in ["resume", "play karo", "shuru karo", "chalu karo"]) and not any(w in msg for w in ["song", "gaana", "geet", "track", "music", "play "]):
         return {
             "reply": "Music resume ho gaya hai, beats enjoy kijiye!",
             "action": "resume",
             "query": "",
             "category": "music"
         }
-    if any(w in msg for w in ['next', 'agla', 'skip', 'change', 'badlo']):
+    if any(w in msg for w in ["next", "agla", "skip", "change", "badlo", "dusra"]):
         return {
-            "reply": "Agla gaana play ho raha hai!",
+            "reply": "Agla superhit track play ho raha hai!",
             "action": "next",
             "query": "",
             "category": "music"
         }
-    if any(w in msg for w in ['prev', 'previous', 'pichla', 'back']):
+    if any(w in msg for w in ["prev", "previous", "pichla", "back"]):
         return {
-            "reply": "Pichla track wapas chala diya hai!",
+            "reply": "Pichla track wapas play kar diya hai!",
             "action": "prev",
             "query": "",
             "category": "music"
         }
+    if any(w in msg for w in ["volume up", "awaaz badhao", "sound badhao", "louder", "tez karo"]):
+        return {
+            "reply": "Volume badha diya hai, full bass mode ON!",
+            "action": "volume_up",
+            "query": "",
+            "category": "system"
+        }
+    if any(w in msg for w in ["volume down", "awaaz kam karo", "sound kam karo", "dheemi karo"]):
+        return {
+            "reply": "Volume kam kar diya hai.",
+            "action": "volume_down",
+            "query": "",
+            "category": "system"
+        }
 
-    # 2. Mood & Genre Curation (Instant & Accurate)
-    mood_map = {
-        ('romantic', 'pyaar', 'love', 'ishq', 'dil'): [
+    # 3. Deep Trained Artist & "Banger" Recognition
+    # A. BADSHAH BANGERS
+    if "badshah" in msg:
+        badshah_bangers = [
+            ("Jugnu - Badshah", "Yeh lijiye Badshah ka superhit party banger Jugnu! Nachne ke liye tayyar ho jaiye!"),
+            ("Soulmate - Badshah, Arijit Singh", "Badshah aur Arijit Singh ka chartbuster banger Soulmate! Suniye aur vibe kijiye."),
+            ("Mercy - Badshah", "Badshah ka timeless groove track Mercy baj raha hai!"),
+            ("Genda Phool - Badshah", "High-energy banger Genda Phool play ho gaya hai!"),
+            ("DJ Waley Babu - Badshah", "All-time club anthem DJ Waley Babu! Full volume kar lijiye!")
+        ]
+        pick = random.choice(badshah_bangers)
+        return {
+            "reply": pick[1],
+            "action": "play",
+            "query": pick[0],
+            "category": "music"
+        }
+
+    # B. HONEY SINGH BANGERS
+    if any(k in msg for k in ["honey singh", "yo yo"]):
+        honey_bangers = [
+            ("Millionaire - Yo Yo Honey Singh", "Yo Yo Honey Singh ka brand-new viral comeback banger Millionaire!"),
+            ("Blue Eyes - Yo Yo Honey Singh", "Legendary Blue Eyes hypnotize track shuru ho gaya hai!"),
+            ("Desi Kalakaar - Yo Yo Honey Singh", "Pure classic Honey Singh vibes Desi Kalakaar baj gaya hai!"),
+            ("Dope Shope - Yo Yo Honey Singh", "Club banger anthem Dope Shope!")
+        ]
+        pick = random.choice(honey_bangers)
+        return {
+            "reply": pick[1],
+            "action": "play",
+            "query": pick[0],
+            "category": "music"
+        }
+
+    # C. KARAN AUJLA BANGERS
+    if any(k in msg for k in ["karan aujla", "aujla"]):
+        aujla_bangers = [
+            ("Tauba Tauba - Karan Aujla", "Floor par aag lagane ke liye Karan Aujla ka mega banger Tauba Tauba!"),
+            ("Winning Speech - Karan Aujla", "Gym aur car ke liye pure hype banger Winning Speech!"),
+            ("Softly - Karan Aujla", "Smooth Punjabi vibe Softly by Karan Aujla!")
+        ]
+        pick = random.choice(aujla_bangers)
+        return {
+            "reply": pick[1],
+            "action": "play",
+            "query": pick[0],
+            "category": "music"
+        }
+
+    # D. SHUBH HITS
+    if "shubh" in msg:
+        shubh_bangers = [
+            ("Cheques - Shubh", "Shubh ka global chartbuster track Cheques baj raha hai!"),
+            ("Baller - Shubh", "Car bass ke liye Baller track play ho gaya!"),
+            ("Elevated - Shubh", "High energy motivational vibe Elevated by Shubh!")
+        ]
+        pick = random.choice(shubh_bangers)
+        return {
+            "reply": pick[1],
+            "action": "play",
+            "query": pick[0],
+            "category": "music"
+        }
+
+    # E. SIDHU MOOSE WALA BANGERS
+    if any(k in msg for k in ["sidhu", "moose wala", "moosewala"]):
+        sidhu_bangers = [
+            ("295 - Sidhu Moose Wala", "Sidhu Moose Wala ka evergreen global anthem 295!"),
+            ("So High - Sidhu Moose Wala", "Dil da ni maada! So High play ho gaya hai."),
+            ("The Last Ride - Sidhu Moose Wala", "Legendary The Last Ride by Sidhu Moose Wala.")
+        ]
+        pick = random.choice(sidhu_bangers)
+        return {
+            "reply": pick[1],
+            "action": "play",
+            "query": pick[0],
+            "category": "music"
+        }
+
+    # F. ARIJIT SINGH HITS
+    if any(k in msg for k in ["arijit", "arijit singh"]):
+        arijit_hits = [
+            ("Kesariya - Arijit Singh", "Arijit Singh ka magical romantic track Kesariya hazir hai!"),
+            ("Chaleya - Arijit Singh", "Jawan ka soulful blockbuster Chaleya!"),
+            ("Tum Hi Ho - Arijit Singh", "Heart-touching melody Tum Hi Ho shuru ho raha hai."),
+            ("Apna Bana Le - Arijit Singh", "Bhediya movie ka timeless romantic hit Apna Bana Le.")
+        ]
+        pick = random.choice(arijit_hits)
+        return {
+            "reply": pick[1],
+            "action": "play",
+            "query": pick[0],
+            "category": "music"
+        }
+
+    # G. GENERAL BANGERS & MOODS
+    if any(w in msg for w in ["banger", "bangersong", "banger song", "party", "dance", "club", "hype", "dhamaka"]):
+        generic_bangers = [
+            ("Tauba Tauba - Karan Aujla", "Sabse bada viral dance banger Tauba Tauba baj raha hai!"),
+            ("Jugnu - Badshah", "Floor shaking party banger Jugnu play kar diya hai!"),
+            ("Millionaire - Yo Yo Honey Singh", "Full volume banger Millionaire shuru ho gaya!"),
+            ("Cheques - Shubh", "Top trending hype banger Cheques by Shubh!"),
+            ("Big Dawgs - Hanumankind", "Global rap banger Big Dawgs play ho raha hai!")
+        ]
+        pick = random.choice(generic_bangers)
+        return {
+            "reply": pick[1],
+            "action": "play",
+            "query": pick[0],
+            "category": "music"
+        }
+
+    # H. ROMANTIC MOOD
+    if any(w in msg for w in ["romantic", "pyaar", "love", "ishq", "dil", "sweet"]):
+        romantic_picks = [
             ("Kesariya - Arijit Singh", "Aapke dil ke taar chhedne ke liye yeh raha Kesariya!"),
             ("Apna Bana Le - Arijit Singh", "Pure romantic vibes! Apna Bana Le suniye."),
-            ("Tum Se Hi - Mohit Chauhan", "Jab We Met ka timeless romantic magic aapke liye!")
-        ],
-        ('gym', 'workout', 'energy', 'pump', 'power', 'heavy'): [
+            ("Tum Se Hi - Mohit Chauhan", "Jab We Met ka timeless romantic magic aapke liye!"),
+            ("Tu Hai Kahan - AUR", "Late night romantic soul track Tu Hai Kahan play ho gaya.")
+        ]
+        pick = random.choice(romantic_picks)
+        return {
+            "reply": pick[1],
+            "action": "play",
+            "query": pick[0],
+            "category": "music"
+        }
+
+    # I. GYM & WORKOUT MOOD
+    if any(w in msg for w in ["gym", "workout", "pump", "power", "heavy", "lift", "motivation"]):
+        gym_picks = [
             ("Winning Speech - Karan Aujla", "Gym me aag lagaane ke liye Karan Aujla ka Winning Speech!"),
-            ("Cheques - Shubh", "High energy mode ON! Shubh ka Cheques baj gaya hai."),
-            ("Born to Shine - Diljit Dosanjh", "Full motivation workout track, let's crush it!")
-        ],
-        ('party', 'dance', 'club', 'nachta', 'dhamaka'): [
-            ("Tauba Tauba - Karan Aujla", "Floor par aag lagane ke liye Tauba Tauba baj raha hai!"),
-            ("Badtameez Dil - Ranbir Kapoor", "Party mode activate! Badtameez Dil ke saath jhoom lijiye."),
-            ("Kala Chashma - Baar Baar Dekho", "Super hit dance banger Kala Chashma!")
-        ],
-        ('sad', 'dard', 'heartbreak', 'udaas', 'alone', 'cry'): [
+            ("Born to Shine - Diljit Dosanjh", "Full motivation workout track, let's crush it!"),
+            ("Elevated - Shubh", "High energy beast mode ON! Elevated play ho gaya.")
+        ]
+        pick = random.choice(gym_picks)
+        return {
+            "reply": pick[1],
+            "action": "play",
+            "query": pick[0],
+            "category": "music"
+        }
+
+    # J. SAD & HEARTBREAK
+    if any(w in msg for w in ["sad", "dard", "heartbreak", "udaas", "alone", "cry", "breakup"]):
+        sad_picks = [
             ("Channa Mereya - Arijit Singh", "Dil ko chhoo lene wala Arijit ka Channa Mereya."),
-            ("Ranjha - Shershaah", "Aapke jazbaat ke saath, Ranjha track hazir hai."),
+            ("Filhall - B Praak", "B Praak ka soulful emotional track Filhall baj raha hai."),
             ("Bekhayali - Kabir Singh", "Heartbreak emotions ke liye Bekhayali.")
-        ],
-        ('punjabi', 'bhangra', 'jatt', 'sidhu', 'moosewala', 'aujla'): [
-            ("295 - Sidhu Moose Wala", "Legendary Sidhu Moose Wala ka evergreen track 295!"),
-            ("Softly - Karan Aujla", "Karan Aujla ka smooth Punjabi vibe Softly!"),
-            ("Brown Munde - AP Dhillon", "AP Dhillon ka global anthem Brown Munde!")
-        ],
-        ('lofi', 'chill', 'relax', 'study', 'peace', 'sleep'): [
+        ]
+        pick = random.choice(sad_picks)
+        return {
+            "reply": pick[1],
+            "action": "play",
+            "query": pick[0],
+            "category": "music"
+        }
+
+    # K. LO-FI & CHILL
+    if any(w in msg for w in ["lofi", "lo-fi", "chill", "relax", "study", "peace", "sleep"]):
+        lofi_picks = [
             ("Iktara Lo-Fi Chill Mix", "Peaceful chill vibes ke liye Iktara Lo-Fi baj raha hai."),
             ("Pasoori Lo-Fi Chill", "Dim the lights and vibe to Pasoori Lo-Fi.")
-        ],
-        ('90s', 'retro', 'old', 'purane', 'classic', 'vintage'): [
+        ]
+        pick = random.choice(lofi_picks)
+        return {
+            "reply": pick[1],
+            "action": "play",
+            "query": pick[0],
+            "category": "music"
+        }
+
+    # L. 90s RETRO
+    if any(w in msg for w in ["90s", "retro", "old", "purane", "classic", "vintage"]):
+        retro_picks = [
             ("Tujhe Dekha Toh Yeh Jaana Sanam", "90s ka sabse bada romantic blockbuster gaana!"),
             ("Dil To Pagal Hai - Lata Mangeshkar", "Golden 90s era ka magical melody.")
         ]
-    }
+        pick = random.choice(retro_picks)
+        return {
+            "reply": pick[1],
+            "action": "play",
+            "query": pick[0],
+            "category": "music"
+        }
 
-    for keys, songs in mood_map.items():
-        if any(k in msg for k in keys):
-            pick = random.choice(songs)
-            return {
-                "reply": pick[1],
-                "action": "play",
-                "query": pick[0],
-                "category": "music"
-            }
-
-    # 3. Direct song / artist query cleanup
+    # 4. Direct song / artist query cleanup
     clean = re.sub(r'^(dj|deejay|hey dj|soundwave)\s*', '', msg, flags=re.IGNORECASE)
-    clean = re.sub(r'\b(play|chalao|bajao|sunaao|lagao|song|gaana|geet|sunna hai|track|music)\b', '', clean, flags=re.IGNORECASE).strip()
+    clean = re.sub(r'\b(play|the|chalao|bajao|sunaao|lagao|song|gaana|geet|sunna hai|track|music|banger|bangersong)\b', '', clean, flags=re.IGNORECASE).strip()
     if not clean:
         clean = "Kesariya Arijit Singh"
         reply = "Aapka favourite trendsetter gaana Kesariya baj raha hai!"
@@ -1270,6 +1457,26 @@ class MusicHandler(SimpleHTTPRequestHandler):
                 except Exception as e:
                     print("Movie search error:", e)
                     self.send_json({"error": str(e), "results": []}, status=500)
+
+            elif path == "/api/ai/tts":
+                text = query.get("text", [""])[0].strip()
+                if not text:
+                    self.send_json({"error": "No text provided"}, status=400)
+                    return
+                audio_bytes = fetch_realistic_tts_stream(text)
+                if audio_bytes:
+                    self.send_response(200)
+                    self.send_header("Content-Type", "audio/mpeg")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.send_header("Cache-Control", "public, max-age=86400")
+                    self.send_header("Content-Length", str(len(audio_bytes)))
+                    self.end_headers()
+                    try:
+                        self.wfile.write(audio_bytes)
+                    except (ConnectionResetError, ConnectionAbortedError, BrokenPipeError):
+                        pass
+                else:
+                    self.send_json({"error": "TTS generation failed"}, status=500)
 
             elif path == "/api/ai/providers":
                 self.send_json({

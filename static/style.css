@@ -6767,3 +6767,252 @@ body {
     color: #10b981;
     font-weight: 800;
 }
+
+/* ========================================================
+   SOUNDWAVE AI DJ TRIGGER CONTROLS & FLOATING PILL
+   ======================================================== */
+
+/* 1. Hero Banner AI DJ Button */
+.btn-jumbo-aidj {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, rgba(29, 185, 84, 0.2), rgba(168, 85, 247, 0.25)) !important;
+    border: 1px solid rgba(168, 85, 247, 0.5) !important;
+    color: #ffffff !important;
+    border-radius: 9999px;
+    padding: 12px 22px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 18px rgba(168, 85, 247, 0.2);
+}
+
+.btn-jumbo-aidj:hover {
+    transform: translateY(-2px) scale(1.03);
+    background: linear-gradient(135deg, rgba(29, 185, 84, 0.35), rgba(168, 85, 247, 0.45)) !important;
+    border-color: #a855f7 !important;
+    box-shadow: 0 6px 24px rgba(168, 85, 247, 0.4);
+}
+
+.btn-jumbo-aidj.active {
+    border-color: #1db954 !important;
+    background: linear-gradient(135deg, rgba(29, 185, 84, 0.4), rgba(29, 185, 84, 0.6)) !important;
+    animation: aidjJumboPulse 1.8s infinite;
+}
+
+@keyframes aidjJumboPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(29, 185, 84, 0.5); }
+    50% { box-shadow: 0 0 0 10px rgba(29, 185, 84, 0); }
+}
+
+/* 2. Bottom Player Bar DJ Button */
+.btn-player-aidj {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: #a1a1aa;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0 4px;
+}
+
+.btn-player-aidj:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(168, 85, 247, 0.4);
+    transform: scale(1.08);
+}
+
+.btn-player-aidj .dj-pulse-dot {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #1db954;
+    box-shadow: 0 0 6px #1db954;
+}
+
+.btn-player-aidj.listening {
+    color: #1db954 !important;
+    border-color: #1db954 !important;
+    background: rgba(29, 185, 84, 0.2) !important;
+    animation: aidjPlayerPulse 1.5s infinite;
+}
+
+.btn-player-aidj.speaking {
+    color: #c084fc !important;
+    border-color: #a855f7 !important;
+    background: rgba(168, 85, 247, 0.2) !important;
+}
+
+@keyframes aidjPlayerPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(29, 185, 84, 0.6); }
+    50% { box-shadow: 0 0 0 8px rgba(29, 185, 84, 0); }
+}
+
+/* 3. Mobile Player Modal DJ Button */
+.btn-modal-aidj {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #1db954;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-modal-aidj:hover {
+    background: rgba(29, 185, 84, 0.15);
+    border-color: #1db954;
+    transform: scale(1.1);
+}
+
+/* 4. Floating Universal AI DJ Pill */
+.floating-aidj-pill {
+    position: fixed;
+    right: 24px;
+    bottom: 106px;
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    background: rgba(18, 18, 24, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55), 0 0 16px rgba(168, 85, 247, 0.15);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.floating-aidj-pill:hover {
+    transform: translateY(-3px) scale(1.03);
+    border-color: rgba(168, 85, 247, 0.5);
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.65), 0 0 24px rgba(168, 85, 247, 0.3);
+}
+
+.aidj-pill-mic {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1db954, #1ed760);
+    color: #000;
+}
+
+.aidj-pill-mic .pill-pulse-ring {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid #1db954;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.floating-aidj-pill.listening .aidj-pill-mic .pill-pulse-ring {
+    animation: aidjRingPulse 1.4s infinite;
+}
+
+@keyframes aidjRingPulse {
+    0% { transform: scale(0.9); opacity: 0.9; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+
+.aidj-pill-text {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #f4f4f5;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.aidj-pill-wave {
+    display: inline-flex;
+    align-items: center;
+    gap: 2.5px;
+    height: 14px;
+}
+
+.aidj-pill-wave span {
+    display: block;
+    width: 3px;
+    height: 6px;
+    background: #1db954;
+    border-radius: 2px;
+    transition: height 0.2s ease;
+}
+
+.floating-aidj-pill.listening .aidj-pill-wave span {
+    background: #1db954;
+    animation: aidjPillWave 0.9s infinite ease-in-out;
+}
+
+.floating-aidj-pill.speaking .aidj-pill-wave span {
+    background: #a855f7;
+    animation: aidjPillWave 0.7s infinite ease-in-out;
+}
+
+.floating-aidj-pill.listening .aidj-pill-wave span:nth-child(1) { animation-delay: 0.0s; }
+.floating-aidj-pill.listening .aidj-pill-wave span:nth-child(2) { animation-delay: 0.2s; }
+.floating-aidj-pill.listening .aidj-pill-wave span:nth-child(3) { animation-delay: 0.4s; }
+
+.floating-aidj-pill.speaking .aidj-pill-wave span:nth-child(1) { animation-delay: 0.0s; }
+.floating-aidj-pill.speaking .aidj-pill-wave span:nth-child(2) { animation-delay: 0.15s; }
+.floating-aidj-pill.speaking .aidj-pill-wave span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes aidjPillWave {
+    0%, 100% { height: 4px; }
+    50% { height: 14px; }
+}
+
+.floating-aidj-pill.listening {
+    border-color: rgba(29, 185, 84, 0.7);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(29, 185, 84, 0.4);
+}
+
+.floating-aidj-pill.speaking {
+    border-color: rgba(168, 85, 247, 0.7);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(168, 85, 247, 0.4);
+}
+
+.floating-aidj-pill.speaking .aidj-pill-mic {
+    background: linear-gradient(135deg, #a855f7, #c084fc);
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .floating-aidj-pill {
+        right: 14px;
+        bottom: 78px;
+        padding: 6px 12px;
+        gap: 7px;
+    }
+    .aidj-pill-text {
+        font-size: 0.75rem;
+    }
+    .btn-jumbo-aidj {
+        width: 100%;
+        justify-content: center;
+        margin-top: 6px;
+    }
+}
