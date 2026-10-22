@@ -58,7 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function prefetchTrackStream(track) {
         if (!track || !track.id || streamUrlCache.has(track.id)) return;
         try {
-            const res = await fetch(`${API_BASE}/api/stream?id=${encodeURIComponent(track.id)}`);
+            const streamApiUrl = `${API_BASE}/api/stream?id=${encodeURIComponent(track.id)}&title=${encodeURIComponent(track.title || '')}&channel=${encodeURIComponent(track.channel || '')}`;
+            const res = await fetch(streamApiUrl);
             const data = await res.json();
             if (data && data.streamUrl) {
                 streamUrlCache.set(track.id, data.streamUrl);
@@ -162,120 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Player Bar Elements
     const audio = document.getElementById('audioPlaybackEngine');
 
-    // YouTube Client-Side Audio Engine (Zero-Delay Fallback & Universal Compatibility)
-    let ytAudioPlayer = null;
-    let isYtAudioReady = false;
-    let isYtAudioActive = false;
-    let ytProgressTimer = null;
 
-    function initYtAudioPlayer() {
-        if (window.YT && window.YT.Player) {
-            setupYtPlayerInstance();
-        } else {
-            window.onYouTubeIframeAPIReady = setupYtPlayerInstance;
-        }
-    }
-
-    function setupYtPlayerInstance() {
-        if (ytAudioPlayer) return;
-        try {
-            ytAudioPlayer = new YT.Player('ytAudioPlayerNode', {
-                height: '10',
-                width: '10',
-                videoId: '',
-                playerVars: {
-                    autoplay: 1,
-                    controls: 0,
-                    disablekb: 1,
-                    fs: 0,
-                    playsinline: 1,
-                    rel: 0
-                },
-                events: {
-                    onReady: () => { isYtAudioReady = true; },
-                    onStateChange: (event) => {
-                        if (event.data === YT.PlayerState.PLAYING) {
-                            isYtAudioActive = true;
-                            if (svgPlay) svgPlay.classList.add('hidden');
-                            if (svgPause) svgPause.classList.remove('hidden');
-                            startYtProgressTimer();
-                        } else if (event.data === YT.PlayerState.PAUSED) {
-                            if (svgPlay) svgPlay.classList.remove('hidden');
-                            if (svgPause) svgPause.classList.add('hidden');
-                            stopYtProgressTimer();
-                        } else if (event.data === YT.PlayerState.ENDED) {
-                            stopYtProgressTimer();
-                            onTrackEnded();
-                        }
-                    },
-                    onError: (event) => {
-                        console.warn('YT Audio Engine error:', event.data);
-                        stopYtProgressTimer();
-                        setTimeout(playNext, 800);
-                    }
-                }
-            });
-        } catch (e) {
-            console.warn('YT Audio Engine setup error:', e);
-        }
-    }
-
-    initYtAudioPlayer();
-
-    function startYtProgressTimer() {
-        stopYtProgressTimer();
-        ytProgressTimer = setInterval(() => {
-            if (!isYtAudioActive || !ytAudioPlayer || typeof ytAudioPlayer.getCurrentTime !== 'function') return;
-            const current = ytAudioPlayer.getCurrentTime() || 0;
-            const total = ytAudioPlayer.getDuration() || 0;
-            if (total > 0) {
-                const pct = (current / total) * 100;
-                if (scrubFill) scrubFill.style.width = `${pct}%`;
-                if (scrubThumb) scrubThumb.style.left = `${pct}%`;
-                if (mobProgFill) mobProgFill.style.width = `${pct}%`;
-                if (modalScrubFill) modalScrubFill.style.width = `${pct}%`;
-                if (modalScrubThumb) modalScrubThumb.style.left = `${pct}%`;
-
-                if (timeCurrent) timeCurrent.textContent = formatTime(current);
-                if (timeTotal && isFinite(total)) timeTotal.textContent = formatTime(total);
-                if (modalTimeCurrent) modalTimeCurrent.textContent = formatTime(current);
-                if (modalTimeTotal && isFinite(total)) modalTimeTotal.textContent = formatTime(total);
-            }
-        }, 250);
-    }
-
-    function stopYtProgressTimer() {
-        if (ytProgressTimer) {
-            clearInterval(ytProgressTimer);
-            ytProgressTimer = null;
-        }
-    }
-
-    function playYouTubeAudioFallback(track) {
-        if (!track || !track.id) return;
-        try {
-            audio.pause();
-            audio.src = '';
-        } catch (e) {}
-        isYtAudioActive = true;
-
-        if (svgPlay) svgPlay.classList.add('hidden');
-        if (svgPause) svgPause.classList.remove('hidden');
-
-        if (ytAudioPlayer && typeof ytAudioPlayer.loadVideoById === 'function') {
-            ytAudioPlayer.loadVideoById(track.id);
-            ytAudioPlayer.playVideo();
-        } else {
-            const checkReady = setInterval(() => {
-                if (ytAudioPlayer && typeof ytAudioPlayer.loadVideoById === 'function') {
-                    clearInterval(checkReady);
-                    ytAudioPlayer.loadVideoById(track.id);
-                    ytAudioPlayer.playVideo();
-                }
-            }, 150);
-            setTimeout(() => clearInterval(checkReady), 6000);
-        }
-    }
     const playerCoverImg = document.getElementById('playerCoverImg');
     const playerSongTitle = document.getElementById('playerSongTitle');
     const playerSongArtist = document.getElementById('playerSongArtist');
@@ -745,11 +633,6 @@ document.addEventListener('DOMContentLoaded', () => {
             volumeRange.addEventListener('input', (e) => {
                 const vol = parseFloat(e.target.value);
                 audio.volume = vol;
-                if (isYtAudioActive && ytAudioPlayer && typeof ytAudioPlayer.setVolume === 'function') {
-                    ytAudioPlayer.setVolume(vol * 100);
-                    if (vol === 0) ytAudioPlayer.mute();
-                    else ytAudioPlayer.unMute();
-                }
                 updateVolumeIcon(vol);
             });
         }
@@ -781,8 +664,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Auto-recover from any network stream error in background
         audio.addEventListener('error', (e) => {
-            console.warn('Audio element error, auto-advancing to next song:', e);
-            setTimeout(playNext, 600);
+            if (!audio.src || audio.src === window.location.href) return;
+            console.warn('Audio element error noticed:', e);
         });
 
         // Trigger prefetch for next songs when current song reaches midway
@@ -1330,16 +1213,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function togglePlayPause() {
-        if (isYtAudioActive && ytAudioPlayer && typeof ytAudioPlayer.getPlayerState === 'function') {
-            const state = ytAudioPlayer.getPlayerState();
-            if (state === YT.PlayerState.PLAYING) {
-                ytAudioPlayer.pauseVideo();
-            } else {
-                ytAudioPlayer.playVideo();
-            }
-            return;
-        }
-
         if (!audio.src) {
             if (activeQueue.length > 0) {
                 playTrackByIndex(0);
@@ -1376,12 +1249,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function playPrev() {
         if (activeQueue.length === 0) return;
-        if (isYtAudioActive && ytAudioPlayer && typeof ytAudioPlayer.getCurrentTime === 'function') {
-            if (ytAudioPlayer.getCurrentTime() > 4) {
-                ytAudioPlayer.seekTo(0, true);
-                return;
-            }
-        } else if (audio.currentTime > 4) {
+        if (audio.currentTime > 4) {
             audio.currentTime = 0;
             return;
         }
@@ -1392,13 +1260,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function onTrackEnded() {
         if (isLoop) {
-            if (isYtAudioActive && ytAudioPlayer && typeof ytAudioPlayer.seekTo === 'function') {
-                ytAudioPlayer.seekTo(0, true);
-                ytAudioPlayer.playVideo();
-            } else {
-                audio.currentTime = 0;
-                audio.play();
-            }
+            audio.currentTime = 0;
+            audio.play();
         } else {
             playNext();
         }
@@ -1438,40 +1301,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function seekAudio(e) {
+        if (!audio.src || isNaN(audio.duration)) return;
         const targetTrack = e.currentTarget || scrubTrack;
         const rect = targetTrack.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
         const width = rect.width;
         const seekRatio = Math.max(0, Math.min(1, clickX / width));
-
-        if (isYtAudioActive && ytAudioPlayer && typeof ytAudioPlayer.getDuration === 'function') {
-            const total = ytAudioPlayer.getDuration() || 0;
-            if (total > 0) {
-                ytAudioPlayer.seekTo(seekRatio * total, true);
-            }
-            return;
-        }
-
-        if (!audio.src || isNaN(audio.duration)) return;
         audio.currentTime = seekRatio * audio.duration;
     }
 
     // --- 12. VOLUME & MUTE ---
     function toggleMute() {
-        if (audio.volume > 0 || (isYtAudioActive && ytAudioPlayer && !ytAudioPlayer.isMuted())) {
+        if (audio.volume > 0) {
             previousVolume = audio.volume;
             audio.volume = 0;
-            if (isYtAudioActive && ytAudioPlayer && typeof ytAudioPlayer.mute === 'function') {
-                ytAudioPlayer.mute();
-            }
             if (volumeRange) volumeRange.value = 0;
             updateVolumeIcon(0);
         } else {
             audio.volume = previousVolume || 0.9;
-            if (isYtAudioActive && ytAudioPlayer && typeof ytAudioPlayer.unMute === 'function') {
-                ytAudioPlayer.unMute();
-                ytAudioPlayer.setVolume(audio.volume * 100);
-            }
             if (volumeRange) volumeRange.value = audio.volume;
             updateVolumeIcon(audio.volume);
         }
