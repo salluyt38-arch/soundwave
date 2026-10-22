@@ -516,6 +516,7 @@ class MusicHandler(SimpleHTTPRequestHandler):
 
             if path == "/api/debug":
                 self.send_json({
+                    "build_id": "v3_android_client_only",
                     "yt_dlp_version": yt_dlp.version.__version__,
                     "python_version": sys.version,
                     "platform": sys.platform,
