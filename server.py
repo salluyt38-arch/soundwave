@@ -513,7 +513,18 @@ class MusicHandler(SimpleHTTPRequestHandler):
             path = parsed_url.path
             query = urllib.parse.parse_qs(parsed_url.query)
 
-            if path == "/api/search":
+            if path == "/api/debug":
+                import yt_dlp.version
+                self.send_json({
+                    "yt_dlp_version": yt_dlp.version.__version__,
+                    "python_version": sys.version,
+                    "platform": sys.platform,
+                    "node_path": NODE_PATH,
+                    "ffmpeg_path": FFMPEG_PATH
+                })
+                return
+
+            elif path == "/api/search":
                 q = query.get("q", [""])[0].strip()
                 if not q:
                     self.send_json({"results": []})
