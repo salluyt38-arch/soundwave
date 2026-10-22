@@ -503,7 +503,8 @@ def fetch_channel_songs(channel_key="tseries", page=1):
     # High-speed fallback if yt_dlp failed or timed out
     if not songs:
         try:
-            encoded = urllib.parse.quote(query_str)
+            fallback_q = info_meta.get("name", "Bollywood Hits")
+            encoded = urllib.parse.quote(fallback_q)
             saavn_url = f"https://www.jiosaavn.com/api.php?__call=search.getResults&_format=json&_marker=0&api_version=4&ctx=web6dot0&q={encoded}&p={page}&n=12"
             req = urllib.request.Request(saavn_url, headers={"User-Agent": UA})
             with urllib.request.urlopen(req, timeout=5) as r:
