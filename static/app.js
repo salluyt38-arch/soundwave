@@ -17,7 +17,7 @@ const isSameOriginBackend = (
 
 const API_BASE = isSameOriginBackend
     ? ''
-    : (localStorage.getItem('soundwave_backend_url') || 'https://keeping-circuits-draws-ratings.trycloudflare.com');
+    : (localStorage.getItem('soundwave_backend_url') || 'https://soundwave-5y5z.onrender.com');
 
 // SoundWave â€” Spotify Premium Audio Engine
 // Background Playback, MediaSession Lockscreen Control, YouTube Streams, Full Library & Tabs

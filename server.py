@@ -46,6 +46,24 @@ CASHFREE_ENV = os.environ.get("CASHFREE_ENV", "sandbox")
 CASHFREE_SUB_URL = "https://sandbox.cashfree.com/pg/subscriptions" if CASHFREE_ENV == "sandbox" else "https://api.cashfree.com/pg/subscriptions"
 CASHFREE_PAYMENT_LINK = "https://cfre.in/CSHFRE/o1xbhrj"
 
+# Helper to construct yt-dlp options compatible with cloud datacenter IPs
+def get_ydl_opts(extra=None):
+    js_dict = {"node": {"path": NODE_PATH}} if (NODE_PATH and os.path.exists(NODE_PATH)) else {}
+    base = {
+        "quiet": True,
+        "no_warnings": True,
+        "js_runtimes": js_dict,
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["android", "ios", "tv", "web"]
+            }
+        }
+    }
+    if extra:
+        base.update(extra)
+    return base
+
+
 # In-memory caches for lightning fast responses
 search_cache = {}
 stream_cache = {}
@@ -81,11 +99,7 @@ def build_video_file(video_id, quality="1080p"):
         if os.path.exists(cache_file) and os.path.getsize(cache_file) > 100000:
             return cache_file
 
-        js_dict = {"node": {"path": NODE_PATH}} if os.path.exists(NODE_PATH) else {}
-        ydl_opts = {
-            "quiet": True,
-            "js_runtimes": js_dict
-        }
+        ydl_opts = get_ydl_opts({"quiet": True})
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_id, download=False)
             formats = info.get("formats", [])
@@ -272,12 +286,9 @@ def fetch_legal_movies(genre="all", page=1, query_str=""):
         q = genre_queries.get(genre, genre_queries["all"])
 
     search_count = page * 12 + 6
-    js_dict = {"node": {"path": NODE_PATH}} if os.path.exists(NODE_PATH) else {}
-    ydl_opts = {
-        "quiet": True,
+    ydl_opts = get_ydl_opts({
         "extract_flat": True,
-        "js_runtimes": js_dict,
-    }
+    })
     movies = []
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         res = ydl.extract_info(f"ytsearch{search_count}:{q}", download=False)
@@ -362,13 +373,9 @@ def fetch_channel_songs(channel_key="tseries", page=1):
     info_meta = CHANNEL_MAP.get(channel_key, CHANNEL_MAP["tseries"])
     query_str = info_meta["query"]
     search_count = page * 12 + 6
-
-    js_dict = {"node": {"path": NODE_PATH}} if os.path.exists(NODE_PATH) else {}
-    ydl_opts = {
-        "quiet": True,
+    ydl_opts = get_ydl_opts({
         "extract_flat": True,
-        "js_runtimes": js_dict,
-    }
+    })
     songs = []
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         res = ydl.extract_info(f"ytsearch{search_count}:{query_str}", download=False)
@@ -517,14 +524,11 @@ class MusicHandler(SimpleHTTPRequestHandler):
                     return
 
                 try:
-                    js_dict = {"node": {"path": NODE_PATH}} if os.path.exists(NODE_PATH) else {}
-                    ydl_opts = {
+                    ydl_opts = get_ydl_opts({
                         "format": "bestaudio/best",
                         "noplaylist": True,
-                        "quiet": True,
                         "extract_flat": True,
-                        "js_runtimes": js_dict,
-                    }
+                    })
                     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                         res = ydl.extract_info(f"ytsearch25:{q}", download=False)
                         results = []
@@ -584,16 +588,23 @@ class MusicHandler(SimpleHTTPRequestHandler):
                     return
 
                 try:
-                    js_dict = {"node": {"path": NODE_PATH}} if os.path.exists(NODE_PATH) else {}
-                    ydl_opts = {
+                    ydl_opts = get_ydl_opts({
                         "format": "bestaudio[ext=m4a]/bestaudio/best",
                         "noplaylist": True,
-                        "quiet": True,
-                        "js_runtimes": js_dict,
-                    }
+                    })
                     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                         info = ydl.extract_info(f"https://www.youtube.com/watch?v={video_id}", download=False)
                         stream_url = info.get("url")
+                        if not stream_url:
+                            for f in info.get("formats", []):
+                                if f.get("url") and f.get("acodec") != "none" and "manifest" not in f.get("url", ""):
+                                    stream_url = f.get("url")
+                                    break
+                        if not stream_url:
+                            for f in info.get("formats", []):
+                                if f.get("url") and "manifest" not in f.get("url", ""):
+                                    stream_url = f.get("url")
+                                    break
                         
                         data = {
                             "id": video_id,
@@ -631,6 +642,7 @@ class MusicHandler(SimpleHTTPRequestHandler):
                     "app_id_masked": (CASHFREE_APP_ID[:4] + "..." + CASHFREE_APP_ID[-4:]) if len(CASHFREE_APP_ID) > 8 else ("Configured" if CASHFREE_APP_ID else ""),
                     "env": CASHFREE_ENV,
                     "sandbox_url": "https://sandbox.cashfree.com/pg/subscriptions",
+                    "payment_link": CASHFREE_PAYMENT_LINK,
                     "plan": {
                         "id": "soundwave_vip_49",
                         "name": "SoundWave VIP",
@@ -752,16 +764,23 @@ class MusicHandler(SimpleHTTPRequestHandler):
                     return
 
                 try:
-                    js_dict = {"node": {"path": NODE_PATH}} if os.path.exists(NODE_PATH) else {}
-                    ydl_opts = {
+                    ydl_opts = get_ydl_opts({
                         "format": "bestaudio[ext=m4a]/bestaudio/best",
                         "noplaylist": True,
-                        "quiet": True,
-                        "js_runtimes": js_dict,
-                    }
+                    })
                     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                         info = ydl.extract_info(f"https://www.youtube.com/watch?v={video_id}", download=False)
                         stream_url = info.get("url")
+                        if not stream_url:
+                            for f in info.get("formats", []):
+                                if f.get("url") and f.get("acodec") != "none" and "manifest" not in f.get("url", ""):
+                                    stream_url = f.get("url")
+                                    break
+                        if not stream_url:
+                            for f in info.get("formats", []):
+                                if f.get("url") and "manifest" not in f.get("url", ""):
+                                    stream_url = f.get("url")
+                                    break
                         raw_title = info.get("title", "SoundWave_Audio")
                         ascii_title = "".join(c for c in raw_title if c.isascii() and (c.isalnum() or c in (" ", "-", "_"))).strip()
                         if not ascii_title:
