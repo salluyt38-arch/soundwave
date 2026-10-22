@@ -17,7 +17,10 @@ const isSameOriginBackend = (
 
 const API_BASE = isSameOriginBackend
     ? ''
-    : (localStorage.getItem('soundwave_backend_url') || 'https://soundwave-5y5z.onrender.com');
+    : (function() {
+        try { return (window.localStorage && window.localStorage.getItem('soundwave_backend_url')) || 'https://soundwave-5y5z.onrender.com'; }
+        catch(e) { return 'https://soundwave-5y5z.onrender.com'; }
+    })();
 
 // SoundWave â€” Spotify Premium Audio Engine
 // Background Playback, MediaSession Lockscreen Control, YouTube Streams, Full Library & Tabs
@@ -1251,6 +1254,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (svgPlay) svgPlay.classList.add('hidden');
         if (svgPause) svgPause.classList.remove('hidden');
+
+        // Prime audio element synchronously to maintain mobile WebView user gesture
+        try { if (audio) { audio.load(); } } catch(e) {}
 
         // 1. INSTANT ZERO-GAP PLAYBACK IF STREAM WAS PRE-FETCHED
         const cachedUrl = streamUrlCache.get(track.id);

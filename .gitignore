@@ -35,3 +35,10 @@ Thumbs.db
 
 uber-apk-signer.jar
 
+
+bin/
+bin_dex/
+build_tools/
+merged_dex/
+src/
+
