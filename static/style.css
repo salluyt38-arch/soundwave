@@ -8518,3 +8518,136 @@ body {
 .pwa-zip-anchor:hover {
     color: #ffffff;
 }
+
+
+/* =========================================================================
+   SOUNDWAVE APP ENGINE: NATIVE APP MODE, VOICE SEARCH & VIDEO FULLSCREEN
+   ========================================================================= */
+
+/* 1. App Mode: Hide Install/Download Button */
+.in-soundwave-app #btnInstallPwa,
+.in-soundwave-app .btn-install-pwa {
+    display: none !important;
+}
+
+@media all and (display-mode: standalone) {
+    #btnInstallPwa,
+    .btn-install-pwa {
+        display: none !important;
+    }
+}
+
+/* 2. Universal Voice Search Microphone Buttons */
+.btn-voice-search {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: #1db954;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 0 4px;
+    outline: none;
+}
+
+.btn-voice-search:hover {
+    background: rgba(29, 185, 84, 0.25);
+    color: #fff;
+    border-color: #1db954;
+    transform: scale(1.08);
+}
+
+.btn-voice-search:active {
+    transform: scale(0.95);
+}
+
+.btn-voice-search.listening {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+    border-color: #ef4444 !important;
+    animation: voiceSearchPulse 1.2s infinite !important;
+}
+
+@keyframes voiceSearchPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 0 14px rgba(239, 68, 68, 0);
+        transform: scale(1.12);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+        transform: scale(1);
+    }
+}
+
+/* Input container adjustments */
+.topbar-search-bar .btn-voice-search {
+    width: 32px;
+    height: 32px;
+    margin-right: 4px;
+}
+
+.search-input-box .btn-voice-search,
+.big-search-box .btn-voice-search {
+    width: 42px;
+    height: 42px;
+}
+
+.yt-input-group .btn-voice-search {
+    width: 38px;
+    height: 38px;
+}
+
+.movie-search-box .btn-voice-search {
+    width: 36px;
+    height: 36px;
+    margin-right: 8px;
+}
+
+/* 3. Floating Fullscreen button on Video Theater */
+.btn-theater-floating-fs {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.btn-theater-floating-fs:hover {
+    background: #1db954;
+    border-color: #1db954;
+    transform: scale(1.1);
+}
+
+.btn-theater-floating-fs:active {
+    transform: scale(0.95);
+}
+
+/* Fullscreen mode helper */
+:fullscreen .yt-native-video,
+:-webkit-full-screen .yt-native-video {
+    width: 100vw !important;
+    height: 100vh !important;
+    object-fit: contain !important;
+    background: #000000 !important;
+}

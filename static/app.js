@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =============================================================
     // UNSTOPPABLE 1000% BACKGROUND AUDIO ENGINE (PRE-FETCH + KEEP-ALIVE)
     // =============================================================
+    const SILENT_AUDIO_CARRIER = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
     const streamUrlCache = new Map();
     let bgAudioContext = null;
     let isQueueRefilling = false;
@@ -832,7 +833,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // PWA Install Prompt Listener
         const btnInstallPwa = document.getElementById('btnInstallPwa');
+        // App Mode Detection: Hide Install Button inside Android APK / Standalone PWA
+        const isSoundWaveNativeApp = navigator.userAgent.includes('SoundWaveApp') || 
+                                     window.matchMedia('(display-mode: standalone)').matches || 
+                                     window.navigator.standalone === true;
+        if (isSoundWaveNativeApp) {
+            document.documentElement.classList.add('in-soundwave-app');
+            if (btnInstallPwa) {
+                btnInstallPwa.style.setProperty('display', 'none', 'important');
+            }
+        }
         window.addEventListener('beforeinstallprompt', (e) => {
+            if (isSoundWaveNativeApp) return;
             e.preventDefault();
             window.deferredInstallPrompt = e;
             if (btnInstallPwa) btnInstallPwa.style.display = 'flex';
@@ -1255,8 +1267,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (svgPlay) svgPlay.classList.add('hidden');
         if (svgPause) svgPause.classList.remove('hidden');
 
-        // Prime audio element synchronously to maintain mobile WebView user gesture
-        try { if (audio) { audio.load(); } } catch(e) {}
+        // Ensure MediaSession lockscreen indicator stays active
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.playbackState = 'playing';
+        }
 
         // 1. INSTANT ZERO-GAP PLAYBACK IF STREAM WAS PRE-FETCHED
         const cachedUrl = streamUrlCache.get(track.id);
@@ -1272,6 +1286,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Bridge network latency with inaudible audio carrier so mobile OS media session & notification never drop!
+        try {
+            audio.src = SILENT_AUDIO_CARRIER;
+            audio.play().catch(() => {});
+        } catch(e) {}
+
         // 2. Fetch direct unblocked 160kbps audio stream from backend (Works 100% on Render & Mobile Background)
         try {
             ensureAudioKeepAlive();
@@ -1286,16 +1306,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (playPromise) {
                     playPromise.catch(err => {
                         console.warn('Autoplay notice:', err);
-                        setTimeout(() => audio.play().catch(() => {}), 150);
+                        setTimeout(() => audio.play().catch(() => {}), 100);
                     });
                 }
                 scheduleUpcomingPrefetch();
             } else {
                 console.warn('Stream not returned for:', track.title);
-                showToast('Finding best audio stream...');
+                // Advance to next song after short interval so 24/7 stream never halts
+                setTimeout(() => playNext(), 1200);
             }
         } catch (err) {
             console.error('Failed to load audio stream:', err);
+            setTimeout(() => playNext(), 1200);
         }
     }
     function togglePlayPause() {
@@ -3399,6 +3421,59 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnMiniClose) {
         btnMiniClose.addEventListener('click', () => toggleFloatingMiniPlayer(false));
     }
+
+    // -------------------------------------------------------------
+    // FEATURE 6: NATIVE FULLSCREEN VIDEO CONTROLS (THEATER & MOVIES)
+    // -------------------------------------------------------------
+    const btnToggleVideoFullscreen = document.getElementById('btnToggleVideoFullscreen');
+    const btnFloatingFullscreen = document.getElementById('btnFloatingFullscreen');
+
+    function toggleVideoFullscreen() {
+        const wrapper = document.getElementById('ytVideoWrapper');
+        const nativeVideo = document.getElementById('ytNativeVideo');
+        const iframe = document.getElementById('ytVideoIframe');
+        const target = (nativeVideo && !nativeVideo.classList.contains('hidden')) ? nativeVideo : (wrapper || iframe);
+        if (!target) return;
+
+        const isFs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+
+        if (!isFs) {
+            if (target.requestFullscreen) {
+                target.requestFullscreen().catch(() => {
+                    if (target.webkitRequestFullscreen) target.webkitRequestFullscreen();
+                    else if (nativeVideo && nativeVideo.webkitEnterFullscreen) nativeVideo.webkitEnterFullscreen();
+                });
+            } else if (target.webkitRequestFullscreen) {
+                target.webkitRequestFullscreen();
+            } else if (nativeVideo && nativeVideo.webkitEnterFullscreen) {
+                nativeVideo.webkitEnterFullscreen();
+            }
+            try {
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').catch(() => {});
+                }
+            } catch(e) {}
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(() => {});
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+            try {
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock();
+                }
+            } catch(e) {}
+        }
+    }
+
+    if (btnToggleVideoFullscreen) {
+        btnToggleVideoFullscreen.addEventListener('click', toggleVideoFullscreen);
+    }
+    if (btnFloatingFullscreen) {
+        btnFloatingFullscreen.addEventListener('click', toggleVideoFullscreen);
+    }
+
     if (btnMiniExpand) {
         btnMiniExpand.addEventListener('click', () => {
             toggleFloatingMiniPlayer(false);
@@ -4911,6 +4986,108 @@ document.addEventListener('DOMContentLoaded', () => {
     let isSearchPaginating = false;
     let searchHasMore = true;
     let currentActiveSearchQuery = '';
+
+
+    // =========================================================================
+    // UNIVERSAL VOICE SEARCH SYSTEM (HINDI + ENGLISH AI RECOGNITION)
+    // =========================================================================
+    function setupVoiceSearch(btnId, inputId, onSearchCallback) {
+        const btn = document.getElementById(btnId);
+        const input = document.getElementById(inputId);
+        if (!btn || !input) return;
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showToast('Voice Search requires microphone support.');
+            });
+            return;
+        }
+
+        let recognition = null;
+        let isListening = false;
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (isListening && recognition) {
+                try { recognition.stop(); } catch(err) {}
+                return;
+            }
+
+            try {
+                recognition = new SpeechRecognition();
+                recognition.lang = 'hi-IN'; // Robust support for Indian accents, Hindi & English
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
+
+                const originalPlaceholder = input.placeholder;
+
+                recognition.onstart = () => {
+                    isListening = true;
+                    btn.classList.add('listening');
+                    input.placeholder = '🎙️ Listening... Speak song or movie name';
+                    showToast('🎙️ Listening... Speak now');
+                };
+
+                recognition.onresult = (evt) => {
+                    if (evt.results && evt.results[0] && evt.results[0][0]) {
+                        const transcript = evt.results[0][0].transcript.trim();
+                        if (transcript) {
+                            input.value = transcript;
+                            showToast(`🎙️ Voice Search: "${transcript}"`);
+                            if (typeof onSearchCallback === 'function') {
+                                onSearchCallback(transcript);
+                            }
+                        }
+                    }
+                };
+
+                recognition.onerror = (evt) => {
+                    console.warn('Voice search notice:', evt.error);
+                    if (evt.error === 'not-allowed') {
+                        showToast('Microphone permission required for Voice Search');
+                    } else if (evt.error === 'no-speech') {
+                        showToast('No speech detected. Please try again.');
+                    }
+                };
+
+                recognition.onend = () => {
+                    isListening = false;
+                    btn.classList.remove('listening');
+                    input.placeholder = originalPlaceholder;
+                };
+
+                recognition.start();
+            } catch (err) {
+                console.warn('Voice Search error:', err);
+                isListening = false;
+                btn.classList.remove('listening');
+            }
+        });
+    }
+
+    // Initialize all 4 Voice Search Sections
+    setupVoiceSearch('btnVoiceGlobal', 'globalSearchInput', (q) => {
+        switchTab('search');
+        const sView = document.getElementById('searchPageViewInput');
+        if (sView) sView.value = q;
+        triggerSearch(q);
+    });
+
+    setupVoiceSearch('btnVoiceSearchPage', 'searchPageViewInput', (q) => {
+        triggerSearch(q);
+    });
+
+    setupVoiceSearch('btnVoiceVideo', 'ytSearchInput', (q) => {
+        loadYouTubeVideos(q);
+    });
+
+    setupVoiceSearch('btnVoiceMovie', 'movieSearchInput', (q) => {
+        searchVegamovies(q);
+    });
 
     function setupSearchInfiniteScroll() {
         const scrollContainer = document.getElementById('viewportScroll');

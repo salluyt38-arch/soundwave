@@ -18,6 +18,10 @@
             };
         } catch(err) {}
     }
+    // Detect SoundWave Native App / Standalone mode immediately
+    if (navigator.userAgent.indexOf('SoundWaveApp') !== -1 || window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+        document.documentElement.classList.add('in-soundwave-app');
+    }
   </script>
 
     <meta charset="UTF-8">
@@ -29,7 +33,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20261023_v54_webview_engine">
+    <link rel="stylesheet" href="style.css?v=20261023_v55_soundwave_final">
     <link rel="manifest" href="manifest.json">
 
 
@@ -194,6 +198,11 @@
                         </svg>
                         <input type="text" id="globalSearchInput" placeholder="What do you want to listen to?">
                         <button class="search-clear-btn hidden" id="globalClearBtn">✕</button>
+                        <button class="btn-voice-search" id="btnVoiceGlobal" title="Voice Search (Speak in Hindi/English)" type="button">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                            </svg>
+                        </button>
                     </div>
 
                     <div class="topbar-right">
@@ -730,6 +739,11 @@
                                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                                     </svg>
                                     <input type="text" id="searchPageViewInput" placeholder="Songs, artists, genres, or paste video link...">
+                                    <button class="btn-voice-search" id="btnVoiceSearchPage" title="Voice Search (Speak in Hindi/English)" type="button">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                                        </svg>
+                                    </button>
                                     <button class="search-execute-btn" id="btnExecuteSearch">Search</button>
                                 </div>
                             </div>
@@ -796,52 +810,19 @@
                     <!-- TAB: SOUNDWAVE VIDEO LOUNGE & PLAYER -->
                     <div class="tab-panel" id="tabVideo">
                         <div class="yt-browser-container">
-                            <!-- Video Hero Spotlight (Cinema style) -->
-                            <div class="video-hero-spotlight" id="videoSpotlightBanner">
-                                <div class="video-spotlight-backdrop-glow"></div>
-                                <div class="video-spotlight-content">
-                                    <div class="spotlight-badge">
-                                        <span class="spotlight-badge-dot"></span>
-                                        <span>1080p FULL HD MUSIC VIDEOS & CONCERTS</span>
-                                    </div>
-                                    <h1 class="video-spotlight-title" id="videoSpotlightTitle">Travis Scott & The Weeknd - Global 4K Concerts</h1>
-                                    <p class="video-spotlight-desc">Watch official high-definition music videos, live stadium concerts, and cinema soundtracks with screen-off background audio.</p>
-                                    <div class="video-spotlight-actions">
-                                        <button class="btn-spotlight-play-video" id="btnSpotlightPlayVideo">
-                                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                                                <polygon points="6 3 20 12 6 21 6 3"></polygon>
-                                            </svg>
-                                            <span>▶ Watch in 1080p HD</span>
-                                        </button>
-                                        <button class="btn-spotlight-bg-listen" id="btnSpotlightBgListen">
-                                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                                            </svg>
-                                            <span>🎧 Listen in Background (Screen-Off)</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Top Video Search / URL Input -->
-                            <div class="yt-search-hero">
-                                <div class="yt-brand-header">
-                                    <div style="width:48px; height:48px; border-radius:14px; background:linear-gradient(135deg, #1db954, #10b981); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 20px rgba(29,185,84,0.45); flex-shrink:0;">
-                                        <svg viewBox="0 0 24 24" width="24" height="24" fill="#000">
-                                            <polygon points="6 3 20 12 6 21 6 3"></polygon>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h2 style="color:#fff; font-size:1.8rem; font-weight:800; margin:0; letter-spacing:-0.5px;">SoundWave Videos</h2>
-                                        <p style="color:#a7a7a7; font-size:0.9rem; margin-top:4px;">Watch 1080p full HD music videos, cinema & live sports stream</p>
-                                    </div>
-                                </div>
-
+                            <!-- Clean Video Search Bar (Clean Top Section) -->
+                            <div class="yt-search-hero" style="padding-top: 0.5rem; margin-bottom: 1.25rem;">
                                 <div class="yt-input-group">
                                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
                                         <circle cx="11" cy="11" r="8"></circle>
                                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                                     </svg>
-                                    <input type="text" id="ytSearchInput" placeholder="Search SoundWave videos or paste any video link...">
+                                    <input type="text" id="ytSearchInput" placeholder="Search SoundWave videos, songs or paste link...">
+                                    <button class="btn-voice-search" id="btnVoiceVideo" title="Voice Search (Speak in Hindi/English)" type="button">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                                        </svg>
+                                    </button>
                                     <button class="yt-search-btn" id="btnYtSearch">Search</button>
                                 </div>
 
@@ -865,6 +846,11 @@
                                     <div class="yt-iframe-wrapper" id="ytVideoWrapper">
                                     <video id="ytNativeVideo" class="yt-native-video" playsinline controls controlslist="nodownload" preload="auto"></video>
                                     <iframe id="ytVideoIframe" class="hidden" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                    <button class="btn-theater-floating-fs" id="btnFloatingFullscreen" title="Toggle Fullscreen Video">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff">
+                                            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                                        </svg>
+                                    </button>
                                     <div class="yt-video-loader hidden" id="ytVideoLoader">
                                         <div class="sp-spinner"></div>
                                         <span>Loading video stream...</span>
@@ -927,6 +913,12 @@
                                             <span>Audio</span>
                                         </button>
 
+                                        <button class="btn-yt-action" id="btnToggleVideoFullscreen" title="Toggle Fullscreen Video">
+                                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                                <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                                            </svg>
+                                            <span>Fullscreen</span>
+                                        </button>
                                         <button class="btn-yt-action" id="btnYtOpenApp" title="Share Video Link">
                                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                                                 <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
@@ -1050,6 +1042,11 @@
                                         </svg>
                                         <input type="text" id="movieSearchInput" placeholder="Search full movies (e.g. Salman Khan, Allu Arjun, KGF, Pushpa, Comedy)...">
                                         <button class="movie-search-clear hidden" id="movieSearchClear">✕</button>
+                                        <button class="btn-voice-search" id="btnVoiceMovie" title="Voice Search (Speak in Hindi/English)" type="button">
+                                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                                            </svg>
+                                        </button>
                                     </div>
                                 </div>
 
@@ -2834,7 +2831,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=20261023_v54_webview_engine"></script>
+    <script src="app.js?v=20261023_v55_soundwave_final"></script>
 
   <!-- DMCA & COPYRIGHT LEGAL MODAL -->
   <div class="movie-modal-overlay hidden" id="dmcaModal">
