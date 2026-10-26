@@ -86,54 +86,90 @@ def get_default_provider():
     return "builtin"
 
 
+# Smart title cleaner for JioSaavn & Media Matching
+def smart_clean_title(title):
+    if not title:
+        return ""
+    t = title
+    bad_prefixes = [
+        't-series', 't series', 'zee music company', 'speed records',
+        'sony music india', 'yrf', 'saregama music', 'tips official',
+        'geet mp3', 'white hill music', 'eros now', 'aditya music'
+    ]
+    for b in bad_prefixes:
+        t = re.sub(rf'(?i)^{b}\s*[:|\-]?\s*', '', t)
+        t = re.sub(rf'(?i)\s*\|\s*{b}.*$', '', t)
+    t = re.sub(r'(?i)[\(\[\{].*?[\)\]\}]', '', t)
+    t = re.sub(r'(?i)(official|music|video|audio|full|song|lyric|lyrics|hd|4k|remix|slowed|reverb)', '', t)
+    t = re.sub(r'[\-|_|\|]+', ' ', t)
+    return re.sub(r'\s+', ' ', t).strip()
+
 # Fast Unblocked Direct Stream Extractor via CDN (0.15s, 160kbps high quality)
 def get_saavn_stream(query):
     if not query:
         return None
     try:
         from Crypto.Cipher import DES
-        clean_q = clean_youtube_title(query)
-        words = clean_q.split()[:4]
-        search_seed = " ".join(words)
-        encoded = urllib.parse.quote(search_seed)
-        url = f"https://www.jiosaavn.com/api.php?__call=search.getResults&_format=json&_marker=0&api_version=4&ctx=web6dot0&q={encoded}&p=1&n=5"
-        req = urllib.request.Request(url, headers={"User-Agent": UA})
-        with urllib.request.urlopen(req, timeout=4) as r:
-            data = json.loads(r.read().decode("utf-8", errors="ignore"))
-            results = data.get("results", [])
-            if not results:
-                return None
-            
-            # Select best official track (filter out unwanted covers or karaoke)
-            q_lower = query.lower()
-            best_item = None
-            for item in results:
-                t_lower = (item.get("title") or "").lower()
-                if "karaoke" not in q_lower and "karaoke" in t_lower:
-                    continue
-                if "cover" not in q_lower and "cover" in t_lower:
-                    continue
-                if "tribute" not in q_lower and "tribute" in t_lower:
-                    continue
-                best_item = item
-                break
-            if not best_item:
-                best_item = results[0]
 
-            song_id = best_item["id"]
-            det_url = f"https://www.jiosaavn.com/api.php?__call=song.getDetails&_format=json&_marker=0&api_version=4&ctx=web6dot0&pids={song_id}"
-            req2 = urllib.request.Request(det_url, headers={"User-Agent": UA})
-            with urllib.request.urlopen(req2, timeout=4) as r2:
-                det = json.loads(r2.read().decode("utf-8", errors="ignore"))
-                more = det.get("songs", [{}])[0].get("more_info", {})
-                enc = more.get("encrypted_media_url")
-                if not enc:
-                    return None
-                cipher = DES.new(b"38346591", DES.MODE_ECB)
-                dec = cipher.decrypt(base64.b64decode(enc))
-                pad = dec[-1]
-                raw_url = dec[:-pad].decode("utf-8")
-                return raw_url.replace("_96.mp4", "_160.mp4")
+        # Generate search candidates
+        candidates = []
+        smart_q = smart_clean_title(query)
+        if smart_q:
+            candidates.append(smart_q)
+            words = smart_q.split()
+            if len(words) > 3:
+                candidates.append(" ".join(words[:4]))
+        clean_q = clean_youtube_title(query)
+        if clean_q and clean_q not in candidates:
+            candidates.append(clean_q)
+
+        for candidate_q in candidates:
+            try:
+                encoded = urllib.parse.quote(candidate_q)
+                url = f"https://www.jiosaavn.com/api.php?__call=search.getResults&_format=json&_marker=0&api_version=4&ctx=web6dot0&q={encoded}&p=1&n=5"
+                req = urllib.request.Request(url, headers={"User-Agent": UA})
+                with urllib.request.urlopen(req, timeout=3.5) as r:
+                    data = json.loads(r.read().decode("utf-8", errors="ignore"))
+                    results = data.get("results", [])
+                    if not results:
+                        continue
+
+                    # Select best official track
+                    q_lower = candidate_q.lower()
+                    best_item = None
+                    for item in results:
+                        t_lower = (item.get("title") or "").lower()
+                        if "karaoke" not in q_lower and "karaoke" in t_lower:
+                            continue
+                        if "cover" not in q_lower and "cover" in t_lower:
+                            continue
+                        if "tribute" not in q_lower and "tribute" in t_lower:
+                            continue
+                        best_item = item
+                        break
+                    if not best_item:
+                        best_item = results[0]
+
+                    song_id = best_item.get("id")
+                    if not song_id:
+                        continue
+                    det_url = f"https://www.jiosaavn.com/api.php?__call=song.getDetails&_format=json&_marker=0&api_version=4&ctx=web6dot0&pids={song_id}"
+                    req2 = urllib.request.Request(det_url, headers={"User-Agent": UA})
+                    with urllib.request.urlopen(req2, timeout=3.5) as r2:
+                        det = json.loads(r2.read().decode("utf-8", errors="ignore"))
+                        songs = det.get("songs") or [det.get(song_id, {})]
+                        more = songs[0].get("more_info", {}) if songs else {}
+                        enc = more.get("encrypted_media_url")
+                        if not enc:
+                            continue
+                        cipher = DES.new(b"38346591", DES.MODE_ECB)
+                        dec = cipher.decrypt(base64.b64decode(enc))
+                        pad = dec[-1]
+                        raw_url = dec[:-pad].decode("utf-8")
+                        return raw_url.replace("_96.mp4", "_160.mp4")
+            except Exception:
+                continue
+        return None
     except Exception as e:
         return None
 
@@ -1387,6 +1423,63 @@ class MusicHandler(SimpleHTTPRequestHandler):
                 except Exception as e:
                     self.send_json({"error": str(e), "results": [], "page": page, "hasMore": False}, status=500)
 
+            elif path == "/api/audio_proxy":
+                video_id = query.get("id", [""])[0].strip()
+                if not video_id:
+                    self.send_json({"error": "Missing video ID"}, status=400)
+                    return
+
+                raw_url = None
+                if video_id in stream_cache and "streamUrl" in stream_cache[video_id]:
+                    cached = stream_cache[video_id]["streamUrl"]
+                    if "googlevideo.com" in cached:
+                        raw_url = cached
+
+                if not raw_url:
+                    try:
+                        ydl_opts = get_ydl_opts({
+                            "format": "bestaudio[ext=m4a]/bestaudio/18/best",
+                            "noplaylist": True,
+                        })
+                        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                            info = ydl.extract_info(f"https://www.youtube.com/watch?v={video_id}", download=False)
+                            raw_url = info.get("url")
+                            if not raw_url:
+                                for f in info.get("formats", []):
+                                    if f.get("url") and f.get("acodec") != "none" and "manifest" not in f.get("url", ""):
+                                        raw_url = f.get("url")
+                                        break
+                    except Exception as e:
+                        print("Audio proxy extraction error:", e)
+
+                if not raw_url:
+                    self.send_json({"error": "Audio stream not found"}, status=404)
+                    return
+
+                try:
+                    req_headers = {"User-Agent": UA}
+                    client_range = self.headers.get("Range")
+                    if client_range:
+                        req_headers["Range"] = client_range
+
+                    proxy_req = urllib.request.Request(raw_url, headers=req_headers)
+                    with urllib.request.urlopen(proxy_req, timeout=15) as remote_res:
+                        self.send_response(remote_res.status)
+                        for h, v in remote_res.headers.items():
+                            if h.lower() in ["content-type", "content-length", "content-range", "accept-ranges"]:
+                                self.send_header(h, v)
+                        self.send_header("Access-Control-Allow-Origin", "*")
+                        self.end_headers()
+
+                        while True:
+                            chunk = remote_res.read(64 * 1024)
+                            if not chunk:
+                                break
+                            self.wfile.write(chunk)
+                except Exception as pipe_err:
+                    pass
+                return
+
             elif path == "/api/stream":
                 video_id = query.get("id", [""])[0].strip()
                 title = query.get("title", [""])[0].strip()
@@ -1442,11 +1535,14 @@ class MusicHandler(SimpleHTTPRequestHandler):
                     stream_url = get_saavn_stream(title)
 
                 if stream_url:
+                    final_stream = stream_url
+                    if "googlevideo.com" in stream_url and video_id:
+                        final_stream = f"/api/audio_proxy?id={video_id}"
                     data = {
                         "id": video_id,
                         "title": title or "SoundWave Audio",
                         "channel": channel or "Artist",
-                        "streamUrl": stream_url,
+                        "streamUrl": final_stream,
                         "thumbnail": f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg" if (video_id and not video_id.startswith("saavn_")) else "",
                         "duration": 0
                     }

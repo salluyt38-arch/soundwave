@@ -750,6 +750,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (svgModalPlay) svgModalPlay.classList.add('hidden');
             if (svgModalPause) svgModalPause.classList.remove('hidden');
             updateMediaSessionPlaybackState('playing');
+
+            const cur = activeQueue[currentTrackIndex];
+            if (cur && window.SoundWaveNative && window.SoundWaveNative.updateNotification) {
+                try { window.SoundWaveNative.updateNotification(cur.title, cur.channel || 'SoundWave', true); } catch(e) {}
+            }
         });
         audio.addEventListener('pause', () => {
             if (svgPlay) svgPlay.classList.remove('hidden');
@@ -757,6 +762,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (svgModalPlay) svgModalPlay.classList.remove('hidden');
             if (svgModalPause) svgModalPause.classList.add('hidden');
             updateMediaSessionPlaybackState('paused');
+
+            const cur = activeQueue[currentTrackIndex];
+            if (cur && window.SoundWaveNative && window.SoundWaveNative.updateNotification) {
+                try { window.SoundWaveNative.updateNotification(cur.title, cur.channel || 'SoundWave', false); } catch(e) {}
+            }
         });
         audio.addEventListener('waiting', () => {
             if (playerSongArtist) {
@@ -1271,6 +1281,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if ('mediaSession' in navigator) {
             navigator.mediaSession.playbackState = 'playing';
         }
+        if (window.SoundWaveNative && window.SoundWaveNative.updateNotification) {
+            try { window.SoundWaveNative.updateNotification(track.title, track.channel || 'SoundWave', true); } catch(e) {}
+        }
 
         // 1. INSTANT ZERO-GAP PLAYBACK IF STREAM WAS PRE-FETCHED
         const cachedUrl = streamUrlCache.get(track.id);
@@ -1286,12 +1299,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Bridge network latency with inaudible audio carrier so mobile OS media session & notification never drop!
-        try {
-            audio.src = SILENT_AUDIO_CARRIER;
-            audio.play().catch(() => {});
-        } catch(e) {}
-
         // 2. Fetch direct unblocked 160kbps audio stream from backend (Works 100% on Render & Mobile Background)
         try {
             ensureAudioKeepAlive();
@@ -1300,8 +1307,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await res.json();
 
             if (data && data.streamUrl) {
-                streamUrlCache.set(track.id, data.streamUrl);
-                audio.src = data.streamUrl;
+                const finalUrl = data.streamUrl.startsWith('http') ? data.streamUrl : `${API_BASE}${data.streamUrl}`;
+                streamUrlCache.set(track.id, finalUrl);
+                audio.src = finalUrl;
                 const playPromise = audio.play();
                 if (playPromise) {
                     playPromise.catch(err => {
@@ -1312,12 +1320,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 scheduleUpcomingPrefetch();
             } else {
                 console.warn('Stream not returned for:', track.title);
-                // Advance to next song after short interval so 24/7 stream never halts
-                setTimeout(() => playNext(), 1200);
+                showToast('Stream temporarily unavailable for this track');
             }
         } catch (err) {
             console.error('Failed to load audio stream:', err);
-            setTimeout(() => playNext(), 1200);
         }
     }
     function togglePlayPause() {
@@ -1367,11 +1373,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function onTrackEnded() {
-        // PREVENT 3-SECOND PREMATURE SKIP BUG:
-        // Only advance if song has legitimately finished (within 4s of duration).
-        // If fired prematurely due to network buffer glitch, auto-recover seamlessly!
-        if (audio.duration && audio.duration > 10 && (audio.duration - audio.currentTime) > 4) {
-            console.warn(`Premature stream ended at ${audio.currentTime.toFixed(1)}s of ${audio.duration.toFixed(1)}s. Auto-resuming...`);
+        // PREVENT PREMATURE SKIP: Only advance if song has legitimately finished within 3 seconds of end
+        if (audio.duration && isFinite(audio.duration) && audio.duration > 15 && (audio.duration - audio.currentTime) > 3) {
+            console.warn(`Buffer pause at ${audio.currentTime.toFixed(1)}s of ${audio.duration.toFixed(1)}s. Auto-resuming playback...`);
             audio.play().catch(() => {});
             return;
         }
@@ -3432,33 +3436,51 @@ document.addEventListener('DOMContentLoaded', () => {
         const wrapper = document.getElementById('ytVideoWrapper');
         const nativeVideo = document.getElementById('ytNativeVideo');
         const iframe = document.getElementById('ytVideoIframe');
-        const target = (nativeVideo && !nativeVideo.classList.contains('hidden')) ? nativeVideo : (wrapper || iframe);
-        if (!target) return;
+        const theater = document.getElementById('ytPlayerTheater');
+        const btnFloatingFullscreen = document.getElementById('btnFloatingFullscreen');
+        if (!wrapper) return;
 
-        const isFs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+        const isCurrentlyFs = wrapper.classList.contains('is-fullscreen') || 
+                              document.fullscreenElement || 
+                              document.webkitFullscreenElement;
 
-        if (!isFs) {
-            if (target.requestFullscreen) {
-                target.requestFullscreen().catch(() => {
-                    if (target.webkitRequestFullscreen) target.webkitRequestFullscreen();
-                    else if (nativeVideo && nativeVideo.webkitEnterFullscreen) nativeVideo.webkitEnterFullscreen();
-                });
-            } else if (target.webkitRequestFullscreen) {
-                target.webkitRequestFullscreen();
-            } else if (nativeVideo && nativeVideo.webkitEnterFullscreen) {
-                nativeVideo.webkitEnterFullscreen();
+        if (!isCurrentlyFs) {
+            // Activate Fullscreen
+            wrapper.classList.add('is-fullscreen');
+            if (theater) theater.classList.add('theater-fs-active');
+            if (btnFloatingFullscreen) {
+                btnFloatingFullscreen.innerHTML = '<span style="font-size:22px; font-weight:900; line-height:1;">&times;</span>';
+                btnFloatingFullscreen.title = 'Exit Fullscreen';
             }
+            showToast('📺 Fullscreen Video Mode (Tap X to exit)');
+
+            // Also request native system fullscreen
+            const target = (nativeVideo && !nativeVideo.classList.contains('hidden')) ? nativeVideo : wrapper;
+            try {
+                if (target.requestFullscreen) target.requestFullscreen().catch(() => {});
+                else if (target.webkitRequestFullscreen) target.webkitRequestFullscreen();
+                else if (nativeVideo && nativeVideo.webkitEnterFullscreen) nativeVideo.webkitEnterFullscreen();
+            } catch(e) {}
+
             try {
                 if (screen.orientation && screen.orientation.lock) {
                     screen.orientation.lock('landscape').catch(() => {});
                 }
             } catch(e) {}
         } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen().catch(() => {});
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
+            // Exit Fullscreen
+            wrapper.classList.remove('is-fullscreen');
+            if (theater) theater.classList.remove('theater-fs-active');
+            if (btnFloatingFullscreen) {
+                btnFloatingFullscreen.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="#fff"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>';
+                btnFloatingFullscreen.title = 'Toggle Fullscreen Video';
             }
+
+            try {
+                if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            } catch(e) {}
+
             try {
                 if (screen.orientation && screen.orientation.unlock) {
                     screen.orientation.unlock();
@@ -5008,13 +5030,25 @@ document.addEventListener('DOMContentLoaded', () => {
         let recognition = null;
         let isListening = false;
 
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', async (e) => {
             e.preventDefault();
             e.stopPropagation();
 
             if (isListening && recognition) {
                 try { recognition.stop(); } catch(err) {}
                 return;
+            }
+
+            // Explicitly request microphone permission so Android WebView / Browser triggers the permission dialog!
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    stream.getTracks().forEach(t => t.stop());
+                } catch(permErr) {
+                    console.warn('Microphone permission error:', permErr);
+                    showToast('🎙️ Microphone permission required! Please tap Allow.');
+                    return;
+                }
             }
 
             try {
