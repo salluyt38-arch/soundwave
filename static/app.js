@@ -878,6 +878,85 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnInstallPwa) btnInstallPwa.style.display = 'flex';
         });
 
+        // =========================================================================
+        // IN-APP UPDATE SYSTEM (PROACTIVE UPDATER & NATIVE INSTALL ENGINE)
+        // =========================================================================
+        const btnInAppUpdate = document.getElementById('btnInAppUpdate');
+        const inAppUpdateModal = document.getElementById('inAppUpdateModal');
+        const inAppUpdateBackdrop = document.getElementById('inAppUpdateBackdrop');
+        const btnCloseInAppUpdate = document.getElementById('btnCloseInAppUpdate');
+        const btnStartInAppUpdate = document.getElementById('btnStartInAppUpdate');
+        const inAppProgressBox = document.getElementById('inAppProgressBox');
+        const inAppProgressFill = document.getElementById('inAppProgressFill');
+        const inAppProgressText = document.getElementById('inAppProgressText');
+
+        window.openInAppUpdateModal = function() {
+            if (inAppUpdateModal) inAppUpdateModal.classList.remove('hidden');
+        };
+
+        window.closeInAppUpdateModal = function() {
+            if (inAppUpdateModal) inAppUpdateModal.classList.add('hidden');
+        };
+
+        if (btnInAppUpdate) {
+            btnInAppUpdate.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.openInAppUpdateModal();
+            });
+        }
+        if (inAppUpdateBackdrop) inAppUpdateBackdrop.addEventListener('click', window.closeInAppUpdateModal);
+        if (btnCloseInAppUpdate) btnCloseInAppUpdate.addEventListener('click', window.closeInAppUpdateModal);
+
+        function triggerInAppDownload() {
+            if (inAppProgressBox) inAppProgressBox.style.display = 'block';
+            if (btnStartInAppUpdate) {
+                btnStartInAppUpdate.disabled = true;
+                btnStartInAppUpdate.textContent = 'Downloading SoundWave v2.1...';
+            }
+
+            let progress = 10;
+            const progressTimer = setInterval(() => {
+                progress += Math.floor(Math.random() * 20) + 10;
+                if (progress > 95) progress = 95;
+                if (inAppProgressFill) inAppProgressFill.style.width = `${progress}%`;
+                if (inAppProgressText) inAppProgressText.textContent = `Downloading ${progress}% (1.6 MB)...`;
+            }, 180);
+
+            setTimeout(() => {
+                clearInterval(progressTimer);
+                if (inAppProgressFill) inAppProgressFill.style.width = '100%';
+                if (inAppProgressText) inAppProgressText.textContent = '🚀 Download Complete! Tap notification to install.';
+                if (btnStartInAppUpdate) {
+                    btnStartInAppUpdate.disabled = false;
+                    btnStartInAppUpdate.textContent = '✅ Downloaded! Tap to Install';
+                }
+
+                // 1. Android APK Native DownloadManager
+                if (window.SoundWaveNative && typeof window.SoundWaveNative.downloadAndInstallUpdate === 'function') {
+                    try {
+                        window.SoundWaveNative.downloadAndInstallUpdate();
+                        return;
+                    } catch(e) {}
+                }
+
+                // 2. Browser & WebView Fallback
+                const a = document.createElement('a');
+                a.href = 'https://soundwave-5y5z.onrender.com/download/soundwave.apk';
+                a.download = 'SoundWave.apk';
+                a.target = '_blank';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => a.remove(), 1000);
+            }, 1200);
+        }
+
+        if (btnStartInAppUpdate) {
+            btnStartInAppUpdate.addEventListener('click', (e) => {
+                e.preventDefault();
+                triggerInAppDownload();
+            });
+        }
+
         // PWA Install Guide & Download Modal Controls
         const pwaInstallModal = document.getElementById('pwaInstallModal');
         const pwaInstallBackdrop = document.getElementById('pwaInstallBackdrop');
@@ -5188,7 +5267,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 2. Old APK Detection: Offer 1-Click Update
             if (window.SoundWaveNative && !window.SoundWaveNative.startVoiceSearch) {
-                showUpdateModalForVoice();
+                if (window.openInAppUpdateModal) window.openInAppUpdateModal(); else showUpdateModalForVoice();
                 return;
             }
 

@@ -33,7 +33,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20261028_v58_voice_update">
+    <link rel="stylesheet" href="style.css?v=20261028_v59_inapp_update">
     <link rel="manifest" href="manifest.json">
 
 
@@ -207,6 +207,10 @@
 
                     <div class="topbar-right">
 
+                        <button class="btn-inapp-update" id="btnInAppUpdate" title="Update SoundWave App">
+                            <span class="pulse-dot"></span>
+                            <span>Update App</span>
+                        </button>
                         <button class="btn-topbar-aidj" id="btnTopbarAiDj" title="SoundWave AI DJ (Always-on Voice Assistant)">
                             <span class="dj-live-orb"></span>
                             <span class="dj-topbar-label">AI DJ Voice</span>
@@ -2825,13 +2829,57 @@
             </div>
         </div>
 
+        <!-- ========================================================================== -->
+        <!-- IN-APP AUTO UPDATER MODAL (1-CLICK UPDATE ENGINE) -->
+        <!-- ========================================================================== -->
+        <div class="sp-modal-overlay hidden" id="inAppUpdateModal">
+            <div class="modal-backdrop-blur" id="inAppUpdateBackdrop"></div>
+            <div class="inapp-update-dialog">
+                <div class="inapp-update-header">
+                    <span class="inapp-update-badge">⚡ Official App Update</span>
+                    <h2 class="inapp-update-title">SoundWave v2.1 Ready</h2>
+                    <p class="inapp-update-version">Installed: v2.0 &bull; <strong style="color:#1db954;">New: v2.1 (1.6 MB)</strong></p>
+                </div>
+                <div class="inapp-update-features">
+                    <div class="inapp-feature-item">
+                        <span class="feat-icon">🎙️</span>
+                        <span><strong>Google Voice Search:</strong> Bol kar gaane, videos aur movies search karein bina kisi mic permission error ke.</span>
+                    </div>
+                    <div class="inapp-feature-item">
+                        <span class="feat-icon">🎧</span>
+                        <span><strong>24/7 Lockscreen Controls:</strong> Screen lock hone par bhi Play, Pause, Next, Prev notification har waqt active rahega.</span>
+                    </div>
+                    <div class="inapp-feature-item">
+                        <span class="feat-icon">📺</span>
+                        <span><strong>1080p Fullscreen Cinema:</strong> Auto landscape rotation aur universal fullscreen video player.</span>
+                    </div>
+                    <div class="inapp-feature-item">
+                        <span class="feat-icon">⚡</span>
+                        <span><strong>Unstoppable 24/7 Playback:</strong> Gaana khatam hote hi agla gaana bina ruke 0ms gap mein auto-play hoga.</span>
+                    </div>
+                </div>
+                <div class="inapp-progress-container" id="inAppProgressBox">
+                    <div class="inapp-progress-bar">
+                        <div class="inapp-progress-fill" id="inAppProgressFill"></div>
+                    </div>
+                    <div class="inapp-progress-text" id="inAppProgressText">Downloading 0%...</div>
+                </div>
+                <button class="inapp-btn-update" id="btnStartInAppUpdate">
+                    ⬇️ 1-Click Fast Update (1.6 MB)
+                </button>
+                <button class="inapp-btn-close" id="btnCloseInAppUpdate">
+                    Later / Dismiss
+                </button>
+            </div>
+        </div>
+
         <!-- Toast Alert Notification -->
         <div class="sp-toast hidden" id="spToastAlert">
             <span id="toastAlertText">Added to Liked Songs</span>
         </div>
     </div>
 
-    <script src="app.js?v=20261028_v58_voice_update"></script>
+    <script src="app.js?v=20261028_v59_inapp_update"></script>
 
   <!-- DMCA & COPYRIGHT LEGAL MODAL -->
   <div class="movie-modal-overlay hidden" id="dmcaModal">

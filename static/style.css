@@ -8698,3 +8698,156 @@ body {
     color: #ffffff !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8) !important;
 }
+
+/* ========================================================================== */
+/* IN-APP UPDATE SYSTEM (PROACTIVE UPDATER & NATIVE DIALOG) */
+/* ========================================================================== */
+.btn-inapp-update {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: linear-gradient(135deg, #1db954, #1ed760);
+    color: #000000 !important;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(29, 185, 84, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+}
+.btn-inapp-update:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(29, 185, 84, 0.6);
+}
+.btn-inapp-update .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #000000;
+    animation: updatePulse 1.5s infinite;
+}
+@keyframes updatePulse {
+    0% { transform: scale(0.9); opacity: 0.8; }
+    50% { transform: scale(1.3); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0.8; }
+}
+
+.inapp-update-dialog {
+    background: #121318;
+    border: 1px solid #282828;
+    border-radius: 24px;
+    max-width: 400px;
+    width: 90%;
+    padding: 24px 20px;
+    color: #ffffff;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
+    animation: modalScaleIn 0.25s ease-out;
+    box-sizing: border-box;
+}
+.inapp-update-badge {
+    display: inline-block;
+    background: rgba(29, 185, 84, 0.15);
+    color: #1db954;
+    border: 1px solid rgba(29, 185, 84, 0.4);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.inapp-update-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0 0 6px 0;
+    color: #ffffff;
+}
+.inapp-update-version {
+    font-size: 13px;
+    color: #a7a7a7;
+    margin: 0 0 16px 0;
+}
+.inapp-update-features {
+    background: #181920;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    border: 1px solid #24252e;
+    text-align: left;
+}
+.inapp-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: #e0e0e0;
+    line-height: 1.4;
+}
+.inapp-feature-item:last-child {
+    margin-bottom: 0;
+}
+.inapp-progress-container {
+    margin-bottom: 16px;
+    display: none;
+}
+.inapp-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #282828;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.inapp-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #1db954, #1ed760);
+    transition: width 0.25s ease;
+}
+.inapp-progress-text {
+    font-size: 12px;
+    color: #1db954;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 6px;
+}
+.inapp-btn-update {
+    display: block;
+    width: 100%;
+    background: #1db954;
+    color: #000000;
+    border: none;
+    padding: 14px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(29, 185, 84, 0.4);
+    transition: transform 0.2s ease, background 0.2s ease;
+    text-align: center;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+.inapp-btn-update:hover {
+    background: #1ed760;
+    transform: scale(1.02);
+}
+.inapp-btn-close {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #888;
+    padding: 10px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 6px;
+    text-align: center;
+}
+.inapp-btn-close:hover {
+    color: #ffffff;
+}
