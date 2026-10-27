@@ -83,7 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(streamApiUrl);
             const data = await res.json();
             if (data && data.streamUrl) {
-                streamUrlCache.set(track.id, data.streamUrl);
+                const finalUrl = data.streamUrl.startsWith('http') ? data.streamUrl : `${API_BASE}${data.streamUrl}`;
+                streamUrlCache.set(track.id, finalUrl);
             }
         } catch (e) {}
     }
@@ -92,28 +93,45 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!activeQueue || activeQueue.length <= 1) return;
         const next1 = activeQueue[(currentTrackIndex + 1) % activeQueue.length];
         const next2 = activeQueue[(currentTrackIndex + 2) % activeQueue.length];
+        const next3 = activeQueue[(currentTrackIndex + 3) % activeQueue.length];
         if (next1) prefetchTrackStream(next1);
         if (next2) prefetchTrackStream(next2);
+        if (next3) prefetchTrackStream(next3);
     }
 
-    // Infinite YouTube Recommendation Queue (Music Never Stops)
+    // Infinite YouTube Recommendation Queue (Music Never Stops 24/7)
+    const AUTO_SEEDS = [
+        'Trending Hindi Songs 2024',
+        'Arijit Singh Hits',
+        'Top Bollywood Songs',
+        'Latest Punjabi Hits 2024',
+        'Shreya Ghoshal Hits',
+        'Romantic Hindi Songs',
+        'Pritam Hits',
+        'Atif Aslam Hits'
+    ];
+    let autoSeedIndex = 0;
+
     async function fillInfiniteQueue() {
         if (isQueueRefilling) return;
-        const curr = activeQueue[currentTrackIndex] || activeQueue[0];
-        if (!curr) return;
         isQueueRefilling = true;
-        const seedQuery = curr.channel ? `${curr.channel} top songs hits` : (curr.title ? curr.title.split('-')[0].trim() : 'Trending Hindi Songs 2024');
         try {
+            const curr = activeQueue[currentTrackIndex] || activeQueue[0];
+            let seedQuery = curr && curr.channel ? `${curr.channel} top songs` : AUTO_SEEDS[autoSeedIndex % AUTO_SEEDS.length];
+            autoSeedIndex++;
+
             const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(seedQuery)}`);
             const data = await res.json();
-            if (data.results && data.results.length > 0) {
+            if (data && data.results && data.results.length > 0) {
                 const existingIds = new Set(activeQueue.map(q => q.id));
                 const fresh = data.results.filter(r => !existingIds.has(r.id));
                 if (fresh.length > 0) {
-                    activeQueue.push(...fresh.slice(0, 10));
-                    renderQueueDrawer();
-                    scheduleUpcomingPrefetch();
+                    activeQueue.push(...fresh.slice(0, 15));
+                } else {
+                    activeQueue.push(...data.results.slice(0, 10));
                 }
+                renderQueueDrawer();
+                scheduleUpcomingPrefetch();
             }
         } catch (e) {} finally {
             isQueueRefilling = false;
@@ -1234,6 +1252,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function collectAllDomTracks() {
+        const cards = document.querySelectorAll('.music-card, .table-song-row, .sound-card, .trending-card, .track-row, .search-track-item');
+        const tracks = [];
+        const seen = new Set();
+        cards.forEach(c => {
+            const id = c.dataset.id;
+            if (id && !seen.has(id)) {
+                seen.add(id);
+                const title = c.dataset.title || c.querySelector('.card-song-title, .row-title-text, .card-title, .track-name')?.textContent?.trim() || 'Music Track';
+                const channel = c.dataset.channel || c.querySelector('.card-song-artist, .row-artist-sub, .card-channel, .track-sub')?.textContent?.trim() || 'SoundWave Artist';
+                const thumbnail = c.dataset.thumb || c.querySelector('img')?.src || `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+                const duration = c.querySelector('.row-duration-text, .track-dur')?.textContent?.trim() || '--:--';
+                tracks.push({ id, title, channel, thumbnail, duration });
+            }
+        });
+        return tracks;
+    }
+
+    function ensureRichQueue(firstTrack) {
+        if (!firstTrack) return;
+        if (!activeQueue || activeQueue.length <= 1) {
+            const domTracks = collectAllDomTracks().filter(t => t.id !== firstTrack.id);
+            if (domTracks.length > 0) {
+                activeQueue = [firstTrack, ...domTracks];
+            } else if (likedSongs && likedSongs.length > 0) {
+                const liked = likedSongs.filter(t => t.id !== firstTrack.id);
+                activeQueue = [firstTrack, ...liked];
+            } else {
+                activeQueue = [firstTrack];
+            }
+        }
+        if (activeQueue.length < 15) {
+            fillInfiniteQueue();
+        }
+        renderQueueDrawer();
+    }
+
     // --- 10. AUDIO PLAYBACK & STREAM EXTRACTION (1000% UNSTOPPABLE) ---
     async function playTrackByIndex(index) {
         if (index < 0 || index >= activeQueue.length) return;
@@ -1321,9 +1376,11 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 console.warn('Stream not returned for:', track.title);
                 showToast('Stream temporarily unavailable for this track');
+                setTimeout(() => playNext(), 1500);
             }
         } catch (err) {
             console.error('Failed to load audio stream:', err);
+            setTimeout(() => playNext(), 1500);
         }
     }
     function togglePlayPause() {
@@ -1406,6 +1463,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (timeTotal && isFinite(total)) timeTotal.textContent = formatTime(total);
         if (modalTimeCurrent) modalTimeCurrent.textContent = formatTime(current);
         if (modalTimeTotal && isFinite(total)) modalTimeTotal.textContent = formatTime(total);
+
+        // When 25 seconds remain, ensure upcoming tracks are pre-fetched
+        if (total > 20 && (total - current) <= 25) {
+            scheduleUpcomingPrefetch();
+        }
 
         // Update MediaSession Position State (smooth lockscreen scrubber)
         if ('mediaSession' in navigator && 'setPositionState' in navigator.mediaSession) {
@@ -2148,6 +2210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         activeQueue = [track];
+        ensureRichQueue(track);
         renderQueueDrawer();
         playTrackByIndex(0);
         showToast('Switched to Background Audio • You can now lock screen! 🎧');
@@ -4994,7 +5057,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 fetch(`${API_BASE}/api/stream?id=${encodeURIComponent(t.id)}&title=${encodeURIComponent(t.title || '')}&channel=${encodeURIComponent(t.channel || '')}`)
                     .then(r => r.json())
                     .then(d => {
-                        if (d && d.streamUrl) streamUrlCache.set(t.id, d.streamUrl);
+                        if (d && d.streamUrl) {
+                            const finalUrl = d.streamUrl.startsWith('http') ? d.streamUrl : `${API_BASE}${d.streamUrl}`;
+                            streamUrlCache.set(t.id, finalUrl);
+                        }
                     })
                     .catch(() => {});
             }
@@ -5011,48 +5077,60 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================================
-    // UNIVERSAL VOICE SEARCH SYSTEM (HINDI + ENGLISH AI RECOGNITION)
+    // UNIVERSAL VOICE SEARCH SYSTEM (HINDI + ENGLISH AI RECOGNITION & ANDROID NATIVE)
     // =========================================================================
+    window.onNativeVoiceResult = function(targetInputId, text) {
+        if (!text) return;
+        const targetId = targetInputId || 'globalSearchInput';
+        const input = document.getElementById(targetId) || document.getElementById('globalSearchInput');
+        if (input) {
+            input.value = text;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        showToast('🎙️ Voice Search: "' + text + '"');
+
+        if (targetId === 'ytSearchInput') {
+            if (typeof loadYouTubeVideos === 'function') loadYouTubeVideos(text);
+        } else if (targetId === 'movieSearchInput') {
+            if (typeof searchVegamovies === 'function') searchVegamovies(text);
+        } else if (targetId === 'searchPageViewInput') {
+            if (typeof triggerSearch === 'function') triggerSearch(text);
+        } else {
+            if (typeof switchTab === 'function') switchTab('search');
+            const sView = document.getElementById('searchPageViewInput');
+            if (sView) sView.value = text;
+            if (typeof triggerSearch === 'function') triggerSearch(text);
+        }
+    };
+
     function setupVoiceSearch(btnId, inputId, onSearchCallback) {
         const btn = document.getElementById(btnId);
         const input = document.getElementById(inputId);
         if (!btn || !input) return;
 
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                showToast('Voice Search requires microphone support.');
-            });
-            return;
-        }
-
-        let recognition = null;
-        let isListening = false;
-
-        btn.addEventListener('click', async (e) => {
+        btn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
 
-            if (isListening && recognition) {
-                try { recognition.stop(); } catch(err) {}
-                return;
-            }
-
-            // Explicitly request microphone permission so Android WebView / Browser triggers the permission dialog!
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            // 1. Android APK Native Google Voice Search Dialog
+            if (window.SoundWaveNative && typeof window.SoundWaveNative.startVoiceSearch === 'function') {
                 try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    stream.getTracks().forEach(t => t.stop());
-                } catch(permErr) {
-                    console.warn('Microphone permission error:', permErr);
-                    showToast('🎙️ Microphone permission required! Please tap Allow.');
+                    window.SoundWaveNative.startVoiceSearch(inputId);
                     return;
+                } catch(nativeErr) {
+                    console.warn('Native voice error, falling back:', nativeErr);
                 }
             }
 
+            // 2. Web Speech API (for Chrome, Edge, Safari)
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showToast('🎙️ Voice Search requires microphone support');
+                return;
+            }
+
             try {
-                recognition = new SpeechRecognition();
+                const recognition = new SpeechRecognition();
                 recognition.lang = 'hi-IN'; // Robust support for Indian accents, Hindi & English
                 recognition.interimResults = false;
                 recognition.maxAlternatives = 1;
@@ -5060,9 +5138,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const originalPlaceholder = input.placeholder;
 
                 recognition.onstart = () => {
-                    isListening = true;
                     btn.classList.add('listening');
-                    input.placeholder = '🎙️ Listening... Speak song or movie name';
+                    input.placeholder = '🎙️ Listening... Speak now';
                     showToast('🎙️ Listening... Speak now');
                 };
 
@@ -5071,25 +5148,27 @@ document.addEventListener('DOMContentLoaded', () => {
                         const transcript = evt.results[0][0].transcript.trim();
                         if (transcript) {
                             input.value = transcript;
-                            showToast(`🎙️ Voice Search: "${transcript}"`);
+                            showToast('🎙️ Voice Search: "' + transcript + '"');
                             if (typeof onSearchCallback === 'function') {
                                 onSearchCallback(transcript);
+                            } else {
+                                triggerSearch(transcript, true);
                             }
                         }
                     }
                 };
 
                 recognition.onerror = (evt) => {
-                    console.warn('Voice search notice:', evt.error);
+                    btn.classList.remove('listening');
+                    input.placeholder = originalPlaceholder;
                     if (evt.error === 'not-allowed') {
-                        showToast('Microphone permission required for Voice Search');
-                    } else if (evt.error === 'no-speech') {
-                        showToast('No speech detected. Please try again.');
+                        showToast('🎙️ Microphone permission required for voice search');
+                    } else if (evt.error !== 'no-speech') {
+                        showToast('🎙️ Voice search error: ' + evt.error);
                     }
                 };
 
                 recognition.onend = () => {
-                    isListening = false;
                     btn.classList.remove('listening');
                     input.placeholder = originalPlaceholder;
                 };
@@ -5097,7 +5176,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 recognition.start();
             } catch (err) {
                 console.warn('Voice Search error:', err);
-                isListening = false;
                 btn.classList.remove('listening');
             }
         });
@@ -5682,6 +5760,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     playTrackByIndex(existingIdx);
                 } else {
                     activeQueue = [track, ...activeQueue];
+                    ensureRichQueue(track);
                     renderQueueDrawer();
                     playTrackByIndex(0);
                 }
