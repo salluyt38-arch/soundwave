@@ -33,7 +33,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20261028_v59_inapp_update">
+    <link rel="stylesheet" href="style.css?v=20261028_v60_inapp_bulletproof">
     <link rel="manifest" href="manifest.json">
 
 
@@ -2864,9 +2864,21 @@
                     </div>
                     <div class="inapp-progress-text" id="inAppProgressText">Downloading 0%...</div>
                 </div>
-                <button class="inapp-btn-update" id="btnStartInAppUpdate">
-                    ⬇️ 1-Click Fast Update (1.6 MB)
-                </button>
+                <div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">
+                    <button class="inapp-btn-update" id="btnStartInAppUpdate">
+                        🚀 Open in Chrome & Download (1-Tap)
+                    </button>
+                    <button class="inapp-btn-whatsapp" id="btnShareWhatsAppUpdate" type="button" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#25D366; color:#000; font-weight:800; border:none; padding:12px; border-radius:30px; font-size:14px; cursor:pointer;">
+                        <span>💬</span> Send Link to WhatsApp
+                    </button>
+                    <button class="inapp-btn-copy" id="btnCopyUpdateLink" type="button" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#24252e; color:#fff; font-weight:700; border:1px solid #3a3b47; padding:11px; border-radius:30px; font-size:13px; cursor:pointer;">
+                        <span>📋</span> Copy Direct Download Link
+                    </button>
+                </div>
+                <div style="background: rgba(29, 185, 84, 0.08); border: 1px dashed rgba(29, 185, 84, 0.4); border-radius: 10px; padding: 10px 12px; font-size: 12px; color: #b3b3b3; line-height: 1.5; margin-top: 12px; text-align: left;">
+                    💡 <strong>Direct Download Tip:</strong><br>
+                    Agar purane app me download na ho, toh <strong>"Send Link to WhatsApp"</strong> ya <strong>"Copy Direct Download Link"</strong> dabakar Chrome browser me paste karein — Chrome me 1 second me download ho jayega!
+                </div>
                 <button class="inapp-btn-close" id="btnCloseInAppUpdate">
                     Later / Dismiss
                 </button>
@@ -2879,7 +2891,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=20261028_v59_inapp_update"></script>
+    <script src="app.js?v=20261028_v60_inapp_bulletproof"></script>
 
   <!-- DMCA & COPYRIGHT LEGAL MODAL -->
   <div class="movie-modal-overlay hidden" id="dmcaModal">

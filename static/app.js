@@ -907,53 +907,94 @@ document.addEventListener('DOMContentLoaded', () => {
         if (inAppUpdateBackdrop) inAppUpdateBackdrop.addEventListener('click', window.closeInAppUpdateModal);
         if (btnCloseInAppUpdate) btnCloseInAppUpdate.addEventListener('click', window.closeInAppUpdateModal);
 
+        const btnShareWhatsAppUpdate = document.getElementById('btnShareWhatsAppUpdate');
+        const btnCopyUpdateLink = document.getElementById('btnCopyUpdateLink');
+        const APK_DOWNLOAD_URL = 'https://soundwave-5y5z.onrender.com/download/soundwave.apk';
+
+        function copyTextToClipboard(text) {
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text);
+                } else {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.position = 'fixed';
+                    ta.style.left = '-9999px';
+                    document.body.appendChild(ta);
+                    ta.focus();
+                    ta.select();
+                    document.execCommand('copy');
+                    ta.remove();
+                }
+            } catch(e) {}
+        }
+
         function triggerInAppDownload() {
-            if (inAppProgressBox) inAppProgressBox.style.display = 'block';
-            if (btnStartInAppUpdate) {
-                btnStartInAppUpdate.disabled = true;
-                btnStartInAppUpdate.textContent = 'Downloading SoundWave v2.1...';
+            const isInsideNativeApp = !!(window.SoundWaveNative || (navigator.userAgent && navigator.userAgent.includes('SoundWaveApp')));
+
+            // 1. If Native Android method is available in newer APK
+            if (window.SoundWaveNative && typeof window.SoundWaveNative.downloadAndInstallUpdate === 'function') {
+                try {
+                    window.SoundWaveNative.downloadAndInstallUpdate();
+                    showToast('🚀 Downloading update... Check notification bar!');
+                    return;
+                } catch(e) {}
             }
 
-            let progress = 10;
-            const progressTimer = setInterval(() => {
-                progress += Math.floor(Math.random() * 20) + 10;
-                if (progress > 95) progress = 95;
-                if (inAppProgressFill) inAppProgressFill.style.width = `${progress}%`;
-                if (inAppProgressText) inAppProgressText.textContent = `Downloading ${progress}% (1.6 MB)...`;
-            }, 180);
-
-            setTimeout(() => {
-                clearInterval(progressTimer);
-                if (inAppProgressFill) inAppProgressFill.style.width = '100%';
-                if (inAppProgressText) inAppProgressText.textContent = '🚀 Download Complete! Tap notification to install.';
-                if (btnStartInAppUpdate) {
-                    btnStartInAppUpdate.disabled = false;
-                    btnStartInAppUpdate.textContent = '✅ Downloaded! Tap to Install';
-                }
-
-                // 1. Android APK Native DownloadManager
-                if (window.SoundWaveNative && typeof window.SoundWaveNative.downloadAndInstallUpdate === 'function') {
-                    try {
-                        window.SoundWaveNative.downloadAndInstallUpdate();
-                        return;
-                    } catch(e) {}
-                }
-
-                // 2. Browser & WebView Fallback
+            // 2. Standard browser download fallback (if opened on Chrome/Firefox)
+            if (!isInsideNativeApp) {
                 const a = document.createElement('a');
-                a.href = 'https://soundwave-5y5z.onrender.com/download/soundwave.apk';
+                a.href = APK_DOWNLOAD_URL;
                 a.download = 'SoundWave.apk';
-                a.target = '_blank';
                 document.body.appendChild(a);
                 a.click();
-                setTimeout(() => a.remove(), 1000);
-            }, 1200);
+                setTimeout(() => a.remove(), 800);
+                showToast('⬇️ Downloading SoundWave.apk...');
+                return;
+            }
+
+            // 3. Inside Old Native WebView: Copy link to clipboard unconditionally
+            copyTextToClipboard(APK_DOWNLOAD_URL);
+
+            // 4. Trigger Android native Share Sheet (offers Chrome, Drive, Downloads, etc.)
+            if (navigator.share) {
+                navigator.share({
+                    title: 'SoundWave App Update v2.1',
+                    text: 'Download SoundWave 2.1 APK (1.6 MB) with Google Voice Search & Lockscreen Controls:',
+                    url: APK_DOWNLOAD_URL
+                }).then(() => {
+                    showToast('🚀 Select Chrome to download SoundWave.apk');
+                }).catch(() => {
+                    window.open(APK_DOWNLOAD_URL, '_system');
+                    showToast('📋 Link copied! Open Chrome browser & paste to download.');
+                });
+            } else {
+                window.open(APK_DOWNLOAD_URL, '_system');
+                showToast('📋 Download link copied! Paste in Chrome browser.');
+            }
         }
 
         if (btnStartInAppUpdate) {
             btnStartInAppUpdate.addEventListener('click', (e) => {
                 e.preventDefault();
                 triggerInAppDownload();
+            });
+        }
+
+        if (btnShareWhatsAppUpdate) {
+            btnShareWhatsAppUpdate.addEventListener('click', (e) => {
+                e.preventDefault();
+                const shareText = encodeURIComponent('Download SoundWave 2.1 APK (Google Voice Search & 24/7 Lockscreen Controls): ' + APK_DOWNLOAD_URL);
+                window.open('https://api.whatsapp.com/send?text=' + shareText, '_blank');
+                showToast('💬 Opening WhatsApp to share download link...');
+            });
+        }
+
+        if (btnCopyUpdateLink) {
+            btnCopyUpdateLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                copyTextToClipboard(APK_DOWNLOAD_URL);
+                showToast('📋 Link copied! Chrome browser khol kar paste karein.');
             });
         }
 
@@ -5184,40 +5225,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper: Show Update Modal if running in older APK without native Google Voice Search
     function showUpdateModalForVoice() {
-        const existing = document.getElementById('swVoiceUpdateModal');
-        if (existing) return;
-
-        const modal = document.createElement('div');
-        modal.id = 'swVoiceUpdateModal';
-        modal.className = 'sp-modal-overlay';
-        modal.style.zIndex = '99999999';
-        modal.innerHTML = `
-            <div class="modal-backdrop-blur"></div>
-            <div class="pwa-guide-dialog" style="max-width:380px; text-align:center; padding: 26px 20px; border-radius: 20px; background: #121318; border: 1px solid #282828;">
-                <div style="font-size: 46px; margin-bottom: 12px;">🎙️</div>
-                <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px;">Update SoundWave App</h3>
-                <p style="font-size: 13.5px; color: #b3b3b3; line-height: 1.5; margin-bottom: 22px;">
-                    Google Voice Search aur 24/7 Lockscreen Controls ke liye naya updated SoundWave APK install karein (1.6 MB).
-                </p>
-                <div style="display:flex; flex-direction:column; gap:12px;">
-                    <a href="/download/soundwave.apk" download="SoundWave.apk" class="pwa-cta-btn green" style="display:block; text-align:center; padding:13px; border-radius:30px; font-weight:800; font-size:15px; text-decoration:none; background:#1db954; color:#000; box-shadow: 0 4px 15px rgba(29,185,84,0.4);">
-                        ⬇️ Download Update Now (1.6 MB)
-                    </a>
-                    <button class="btn-modal-cancel" style="background:transparent; border:none; color:#888; padding:8px; font-size:13px; cursor:pointer;">
-                        Dismiss
-                    </button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        modal.querySelector('.btn-modal-cancel').addEventListener('click', () => modal.remove());
-        modal.querySelector('.modal-backdrop-blur').addEventListener('click', () => modal.remove());
-        const dlLink = modal.querySelector('a');
-        if (dlLink) {
-            dlLink.addEventListener('click', () => {
-                showToast('🚀 Downloading updated SoundWave APK...');
-                setTimeout(() => modal.remove(), 1200);
-            });
+        if (window.openInAppUpdateModal) {
+            window.openInAppUpdateModal();
         }
     }
 
@@ -5233,12 +5242,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span style="font-size:16px;">🎙️</span>
                         <span>SoundWave Update: Native Voice & Lockscreen</span>
                     </div>
-                    <a href="/download/soundwave.apk" download="SoundWave.apk" style="background: #000; color: #fff; padding: 5px 12px; border-radius: 16px; text-decoration: none; font-size: 11px; font-weight: 800; white-space:nowrap; margin-left:8px;">
+                    <button id="btnAppUpdateNoticeBanner" type="button" style="background: #000; color: #fff; border:none; padding: 5px 12px; border-radius: 16px; font-size: 11px; font-weight: 800; white-space:nowrap; margin-left:8px; cursor:pointer;">
                         Update
-                    </a>
+                    </button>
                 `;
                 document.body.appendChild(banner);
                 document.body.style.paddingTop = '40px';
+                const bBtn = document.getElementById('btnAppUpdateNoticeBanner');
+                if (bBtn) {
+                    bBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (window.openInAppUpdateModal) window.openInAppUpdateModal();
+                    });
+                }
+                return;
             }
         }
     }, 1500);
