@@ -3532,6 +3532,43 @@ document.addEventListener('DOMContentLoaded', () => {
         playTrackByIndex(0);
     };
 
+    // =========================================================================
+    // EXPOSE GLOBAL PLAYER CONTROLS (FOR LOCKSCREEN, ANDROID NATIVE & MEDIASESSION)
+    // =========================================================================
+    window.togglePlayPause = function() {
+        console.log('[NativeBridge] togglePlayPause called');
+        if (typeof togglePlayPause === 'function') {
+            togglePlayPause();
+        } else {
+            const btn = document.getElementById('btnPlayPause');
+            if (btn) btn.click();
+            else if (audio) {
+                if (audio.paused) audio.play().catch(e => console.warn(e));
+                else audio.pause();
+            }
+        }
+    };
+
+    window.playNext = function() {
+        console.log('[NativeBridge] playNext called');
+        if (typeof playNext === 'function') {
+            playNext();
+        } else {
+            const btn = document.getElementById('btnNext');
+            if (btn) btn.click();
+        }
+    };
+
+    window.playPrev = function() {
+        console.log('[NativeBridge] playPrev called');
+        if (typeof playPrev === 'function') {
+            playPrev();
+        } else {
+            const btn = document.getElementById('btnPrev');
+            if (btn) btn.click();
+        }
+    };
+
     // Video Autoplay: When a video finishes, auto-play next video in grid
     const ytNativeVideoForAutoplay = document.getElementById('ytNativeVideo');
     if (ytNativeVideoForAutoplay) {
@@ -5260,15 +5297,63 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 1500);
 
+    window.startWebVoiceFallback = function(inputId, onSearchCallback, btnEl) {
+        const input = document.getElementById(inputId) || document.getElementById('globalSearchInput');
+        const btn = btnEl || document.getElementById('btnVoiceGlobal');
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            showToast('🎙️ Bol kar search karne ke liye keyboard ka mic icon dabayein');
+            if (input) input.focus();
+            return;
+        }
+
+        try {
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'hi-IN';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            if (btn) btn.classList.add('listening');
+            showToast('🎙️ Listening... Speak now (Hindi / English)');
+
+            recognition.onresult = (evt) => {
+                if (evt.results && evt.results[0] && evt.results[0][0]) {
+                    const transcript = evt.results[0][0].transcript.trim();
+                    if (transcript) {
+                        window.onNativeVoiceResult(inputId, transcript);
+                    }
+                }
+            };
+
+            recognition.onerror = (evt) => {
+                console.warn('Voice recognition error:', evt.error);
+                if (btn) btn.classList.remove('listening');
+                if (evt.error === 'not-allowed') {
+                    showToast('🎙️ Microphone allow karein ya keyboard ka mic use karein');
+                } else if (evt.error !== 'no-speech') {
+                    showToast('🎙️ ' + evt.error);
+                }
+            };
+
+            recognition.onend = () => {
+                if (btn) btn.classList.remove('listening');
+            };
+
+            recognition.start();
+        } catch(e) {
+            console.warn('Web speech start error:', e);
+            if (btn) btn.classList.remove('listening');
+            showToast('🎙️ Bol kar search karne ke liye keyboard mic use karein');
+        }
+    };
+
     function setupVoiceSearch(btnId, inputId, onSearchCallback) {
         const btn = document.getElementById(btnId);
         const input = document.getElementById(inputId);
         if (!btn || !input) return;
 
-        let recognition = null;
-        let isListening = false;
-
-        btn.addEventListener('click', async (e) => {
+        btn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
 
@@ -5284,90 +5369,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 2. Old APK Detection: Offer 1-Click Update
             if (window.SoundWaveNative && !window.SoundWaveNative.startVoiceSearch) {
-                if (window.openInAppUpdateModal) window.openInAppUpdateModal(); else showUpdateModalForVoice();
+                if (window.openInAppUpdateModal) window.openInAppUpdateModal();
                 return;
             }
 
-            // If already listening, stop
-            if (isListening && recognition) {
-                try { recognition.stop(); } catch(err) {}
-                isListening = false;
-                btn.classList.remove('listening');
-                return;
-            }
-
-            // 3. Web Speech API with explicit permission prompt via getUserMedia
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    stream.getTracks().forEach(track => track.stop());
-                } catch(permErr) {
-                    console.warn('Microphone permission error:', permErr);
-                    showToast('🎙️ Microphone permission required! Please tap Allow.');
-                    return;
-                }
-            }
-
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                showToast('🎙️ Voice Search is not supported in this browser. Please type to search.');
-                return;
-            }
-
-            try {
-                recognition = new SpeechRecognition();
-                recognition.lang = 'hi-IN'; // Robust support for Indian accents, Hindi & English
-                recognition.interimResults = false;
-                recognition.maxAlternatives = 1;
-
-                const originalPlaceholder = input.placeholder;
-
-                recognition.onstart = () => {
-                    isListening = true;
-                    btn.classList.add('listening');
-                    input.placeholder = '🎙️ Listening... Speak now';
-                    showToast('🎙️ Listening... Speak now');
-                };
-
-                recognition.onresult = (evt) => {
-                    if (evt.results && evt.results[0] && evt.results[0][0]) {
-                        const transcript = evt.results[0][0].transcript.trim();
-                        if (transcript) {
-                            input.value = transcript;
-                            showToast('🎙️ Voice Search: "' + transcript + '"');
-                            if (typeof onSearchCallback === 'function') {
-                                onSearchCallback(transcript);
-                            } else {
-                                triggerSearch(transcript, true);
-                            }
-                        }
-                    }
-                };
-
-                recognition.onerror = (evt) => {
-                    console.warn('Voice search error event:', evt.error);
-                    btn.classList.remove('listening');
-                    input.placeholder = originalPlaceholder;
-                    isListening = false;
-                    if (evt.error === 'not-allowed') {
-                        showToast('🎙️ Microphone permission required. Please allow microphone in settings.');
-                    } else if (evt.error !== 'no-speech') {
-                        showToast('🎙️ Voice search notice: ' + evt.error);
-                    }
-                };
-
-                recognition.onend = () => {
-                    isListening = false;
-                    btn.classList.remove('listening');
-                    input.placeholder = originalPlaceholder;
-                };
-
-                recognition.start();
-            } catch (err) {
-                console.warn('Voice Search error:', err);
-                isListening = false;
-                btn.classList.remove('listening');
-            }
+            // 3. Web Speech API Fallback
+            window.startWebVoiceFallback(inputId, onSearchCallback, btn);
         });
     }
 
