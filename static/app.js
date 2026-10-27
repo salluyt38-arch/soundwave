@@ -5103,34 +5103,123 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Helper: Show Update Modal if running in older APK without native Google Voice Search
+    function showUpdateModalForVoice() {
+        const existing = document.getElementById('swVoiceUpdateModal');
+        if (existing) return;
+
+        const modal = document.createElement('div');
+        modal.id = 'swVoiceUpdateModal';
+        modal.className = 'sp-modal-overlay';
+        modal.style.zIndex = '99999999';
+        modal.innerHTML = `
+            <div class="modal-backdrop-blur"></div>
+            <div class="pwa-guide-dialog" style="max-width:380px; text-align:center; padding: 26px 20px; border-radius: 20px; background: #121318; border: 1px solid #282828;">
+                <div style="font-size: 46px; margin-bottom: 12px;">🎙️</div>
+                <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px;">Update SoundWave App</h3>
+                <p style="font-size: 13.5px; color: #b3b3b3; line-height: 1.5; margin-bottom: 22px;">
+                    Google Voice Search aur 24/7 Lockscreen Controls ke liye naya updated SoundWave APK install karein (1.6 MB).
+                </p>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    <a href="/download/soundwave.apk" download="SoundWave.apk" class="pwa-cta-btn green" style="display:block; text-align:center; padding:13px; border-radius:30px; font-weight:800; font-size:15px; text-decoration:none; background:#1db954; color:#000; box-shadow: 0 4px 15px rgba(29,185,84,0.4);">
+                        ⬇️ Download Update Now (1.6 MB)
+                    </a>
+                    <button class="btn-modal-cancel" style="background:transparent; border:none; color:#888; padding:8px; font-size:13px; cursor:pointer;">
+                        Dismiss
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.querySelector('.btn-modal-cancel').addEventListener('click', () => modal.remove());
+        modal.querySelector('.modal-backdrop-blur').addEventListener('click', () => modal.remove());
+        const dlLink = modal.querySelector('a');
+        if (dlLink) {
+            dlLink.addEventListener('click', () => {
+                showToast('🚀 Downloading updated SoundWave APK...');
+                setTimeout(() => modal.remove(), 1200);
+            });
+        }
+    }
+
+    // Auto-detect older APK and show sleek update banner
+    setTimeout(() => {
+        if (window.SoundWaveNative && !window.SoundWaveNative.startVoiceSearch) {
+            if (!document.getElementById('appUpdateNoticeBanner')) {
+                const banner = document.createElement('div');
+                banner.id = 'appUpdateNoticeBanner';
+                banner.style.cssText = 'position:fixed; top:0; left:0; width:100%; background: linear-gradient(90deg, #1db954, #1ed760); color: #000; padding: 9px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; z-index: 9999999; box-shadow: 0 4px 12px rgba(0,0,0,0.5); box-sizing: border-box;';
+                banner.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                        <span style="font-size:16px;">🎙️</span>
+                        <span>SoundWave Update: Native Voice & Lockscreen</span>
+                    </div>
+                    <a href="/download/soundwave.apk" download="SoundWave.apk" style="background: #000; color: #fff; padding: 5px 12px; border-radius: 16px; text-decoration: none; font-size: 11px; font-weight: 800; white-space:nowrap; margin-left:8px;">
+                        Update
+                    </a>
+                `;
+                document.body.appendChild(banner);
+                document.body.style.paddingTop = '40px';
+            }
+        }
+    }, 1500);
+
     function setupVoiceSearch(btnId, inputId, onSearchCallback) {
         const btn = document.getElementById(btnId);
         const input = document.getElementById(inputId);
         if (!btn || !input) return;
 
-        btn.addEventListener('click', (e) => {
+        let recognition = null;
+        let isListening = false;
+
+        btn.addEventListener('click', async (e) => {
             e.preventDefault();
             e.stopPropagation();
 
-            // 1. Android APK Native Google Voice Search Dialog
+            // 1. Android APK Native Google Voice Search Dialog (New APK)
             if (window.SoundWaveNative && typeof window.SoundWaveNative.startVoiceSearch === 'function') {
                 try {
                     window.SoundWaveNative.startVoiceSearch(inputId);
                     return;
                 } catch(nativeErr) {
-                    console.warn('Native voice error, falling back:', nativeErr);
+                    console.warn('Native voice error:', nativeErr);
                 }
             }
 
-            // 2. Web Speech API (for Chrome, Edge, Safari)
+            // 2. Old APK Detection: Offer 1-Click Update
+            if (window.SoundWaveNative && !window.SoundWaveNative.startVoiceSearch) {
+                showUpdateModalForVoice();
+                return;
+            }
+
+            // If already listening, stop
+            if (isListening && recognition) {
+                try { recognition.stop(); } catch(err) {}
+                isListening = false;
+                btn.classList.remove('listening');
+                return;
+            }
+
+            // 3. Web Speech API with explicit permission prompt via getUserMedia
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    stream.getTracks().forEach(track => track.stop());
+                } catch(permErr) {
+                    console.warn('Microphone permission error:', permErr);
+                    showToast('🎙️ Microphone permission required! Please tap Allow.');
+                    return;
+                }
+            }
+
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
-                showToast('🎙️ Voice Search requires microphone support');
+                showToast('🎙️ Voice Search is not supported in this browser. Please type to search.');
                 return;
             }
 
             try {
-                const recognition = new SpeechRecognition();
+                recognition = new SpeechRecognition();
                 recognition.lang = 'hi-IN'; // Robust support for Indian accents, Hindi & English
                 recognition.interimResults = false;
                 recognition.maxAlternatives = 1;
@@ -5138,6 +5227,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const originalPlaceholder = input.placeholder;
 
                 recognition.onstart = () => {
+                    isListening = true;
                     btn.classList.add('listening');
                     input.placeholder = '🎙️ Listening... Speak now';
                     showToast('🎙️ Listening... Speak now');
@@ -5159,16 +5249,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
 
                 recognition.onerror = (evt) => {
+                    console.warn('Voice search error event:', evt.error);
                     btn.classList.remove('listening');
                     input.placeholder = originalPlaceholder;
+                    isListening = false;
                     if (evt.error === 'not-allowed') {
-                        showToast('🎙️ Microphone permission required for voice search');
+                        showToast('🎙️ Microphone permission required. Please allow microphone in settings.');
                     } else if (evt.error !== 'no-speech') {
-                        showToast('🎙️ Voice search error: ' + evt.error);
+                        showToast('🎙️ Voice search notice: ' + evt.error);
                     }
                 };
 
                 recognition.onend = () => {
+                    isListening = false;
                     btn.classList.remove('listening');
                     input.placeholder = originalPlaceholder;
                 };
@@ -5176,6 +5269,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 recognition.start();
             } catch (err) {
                 console.warn('Voice Search error:', err);
+                isListening = false;
                 btn.classList.remove('listening');
             }
         });
