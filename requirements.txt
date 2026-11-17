@@ -1,2 +1,3 @@
 yt-dlp>=2025.01.01
 pycryptodome>=3.20.0
+requests>=2.31.0

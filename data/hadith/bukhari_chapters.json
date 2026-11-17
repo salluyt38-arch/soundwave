@@ -1,0 +1,972 @@
+[
+  {
+    "_id": "69b6bc020df084ec203b46ee",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Revelation"
+    },
+    "bookIndex": 1,
+    "hadithCount": 7,
+    "hadithIndexStart": 1
+  },
+  {
+    "_id": "69b6bc020df084ec203b46ef",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Belief"
+    },
+    "bookIndex": 2,
+    "hadithCount": 51,
+    "hadithIndexStart": 8
+  },
+  {
+    "_id": "69b6bc020df084ec203b46f0",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Knowledge"
+    },
+    "bookIndex": 3,
+    "hadithCount": 76,
+    "hadithIndexStart": 59
+  },
+  {
+    "_id": "69b6bc020df084ec203b46f1",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Ablutions (Wudu')"
+    },
+    "bookIndex": 4,
+    "hadithCount": 113,
+    "hadithIndexStart": 135
+  },
+  {
+    "_id": "69b6bc020df084ec203b46f2",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Bathing (Ghusl)"
+    },
+    "bookIndex": 5,
+    "hadithCount": 46,
+    "hadithIndexStart": 248
+  },
+  {
+    "_id": "69b6bc020df084ec203b46f3",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Menstrual Periods"
+    },
+    "bookIndex": 6,
+    "hadithCount": 40,
+    "hadithIndexStart": 294
+  },
+  {
+    "_id": "69b6bc020df084ec203b46f4",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Rubbing hands and feet with dust (Tayammum)"
+    },
+    "bookIndex": 7,
+    "hadithCount": 15,
+    "hadithIndexStart": 334
+  },
+  {
+    "_id": "69b6bc020df084ec203b46f5",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Prayers (Salat)"
+    },
+    "bookIndex": 8,
+    "hadithCount": 172,
+    "hadithIndexStart": 349
+  },
+  {
+    "_id": "69b6bc020df084ec203b46f6",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Times of the Prayers"
+    },
+    "bookIndex": 9,
+    "hadithCount": 81,
+    "hadithIndexStart": 522
+  },
+  {
+    "_id": "69b6bc020df084ec203b46f7",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Call to Prayers (Adhaan)"
+    },
+    "bookIndex": 10,
+    "hadithCount": 273,
+    "hadithIndexStart": 603
+  },
+  {
+    "_id": "69b6bc020df084ec203b46f8",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Friday Prayer"
+    },
+    "bookIndex": 11,
+    "hadithCount": 66,
+    "hadithIndexStart": 876
+  },
+  {
+    "_id": "69b6bc020df084ec203b46f9",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Fear Prayer"
+    },
+    "bookIndex": 12,
+    "hadithCount": 6,
+    "hadithIndexStart": 942
+  },
+  {
+    "_id": "69b6bc020df084ec203b46fa",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "The Two Festivals (Eids)"
+    },
+    "bookIndex": 13,
+    "hadithCount": 42,
+    "hadithIndexStart": 948
+  },
+  {
+    "_id": "69b6bc020df084ec203b46fb",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Witr Prayer"
+    },
+    "bookIndex": 14,
+    "hadithCount": 15,
+    "hadithIndexStart": 990
+  },
+  {
+    "_id": "69b6bc020df084ec203b46fc",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Invoking Allah for Rain (Istisqaa)"
+    },
+    "bookIndex": 15,
+    "hadithCount": 35,
+    "hadithIndexStart": 1005
+  },
+  {
+    "_id": "69b6bc020df084ec203b46fd",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Eclipses"
+    },
+    "bookIndex": 16,
+    "hadithCount": 27,
+    "hadithIndexStart": 1040
+  },
+  {
+    "_id": "69b6bc020df084ec203b46fe",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Prostration During Recital of Qur'an"
+    },
+    "bookIndex": 17,
+    "hadithCount": 13,
+    "hadithIndexStart": 1067
+  },
+  {
+    "_id": "69b6bc020df084ec203b46ff",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Shortening the Prayers (At-Taqseer)"
+    },
+    "bookIndex": 18,
+    "hadithCount": 40,
+    "hadithIndexStart": 1080
+  },
+  {
+    "_id": "69b6bc020df084ec203b4700",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Prayer at Night (Tahajjud)"
+    },
+    "bookIndex": 19,
+    "hadithCount": 68,
+    "hadithIndexStart": 1120
+  },
+  {
+    "_id": "69b6bc020df084ec203b4701",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Virtues of Prayer at Masjid Makkah and Madinah"
+    },
+    "bookIndex": 20,
+    "hadithCount": 10,
+    "hadithIndexStart": 1188
+  },
+  {
+    "_id": "69b6bc020df084ec203b4702",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Actions while Praying"
+    },
+    "bookIndex": 21,
+    "hadithCount": 26,
+    "hadithIndexStart": 1198
+  },
+  {
+    "_id": "69b6bc020df084ec203b4703",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Forgetfulness in Prayer"
+    },
+    "bookIndex": 22,
+    "hadithCount": 13,
+    "hadithIndexStart": 1224
+  },
+  {
+    "_id": "69b6bc020df084ec203b4704",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Funerals (Al-Janaa'iz)"
+    },
+    "bookIndex": 23,
+    "hadithCount": 158,
+    "hadithIndexStart": 1237
+  },
+  {
+    "_id": "69b6bc020df084ec203b4705",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Obligatory Charity Tax (Zakat)"
+    },
+    "bookIndex": 24,
+    "hadithCount": 118,
+    "hadithIndexStart": 1395
+  },
+  {
+    "_id": "69b6bc020df084ec203b4706",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Hajj (Pilgrimage)"
+    },
+    "bookIndex": 25,
+    "hadithCount": 260,
+    "hadithIndexStart": 1513
+  },
+  {
+    "_id": "69b6bc020df084ec203b4707",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "`Umrah (Minor pilgrimage)"
+    },
+    "bookIndex": 26,
+    "hadithCount": 33,
+    "hadithIndexStart": 1773
+  },
+  {
+    "_id": "69b6bc020df084ec203b4708",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Pilgrims Prevented from Completing the Pilgrimage"
+    },
+    "bookIndex": 27,
+    "hadithCount": 15,
+    "hadithIndexStart": 1806
+  },
+  {
+    "_id": "69b6bc020df084ec203b4709",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Penalty of Hunting while on Pilgrimage"
+    },
+    "bookIndex": 28,
+    "hadithCount": 46,
+    "hadithIndexStart": 1821
+  },
+  {
+    "_id": "69b6bc020df084ec203b470a",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Virtues of Madinah"
+    },
+    "bookIndex": 29,
+    "hadithCount": 24,
+    "hadithIndexStart": 1867
+  },
+  {
+    "_id": "69b6bc020df084ec203b470b",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Fasting"
+    },
+    "bookIndex": 30,
+    "hadithCount": 117,
+    "hadithIndexStart": 1891
+  },
+  {
+    "_id": "69b6bc020df084ec203b470c",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Praying at Night in Ramadaan (Taraweeh)"
+    },
+    "bookIndex": 31,
+    "hadithCount": 6,
+    "hadithIndexStart": 2008
+  },
+  {
+    "_id": "69b6bc020df084ec203b470d",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Virtues of the Night of Qadr"
+    },
+    "bookIndex": 32,
+    "hadithCount": 11,
+    "hadithIndexStart": 2014
+  },
+  {
+    "_id": "69b6bc020df084ec203b470e",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Retiring to a Mosque for Remembrance of Allah (I'tikaf)"
+    },
+    "bookIndex": 33,
+    "hadithCount": 22,
+    "hadithIndexStart": 2025
+  },
+  {
+    "_id": "69b6bc020df084ec203b470f",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Sales and Trade"
+    },
+    "bookIndex": 34,
+    "hadithCount": 192,
+    "hadithIndexStart": 2047
+  },
+  {
+    "_id": "69b6bc020df084ec203b4710",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Sales in which a Price is paid for Goods to be Delivered Later (As-Salam)"
+    },
+    "bookIndex": 35,
+    "hadithCount": 18,
+    "hadithIndexStart": 2239
+  },
+  {
+    "_id": "69b6bc020df084ec203b4711",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Preemption"
+    },
+    "bookIndex": 36,
+    "hadithCount": 3,
+    "hadithIndexStart": 2257
+  },
+  {
+    "_id": "69b6bc020df084ec203b4712",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Hiring"
+    },
+    "bookIndex": 37,
+    "hadithCount": 27,
+    "hadithIndexStart": 2260
+  },
+  {
+    "_id": "69b6bc020df084ec203b4713",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Transferance of a Debt from One Person to Another (Al-Hawaala)"
+    },
+    "bookIndex": 38,
+    "hadithCount": 3,
+    "hadithIndexStart": 2287
+  },
+  {
+    "_id": "69b6bc020df084ec203b4714",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Guarantee"
+    },
+    "bookIndex": 39,
+    "hadithCount": 9,
+    "hadithIndexStart": 2290
+  },
+  {
+    "_id": "69b6bc020df084ec203b4715",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Representation, Authorization, Business by Proxy"
+    },
+    "bookIndex": 40,
+    "hadithCount": 21,
+    "hadithIndexStart": 2299
+  },
+  {
+    "_id": "69b6bc020df084ec203b4716",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Agriculture"
+    },
+    "bookIndex": 41,
+    "hadithCount": 31,
+    "hadithIndexStart": 2320
+  },
+  {
+    "_id": "69b6bc020df084ec203b4717",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Distribution of Water"
+    },
+    "bookIndex": 42,
+    "hadithCount": 33,
+    "hadithIndexStart": 2351
+  },
+  {
+    "_id": "69b6bc020df084ec203b4718",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Loans, Payment of Loans, Freezing of Property, Bankruptcy"
+    },
+    "bookIndex": 43,
+    "hadithCount": 25,
+    "hadithIndexStart": 2385
+  },
+  {
+    "_id": "69b6bc020df084ec203b4719",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Litigation"
+    },
+    "bookIndex": 44,
+    "hadithCount": 16,
+    "hadithIndexStart": 2410
+  },
+  {
+    "_id": "69b6bc020df084ec203b471a",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Lost Things Picked up by Someone (Luqatah)"
+    },
+    "bookIndex": 45,
+    "hadithCount": 14,
+    "hadithIndexStart": 2426
+  },
+  {
+    "_id": "69b6bc020df084ec203b471b",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Oppressions"
+    },
+    "bookIndex": 46,
+    "hadithCount": 43,
+    "hadithIndexStart": 2440
+  },
+  {
+    "_id": "69b6bc020df084ec203b471c",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Partnership"
+    },
+    "bookIndex": 47,
+    "hadithCount": 25,
+    "hadithIndexStart": 2483
+  },
+  {
+    "_id": "69b6bc020df084ec203b471d",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Mortgaging"
+    },
+    "bookIndex": 48,
+    "hadithCount": 8,
+    "hadithIndexStart": 2508
+  },
+  {
+    "_id": "69b6bc020df084ec203b471e",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Manumission of Slaves"
+    },
+    "bookIndex": 49,
+    "hadithCount": 43,
+    "hadithIndexStart": 2517
+  },
+  {
+    "_id": "69b6bc020df084ec203b471f",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Contract of Manumission"
+    },
+    "bookIndex": 50,
+    "hadithCount": 6,
+    "hadithIndexStart": 2560
+  },
+  {
+    "_id": "69b6bc020df084ec203b4720",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Gifts, their virtue and encouragement to give them"
+    },
+    "bookIndex": 51,
+    "hadithCount": 71,
+    "hadithIndexStart": 2566
+  },
+  {
+    "_id": "69b6bc020df084ec203b4721",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Witnesses"
+    },
+    "bookIndex": 52,
+    "hadithCount": 53,
+    "hadithIndexStart": 2637
+  },
+  {
+    "_id": "69b6bc020df084ec203b4722",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Peacemaking"
+    },
+    "bookIndex": 53,
+    "hadithCount": 21,
+    "hadithIndexStart": 2690
+  },
+  {
+    "_id": "69b6bc020df084ec203b4723",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Conditions"
+    },
+    "bookIndex": 54,
+    "hadithCount": 26,
+    "hadithIndexStart": 2712
+  },
+  {
+    "_id": "69b6bc020df084ec203b4724",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Wills and Testaments"
+    },
+    "bookIndex": 55,
+    "hadithCount": 44,
+    "hadithIndexStart": 2738
+  },
+  {
+    "_id": "69b6bc020df084ec203b4725",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Fighting for the Cause of Allah"
+    },
+    "bookIndex": 56,
+    "hadithCount": 309,
+    "hadithIndexStart": 2782
+  },
+  {
+    "_id": "69b6bc020df084ec203b4726",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "One-fifth of Booty to the Cause of Allah"
+    },
+    "bookIndex": 57,
+    "hadithCount": 65,
+    "hadithIndexStart": 3091
+  },
+  {
+    "_id": "69b6bc020df084ec203b4727",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Jizyah and Peace Treaties"
+    },
+    "bookIndex": 58,
+    "hadithCount": 33,
+    "hadithIndexStart": 3157
+  },
+  {
+    "_id": "69b6bc020df084ec203b4728",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Beginning of Creation"
+    },
+    "bookIndex": 59,
+    "hadithCount": 136,
+    "hadithIndexStart": 3190
+  },
+  {
+    "_id": "69b6bc020df084ec203b4729",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Prophets"
+    },
+    "bookIndex": 60,
+    "hadithCount": 163,
+    "hadithIndexStart": 3326
+  },
+  {
+    "_id": "69b6bc020df084ec203b472a",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Virtues and Merits"
+    },
+    "bookIndex": 61,
+    "hadithCount": 160,
+    "hadithIndexStart": 3489
+  },
+  {
+    "_id": "69b6bc020df084ec203b472b",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Virtues of the Companions of the Prophet"
+    },
+    "bookIndex": 62,
+    "hadithCount": 127,
+    "hadithIndexStart": 3649
+  },
+  {
+    "_id": "69b6bc020df084ec203b472c",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Merits of the Helpers in Madinah (Ansaar)"
+    },
+    "bookIndex": 63,
+    "hadithCount": 173,
+    "hadithIndexStart": 3776
+  },
+  {
+    "_id": "69b6bc020df084ec203b472d",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Military Expeditions"
+    },
+    "bookIndex": 64,
+    "hadithCount": 525,
+    "hadithIndexStart": 3949
+  },
+  {
+    "_id": "69b6bc020df084ec203b472e",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Prophetic Commentary on the Qur'an"
+    },
+    "bookIndex": 65,
+    "hadithCount": 504,
+    "hadithIndexStart": 4474
+  },
+  {
+    "_id": "69b6bc020df084ec203b472f",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Virtues of the Qur'an"
+    },
+    "bookIndex": 66,
+    "hadithCount": 84,
+    "hadithIndexStart": 4979
+  },
+  {
+    "_id": "69b6bc020df084ec203b4730",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Wedlock, Marriage"
+    },
+    "bookIndex": 67,
+    "hadithCount": 188,
+    "hadithIndexStart": 5063
+  },
+  {
+    "_id": "69b6bc020df084ec203b4731",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Divorce"
+    },
+    "bookIndex": 68,
+    "hadithCount": 100,
+    "hadithIndexStart": 5251
+  },
+  {
+    "_id": "69b6bc020df084ec203b4732",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Supporting the Family"
+    },
+    "bookIndex": 69,
+    "hadithCount": 22,
+    "hadithIndexStart": 5351
+  },
+  {
+    "_id": "69b6bc020df084ec203b4733",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Food, Meals"
+    },
+    "bookIndex": 70,
+    "hadithCount": 94,
+    "hadithIndexStart": 5373
+  },
+  {
+    "_id": "69b6bc020df084ec203b4734",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Aqiqah (Birth Sacrifice)"
+    },
+    "bookIndex": 71,
+    "hadithCount": 8,
+    "hadithIndexStart": 5467
+  },
+  {
+    "_id": "69b6bc020df084ec203b4735",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Hunting, Slaughtering"
+    },
+    "bookIndex": 72,
+    "hadithCount": 70,
+    "hadithIndexStart": 5475
+  },
+  {
+    "_id": "69b6bc020df084ec203b4736",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Al-Adha Festival Sacrifice"
+    },
+    "bookIndex": 73,
+    "hadithCount": 30,
+    "hadithIndexStart": 5545
+  },
+  {
+    "_id": "69b6bc020df084ec203b4737",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Drinks"
+    },
+    "bookIndex": 74,
+    "hadithCount": 65,
+    "hadithIndexStart": 5575
+  },
+  {
+    "_id": "69b6bc020df084ec203b4738",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Patients"
+    },
+    "bookIndex": 75,
+    "hadithCount": 38,
+    "hadithIndexStart": 5640
+  },
+  {
+    "_id": "69b6bc020df084ec203b4739",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Medicine"
+    },
+    "bookIndex": 76,
+    "hadithCount": 105,
+    "hadithIndexStart": 5678
+  },
+  {
+    "_id": "69b6bc020df084ec203b473a",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Dress"
+    },
+    "bookIndex": 77,
+    "hadithCount": 187,
+    "hadithIndexStart": 5783
+  },
+  {
+    "_id": "69b6bc020df084ec203b473b",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Ethics"
+    },
+    "bookIndex": 78,
+    "hadithCount": 257,
+    "hadithIndexStart": 5970
+  },
+  {
+    "_id": "69b6bc020df084ec203b473c",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Asking Permission"
+    },
+    "bookIndex": 79,
+    "hadithCount": 77,
+    "hadithIndexStart": 6227
+  },
+  {
+    "_id": "69b6bc020df084ec203b473d",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Invocations"
+    },
+    "bookIndex": 80,
+    "hadithCount": 108,
+    "hadithIndexStart": 6304
+  },
+  {
+    "_id": "69b6bc020df084ec203b473e",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "To make the Heart Tender"
+    },
+    "bookIndex": 81,
+    "hadithCount": 182,
+    "hadithIndexStart": 6412
+  },
+  {
+    "_id": "69b6bc020df084ec203b473f",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Divine Will"
+    },
+    "bookIndex": 82,
+    "hadithCount": 27,
+    "hadithIndexStart": 6594
+  },
+  {
+    "_id": "69b6bc020df084ec203b4740",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Oaths and Vows"
+    },
+    "bookIndex": 83,
+    "hadithCount": 87,
+    "hadithIndexStart": 6621
+  },
+  {
+    "_id": "69b6bc020df084ec203b4741",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Expiation for Unfulfilled Oaths"
+    },
+    "bookIndex": 84,
+    "hadithCount": 15,
+    "hadithIndexStart": 6708
+  },
+  {
+    "_id": "69b6bc020df084ec203b4742",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Laws of Inheritance"
+    },
+    "bookIndex": 85,
+    "hadithCount": 49,
+    "hadithIndexStart": 6723
+  },
+  {
+    "_id": "69b6bc020df084ec203b4743",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Legal Punishments"
+    },
+    "bookIndex": 86,
+    "hadithCount": 89,
+    "hadithIndexStart": 6772
+  },
+  {
+    "_id": "69b6bc020df084ec203b4744",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Blood Money"
+    },
+    "bookIndex": 87,
+    "hadithCount": 57,
+    "hadithIndexStart": 6861
+  },
+  {
+    "_id": "69b6bc020df084ec203b4745",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Apostates"
+    },
+    "bookIndex": 88,
+    "hadithCount": 22,
+    "hadithIndexStart": 6918
+  },
+  {
+    "_id": "69b6bc020df084ec203b4746",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "(Statements made under) Coercion"
+    },
+    "bookIndex": 89,
+    "hadithCount": 13,
+    "hadithIndexStart": 6940
+  },
+  {
+    "_id": "69b6bc020df084ec203b4747",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Tricks"
+    },
+    "bookIndex": 90,
+    "hadithCount": 29,
+    "hadithIndexStart": 6953
+  },
+  {
+    "_id": "69b6bc020df084ec203b4748",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Interpretation of Dreams"
+    },
+    "bookIndex": 91,
+    "hadithCount": 66,
+    "hadithIndexStart": 6982
+  },
+  {
+    "_id": "69b6bc020df084ec203b4749",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Afflictions and the End of the World"
+    },
+    "bookIndex": 92,
+    "hadithCount": 89,
+    "hadithIndexStart": 7048
+  },
+  {
+    "_id": "69b6bc020df084ec203b474a",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Judgments"
+    },
+    "bookIndex": 93,
+    "hadithCount": 89,
+    "hadithIndexStart": 7137
+  },
+  {
+    "_id": "69b6bc020df084ec203b474b",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Wishes"
+    },
+    "bookIndex": 94,
+    "hadithCount": 20,
+    "hadithIndexStart": 7226
+  },
+  {
+    "_id": "69b6bc020df084ec203b474c",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Accepting Information Given by a Truthful Person"
+    },
+    "bookIndex": 95,
+    "hadithCount": 22,
+    "hadithIndexStart": 7246
+  },
+  {
+    "_id": "69b6bc020df084ec203b474d",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Holding Fast to the Qur'an and Sunnah"
+    },
+    "bookIndex": 96,
+    "hadithCount": 103,
+    "hadithIndexStart": 7268
+  },
+  {
+    "_id": "69b6bc020df084ec203b474e",
+    "editionId": "69b55e8d6f42ba7ccb2a131e",
+    "name": {
+      "en": "Oneness, Uniqueness of Allah (Tawheed)"
+    },
+    "bookIndex": 97,
+    "hadithCount": 193,
+    "hadithIndexStart": 7371
+  }
+]

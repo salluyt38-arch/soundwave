@@ -1,0 +1,572 @@
+[
+  {
+    "_id": "69b6bc020df084ec203b474f",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Introduction"
+    },
+    "bookIndex": 0,
+    "hadithCount": 92,
+    "hadithIndexStart": 1
+  },
+  {
+    "_id": "69b6bc020df084ec203b4750",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Faith"
+    },
+    "bookIndex": 1,
+    "hadithCount": 441,
+    "hadithIndexStart": 93
+  },
+  {
+    "_id": "69b6bc020df084ec203b4751",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Purification"
+    },
+    "bookIndex": 2,
+    "hadithCount": 145,
+    "hadithIndexStart": 534
+  },
+  {
+    "_id": "69b6bc020df084ec203b4752",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Menstruation"
+    },
+    "bookIndex": 3,
+    "hadithCount": 158,
+    "hadithIndexStart": 679
+  },
+  {
+    "_id": "69b6bc020df084ec203b4753",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Prayers"
+    },
+    "bookIndex": 4,
+    "hadithCount": 324,
+    "hadithIndexStart": 837
+  },
+  {
+    "_id": "69b6bc020df084ec203b4754",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Mosques and Places of Prayer"
+    },
+    "bookIndex": 5,
+    "hadithCount": 409,
+    "hadithIndexStart": 1161
+  },
+  {
+    "_id": "69b6bc020df084ec203b4755",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Prayer - Travellers"
+    },
+    "bookIndex": 6,
+    "hadithCount": 381,
+    "hadithIndexStart": 1570
+  },
+  {
+    "_id": "69b6bc020df084ec203b4756",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Prayer - Friday"
+    },
+    "bookIndex": 7,
+    "hadithCount": 93,
+    "hadithIndexStart": 1951
+  },
+  {
+    "_id": "69b6bc020df084ec203b4757",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Prayer - Two Eids"
+    },
+    "bookIndex": 8,
+    "hadithCount": 26,
+    "hadithIndexStart": 2044
+  },
+  {
+    "_id": "69b6bc020df084ec203b4758",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Prayer - Rain"
+    },
+    "bookIndex": 9,
+    "hadithCount": 19,
+    "hadithIndexStart": 2070
+  },
+  {
+    "_id": "69b6bc020df084ec203b4759",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Prayer - Eclipses"
+    },
+    "bookIndex": 10,
+    "hadithCount": 34,
+    "hadithIndexStart": 2089
+  },
+  {
+    "_id": "69b6bc020df084ec203b475a",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Prayer - Funerals"
+    },
+    "bookIndex": 11,
+    "hadithCount": 140,
+    "hadithIndexStart": 2123
+  },
+  {
+    "_id": "69b6bc020df084ec203b475b",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Zakat"
+    },
+    "bookIndex": 12,
+    "hadithCount": 232,
+    "hadithIndexStart": 2263
+  },
+  {
+    "_id": "69b6bc020df084ec203b475c",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Fasting"
+    },
+    "bookIndex": 13,
+    "hadithCount": 285,
+    "hadithIndexStart": 2495
+  },
+  {
+    "_id": "69b6bc020df084ec203b475d",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "I'tikaf"
+    },
+    "bookIndex": 14,
+    "hadithCount": 11,
+    "hadithIndexStart": 2780
+  },
+  {
+    "_id": "69b6bc020df084ec203b475e",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Pilgrimage"
+    },
+    "bookIndex": 15,
+    "hadithCount": 607,
+    "hadithIndexStart": 2791
+  },
+  {
+    "_id": "69b6bc020df084ec203b475f",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Marriage"
+    },
+    "bookIndex": 16,
+    "hadithCount": 3180,
+    "hadithIndexStart": 388
+  },
+  {
+    "_id": "69b6bc020df084ec203b4760",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Breastfeeding"
+    },
+    "bookIndex": 17,
+    "hadithCount": 84,
+    "hadithIndexStart": 3568
+  },
+  {
+    "_id": "69b6bc020df084ec203b4761",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Divorce"
+    },
+    "bookIndex": 18,
+    "hadithCount": 91,
+    "hadithIndexStart": 3652
+  },
+  {
+    "_id": "69b6bc020df084ec203b4762",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Invoking Curses"
+    },
+    "bookIndex": 19,
+    "hadithCount": 27,
+    "hadithIndexStart": 3743
+  },
+  {
+    "_id": "69b6bc020df084ec203b4763",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Emancipating Slaves"
+    },
+    "bookIndex": 20,
+    "hadithCount": 31,
+    "hadithIndexStart": 3770
+  },
+  {
+    "_id": "69b6bc020df084ec203b4764",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Transactions"
+    },
+    "bookIndex": 21,
+    "hadithCount": 161,
+    "hadithIndexStart": 3801
+  },
+  {
+    "_id": "69b6bc020df084ec203b4765",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Irrigation"
+    },
+    "bookIndex": 22,
+    "hadithCount": 178,
+    "hadithIndexStart": 3962
+  },
+  {
+    "_id": "69b6bc020df084ec203b4766",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "The Rules of Inheritance"
+    },
+    "bookIndex": 23,
+    "hadithCount": 23,
+    "hadithIndexStart": 4140
+  },
+  {
+    "_id": "69b6bc020df084ec203b4767",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Gifts"
+    },
+    "bookIndex": 24,
+    "hadithCount": 41,
+    "hadithIndexStart": 4163
+  },
+  {
+    "_id": "69b6bc020df084ec203b4768",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Wills"
+    },
+    "bookIndex": 25,
+    "hadithCount": 31,
+    "hadithIndexStart": 4204
+  },
+  {
+    "_id": "69b6bc020df084ec203b4769",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Vows"
+    },
+    "bookIndex": 26,
+    "hadithCount": 19,
+    "hadithIndexStart": 4235
+  },
+  {
+    "_id": "69b6bc020df084ec203b476a",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Oaths"
+    },
+    "bookIndex": 27,
+    "hadithCount": 88,
+    "hadithIndexStart": 4254
+  },
+  {
+    "_id": "69b6bc020df084ec203b476b",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Oaths, Muharibin, Qasas (Retaliation), and Diyat (Blood Money)"
+    },
+    "bookIndex": 28,
+    "hadithCount": 56,
+    "hadithIndexStart": 4342
+  },
+  {
+    "_id": "69b6bc020df084ec203b476c",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Legal Punishments"
+    },
+    "bookIndex": 29,
+    "hadithCount": 72,
+    "hadithIndexStart": 4398
+  },
+  {
+    "_id": "69b6bc020df084ec203b476d",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Judicial Decisions"
+    },
+    "bookIndex": 30,
+    "hadithCount": 28,
+    "hadithIndexStart": 4470
+  },
+  {
+    "_id": "69b6bc020df084ec203b476e",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Lost Property"
+    },
+    "bookIndex": 31,
+    "hadithCount": 21,
+    "hadithIndexStart": 4498
+  },
+  {
+    "_id": "69b6bc020df084ec203b476f",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Jihad and Expeditions"
+    },
+    "bookIndex": 32,
+    "hadithCount": 182,
+    "hadithIndexStart": 4519
+  },
+  {
+    "_id": "69b6bc020df084ec203b4770",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Government"
+    },
+    "bookIndex": 33,
+    "hadithCount": 267,
+    "hadithIndexStart": 4701
+  },
+  {
+    "_id": "69b6bc020df084ec203b4771",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Hunting, Slaughter, and what may be Eaten"
+    },
+    "bookIndex": 34,
+    "hadithCount": 92,
+    "hadithIndexStart": 4972
+  },
+  {
+    "_id": "69b6bc020df084ec203b4772",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Sacrifices"
+    },
+    "bookIndex": 35,
+    "hadithCount": 63,
+    "hadithIndexStart": 5064
+  },
+  {
+    "_id": "69b6bc020df084ec203b4773",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Drinks"
+    },
+    "bookIndex": 36,
+    "hadithCount": 270,
+    "hadithIndexStart": 5114
+  },
+  {
+    "_id": "69b6bc020df084ec203b4774",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Clothes and Adornment"
+    },
+    "bookIndex": 37,
+    "hadithCount": 201,
+    "hadithIndexStart": 5385
+  },
+  {
+    "_id": "69b6bc020df084ec203b4775",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Manners and Etiquette"
+    },
+    "bookIndex": 38,
+    "hadithCount": 60,
+    "hadithIndexStart": 5586
+  },
+  {
+    "_id": "69b6bc020df084ec203b4776",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Greetings"
+    },
+    "bookIndex": 39,
+    "hadithCount": 216,
+    "hadithIndexStart": 5646
+  },
+  {
+    "_id": "69b6bc020df084ec203b4777",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Concerning the Use of Correct Words"
+    },
+    "bookIndex": 40,
+    "hadithCount": 23,
+    "hadithIndexStart": 5862
+  },
+  {
+    "_id": "69b6bc020df084ec203b4778",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Poetry"
+    },
+    "bookIndex": 41,
+    "hadithCount": 10,
+    "hadithIndexStart": 5887
+  },
+  {
+    "_id": "69b6bc020df084ec203b4779",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Dreams"
+    },
+    "bookIndex": 42,
+    "hadithCount": 41,
+    "hadithIndexStart": 5897
+  },
+  {
+    "_id": "69b6bc020df084ec203b477a",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Virtues"
+    },
+    "bookIndex": 43,
+    "hadithCount": 5785,
+    "hadithIndexStart": 384
+  },
+  {
+    "_id": "69b6bc020df084ec203b477b",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "The Merits of the Companions"
+    },
+    "bookIndex": 44,
+    "hadithCount": 331,
+    "hadithIndexStart": 6169
+  },
+  {
+    "_id": "69b6bc020df084ec203b477c",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Virtue, Enjoining Good Manners, and Joining of the Ties of Kinship"
+    },
+    "bookIndex": 45,
+    "hadithCount": 223,
+    "hadithIndexStart": 6500
+  },
+  {
+    "_id": "69b6bc020df084ec203b477d",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Destiny"
+    },
+    "bookIndex": 46,
+    "hadithCount": 52,
+    "hadithIndexStart": 6723
+  },
+  {
+    "_id": "69b6bc020df084ec203b477e",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Knowledge"
+    },
+    "bookIndex": 47,
+    "hadithCount": 30,
+    "hadithIndexStart": 6775
+  },
+  {
+    "_id": "69b6bc020df084ec203b477f",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Pertaining to the Remembrance of Allah, Supplication, Repentance and Seeking Forgiveness"
+    },
+    "bookIndex": 48,
+    "hadithCount": 132,
+    "hadithIndexStart": 6805
+  },
+  {
+    "_id": "69b6bc020df084ec203b4780",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Heart-Melting Traditions"
+    },
+    "bookIndex": 49,
+    "hadithCount": 15,
+    "hadithIndexStart": 6937
+  },
+  {
+    "_id": "69b6bc020df084ec203b4781",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Repentance"
+    },
+    "bookIndex": 50,
+    "hadithCount": 72,
+    "hadithIndexStart": 6952
+  },
+  {
+    "_id": "69b6bc020df084ec203b4782",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Characteristics of The Hypocrites And Rulings Concerning Them"
+    },
+    "bookIndex": 51,
+    "hadithCount": 21,
+    "hadithIndexStart": 7024
+  },
+  {
+    "_id": "69b6bc020df084ec203b4783",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Characteristics of the Day of Judgment, Paradise, and Hell"
+    },
+    "bookIndex": 52,
+    "hadithCount": 85,
+    "hadithIndexStart": 7045
+  },
+  {
+    "_id": "69b6bc020df084ec203b4784",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Paradise, its Description, its Bounties and its Inhabitants"
+    },
+    "bookIndex": 53,
+    "hadithCount": 105,
+    "hadithIndexStart": 7130
+  },
+  {
+    "_id": "69b6bc020df084ec203b4785",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Tribulations and Portents of the Last Hour"
+    },
+    "bookIndex": 54,
+    "hadithCount": 182,
+    "hadithIndexStart": 7235
+  },
+  {
+    "_id": "69b6bc020df084ec203b4786",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Zuhd and Softening of Hearts"
+    },
+    "bookIndex": 55,
+    "hadithCount": 106,
+    "hadithIndexStart": 7417
+  },
+  {
+    "_id": "69b6bc020df084ec203b4787",
+    "editionId": "69b55e8d6f42ba7ccb2a131f",
+    "name": {
+      "en": "Commentary on the Qur'an"
+    },
+    "bookIndex": 56,
+    "hadithCount": 41,
+    "hadithIndexStart": 7523
+  }
+]

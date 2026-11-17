@@ -29,7 +29,7 @@ import re
 from html import unescape
 import yt_dlp
 import yt_dlp.version
-
+import app_backend
 import shutil
 PORT = int(os.environ.get("PORT", 5000))
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -1368,6 +1368,9 @@ class MusicHandler(SimpleHTTPRequestHandler):
                 self.send_json(APPSTORE_CATALOG)
                 return
 
+            if app_backend.handle_app_get(self, path, query):
+                return
+
             if path == "/api/debug":
                 self.send_json({
                     "build_id": "v3_android_client_only",
@@ -1994,6 +1997,9 @@ class MusicHandler(SimpleHTTPRequestHandler):
             content_len = int(self.headers.get("Content-Length", 0))
             post_body = self.rfile.read(content_len).decode("utf-8") if content_len > 0 else "{}"
             data = json.loads(post_body) if post_body else {}
+
+            if app_backend.handle_app_post(self, path, data):
+                return
 
             if path == "/api/subscription/create":
                 sub_id = f"SoundWave_SUB_{int(time.time())}"
