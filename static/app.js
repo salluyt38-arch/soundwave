@@ -6028,144 +6028,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // State for In-App Tabs opened directly inside SoundWave
-    window.playstoreOpenedTabs = {};
-    window.activePlaystoreTab = 'store';
-
-    // Renders the dynamic tab pills inside SoundWave
-    window.renderPlaystoreTabstrip = function() {
-        const container = document.getElementById('playstoreDynamicTabs');
-        if (!container) return;
-        const tabIds = Object.keys(window.playstoreOpenedTabs);
-        container.innerHTML = tabIds.map(id => {
-            const app = window.appstoreCatalog[id] || window.appstoreCatalog['weather'];
-            const isActive = (window.activePlaystoreTab === id);
-            return `
-                <button class="playstore-tab-pill ${isActive ? 'active' : ''}" id="tabbtn_${id}" type="button" onclick="window.switchPlaystoreTab('${id}')">
-                    <span>${app.icon}</span>
-                    <span>${app.shortTitle}</span>
-                    <span class="tab-close-x" title="Close Tab" onclick="event.stopPropagation(); window.closeAppTab('${id}')">✕</span>
-                </button>
-            `;
-        }).join('');
-    };
-
-    // Opens an App as a New Tab directly inside SoundWave
+    // Direct Application Launch in Clean New Tab (Owner: Sallu Services Hub)
     window.openAppTab = function(appId) {
         const app = window.appstoreCatalog[appId] || window.appstoreCatalog['weather'];
-        window.playstoreOpenedTabs[app.id] = true;
-        window.renderPlaystoreTabstrip();
-        window.switchPlaystoreTab(app.id);
-    };
-
-    // Switches between Store and any opened in-app tab
-    window.switchPlaystoreTab = function(target) {
-        window.activePlaystoreTab = target;
-        const mainView = document.getElementById('playstoreMainView');
-        const browserView = document.getElementById('playstoreBrowserView');
-        const storeTabBtn = document.getElementById('tabbtn_store');
-        const iframe = document.getElementById('swBrowserIframe');
-        const omnibarUrl = document.getElementById('swBrowserOmnibarUrl');
-        const dlHtmlBtn = document.getElementById('btnBrowserDownloadHtml');
-        const dlZipBtn = document.getElementById('btnBrowserDownloadZip');
-
-        // Make sure user is on the App Store / Play Store tab in SoundWave
-        if (typeof switchTab === 'function' && activeTabName !== 'appstore') {
-            switchTab('appstore');
-        }
-
-        if (target === 'store') {
-            if (storeTabBtn) storeTabBtn.classList.add('active');
-            if (mainView) mainView.classList.remove('hidden');
-            if (browserView) browserView.classList.add('hidden');
-            window.renderPlaystoreTabstrip();
-        } else {
-            const app = window.appstoreCatalog[target] || window.appstoreCatalog['weather'];
-            if (storeTabBtn) storeTabBtn.classList.remove('active');
-            if (mainView) mainView.classList.add('hidden');
-            if (browserView) browserView.classList.remove('hidden');
-
-            // Configure browser stage inside SoundWave
-            if (omnibarUrl) omnibarUrl.textContent = app.scheme;
-            if (dlHtmlBtn) {
-                dlHtmlBtn.href = app.download_html;
-                dlHtmlBtn.download = (app.id === 'weather' ? 'Weather-Experience-2026.html' : 'Islamic-Hadith-Library.html');
-            }
-            if (dlZipBtn) {
-                dlZipBtn.href = app.download_zip;
-                dlZipBtn.download = (app.id === 'weather' ? 'Weather-Experience-2026.zip' : 'Islamic-Hadith-Library.zip');
-            }
-
-            // Load into SoundWave In-App Viewport
-            if (iframe) {
-                if (!iframe.src || !iframe.src.endsWith(app.url)) {
-                    iframe.src = app.url;
-                }
-            }
-
-            window.renderPlaystoreTabstrip();
-            showToast('🚀 Running ' + app.title + ' in SoundWave');
+        if (app && app.url) {
+            window.open(app.url, '_blank');
         }
     };
-
-    // Closes a specific open tab
-    window.closeAppTab = function(appId) {
-        delete window.playstoreOpenedTabs[appId];
-        if (window.activePlaystoreTab === appId) {
-            const remaining = Object.keys(window.playstoreOpenedTabs);
-            if (remaining.length > 0) {
-                window.switchPlaystoreTab(remaining[remaining.length - 1]);
-            } else {
-                window.switchPlaystoreTab('store');
-            }
-        } else {
-            window.renderPlaystoreTabstrip();
-        }
+    window.launchAppInSoundWaveBrowser = window.openAppTab;
+    window.returnToAppStoreGrid = () => {
+        if (typeof switchTab === 'function') switchTab('appstore');
     };
 
-    // Closes the currently active app tab
-    window.closeActiveAppTab = function() {
-        if (window.activePlaystoreTab !== 'store') {
-            window.closeAppTab(window.activePlaystoreTab);
-        }
-    };
-
-    // Reloads the iframe inside SoundWave
-    window.reloadBrowserIframe = function() {
-        const iframe = document.getElementById('swBrowserIframe');
-        if (iframe && iframe.src && iframe.src !== 'about:blank') {
-            iframe.src = iframe.src;
-            showToast('🔄 Reloaded app');
-        }
-    };
-
-    // Toggles fullscreen
-    window.toggleBrowserFullscreen = function() {
-        const wrapper = document.querySelector('.sw-browser-wrapper');
-        if (!wrapper) return;
-        if (!document.fullscreenElement) {
-            wrapper.requestFullscreen().catch(() => {});
-        } else {
-            document.exitFullscreen().catch(() => {});
-        }
-    };
-
-    // Filter Play Store apps by search text
-    window.filterPlayStoreApps = function(query) {
+    // Filter Services by search query
+    window.filterServices = function(query) {
         const q = (query || '').toLowerCase().trim();
-        const cards = document.querySelectorAll('.play-app-card, .play-rank-item');
+        const cards = document.querySelectorAll('.service-card, .service-rank-item');
         cards.forEach(card => {
             const text = card.textContent.toLowerCase();
             card.style.display = (!q || text.includes(q)) ? 'flex' : 'none';
         });
     };
+    window.filterPlayStoreApps = window.filterServices;
 
-    // Filter Play Store apps by category chip
-    window.filterPlayStoreCategory = function(cat, btn) {
-        document.querySelectorAll('.play-chip').forEach(c => c.classList.remove('active'));
+    // Filter Services by category chip
+    window.filterServicesCategory = function(cat, btn) {
+        document.querySelectorAll('.services-chip').forEach(c => c.classList.remove('active'));
         if (btn) btn.classList.add('active');
 
-        const cards = document.querySelectorAll('.play-app-card');
+        const cards = document.querySelectorAll('.service-card');
         cards.forEach(card => {
             const cardCat = card.getAttribute('data-category') || '';
             if (cat === 'all' || cardCat.includes(cat)) {
@@ -6175,41 +6066,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     };
+    window.filterPlayStoreCategory = window.filterServicesCategory;
 
-    // Dropdown popover for standalone HTML & ZIP download
-    window.toggleDlMenu = function(appId, event) {
-        const popover = document.getElementById('playDlPopover');
-        if (!popover) return;
-        const app = window.appstoreCatalog[appId] || window.appstoreCatalog['weather'];
-
-        const dlHtml = document.getElementById('popoverDlHtml');
-        const dlZip = document.getElementById('popoverDlZip');
-        if (dlHtml) {
-            dlHtml.href = app.download_html;
-            dlHtml.download = (app.id === 'weather' ? 'Weather-Experience-2026.html' : 'Islamic-Hadith-Library.html');
+    // Backward compatibility safe stubs
+    window.switchPlaystoreTab = function(target) {
+        if (target && target !== 'store') {
+            window.openAppTab(target);
+        } else if (typeof switchTab === 'function') {
+            switchTab('appstore');
         }
-        if (dlZip) {
-            dlZip.href = app.download_zip;
-            dlZip.download = (app.id === 'weather' ? 'Weather-Experience-2026.zip' : 'Islamic-Hadith-Library.zip');
-        }
-
-        const rect = event.target.getBoundingClientRect();
-        popover.style.top = (rect.bottom + 8) + 'px';
-        popover.style.left = Math.max(10, rect.left - 180) + 'px';
-        popover.classList.toggle('hidden');
     };
-
-    // Close download popover on click outside
-    document.addEventListener('click', (e) => {
-        const popover = document.getElementById('playDlPopover');
-        if (popover && !popover.classList.contains('hidden') && !e.target.closest('.play-dl-dropdown-trigger') && !e.target.closest('#playDlPopover')) {
-            popover.classList.add('hidden');
-        }
-    });
-
-    // Backward compatibility aliases
-    window.launchAppInSoundWaveBrowser = window.openAppTab;
-    window.returnToAppStoreGrid = () => window.switchPlaystoreTab('store');
+    window.renderPlaystoreTabstrip = function() {};
+    window.closeAppTab = function() {};
+    window.closeActiveAppTab = function() {};
+    window.reloadBrowserIframe = function() {};
+    window.toggleBrowserFullscreen = function() {};
+    window.toggleDlMenu = function() {};
 
     // 24/7 SERVER CONNECTION & KEEP-ALIVE HEARTBEAT
     function syncServer24x7Status() {
