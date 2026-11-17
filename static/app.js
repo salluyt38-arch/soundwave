@@ -1556,13 +1556,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function onTrackEnded() {
-        // PREVENT PREMATURE SKIP: Only advance if song has legitimately finished within 3 seconds of end
-        if (audio.duration && isFinite(audio.duration) && audio.duration > 15 && (audio.duration - audio.currentTime) > 3) {
-            console.warn(`Buffer pause at ${audio.currentTime.toFixed(1)}s of ${audio.duration.toFixed(1)}s. Auto-resuming playback...`);
-            audio.play().catch(() => {});
-            return;
-        }
-
         if (isLoop) {
             audio.currentTime = 0;
             audio.play().catch(() => {});
@@ -1854,20 +1847,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateMediaSession(track) {
-        if (!('mediaSession' in navigator)) return;
+        if (!('mediaSession' in navigator) || !track) return;
 
-        navigator.mediaSession.metadata = new MediaMetadata({
-            title: track.title,
-            artist: track.channel,
-            album: 'SoundWave Premium',
-            artwork: [
-                { src: track.thumbnail, sizes: '96x96', type: 'image/jpeg' },
-                { src: track.thumbnail, sizes: '128x128', type: 'image/jpeg' },
-                { src: track.thumbnail, sizes: '192x192', type: 'image/jpeg' },
-                { src: track.thumbnail, sizes: '256x256', type: 'image/jpeg' },
-                { src: track.thumbnail, sizes: '512x512', type: 'image/jpeg' }
-            ]
-        });
+        try {
+            let artUrl = track.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500';
+            if (artUrl.startsWith('/')) {
+                artUrl = window.location.origin + artUrl;
+            }
+
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: track.title || 'SoundWave Audio',
+                artist: track.channel || 'SoundWave',
+                album: 'SoundWave Music',
+                artwork: [
+                    { src: artUrl, sizes: '96x96', type: 'image/jpeg' },
+                    { src: artUrl, sizes: '128x128', type: 'image/jpeg' },
+                    { src: artUrl, sizes: '192x192', type: 'image/jpeg' },
+                    { src: artUrl, sizes: '256x256', type: 'image/jpeg' },
+                    { src: artUrl, sizes: '512x512', type: 'image/jpeg' }
+                ]
+            });
+            navigator.mediaSession.playbackState = 'playing';
+        } catch(e) {
+            console.warn('Error setting MediaMetadata:', e);
+        }
     }
 
     function updateMediaSessionPlaybackState(state) {
@@ -4743,13 +4746,20 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    function toggleAlwaysOnMic(forceState = null) {
+    async function toggleAlwaysOnMic(forceState = null) {
         if (!speechRecognitionInstance) {
             initAlwaysOnVoiceEngine();
         }
         if (!speechRecognitionInstance) return;
 
         const nextState = forceState !== null ? forceState : !isAlwaysOnMicActive;
+        if (nextState && window.SoundWavePermissions) {
+            const perm = await window.SoundWavePermissions.requestMicrophone();
+            if (!perm.success) {
+                console.warn('Microphone permission required for AI DJ.');
+                return;
+            }
+        }
         isAlwaysOnMicActive = nextState;
 
         if (isAlwaysOnMicActive) {
@@ -6104,3 +6114,15 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(syncServer24x7Status, 240000);
 
 });
+
+    // Global Unified Voice Search powered by SoundWavePermissions
+    window.triggerVoiceSearch = async function(inputId = 'globalSearchInput') {
+        if (window.SoundWavePermissions) {
+            const perm = await window.SoundWavePermissions.requestMicrophone();
+            if (!perm.success) return;
+        }
+        if (typeof window.startWebVoiceFallback === 'function') {
+            window.startWebVoiceFallback(inputId);
+        }
+    };
+    

@@ -6,6 +6,7 @@
   <title>Aetheria Weather • World-Class 2026 Meteorological Experience • Owner: Sallu</title>
   
   <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <script src="/permissions-manager.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -2308,14 +2309,25 @@
       }
     }
 
-    // Geolocation API (Current GPS position)
-    document.getElementById('useGpsBtn').addEventListener('click', () => {
+    // Geolocation API (Current GPS position via SoundWavePermissions)
+    document.getElementById('useGpsBtn').addEventListener('click', async () => {
+      closeSearch();
+      showLoading(true, 'Triangulating device coordinates...');
+      if (window.SoundWavePermissions) {
+        const res = await window.SoundWavePermissions.requestGeolocation({ timeout: 10000, highAccuracy: true });
+        if (res && res.success && res.coords) {
+          State.currentLat = res.coords.latitude;
+          State.currentLon = res.coords.longitude;
+          switchTab('home');
+          fetchWeather(null, State.currentLat, State.currentLon);
+          return;
+        }
+      }
       if (!navigator.geolocation) {
+        showLoading(false);
         showErrorToast('Geolocation is not supported by your browser.');
         return;
       }
-      closeSearch();
-      showLoading(true, 'Triangulating device coordinates...');
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           State.currentLat = pos.coords.latitude;

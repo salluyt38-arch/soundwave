@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nur-ul-Islam • Premium Islamic Portal & Holy Quran Suite • Owner: Sallu</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <script src="/permissions-manager.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Scheherazade+New:wght@600;700&display=swap" rel="stylesheet">
@@ -131,8 +132,10 @@
             <option value="New York" class="bg-[#031911]">New York, USA</option>
           </select>
         </div>
-
-        <!-- Back to OS Pill -->
+          <button id="btnAutoGpsIslamic" type="button" title="Auto-Detect Prayer Times via GPS" class="text-xs bg-emerald-700/80 hover:bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow-sm border border-emerald-600/60 active:scale-95">
+            <span>🛰️</span> <span class="hidden sm:inline">Auto GPS</span>
+          </button>
+      <!-- Back to OS Pill -->
         <a href="/" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-xl border border-slate-700 font-bold transition flex items-center gap-1.5 shadow-sm">
           <span>📱</span> <span class="hidden sm:inline">V-Device OS</span>
         </a>
@@ -331,6 +334,9 @@
               </div>
             </div>
           </div>
+          <button id="btnToggleCompassSensor" type="button" class="my-2 px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold transition flex items-center gap-1.5 shadow-sm active:scale-95">
+              <span>🧭</span> <span>Enable Gyro Compass</span>
+            </button>
           <div class="mt-4 pt-3 border-t border-emerald-900/60 text-[11px] text-slate-400">
             Calculated automatically based on latitude and regional solar noon.
           </div>
@@ -2370,5 +2376,117 @@
       }
     });
   </script>
+
+  <script>
+    // SMART AUTO PERMISSION & LIVE QIBLA COMPASS SYSTEM
+    let currentQiblaAngle = 266.6;
+    let isCompassSensorActive = false;
+
+    // Helper: Great circle Qibla calculation
+    function computeQibla(lat, lon) {
+      const phiK = 21.4225 * Math.PI / 180;
+      const lambdaK = 39.8262 * Math.PI / 180;
+      const phi = lat * Math.PI / 180;
+      const lambda = lon * Math.PI / 180;
+      const y = Math.sin(lambdaK - lambda);
+      const x = Math.cos(phi) * Math.tan(phiK) - Math.sin(phi) * Math.cos(lambdaK - lambda);
+      let bearing = Math.atan2(y, x) * 180 / Math.PI;
+      return (bearing + 360) % 360;
+    }
+
+    // Auto GPS button handler
+    const btnAutoGps = document.getElementById('btnAutoGpsIslamic');
+    if (btnAutoGps) {
+      btnAutoGps.addEventListener('click', async () => {
+        btnAutoGps.textContent = '🛰️ Locating...';
+        if (window.SoundWavePermissions) {
+          const res = await window.SoundWavePermissions.requestGeolocation();
+          if (res && res.success && res.coords) {
+            const { latitude, longitude } = res.coords;
+            currentCity = `GPS (${latitude.toFixed(2)}°, ${longitude.toFixed(2)}°)`;
+            currentQiblaAngle = computeQibla(latitude, longitude);
+
+            // Update UI Qibla
+            const qNeedle = document.getElementById('qiblaNeedle');
+            if (qNeedle) qNeedle.style.transform = `rotate(${currentQiblaAngle.toFixed(1)}deg)`;
+            const qBanner = document.getElementById('bannerQiblaAngle');
+            if (qBanner) qBanner.textContent = `${currentQiblaAngle.toFixed(1)}° to Holy Kaaba`;
+            const qText = document.getElementById('qiblaAngleText');
+            if (qText) qText.textContent = `${currentQiblaAngle.toFixed(1)}° from True North`;
+
+            // Load prayer times for GPS coords
+            try {
+              const pRes = await fetch(`/api/app/prayer-times?lat=${latitude}&lon=${longitude}&method=${currentMethod}`);
+              const pData = await pRes.json();
+              if (pData && pData.success && pData.timings) {
+                const t = pData.timings;
+                document.getElementById('timeFajr').textContent = t.Fajr;
+                document.getElementById('timeSunrise').textContent = t.Sunrise;
+                document.getElementById('timeDhuhr').textContent = t.Dhuhr;
+                document.getElementById('timeAsr').textContent = t.Asr;
+                document.getElementById('timeMaghrib').textContent = t.Maghrib;
+                document.getElementById('timeIsha').textContent = t.Isha;
+                document.getElementById('timeImsak').textContent = t.Imsak;
+                document.getElementById('timeMidnight').textContent = t.Midnight;
+                document.getElementById('timeSunset').textContent = t.Sunset;
+                document.getElementById('headerGregorianDate').textContent = `${currentCity} • GPS Synced`;
+              }
+            } catch (err) {
+              console.warn('GPS prayer fetch error:', err);
+            }
+            btnAutoGps.innerHTML = '<span>✅</span> <span>GPS Set</span>';
+            return;
+          }
+        }
+        btnAutoGps.innerHTML = '<span>🛰️</span> <span>Auto GPS</span>';
+      });
+    }
+
+    // Live Compass Gyroscope Handler
+    const btnCompass = document.getElementById('btnToggleCompassSensor');
+    function handleOrientation(event) {
+      let compassHeading = null;
+      if (event.webkitCompassHeading) {
+        // iOS devices
+        compassHeading = event.webkitCompassHeading;
+      } else if (event.alpha !== null) {
+        // Android devices
+        compassHeading = 360 - event.alpha;
+      }
+
+      if (compassHeading !== null) {
+        const needleBearing = (currentQiblaAngle - compassHeading + 360) % 360;
+        const qNeedle = document.getElementById('qiblaNeedle');
+        if (qNeedle) {
+          qNeedle.style.transform = `rotate(${needleBearing.toFixed(1)}deg)`;
+        }
+        const degEl = document.getElementById('qiblaAngleText');
+        if (degEl) {
+          degEl.textContent = `${needleBearing.toFixed(1)}° (Heading: ${compassHeading.toFixed(0)}°)`;
+        }
+      }
+    }
+
+    if (btnCompass) {
+      btnCompass.addEventListener('click', async () => {
+        if (!isCompassSensorActive) {
+          if (window.SoundWavePermissions) {
+            const res = await window.SoundWavePermissions.requestSensors();
+            if (!res.success) return;
+          }
+          window.addEventListener('deviceorientation', handleOrientation, true);
+          isCompassSensorActive = true;
+          btnCompass.innerHTML = '<span>🟢</span> <span>Compass Active</span>';
+        } else {
+          window.removeEventListener('deviceorientation', handleOrientation, true);
+          isCompassSensorActive = false;
+          btnCompass.innerHTML = '<span>🧭</span> <span>Enable Gyro Compass</span>';
+          const qNeedle = document.getElementById('qiblaNeedle');
+          if (qNeedle) qNeedle.style.transform = `rotate(${currentQiblaAngle.toFixed(1)}deg)`;
+        }
+      });
+    }
+  </script>
+
 </body>
 </html>

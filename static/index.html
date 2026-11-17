@@ -33,6 +33,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script src="permissions-manager.js"></script>
     <link rel="stylesheet" href="style.css?v=20261028_v63_browser_keepalive">
     <link rel="manifest" href="manifest.json">
 
@@ -2847,6 +2848,14 @@
                 </div>
 
                 <div class="profile-actions-list">
+                    <button class="profile-action-btn" id="btnOpenPermissionSettings" type="button" onclick="window.SoundWavePermissions.openSettingsModal()">
+                        <span class="action-icon">🛡️</span>
+                        <div class="action-meta">
+                            <strong>Device Permissions & Sensors</strong>
+                            <small>Microphone, Location, Notifications & Compass</small>
+                        </div>
+                        <span class="action-arrow">›</span>
+                    </button>
                     <button class="profile-action-btn" id="btnOpenFirebaseSettings">
                         <span class="action-icon">🔥</span>
                         <div class="action-meta">
@@ -2955,6 +2964,120 @@
         <!-- ========================================================================== -->
         <!-- PWA & APP DOWNLOAD / INSTALL MODAL -->
         <!-- ========================================================================== -->
+        <!-- ========================================================================== -->
+        <!-- DEVICE PERMISSIONS & SENSORS MODAL -->
+        <!-- ========================================================================== -->
+        <div class="sp-modal-overlay hidden" id="devicePermissionsModal">
+            <div class="modal-backdrop-blur" id="devicePermBackdrop" onclick="document.getElementById('devicePermissionsModal').classList.add('hidden')"></div>
+            <div class="fb-settings-dialog perm-settings-dialog">
+                <button class="modal-close-btn" id="btnDevicePermClose" onclick="document.getElementById('devicePermissionsModal').classList.add('hidden')" title="Close">✕</button>
+
+                <div class="fb-settings-header">
+                    <div class="fb-logo-wrap perm-logo-wrap">
+                        <span style="font-size: 24px;">🛡️</span>
+                    </div>
+                    <div>
+                        <h2>Device Permissions & Hardware</h2>
+                        <p class="text-sub">Smart Auto-Detect & Hardware Access Controls</p>
+                    </div>
+                </div>
+
+                <div class="perm-items-list">
+                    
+                    <!-- 1. Microphone -->
+                    <div class="perm-card-item">
+                        <div class="perm-card-left">
+                            <div class="perm-icon-bubble">🎙️</div>
+                            <div>
+                                <div class="perm-title-row">
+                                    <strong>Microphone</strong>
+                                    <span class="perm-status-badge status-prompt" id="permBadge_microphone">Checking...</span>
+                                </div>
+                                <small class="text-sub">Used for AI DJ Voice conversation & hands-free search</small>
+                            </div>
+                        </div>
+                        <button class="btn-perm-action" id="permBtn_microphone" type="button" onclick="window.SoundWavePermissions.requestMicrophone()">
+                            Grant Access
+                        </button>
+                    </div>
+
+                    <!-- 2. Geolocation -->
+                    <div class="perm-card-item">
+                        <div class="perm-card-left">
+                            <div class="perm-icon-bubble">📍</div>
+                            <div>
+                                <div class="perm-title-row">
+                                    <strong>Location & GPS</strong>
+                                    <span class="perm-status-badge status-prompt" id="permBadge_geolocation">Checking...</span>
+                                </div>
+                                <small class="text-sub">Used for live Doppler radar, weather forecasts & prayer times</small>
+                            </div>
+                        </div>
+                        <button class="btn-perm-action" id="permBtn_geolocation" type="button" onclick="window.SoundWavePermissions.requestGeolocation()">
+                            Grant Access
+                        </button>
+                    </div>
+
+                    <!-- 3. Notifications -->
+                    <div class="perm-card-item">
+                        <div class="perm-card-left">
+                            <div class="perm-icon-bubble">🔔</div>
+                            <div>
+                                <div class="perm-title-row">
+                                    <strong>Notifications & Lockscreen</strong>
+                                    <span class="perm-status-badge status-prompt" id="permBadge_notifications">Checking...</span>
+                                </div>
+                                <small class="text-sub">Background playback status, prayer time alerts & system notices</small>
+                            </div>
+                        </div>
+                        <button class="btn-perm-action" id="permBtn_notifications" type="button" onclick="window.SoundWavePermissions.requestNotifications()">
+                            Enable
+                        </button>
+                    </div>
+
+                    <!-- 4. Sensors / Orientation -->
+                    <div class="perm-card-item">
+                        <div class="perm-card-left">
+                            <div class="perm-icon-bubble">🧭</div>
+                            <div>
+                                <div class="perm-title-row">
+                                    <strong>Device Orientation & Compass</strong>
+                                    <span class="perm-status-badge status-prompt" id="permBadge_sensors">Checking...</span>
+                                </div>
+                                <small class="text-sub">Realtime gyroscopic compass for 360° Qibla direction finder</small>
+                            </div>
+                        </div>
+                        <button class="btn-perm-action" id="permBtn_sensors" type="button" onclick="window.SoundWavePermissions.requestSensors()">
+                            Calibrate
+                        </button>
+                    </div>
+
+                    <!-- 5. Offline Storage -->
+                    <div class="perm-card-item">
+                        <div class="perm-card-left">
+                            <div class="perm-icon-bubble">📦</div>
+                            <div>
+                                <div class="perm-title-row">
+                                    <strong>Storage & Packages</strong>
+                                    <span class="perm-status-badge status-granted">🟢 Allowed</span>
+                                </div>
+                                <small class="text-sub">Offline standalone HTML apps, ZIP archives & audio caching</small>
+                            </div>
+                        </div>
+                        <button class="btn-perm-action" type="button" style="opacity: 0.7; cursor: default;">
+                            Ready ✓
+                        </button>
+                    </div>
+
+                </div>
+
+                <div class="fb-settings-buttons" style="margin-top: 20px;">
+                    <button class="btn-fb-cancel" type="button" onclick="document.getElementById('devicePermissionsModal').classList.add('hidden')">Close</button>
+                    <button class="btn-fb-save" type="button" onclick="window.SoundWavePermissions.syncAllStatuses();">🔄 Re-Check All Statuses</button>
+                </div>
+            </div>
+        </div>
+
         <div class="sp-modal-overlay hidden" id="pwaInstallModal">
             <div class="modal-backdrop-blur" id="pwaInstallBackdrop"></div>
             <div class="pwa-guide-dialog">
