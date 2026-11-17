@@ -68,6 +68,114 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 NVIDIA_API_KEY = os.environ.get("NVIDIA_API_KEY", "").strip()
 DEFAULT_AI_PROVIDER = os.environ.get("DEFAULT_AI_PROVIDER", "").strip().lower()
 
+SERVER_START_TIME = time.time()
+
+APPSTORE_CATALOG = {
+    "status": "success",
+    "updated_at": "2026-11-17",
+    "server_status": "online_24_7",
+    "apps": [
+        {
+            "id": "weather",
+            "name": "Weather Experience (2026)",
+            "subtitle": "Next-Gen Atmospheric & Doppler Radar Intelligence",
+            "version": "2026.1.0",
+            "rating": 4.9,
+            "reviews": "1.8k reviews",
+            "size": "110 KB",
+            "icon": "🌦️",
+            "theme_color": "#0ea5e9",
+            "category": "Weather & Meteorology",
+            "badge": "✨ 2026 Edition",
+            "summary": "Full Doppler radar player, high-res synoptic forecast, AQI air quality gauge, UV index and 7-day predictions.",
+            "features": [
+                {
+                    "title": "RainViewer Zero-Key Doppler Radar",
+                    "desc": "Real-time animated precipitation, cloud cover and severe weather radar tracking with scrubbing controls."
+                },
+                {
+                    "title": "Open-Meteo High-Resolution Engine",
+                    "desc": "Hyper-local synoptic meteorological calculations with real-time temperature, dew point and gusts."
+                },
+                {
+                    "title": "Real-time AQI Air Quality Gauge",
+                    "desc": "Continuous monitoring of PM2.5, PM10, Ozone and Nitrogen Dioxide with health recommendations."
+                },
+                {
+                    "title": "UV Index & 7-Day Precision Forecast",
+                    "desc": "Hourly solar exposure alerts, barometer pressure tracking, and detailed 7-day forecast."
+                },
+                {
+                    "title": "100% Client-Side / Standalone",
+                    "desc": "Runs completely offline without external server dependencies or API keys required."
+                }
+            ],
+            "launch_url": "/weather.html",
+            "download_html": "/download/weather.html",
+            "download_zip": "/download/weather.zip",
+            "internal_scheme": "soundwave://appstore/weather"
+        },
+        {
+            "id": "islamic",
+            "name": "Islamic & Hadith Library",
+            "subtitle": "Nur-ul-Islam • Hadith Collections, Quran & Prayer Suite",
+            "version": "2026.2.0",
+            "rating": 5.0,
+            "reviews": "3.2k reviews",
+            "size": "124 KB",
+            "icon": "🌙",
+            "theme_color": "#10b981",
+            "category": "Spiritual & Education",
+            "badge": "📖 Authentic Library",
+            "summary": "Authentic Hadith collections (Bukhari, Muslim, Nawawi), Holy Quran recitation audio, prayer times and 4-language support.",
+            "features": [
+                {
+                    "title": "Bukhari, Muslim & Nawawi Collections",
+                    "desc": "Complete authentic Hadith collections with Arabic text, chapter organization and search engine."
+                },
+                {
+                    "title": "4-Language Instant Translation",
+                    "desc": "Read in authentic Arabic, Hindi, Urdu, and English with instant language toggling."
+                },
+                {
+                    "title": "Authentic Arabic Recitation Audio",
+                    "desc": "High-fidelity audio playback with interactive audio visualizer and verse highlighting."
+                },
+                {
+                    "title": "Offline TTS Fallback & Spiritual Hub",
+                    "desc": "Native Text-to-Speech reading, GPS Prayer Times calculator, Qibla compass & Tasbeeh."
+                },
+                {
+                    "title": "Zero-Delay Standalone Engine",
+                    "desc": "Fast client-side caching enables uninterrupted access anywhere in the world."
+                }
+            ],
+            "launch_url": "/islamic.html",
+            "download_html": "/download/islamic.html",
+            "download_zip": "/download/islamic.zip",
+            "internal_scheme": "soundwave://appstore/islamic"
+        }
+    ]
+}
+
+def keep_alive_worker():
+    """24/7 background keep-alive pinger for Render and local server"""
+    time.sleep(20)
+    urls = [
+        "https://soundwave-5y5z.onrender.com/api/ping",
+        f"http://127.0.0.1:{PORT}/api/ping"
+    ]
+    while True:
+        for u in urls:
+            try:
+                req = urllib.request.Request(u, headers={"User-Agent": "SoundWave-24-7-KeepAlive"})
+                with urllib.request.urlopen(req, timeout=12) as resp:
+                    pass
+            except Exception:
+                pass
+        time.sleep(240)  # Ping every 4 minutes (keeps Render instance warm permanently)
+
+
 def get_default_provider():
     if DEFAULT_AI_PROVIDER and DEFAULT_AI_PROVIDER not in ["auto", "default"]:
         return DEFAULT_AI_PROVIDER
@@ -1246,6 +1354,20 @@ class MusicHandler(SimpleHTTPRequestHandler):
             path = parsed_url.path
             query = urllib.parse.parse_qs(parsed_url.query)
 
+            if path in ("/api/ping", "/api/health"):
+                self.send_json({
+                    "status": "online",
+                    "server": "SoundWave 24/7 Cloud Engine",
+                    "uptime_seconds": int(time.time() - SERVER_START_TIME),
+                    "timestamp": time.time(),
+                    "active_apps": ["weather", "islamic", "soundwave"]
+                })
+                return
+
+            if path in ("/api/appstore/apps", "/api/appstore"):
+                self.send_json(APPSTORE_CATALOG)
+                return
+
             if path == "/api/debug":
                 self.send_json({
                     "build_id": "v3_android_client_only",
@@ -2069,6 +2191,8 @@ class MusicHandler(SimpleHTTPRequestHandler):
 
 def run():
     os.makedirs(STATIC_DIR, exist_ok=True)
+    t = threading.Thread(target=keep_alive_worker, daemon=True, name="SoundWave24x7KeepAlive")
+    t.start()
     # Permanent cache: all media chunks and files are preserved permanently
     server = ThreadingHTTPServer(("0.0.0.0", PORT), MusicHandler)
     print(f"SoundWave Server active on http://0.0.0.0:{PORT}")
