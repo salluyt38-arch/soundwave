@@ -995,6 +995,22 @@
     // ==============================================
     // 6. AUTO GPS PANCHANG INTEGRATION
     // ==============================================
+    
+    // LIVE VEDIC PANCHANG API ENGINE
+    async function syncLivePanchang(city = 'Varanasi') {
+      try {
+        const res = await fetch(/api/app/sanatan/panchang?city=);
+        const json = await res.json();
+        if (json && json.success) {
+          const banner = document.getElementById('panchangBannerTithi');
+          if (banner) {
+            banner.textContent = ${json.samvat} •  •  • अभिजित: ;
+          }
+        }
+      } catch(e) {}
+    }
+    syncLivePanchang();
+
     const btnAutoGps = document.getElementById('btnAutoGpsSanatan');
     if (btnAutoGps) {
       btnAutoGps.addEventListener('click', async () => {

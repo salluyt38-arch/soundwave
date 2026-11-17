@@ -263,7 +263,29 @@
       `).join('');
     }
 
+    async function loadLiveJobs(cat = 'all') {
+      try {
+        const res = await fetch(`/api/app/sarkari/jobs?cat=${cat}`);
+        const json = await res.json();
+        if (json && json.success && json.jobs) {
+          renderJobs(json.jobs);
+          return;
+        }
+      } catch(e) {}
+      if (cat === 'all') renderJobs(jobs);
+      else renderJobs(jobs.filter(j => j.cat === cat));
+    }
+
     function filterJobs(cat, btn) {
+      document.querySelectorAll('.job-filter').forEach(b => {
+        b.classList.remove('bg-purple-600', 'text-white', 'active');
+        b.classList.add('bg-[#161226]', 'text-slate-300');
+      });
+      btn.classList.add('bg-purple-600', 'text-white', 'active');
+      btn.classList.remove('bg-[#161226]', 'text-slate-300');
+      loadLiveJobs(cat);
+    }
+    function oldFilterJobs(cat, btn) {
       document.querySelectorAll('.job-filter').forEach(b => {
         b.classList.remove('bg-purple-600', 'text-white', 'active');
         b.classList.add('bg-[#161226]', 'text-slate-300');

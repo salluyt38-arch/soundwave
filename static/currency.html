@@ -206,6 +206,22 @@
       SGD: 1.32
     };
 
+    async function syncLiveForex() {
+      try {
+        const res = await fetch('/api/app/currency/rates');
+        const json = await res.json();
+        if (json && json.data) {
+          const d = json.data;
+          if (d.USD) ratesVsUSD['INR'] = d.USD;
+          if (d.gold_24k_per_10g && document.getElementById('goldPriceDisplay')) {
+            document.getElementById('goldPriceDisplay').innerText = '₹' + d.gold_24k_per_10g.toLocaleString('en-IN');
+          }
+          recalculate();
+        }
+      } catch(e) {}
+    }
+    syncLiveForex();
+
     function recalculate() {
       const amount = parseFloat(document.getElementById('inputAmount').value) || 0;
       const from = document.getElementById('selectFrom').value;

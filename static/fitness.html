@@ -264,8 +264,31 @@
       document.getElementById('totalMealDisplay').innerText = `${totalMealCal} kcal • ${totalMealPro.toFixed(1)}g Protein`;
     }
 
-    function searchFood() {
+    async function syncLiveFoods() {
+      try {
+        const res = await fetch('/api/app/fitness/foods');
+        const json = await res.json();
+        if (json && json.success && json.foods && json.foods.length > 0) {
+          renderFoods(json.foods);
+          return;
+        }
+      } catch(e) {}
+      // Handled by syncLiveFoods()
+    }
+    syncLiveFoods();
+
+    async function searchFood() {
       const q = document.getElementById('foodSearch').value.toLowerCase().trim();
+      if (q.length > 1) {
+        try {
+          const res = await fetch(`/api/app/fitness/foods?q=${encodeURIComponent(q)}`);
+          const json = await res.json();
+          if (json && json.success && json.foods) {
+            renderFoods(json.foods);
+            return;
+          }
+        } catch(e) {}
+      }
       renderFoods(foods.filter(f => f.name.toLowerCase().includes(q)));
     }
 
@@ -334,7 +357,7 @@
     }
 
     // Init
-    renderFoods(foods);
+    // Handled by syncLiveFoods()
     calcBMI();
     renderGlasses();
   </script>

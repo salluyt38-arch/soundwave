@@ -268,7 +268,29 @@
       renderRecipes(filtered);
     }
 
-    function filterRecipes(query) {
+    async function filterRecipes(query) {
+      const q = (query || '').toLowerCase().trim();
+      if (q.length > 2) {
+        try {
+          const res = await fetch(`/api/app/recipes/search?q=${encodeURIComponent(q)}`);
+          const json = await res.json();
+          if (json && json.success && json.recipes && json.recipes.length > 0) {
+            renderRecipes(json.recipes.map((r, i) => ({
+              id: 'api_' + i,
+              title: r.name,
+              category: r.cat.toLowerCase().replace(' ', '_'),
+              badge: r.cat,
+              time: r.time,
+              difficulty: 'Easy',
+              icon: '🍲',
+              desc: `स्वादिष्ट ${r.name} बनाने की आसान विधि।`,
+              ingredients: r.ingredients,
+              instructions: r.steps
+            })));
+            return;
+          }
+        } catch(e) {}
+      }
       const q = (query || '').toLowerCase().trim();
       const filtered = recipesData.filter(r => 
         r.title.toLowerCase().includes(q) || 

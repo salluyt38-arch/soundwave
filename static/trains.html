@@ -288,7 +288,47 @@
       }
     };
 
-    function searchTrainStatus() {
+    async function searchTrainStatus() {
+      const q = document.getElementById('trainInput').value.trim() || '22436';
+      try {
+        const res = await fetch(`/api/app/trains/live?train=${encodeURIComponent(q)}`);
+        const json = await res.json();
+        if (json && json.success && json.data) {
+          renderTrainStatus(q, json.data);
+          return;
+        }
+      } catch(e) {}
+      const train = trainDatabase[q] || trainDatabase["22436"];
+      renderTrainStatus(q, train);
+    }
+
+    async function checkPnrStatus() {
+      const pnr = document.getElementById('pnrInput').value.trim() || '2456789123';
+      try {
+        const res = await fetch(`/api/app/trains/pnr?pnr=${encodeURIComponent(pnr)}`);
+        const json = await res.json();
+        if (json && json.success) {
+          document.getElementById('pnrResult').innerHTML = `
+            <div class="flex items-center justify-between border-b border-sky-900/60 pb-3">
+              <div>
+                <h3 class="text-lg font-bold text-white">PNR: ${json.pnr}</h3>
+                <p class="text-xs text-sky-300">${json.train}</p>
+              </div>
+              <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-xl text-xs font-bold font-mono">LIVE CNF</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#0a1529] p-4 rounded-xl text-xs mt-3">
+              <div><span class="text-slate-400">Class:</span> <div class="font-bold text-white">${json.class}</div></div>
+              <div><span class="text-slate-400">Coach:</span> <div class="font-bold text-sky-300">${json.coach}</div></div>
+              <div><span class="text-slate-400">Berth No:</span> <div class="font-bold text-sky-300">${json.berth}</div></div>
+              <div><span class="text-slate-400">Chart:</span> <div class="font-bold text-emerald-400">${json.chart}</div></div>
+            </div>
+          `;
+          return;
+        }
+      } catch(e) {}
+      oldCheckPnrStatus();
+    }
+    function oldCheckPnrStatus() {
       const q = document.getElementById('trainInput').value.trim();
       const train = trainDatabase[q] || trainDatabase["22436"];
       renderTrainStatus(q || "22436", train);

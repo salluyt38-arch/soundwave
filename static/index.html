@@ -281,10 +281,10 @@
                         </div>
 
                         <!-- UNIFIED APPS & SERVICES HUB ON HOME (OWNER: SALLU) -->
-                        <div class="home-apps-hub" style="margin: 20px 0 25px 0;">
+                        <div class="home-apps-hub" style="margin: 20px 0 30px 0;">
                             
-                            <!-- 4 Core Pillars Quick Bar -->
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px;">
+                            <!-- 4 Core Entertainment & Utility Pillars -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 22px;">
                                 <div onclick="if(typeof switchTab==='function') switchTab('home')" style="background: linear-gradient(135deg, rgba(29,185,84,0.18), rgba(29,185,84,0.06)); border: 1px solid rgba(29,185,84,0.35); border-radius: 16px; padding: 14px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
                                     <span style="font-size: 26px;">🎵</span>
                                     <div>
@@ -315,99 +315,106 @@
                                 </div>
                             </div>
 
-                            <!-- Services Horizontal Quick Slider -->
-                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                            <!-- Sallu Services Hub - Modern App Launcher Grid -->
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin: 0;">⚡ Cloud Services & Micro-Apps</h3>
-                                    <span style="font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 99px; background: rgba(245,158,11,0.2); color: #fbbf24; border: 1px solid rgba(245,158,11,0.4);">👑 Owner: Sallu</span>
+                                    <h3 style="font-size: 17px; font-weight: 800; color: #fff; margin: 0; display: flex; align-items: center; gap: 6px;">
+                                        <span>⚡</span>
+                                        <span>Services & Micro-Apps (14)</span>
+                                    </h3>
+                                    <span style="font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 99px; background: rgba(245,158,11,0.18); color: #fbbf24; border: 1px solid rgba(245,158,11,0.35);">👑 Owner: Sallu</span>
                                 </div>
-                                <button onclick="if(typeof switchTab==='function') switchTab('appstore')" style="background: none; border: none; font-size: 12px; font-weight: 700; color: #1db954; cursor: pointer;">See All 14 ↗</button>
+                                <button onclick="if(typeof switchTab==='function') switchTab('appstore')" style="background: none; border: none; font-size: 12px; font-weight: 700; color: #10b981; cursor: pointer; display: flex; align-items: center; gap: 3px;">
+                                    <span>Explore All</span>
+                                    <span>↗</span>
+                                </button>
                             </div>
 
-                            <div style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none;" class="no-scrollbar">
+                            <!-- Responsive App Drawer Grid (4 cols on mobile, 7 cols on desktop) -->
+                            <div class="home-app-drawer-grid">
                                 
-                                <div onclick="window.open('/sanatan.html', '_blank')" style="min-width: 140px; background: rgba(234,88,12,0.12); border: 1px solid rgba(234,88,12,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
-                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🕉️</span>
-                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Sanatan Seva</div>
-                                    <div style="font-size: 10px; color: #fb923c;">Gita & Panchang</div>
+                                <div class="home-app-tile" onclick="window.open('/sanatan.html', '_blank')">
+                                    <div class="home-app-tile-icon sanatan"><span>🕉️</span></div>
+                                    <span class="home-app-tile-title">Sanatan Seva</span>
+                                    <span class="home-app-tile-cat">Gita • Panchang</span>
                                 </div>
 
-                                <div onclick="window.open('/islamic.html', '_blank')" style="min-width: 140px; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
-                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🌙</span>
-                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Islamic Library</div>
-                                    <div style="font-size: 10px; color: #34d399;">Hadith & Quran</div>
+                                <div class="home-app-tile" onclick="window.open('/islamic.html', '_blank')">
+                                    <div class="home-app-tile-icon islamic"><span>🌙</span></div>
+                                    <span class="home-app-tile-title">Nur-ul-Islam</span>
+                                    <span class="home-app-tile-cat">Quran • Hadith</span>
                                 </div>
 
-                                <div onclick="window.open('/health.html', '_blank')" style="min-width: 140px; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
-                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🏥</span>
-                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Swasthya Seva</div>
-                                    <div style="font-size: 10px; color: #34d399;">Medicine & First Aid</div>
+                                <div class="home-app-tile" onclick="window.open('/health.html', '_blank')">
+                                    <div class="home-app-tile-icon health"><span>🏥</span></div>
+                                    <span class="home-app-tile-title">Swasthya Seva</span>
+                                    <span class="home-app-tile-cat">Generic Meds</span>
                                 </div>
 
-                                <div onclick="window.open('/trains.html', '_blank')" style="min-width: 140px; background: rgba(14,165,233,0.12); border: 1px solid rgba(14,165,233,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
-                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🚆</span>
-                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">RailSathi</div>
-                                    <div style="font-size: 10px; color: #38bdf8;">Train & Metro Radar</div>
+                                <div class="home-app-tile" onclick="window.open('/trains.html', '_blank')">
+                                    <div class="home-app-tile-icon trains"><span>🚆</span></div>
+                                    <span class="home-app-tile-title">RailSathi</span>
+                                    <span class="home-app-tile-cat">Live PNR Radar</span>
                                 </div>
 
-                                <div onclick="window.open('/sarkari.html', '_blank')" style="min-width: 140px; background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
-                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">💼</span>
-                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Sarkari Hub</div>
-                                    <div style="font-size: 10px; color: #c084fc;">Jobs & GK Quiz</div>
+                                <div class="home-app-tile" onclick="window.open('/sarkari.html', '_blank')">
+                                    <div class="home-app-tile-icon sarkari"><span>💼</span></div>
+                                    <span class="home-app-tile-title">Sarkari Hub</span>
+                                    <span class="home-app-tile-cat">Jobs & GK Quiz</span>
                                 </div>
 
-                                <div onclick="window.open('/weather.html', '_blank')" style="min-width: 140px; background: rgba(14,165,233,0.12); border: 1px solid rgba(14,165,233,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
-                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🌦️</span>
-                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Weather 2026</div>
-                                    <div style="font-size: 10px; color: #38bdf8;">Doppler Radar</div>
+                                <div class="home-app-tile" onclick="window.open('/finance.html', '_blank')">
+                                    <div class="home-app-tile-icon finance"><span>💰</span></div>
+                                    <span class="home-app-tile-title">Smart Money</span>
+                                    <span class="home-app-tile-cat">EMI & SIP Pro</span>
                                 </div>
 
-                                <div onclick="window.open('/finance.html', '_blank')" style="min-width: 140px; background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
-                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">💰</span>
-                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Smart Money</div>
-                                    <div style="font-size: 10px; color: #4ade80;">Loan EMI & SIP</div>
+                                <div class="home-app-tile" onclick="window.open('/cricket.html', '_blank')">
+                                    <div class="home-app-tile-icon cricket"><span>🏏</span></div>
+                                    <span class="home-app-tile-title">CricRadar</span>
+                                    <span class="home-app-tile-cat">Live Scores</span>
                                 </div>
 
-                                <div onclick="window.open('/cricket.html', '_blank')" style="min-width: 140px; background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
-                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🏏</span>
-                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">CricRadar</div>
-                                    <div style="font-size: 10px; color: #22d3ee;">Live Score & News</div>
+                                <div class="home-app-tile" onclick="window.open('/fitness.html', '_blank')">
+                                    <div class="home-app-tile-icon fitness"><span>🥗</span></div>
+                                    <span class="home-app-tile-title">FitDesi</span>
+                                    <span class="home-app-tile-cat">Indian Nutrition</span>
                                 </div>
 
-                                <div onclick="window.open('/fitness.html', '_blank')" style="min-width: 140px; background: rgba(132,204,22,0.12); border: 1px solid rgba(132,204,22,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
-                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🥗</span>
-                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">FitDesi</div>
-                                    <div style="font-size: 10px; color: #a3e635;">Calorie & BMI</div>
+                                <div class="home-app-tile" onclick="window.open('/tools.html', '_blank')">
+                                    <div class="home-app-tile-icon tools"><span>🛠️</span></div>
+                                    <span class="home-app-tile-title">OmniTools</span>
+                                    <span class="home-app-tile-cat">PDF & Speed</span>
                                 </div>
 
-                                <div onclick="window.open('/tools.html', '_blank')" style="min-width: 140px; background: rgba(236,72,153,0.12); border: 1px solid rgba(236,72,153,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
-                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🛠️</span>
-                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">OmniTools</div>
-                                    <div style="font-size: 10px; color: #f472b6;">PDF & Speed Radar</div>
+                                <div class="home-app-tile" onclick="window.open('/weather.html', '_blank')">
+                                    <div class="home-app-tile-icon weather"><span>🌦️</span></div>
+                                    <span class="home-app-tile-title">Weather 2026</span>
+                                    <span class="home-app-tile-cat">Doppler Radar</span>
                                 </div>
 
-                                <div onclick="window.open('/currency.html', '_blank')" style="min-width: 140px; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
-                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">💵</span>
-                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Forex & Gold</div>
-                                    <div style="font-size: 10px; color: #34d399;">160+ Currencies</div>
+                                <div class="home-app-tile" onclick="window.open('/currency.html', '_blank')">
+                                    <div class="home-app-tile-icon currency"><span>💵</span></div>
+                                    <span class="home-app-tile-title">Forex Radar</span>
+                                    <span class="home-app-tile-cat">160+ Currencies</span>
                                 </div>
 
-                                <div onclick="window.open('/recipes.html', '_blank')" style="min-width: 140px; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
-                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🍲</span>
-                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Bawarchi</div>
-                                    <div style="font-size: 10px; color: #fbbf24;">Cooking Recipes</div>
+                                <div class="home-app-tile" onclick="window.open('/recipes.html', '_blank')">
+                                    <div class="home-app-tile-icon recipes"><span>🍲</span></div>
+                                    <span class="home-app-tile-title">Bawarchi</span>
+                                    <span class="home-app-tile-cat">Recipe Finder</span>
                                 </div>
 
-                                <div onclick="window.open('/dictionary.html', '_blank')" style="min-width: 140px; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
-                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">📖</span>
-                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Shabadkosh</div>
-                                    <div style="font-size: 10px; color: #818cf8;">Eng-Hindi Vocab</div>
+                                <div class="home-app-tile" onclick="window.open('/dictionary.html', '_blank')">
+                                    <div class="home-app-tile-icon dictionary"><span>📖</span></div>
+                                    <span class="home-app-tile-title">ShabdKosh</span>
+                                    <span class="home-app-tile-cat">Hindi-Eng Vocab</span>
                                 </div>
 
-                                <div onclick="window.open('/pincode.html', '_blank')" style="min-width: 140px; background: rgba(225,29,72,0.12); border: 1px solid rgba(225,29,72,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
-                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">📮</span>
-                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pincode Radar</div>
-                                    <div style="font-size: 10px; color: #fb7185;">150K+ Post Offices</div>
+                                <div class="home-app-tile" onclick="window.open('/pincode.html', '_blank')">
+                                    <div class="home-app-tile-icon pincode"><span>📮</span></div>
+                                    <span class="home-app-tile-title">Pincode Radar</span>
+                                    <span class="home-app-tile-cat">India Post</span>
                                 </div>
 
                             </div>
@@ -2206,9 +2213,7 @@
                                         </div>
                                         <div class="service-card-actions">
                                             <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/sanatan.html', '_blank')"><span>⚡ Open App ↗</span></button>
-                                            <a href="/download/sanatan.html" download="Sanatan-Seva-Vedic-Portal.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
-                                            <a href="/download/sanatan.zip" download="Sanatan-Seva-Vedic-Portal.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
-                                        </div>
+                                            </div>
                                     </div>
 
                                     <!-- APP 2: Islamic & Hadith Library -->
@@ -2233,9 +2238,7 @@
                                         </div>
                                         <div class="service-card-actions">
                                             <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/islamic.html', '_blank')"><span>⚡ Open App ↗</span></button>
-                                            <a href="/download/islamic.html" download="Islamic-Hadith-Library.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
-                                            <a href="/download/islamic.zip" download="Islamic-Hadith-Library.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
-                                        </div>
+                                            </div>
                                     </div>
 
                                     <!-- APP 3: Health & Emergency -->
@@ -2260,9 +2263,7 @@
                                         </div>
                                         <div class="service-card-actions">
                                             <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/health.html', '_blank')"><span>⚡ Open App ↗</span></button>
-                                            <a href="/download/health.html" download="Swasthya-Seva-Health-Pro.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
-                                            <a href="/download/health.zip" download="Swasthya-Seva-Health-Pro.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
-                                        </div>
+                                            </div>
                                     </div>
 
                                     <!-- APP 4: Rail & Transit Radar -->
@@ -2287,9 +2288,7 @@
                                         </div>
                                         <div class="service-card-actions">
                                             <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/trains.html', '_blank')"><span>⚡ Open App ↗</span></button>
-                                            <a href="/download/trains.html" download="RailSathi-Transit-Radar.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
-                                            <a href="/download/trains.zip" download="RailSathi-Transit-Radar.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
-                                        </div>
+                                            </div>
                                     </div>
 
                                     <!-- APP 5: Sarkari Hub -->
@@ -2314,9 +2313,7 @@
                                         </div>
                                         <div class="service-card-actions">
                                             <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/sarkari.html', '_blank')"><span>⚡ Open App ↗</span></button>
-                                            <a href="/download/sarkari.html" download="Sarkari-Hub-Career-Pro.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
-                                            <a href="/download/sarkari.zip" download="Sarkari-Hub-Career-Pro.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
-                                        </div>
+                                            </div>
                                     </div>
 
                                     <!-- APP 6: Smart Money & Loans -->
@@ -2341,9 +2338,7 @@
                                         </div>
                                         <div class="service-card-actions">
                                             <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/finance.html', '_blank')"><span>⚡ Open App ↗</span></button>
-                                            <a href="/download/finance.html" download="Smart-Money-Finance-Pro.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
-                                            <a href="/download/finance.zip" download="Smart-Money-Finance-Pro.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
-                                        </div>
+                                            </div>
                                     </div>
 
                                     <!-- APP 7: CricRadar -->
@@ -2368,9 +2363,7 @@
                                         </div>
                                         <div class="service-card-actions">
                                             <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/cricket.html', '_blank')"><span>⚡ Open App ↗</span></button>
-                                            <a href="/download/cricket.html" download="CricRadar-Live-Sports.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
-                                            <a href="/download/cricket.zip" download="CricRadar-Live-Sports.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
-                                        </div>
+                                            </div>
                                     </div>
 
                                     <!-- APP 8: FitDesi -->
@@ -2395,9 +2388,7 @@
                                         </div>
                                         <div class="service-card-actions">
                                             <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/fitness.html', '_blank')"><span>⚡ Open App ↗</span></button>
-                                            <a href="/download/fitness.html" download="FitDesi-Wellness-Pro.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
-                                            <a href="/download/fitness.zip" download="FitDesi-Wellness-Pro.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
-                                        </div>
+                                            </div>
                                     </div>
 
                                     <!-- APP 9: OmniTools -->
@@ -2422,9 +2413,7 @@
                                         </div>
                                         <div class="service-card-actions">
                                             <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/tools.html', '_blank')"><span>⚡ Open App ↗</span></button>
-                                            <a href="/download/tools.html" download="OmniTools-Toolkit-Pro.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
-                                            <a href="/download/tools.zip" download="OmniTools-Toolkit-Pro.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
-                                        </div>
+                                            </div>
                                     </div>
 
                                     <!-- APP 10: Weather Experience -->
@@ -2449,9 +2438,7 @@
                                         </div>
                                         <div class="service-card-actions">
                                             <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/weather.html', '_blank')"><span>⚡ Open App ↗</span></button>
-                                            <a href="/download/weather.html" download="Weather-Experience-2026.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
-                                            <a href="/download/weather.zip" download="Weather-Experience-2026.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
-                                        </div>
+                                            </div>
                                     </div>
 
                                     <!-- APP 11: Forex & Currency Radar -->
@@ -2476,9 +2463,7 @@
                                         </div>
                                         <div class="service-card-actions">
                                             <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/currency.html', '_blank')"><span>⚡ Open App ↗</span></button>
-                                            <a href="/download/currency.html" download="Forex-Currency-Radar.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
-                                            <a href="/download/currency.zip" download="Forex-Currency-Radar.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
-                                        </div>
+                                            </div>
                                     </div>
 
                                     <!-- APP 12: Bawarchi Recipe Finder -->
@@ -2503,9 +2488,7 @@
                                         </div>
                                         <div class="service-card-actions">
                                             <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/recipes.html', '_blank')"><span>⚡ Open App ↗</span></button>
-                                            <a href="/download/recipes.html" download="Bawarchi-Recipe-Finder.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
-                                            <a href="/download/recipes.zip" download="Bawarchi-Recipe-Finder.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
-                                        </div>
+                                            </div>
                                     </div>
 
                                     <!-- APP 13: Universal Shabadkosh -->
@@ -2530,9 +2513,7 @@
                                         </div>
                                         <div class="service-card-actions">
                                             <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/dictionary.html', '_blank')"><span>⚡ Open App ↗</span></button>
-                                            <a href="/download/dictionary.html" download="Universal-Shabadkosh.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
-                                            <a href="/download/dictionary.zip" download="Universal-Shabadkosh.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
-                                        </div>
+                                            </div>
                                     </div>
 
                                     <!-- APP 14: India Post Pincode Radar -->
@@ -2557,9 +2538,7 @@
                                         </div>
                                         <div class="service-card-actions">
                                             <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/pincode.html', '_blank')"><span>⚡ Open App ↗</span></button>
-                                            <a href="/download/pincode.html" download="India-Post-Pincode-Radar.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
-                                            <a href="/download/pincode.zip" download="India-Post-Pincode-Radar.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
-                                        </div>
+                                            </div>
                                     </div>
 
                                 </div>

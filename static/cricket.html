@@ -279,6 +279,19 @@
     let wickets = 3;
     let balls = 86; // 14.2 ov
 
+    async function syncLiveCricket() {
+      try {
+        const res = await fetch('/api/app/cricket/live');
+        const json = await res.json();
+        if (json && json.success && json.team1) {
+          document.getElementById('scoreRuns').innerText = json.team1.score;
+          document.getElementById('scoreOvers').innerText = `(${json.team1.overs} / 20 ov)`;
+          document.getElementById('matchEquation').innerHTML = `⚡ <strong>${json.equation}</strong> (CR: ${json.currentRunRate})`;
+        }
+      } catch(e) {}
+    }
+    syncLiveCricket();
+
     function simulateNextBall() {
       const outcomes = ['1', '2', '4', '6', '1', '0', '4'];
       const r = outcomes[Math.floor(Math.random() * outcomes.length)];

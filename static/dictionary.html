@@ -220,15 +220,33 @@
       }
     };
 
-    function lookupWord() {
+    async function lookupWord() {
       const q = document.getElementById('dictInput').value.trim().toLowerCase();
       if (!q) return;
+
+      try {
+        const res = await fetch(`/api/app/dictionary/lookup?word=${encodeURIComponent(q)}`);
+        const json = await res.json();
+        if (json && json.success && json.data) {
+          const d = json.data;
+          const mean = (d.meanings && d.meanings[0]) || {definitions:['Standard definition.'], partOfSpeech:'term', example:''};
+          displayWord({
+            word: d.word.charAt(0).toUpperCase() + d.word.slice(1),
+            pos: mean.partOfSpeech || 'Word',
+            phonetic: d.phonetic || `/${d.word}/`,
+            hindi: d.hindi || `${d.word} का अर्थ`,
+            def: mean.definitions[0] || 'Meaning of the term.',
+            example: mean.example || `This is how '${d.word}' is used in English.`,
+            synonyms: ["Term", "Vocabulary", "Word"]
+          });
+          return;
+        }
+      } catch(e) {}
 
       const found = dictionaryDatabase[q];
       if (found) {
         displayWord(found);
       } else {
-        // Fallback: generate definition via standard format
         displayWord({
           word: q.charAt(0).toUpperCase() + q.slice(1),
           pos: "Word / Term",

@@ -134,7 +134,43 @@
       ]
     };
 
-    function searchPincode() {
+    async function searchPincode() {
+      const pin = document.getElementById('pinInput').value.trim();
+      const container = document.getElementById('pinResult');
+      container.innerHTML = `<div class="text-center py-6 text-slate-400"><div class="animate-spin inline-block text-2xl mb-2">🔄</div><p class="text-xs">Calling Official India Post API...</p></div>`;
+
+      try {
+        const res = await fetch(`/api/app/pincode/lookup?pin=${encodeURIComponent(pin)}`);
+        const json = await res.json();
+        if (json && json.success && json.data) {
+          const d = json.data;
+          container.innerHTML = `
+            <div class="border-b border-red-900/60 pb-3 mb-4 flex justify-between items-center">
+              <div>
+                <h3 class="text-xl font-bold text-white">PIN: ${d.pincode}</h3>
+                <p class="text-xs text-red-400">${d.count} Post Office(s) Found</p>
+              </div>
+              <span class="text-xs px-2.5 py-1 bg-emerald-500/20 text-emerald-300 font-bold rounded-lg font-mono">INDIA POST LIVE</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              ${d.offices.map(o => `
+                <div class="p-3 bg-[#160a0a] rounded-xl border border-red-900/40">
+                  <div class="font-bold text-white text-sm">${o.name}</div>
+                  <div class="text-slate-400 mt-1">${o.branchType} • <span class="text-emerald-400">${o.delivery}</span></div>
+                  <div class="text-slate-300 text-[11px] mt-1">${o.district}, ${o.state}</div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+          return;
+        }
+      } catch (e) {
+        console.warn('Pincode fetch failed', e);
+      }
+      localSearchPincode();
+    }
+
+    function localSearchPincode() {
       const q = document.getElementById('pincodeInput').value.trim();
       const container = document.getElementById('pincodeResults');
       if (!q) return;

@@ -81,6 +81,16 @@
     </div>
   </header>
 
+  <!-- LIVE FINANCIAL MARKET TICKER (API SYNC) -->
+  <div class="bg-[#0b1f13] border-b border-emerald-900/40 px-4 py-1.5 text-xs text-center flex items-center justify-center gap-4 text-emerald-300 font-mono flex-wrap">
+    <span>⚡ LIVE MARKET:</span>
+    <span id="finTickerUsd">USD/INR: ₹86.40</span>
+    <span>•</span>
+    <span id="finTickerGold">Gold (24K/10g): ₹78,500</span>
+    <span>•</span>
+    <span id="finTickerSilver">Silver (1kg): ₹92,500</span>
+  </div>
+
   <!-- NAVIGATION TABS -->
   <div class="sticky top-[57px] z-30 bg-[#070e0a]/90 backdrop-blur-md border-b border-emerald-950 px-4 py-2">
     <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar">
@@ -441,6 +451,19 @@
     }
 
     // Init
+    async function syncLiveMarketRates() {
+      try {
+        const res = await fetch('/api/app/currency/rates');
+        const json = await res.json();
+        if (json && json.data) {
+          if (json.data.USD) document.getElementById('finTickerUsd').innerText = `USD/INR: ₹${json.data.USD}`;
+          if (json.data.gold_24k_per_10g) document.getElementById('finTickerGold').innerText = `Gold (24K/10g): ₹${json.data.gold_24k_per_10g.toLocaleString('en-IN')}`;
+          if (json.data.silver_per_1kg) document.getElementById('finTickerSilver').innerText = `Silver (1kg): ₹${json.data.silver_per_1kg.toLocaleString('en-IN')}`;
+        }
+      } catch(e) {}
+    }
+    syncLiveMarketRates();
+
     calculateEMI();
     calculateSIP();
     calculateGST();

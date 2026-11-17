@@ -321,7 +321,24 @@
       `).join('');
     }
 
-    function searchMedicines() {
+    async function searchMedicines() {
+      const q = document.getElementById('medSearch').value.toLowerCase().trim();
+      try {
+        const res = await fetch(`/api/app/health/medicines?q=${encodeURIComponent(q)}`);
+        const json = await res.json();
+        if (json && json.success && json.medicines) {
+          renderMedicines(json.medicines);
+          return;
+        }
+      } catch(e) {}
+      const filtered = medicines.filter(m => 
+        m.brand.toLowerCase().includes(q) || 
+        m.salt.toLowerCase().includes(q) || 
+        m.use.toLowerCase().includes(q)
+      );
+      renderMedicines(filtered);
+    }
+    function oldSearchMedicines() {
       const q = document.getElementById('medSearch').value.toLowerCase().trim();
       const filtered = medicines.filter(m => 
         m.brand.toLowerCase().includes(q) || 
