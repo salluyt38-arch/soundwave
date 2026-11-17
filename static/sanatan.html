@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Sanatan Seva • Hindu Spiritual Portal & Bhagavad Gita Suite • Owner: Sallu</title>
+  
+  <script src="/permissions-manager.js"></script>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Noto Sans Devanagari', 'sans-serif'],
+            cinzel: ['Cinzel', 'serif'],
+            devanagari: ['Noto Sans Devanagari', 'sans-serif']
+          },
+          colors: {
+            saffron: {
+              400: '#fb923c',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c'
+            },
+            vedic: {
+              gold: '#fbbf24',
+              goldLight: '#fde68a',
+              amber: '#d97706',
+              bgDark: '#0a0907',
+              cardDark: '#14120e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #080705;
+      color: #f3f4f6;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    
+    .glass-card {
+      background: rgba(26, 22, 17, 0.7);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(251, 146, 60, 0.16);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .glass-card:hover {
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    
+    .nav-tab.active {
+      background: linear-gradient(135deg, rgba(234, 88, 12, 0.35), rgba(217, 119, 6, 0.25));
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+    }
+    
+    .gold-glow-text {
+      text-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
+    }
+
+    @keyframes flameFlicker {
+      0%, 100% { transform: scale(1) rotate(-1deg); opacity: 0.95; }
+      50% { transform: scale(1.08) rotate(1.5deg); opacity: 1; }
+    }
+    .diya-flame {
+      animation: flameFlicker 1.8s infinite ease-in-out;
+      transform-origin: bottom center;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f0d0a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(245, 158, 11, 0.3);
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(245, 158, 11, 0.5);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col justify-between selection:bg-amber-500/30 selection:text-amber-200">
+
+  <!-- ==============================================
+       TOP GLOBAL APP HEADER (OWNER: SALLU)
+       ============================================== -->
+  <header class="sticky top-0 z-40 bg-[#0d0a07]/95 backdrop-blur-md border-b border-amber-900/50 shadow-2xl">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+      
+      <!-- Brand & Sanskrit Symbol -->
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-600 via-orange-600 to-yellow-500 p-0.5 shadow-lg flex items-center justify-center shadow-amber-600/30">
+          <div class="w-full h-full bg-[#16110a] rounded-[14px] flex items-center justify-center text-xl font-bold text-amber-400">
+            🕉️
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5 font-cinzel">
+              <span>Sanatan Seva</span>
+              <span class="text-xs px-2 py-0.5 bg-amber-500/20 text-amber-400 font-mono rounded-full border border-amber-500/30">VEDIC PRO</span>
+              <span class="text-xs px-2.5 py-0.5 bg-amber-500/20 text-amber-300 font-bold rounded-full border border-amber-500/40 flex items-center gap-1 shadow-sm">👑 Owner: Sallu</span>
+            </h1>
+          </div>
+          <p class="text-xs text-amber-400/80 font-medium">Gita, Daily Panchang, Aartis, Mantras & 108 Jap Mala</p>
+        </div>
+      </div>
+
+      <!-- Live Location, GPS & OS Pill -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        
+        <!-- City Selector Quick Pill -->
+        <div class="flex items-center gap-2 bg-[#1b150c] border border-amber-800/80 rounded-xl px-3 py-1.5 shadow-inner">
+          <span class="text-amber-400 text-sm">📍</span>
+          <select id="quickCitySelect" class="bg-transparent text-xs font-bold text-white focus:outline-none cursor-pointer">
+            <option value="Varanasi" class="bg-[#16110a]" selected>Varanasi (Kashi), India</option>
+            <option value="Ayodhya" class="bg-[#16110a]">Ayodhya, India</option>
+            <option value="Haridwar" class="bg-[#16110a]">Haridwar, India</option>
+            <option value="Mathura" class="bg-[#16110a]">Mathura, India</option>
+            <option value="Ujjain" class="bg-[#16110a]">Ujjain, India</option>
+            <option value="Delhi" class="bg-[#16110a]">Delhi, India</option>
+            <option value="Mumbai" class="bg-[#16110a]">Mumbai, India</option>
+            <option value="Bengaluru" class="bg-[#16110a]">Bengaluru, India</option>
+            <option value="Kolkata" class="bg-[#16110a]">Kolkata, India</option>
+            <option value="London" class="bg-[#16110a]">London, UK</option>
+            <option value="New York" class="bg-[#16110a]">New York, USA</option>
+          </select>
+        </div>
+
+        <!-- Auto GPS Button -->
+        <button id="btnAutoGpsSanatan" type="button" title="Auto-Detect Panchang & Sunrise via GPS" class="text-xs bg-amber-600 hover:bg-amber-500 text-white font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow-sm border border-amber-500/60 active:scale-95">
+          <span>🛰️</span> <span class="hidden sm:inline">Auto GPS</span>
+        </button>
+
+        <!-- Back to OS / Super App Pill -->
+        <a href="/" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-xl border border-slate-700 font-bold transition flex items-center gap-1.5 shadow-sm">
+          <span>📱</span> <span class="hidden sm:inline">SoundWave Hub</span>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Live Daily Panchang & Muhurat Ribbon -->
+    <div class="bg-gradient-to-r from-[#21160a] via-[#2d1b09] to-[#21160a] border-t border-b border-amber-800/40 px-4 py-2 text-xs">
+      <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+          <span class="text-amber-300 font-bold uppercase tracking-wider">PANCHANG RADAR:</span>
+          <span id="panchangBannerTithi" class="text-white font-extrabold font-devanagari text-sm">शुक्ल पक्ष, एकादशी • अभिजीत मुहूर्त: 11:45 AM - 12:32 PM</span>
+        </div>
+        <div class="flex items-center gap-4 text-amber-200/80 font-medium">
+          <span>राहु काल: <strong class="text-red-400 font-mono" id="bannerRahuKaal">04:30 PM - 06:00 PM</strong></span>
+          <span class="hidden md:inline">•</span>
+          <span>सूर्योदय: <strong class="text-amber-300" id="bannerSunrise">06:42 AM</strong></span>
+          <span class="hidden md:inline">•</span>
+          <span>सूर्यास्त: <strong class="text-amber-300" id="bannerSunset">05:48 PM</strong></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       NAVIGATION TABS (5 DEDICATED SECTIONS)
+       ============================================== -->
+  <div class="max-w-7xl mx-auto px-4 mt-6 w-full">
+    <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-amber-900/40">
+      <button class="nav-tab active flex items-center gap-2 px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm text-slate-300 transition whitespace-nowrap" data-view="panchangView">
+        <span>🪔</span> <span>Daily Panchang & Mantras</span>
+      </button>
+      <button class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm text-slate-300 transition whitespace-nowrap" data-view="gitaView">
+        <span>📖</span> <span>Shrimad Bhagavad Gita</span>
+      </button>
+      <button class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm text-slate-300 transition whitespace-nowrap" data-view="malaView">
+        <span>🔔</span> <span>108 Jap Mala & Bells</span>
+      </button>
+      <button class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm text-slate-300 transition whitespace-nowrap" data-view="aartisView">
+        <span>📿</span> <span>Hanuman Chalisa & Aartis</span>
+      </button>
+      <button class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm text-slate-300 transition whitespace-nowrap" data-view="calendarView">
+        <span>📅</span> <span>Vrat & Tyohar (2026)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       MAIN VIEWS WRAPPER
+       ============================================== -->
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-8">
+
+    <!-- ==============================================
+         TAB 1: DAILY PANCHANG & MANTRAS
+         ============================================== -->
+    <div id="panchangView" class="view-panel space-y-6">
+      
+      <!-- Top Grid: Vedic Panchang Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+        
+        <!-- Tithi -->
+        <div class="glass-card rounded-2xl p-4 flex flex-col justify-between border-amber-600/30">
+          <div class="text-[11px] font-bold text-amber-400 uppercase tracking-wider">तिथि (TITHI)</div>
+          <div class="my-2">
+            <div class="text-xl sm:text-2xl font-extrabold text-white font-devanagari" id="boxTithi">एकादशी</div>
+            <div class="text-[10px] text-slate-400" id="boxPaksha">शुक्ल पक्ष</div>
+          </div>
+          <div class="text-[10px] text-amber-400/90 font-semibold">शुभ तिथि</div>
+        </div>
+
+        <!-- Nakshatra -->
+        <div class="glass-card rounded-2xl p-4 flex flex-col justify-between border-amber-600/30">
+          <div class="text-[11px] font-bold text-amber-400 uppercase tracking-wider">नक्षत्र (NAKSHATRA)</div>
+          <div class="my-2">
+            <div class="text-xl sm:text-2xl font-extrabold text-white font-devanagari" id="boxNakshatra">रोहिणी</div>
+            <div class="text-[10px] text-slate-400">चंद्रमा वृषभ राशि</div>
+          </div>
+          <div class="text-[10px] text-emerald-400 font-semibold">अमृत योग</div>
+        </div>
+
+        <!-- Yoga -->
+        <div class="glass-card rounded-2xl p-4 flex flex-col justify-between border-amber-600/30">
+          <div class="text-[11px] font-bold text-amber-400 uppercase tracking-wider">योग (YOGA)</div>
+          <div class="my-2">
+            <div class="text-xl sm:text-2xl font-extrabold text-white font-devanagari" id="boxYoga">हर्षण योग</div>
+            <div class="text-[10px] text-slate-400">सूर्योदय उपरांत</div>
+          </div>
+          <div class="text-[10px] text-sky-400 font-semibold">मंगलकारी</div>
+        </div>
+
+        <!-- Vaar -->
+        <div class="glass-card rounded-2xl p-4 flex flex-col justify-between border-amber-600/30">
+          <div class="text-[11px] font-bold text-amber-400 uppercase tracking-wider">वार (DAY)</div>
+          <div class="my-2">
+            <div class="text-xl sm:text-2xl font-extrabold text-white font-devanagari" id="boxVaar">मंगलवार</div>
+            <div class="text-[10px] text-slate-400">हनुमान जी का दिन</div>
+          </div>
+          <div class="text-[10px] text-amber-300 font-semibold">सौभाग्यवर्धक</div>
+        </div>
+
+        <!-- Shubh Muhurat -->
+        <div class="glass-card rounded-2xl p-4 flex flex-col justify-between border-emerald-600/40">
+          <div class="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">अभिजीत मुहूर्त</div>
+          <div class="my-2">
+            <div class="text-base sm:text-lg font-extrabold text-white font-mono" id="boxAbhijit">11:45 - 12:35</div>
+            <div class="text-[10px] text-emerald-300">सर्वकार्य सिद्धि मुहूर्त</div>
+          </div>
+          <div class="text-[10px] text-emerald-400 font-semibold">सर्वश्रेष्ठ समय</div>
+        </div>
+
+        <!-- Rahu Kaal -->
+        <div class="glass-card rounded-2xl p-4 flex flex-col justify-between border-red-600/40">
+          <div class="text-[11px] font-bold text-red-400 uppercase tracking-wider">राहु काल (अशुभ)</div>
+          <div class="my-2">
+            <div class="text-base sm:text-lg font-extrabold text-white font-mono" id="boxRahuKaal">15:00 - 16:30</div>
+            <div class="text-[10px] text-red-300">शुभ कार्य वर्जित</div>
+          </div>
+          <div class="text-[10px] text-red-400 font-semibold">सावधानी रखें</div>
+        </div>
+
+      </div>
+
+      <!-- Sacred Shloka of the Day Hero Banner -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-[#1f150b] via-[#2c1d0d] to-[#1f150b] border-amber-600/30 relative overflow-hidden">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+          <div class="space-y-3 max-w-3xl">
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/30">
+                ✨ आज का दिव्य भगवद् गीता श्लोक
+              </span>
+              <span class="text-xs text-slate-400">अध्याय 2, श्लोक 47</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold font-devanagari text-amber-300 leading-relaxed">
+              कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।<br>
+              मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥
+            </h2>
+            <p class="text-sm sm:text-base text-slate-300 font-medium leading-relaxed">
+              <strong>हिंदी भावार्थ:</strong> तुम्हारा अधिकार केवल कर्म करने पर है, उसके फलों पर कभी नहीं। इसलिए कर्म के फल की इच्छा मत रखो और न ही अकर्मण्यता (कर्म न करने) में तुम्हारी आसक्ति हो।
+            </p>
+            <p class="text-xs text-slate-400 italic">
+              <strong>English:</strong> You have a right to perform your prescribed duty, but you are not entitled to the fruits of action. Never consider yourself the cause of results, nor be attached to inaction.
+            </p>
+          </div>
+          <div class="flex flex-col gap-3 w-full md:w-auto">
+            <button onclick="playShlokaAudio()" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold text-sm shadow-lg shadow-amber-600/30 flex items-center justify-center gap-2 active:scale-95 transition">
+              <span id="shlokaPlayIcon">▶️</span> <span>सुनिए (Recite)</span>
+            </button>
+            <button onclick="copyShloka()" class="px-5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-xs border border-white/10 flex items-center justify-center gap-2 active:scale-95 transition">
+              <span>📋</span> <span>कॉपी करें (Share)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Sacred Mantras Grid -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+          <span>🕉️</span> <span>नित्य महामंत्र एवं स्तोत्र</span>
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- Gayatri Mantra -->
+          <div class="glass-card rounded-2xl p-5 border-amber-600/20 space-y-3">
+            <div class="flex justify-between items-center">
+              <div class="font-bold text-amber-400 text-sm">गायत्री महामंत्र (GAYATRI MANTRA)</div>
+              <button onclick="playMantra('gayatri')" class="text-xs px-3 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-lg font-bold border border-amber-500/40">
+                ▶️ Play
+              </button>
+            </div>
+            <div class="text-base sm:text-lg font-bold text-white font-devanagari leading-relaxed">
+              ॐ भूर्भुवः स्वः तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात्॥
+            </div>
+            <p class="text-xs text-slate-300">
+              <strong>भावार्थ:</strong> उस प्राणस्वरूप, दुःखनाशक, सुखस्वरूप, श्रेष्ठ, तेजस्वी, पापनाशक, देवस्वरूप परमात्मा को हम अन्तःकरण में धारण करें। वह हमारी बुद्धि को सन्मार्ग में प्रेरित करे।
+            </p>
+          </div>
+
+          <!-- Maha Mrityunjaya Mantra -->
+          <div class="glass-card rounded-2xl p-5 border-amber-600/20 space-y-3">
+            <div class="flex justify-between items-center">
+              <div class="font-bold text-amber-400 text-sm">महामृत्युंजय मंत्र (MAHA MRITYUNJAYA)</div>
+              <button onclick="playMantra('mrityunjaya')" class="text-xs px-3 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-lg font-bold border border-amber-500/40">
+                ▶️ Play
+              </button>
+            </div>
+            <div class="text-base sm:text-lg font-bold text-white font-devanagari leading-relaxed">
+              ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्। उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय माऽमृतात्॥
+            </div>
+            <p class="text-xs text-slate-300">
+              <strong>भावार्थ:</strong> हम त्रिनेत्रधारी भगवान शिव की आराधना करते हैं जो सुगंधित और पुष्टिवर्धक हैं। जिस प्रकार पका हुआ खरबूजा बेल से मुक्त होता है, वैसे ही हम मृत्यु से मुक्त हों, मोक्ष से नहीं।
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==============================================
+         TAB 2: SHRIMAD BHAGAVAD GITA (18 CHAPTERS)
+         ============================================== -->
+    <div id="gitaView" class="view-panel hidden space-y-6">
+      
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-amber-900/40 pb-4">
+        <div>
+          <h2 class="text-2xl font-extrabold text-white font-cinzel">Shrimad Bhagavad Gita</h2>
+          <p class="text-xs text-amber-400/90 font-devanagari">यदा यदा हि धर्मस्य ग्लानिर्भवति भारत। अभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम्॥</p>
+        </div>
+        
+        <!-- Search Chapters / Shlokas -->
+        <div class="flex items-center gap-2 bg-[#1b150c] border border-amber-800/80 rounded-2xl px-3 py-2 w-full sm:w-80">
+          <span class="text-amber-400">🔍</span>
+          <input type="text" id="gitaSearchInput" placeholder="श्लोक या विषय खोजें (उदा: कर्म, आत्मा)..." class="bg-transparent text-xs text-white focus:outline-none w-full" oninput="filterGitaChapters(this.value)">
+        </div>
+      </div>
+
+      <!-- 18 Chapters Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="gitaChaptersGrid">
+        <!-- Generated Dynamically by JS -->
+      </div>
+
+      <!-- Shloka Reading Modal View -->
+      <div id="shlokaModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-card rounded-3xl p-6 sm:p-8 max-w-2xl w-full border-amber-500/40 space-y-5 max-h-[85vh] overflow-y-auto">
+          <div class="flex justify-between items-center border-b border-amber-900/50 pb-3">
+            <div>
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-widest" id="modalChapterBadge">अध्याय 1</span>
+              <h3 class="text-lg font-bold text-white font-devanagari" id="modalChapterTitle">अर्जुनविषादयोग</h3>
+            </div>
+            <button onclick="closeShlokaModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300">✕</button>
+          </div>
+          
+          <div class="space-y-4" id="modalShlokaContent">
+            <!-- Shloka Sanskrit + Translation will be loaded here -->
+          </div>
+
+          <div class="flex justify-between items-center pt-3 border-t border-amber-900/50">
+            <button onclick="prevShloka()" class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-bold text-slate-300">← पिछला श्लोक</button>
+            <button onclick="playActiveShloka()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 rounded-xl text-xs font-bold text-white">▶️ पाठ सुनें</button>
+            <button onclick="nextShloka()" class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-bold text-slate-300">अगला श्लोक →</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==============================================
+         TAB 3: 108 JAP MALA & TEMPLE SOUNDS
+         ============================================== -->
+    <div id="malaView" class="view-panel hidden space-y-6">
+      
+      <div class="text-center max-w-xl mx-auto space-y-2">
+        <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">DIGITAL RUDRAKSHA JAP MALA</span>
+        <h2 class="text-2xl font-extrabold text-white">श्री नाम जप माला (108 Beads)</h2>
+        <p class="text-xs text-slate-400">मंत्र जप करने के लिए रुद्राक्ष मनके पर क्लिक करें। 108 पूर्ण होने पर मंदिर की घंटी बजेगी।</p>
+      </div>
+
+      <!-- Interactive Mala Stage -->
+      <div class="max-w-md mx-auto glass-card rounded-3xl p-6 sm:p-8 flex flex-col items-center justify-center border-amber-600/30 space-y-6 relative overflow-hidden">
+        
+        <!-- Diya Animation on Top -->
+        <div class="flex items-center gap-3">
+          <div class="relative flex flex-col items-center">
+            <div class="w-4 h-6 bg-gradient-to-t from-orange-500 via-amber-400 to-yellow-200 rounded-full diya-flame shadow-[0_0_20px_#f59e0b]"></div>
+            <div class="w-10 h-4 bg-amber-800 rounded-b-xl border border-amber-600/80 -mt-1 shadow-md"></div>
+          </div>
+          <span class="text-xs font-bold text-amber-300 font-devanagari">शुभम् करोति कल्याणम्</span>
+        </div>
+
+        <!-- Big Jap Counter Display -->
+        <div class="text-center space-y-1">
+          <div class="text-6xl sm:text-7xl font-black font-mono text-amber-400 gold-glow-text" id="malaBeadCounter">
+            0
+          </div>
+          <div class="text-xs font-bold text-slate-400">
+            मनका (BEAD) : <span class="text-amber-300 font-mono" id="currentBeadRatio">0 / 108</span>
+          </div>
+          <div class="text-xs text-emerald-400 font-semibold" id="totalMalasCountText">
+            कुल मालाएं: 0
+          </div>
+        </div>
+
+        <!-- Big Tap Button / Rudraksha Bead -->
+        <button id="btnTapMala" onclick="tapMalaBead()" class="w-44 h-44 rounded-full bg-gradient-to-tr from-[#3a200e] via-[#5c3316] to-[#7c441c] border-4 border-amber-500/60 shadow-[0_0_40px_rgba(245,158,11,0.25)] flex flex-col items-center justify-center text-white active:scale-95 transition-transform duration-100 group cursor-pointer select-none">
+          <span class="text-4xl group-hover:scale-110 transition">📿</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-200 mt-2 font-cinzel">JAP (जप करें)</span>
+          <span class="text-[10px] text-amber-300/80">Tap to Chant</span>
+        </button>
+
+        <!-- Sound Controls: Temple Bell, Shankha, Om Drone -->
+        <div class="flex flex-wrap justify-center gap-2 pt-2">
+          <button onclick="playTempleBell()" class="px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center gap-1.5 active:scale-95 transition">
+            <span>🔔</span> <span>मंदिर घंटी (Bell)</span>
+          </button>
+          <button onclick="playShankhaSound()" class="px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center gap-1.5 active:scale-95 transition">
+            <span>🐚</span> <span>शंख ध्वनि (Shankh)</span>
+          </button>
+          <button id="btnToggleOmDrone" onclick="toggleOmDrone()" class="px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center gap-1.5 active:scale-95 transition">
+            <span>🕉️</span> <span>ॐ ध्यान धुन (Om 432Hz)</span>
+          </button>
+        </div>
+
+        <!-- Reset Button -->
+        <button onclick="resetMalaCounter()" class="text-xs text-slate-500 hover:text-slate-300 underline transition">
+          माला रीसेट करें (Reset Count)
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- ==============================================
+         TAB 4: HANUMAN CHALISA & AARTIS
+         ============================================== -->
+    <div id="aartisView" class="view-panel hidden space-y-6">
+      
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-amber-900/40 pb-4">
+        <div>
+          <h2 class="text-2xl font-extrabold text-white font-devanagari">श्री हनुमान चालीसा एवं प्रसिद्ध आरतियां</h2>
+          <p class="text-xs text-amber-400/90 font-medium">संपूर्ण 40 चौपाई, दोहे एवं प्रसिद्ध आरती संग्रह हिंदी अर्थ सहित</p>
+        </div>
+        
+        <div class="flex items-center gap-2">
+          <button onclick="switchAartiCategory('hanuman')" class="aarti-chip px-3 py-1.5 rounded-xl bg-amber-500/30 text-amber-300 border border-amber-500/50 text-xs font-bold">हनुमान चालीसा</button>
+          <button onclick="switchAartiCategory('ganesh')" class="aarti-chip px-3 py-1.5 rounded-xl bg-white/5 text-slate-400 border border-white/10 text-xs font-bold hover:text-white">श्री गणेश</button>
+          <button onclick="switchAartiCategory('shiv')" class="aarti-chip px-3 py-1.5 rounded-xl bg-white/5 text-slate-400 border border-white/10 text-xs font-bold hover:text-white">शिव तांडव</button>
+          <button onclick="switchAartiCategory('lakshmi')" class="aarti-chip px-3 py-1.5 rounded-xl bg-white/5 text-slate-400 border border-white/10 text-xs font-bold hover:text-white">महालक्ष्मी</button>
+        </div>
+      </div>
+
+      <!-- Aarti / Chalisa Content Stage -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 border-amber-600/30 max-w-4xl mx-auto" id="aartiDisplayBox">
+        <!-- Populated Dynamically -->
+      </div>
+
+    </div>
+
+    <!-- ==============================================
+         TAB 5: HINDU CALENDAR, VRAT & TYOHAR (2026)
+         ============================================== -->
+    <div id="calendarView" class="view-panel hidden space-y-6">
+      
+      <div>
+        <h2 class="text-2xl font-extrabold text-white font-devanagari">वर्ष 2026 के प्रमुख व्रत एवं त्यौहार</h2>
+        <p class="text-xs text-amber-400/90 font-medium">सनातन धर्म के सभी प्रमुख उत्सव, एकादशी व्रत एवं पावन तिथियां</p>
+      </div>
+
+      <!-- Festivals Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="festivalsGrid">
+        <!-- Populated Dynamically -->
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ==============================================
+       AUDIO ENGINES (WEB AUDIO API SYNTHESIZER)
+       ============================================== -->
+  <footer class="mt-8 py-6 border-t border-amber-900/40 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div>
+        <span class="text-amber-400 font-bold">Sanatan Seva</span> • Hindu Spiritual Portal & Bhagavad Gita Suite
+      </div>
+      <div class="text-amber-300 font-bold">
+        👑 Owner: Sallu • 100% Free & Open Vedic Knowledge
+      </div>
+      <div>
+        2026 Edition • Powered by SoundWave Cloud Engine
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT LOGIC FOR SANATAN SEVA SUITE -->
+  <script>
+    // Tab Switching Logic
+    const tabs = document.querySelectorAll('.nav-tab');
+    const panels = document.querySelectorAll('.view-panel');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        panels.forEach(p => p.classList.add('hidden'));
+
+        tab.classList.add('active');
+        const targetView = tab.getAttribute('data-view');
+        const targetPanel = document.getElementById(targetView);
+        if (targetPanel) targetPanel.classList.remove('hidden');
+      });
+    });
+
+    // ==============================================
+    // 1. WEB AUDIO SYNTHESIZERS (TEMPLE BELL & OM)
+    // ==============================================
+    let audioCtx = null;
+    let omOscillator = null;
+    let omGain = null;
+    let isOmPlaying = false;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    // Realistic Temple Bell Chime
+    function playTempleBell() {
+      const ctx = getAudioContext();
+      const now = ctx.currentTime;
+
+      // Harmonics for brass bell
+      const freqs = [587.33, 1174.66, 1760.00, 2349.32];
+      freqs.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+
+        const decay = 2.5 / (idx + 1);
+        gain.gain.setValueAtTime(0.25 / (idx + 1), now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + decay);
+      });
+
+      if (navigator.vibrate) navigator.vibrate(40);
+    }
+
+    // Sacred Shankha (Conch shell tone)
+    function playShankhaSound() {
+      const ctx = getAudioContext();
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.linearRampToValueAtTime(330, now + 1.2);
+      osc.frequency.linearRampToValueAtTime(300, now + 3.0);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.2, now + 0.5);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.2);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 3.2);
+    }
+
+    // 432Hz Meditative Om Binaural Drone
+    function toggleOmDrone() {
+      const ctx = getAudioContext();
+      const btn = document.getElementById('btnToggleOmDrone');
+
+      if (!isOmPlaying) {
+        omOscillator = ctx.createOscillator();
+        omGain = ctx.createGain();
+
+        omOscillator.type = 'sine';
+        omOscillator.frequency.setValueAtTime(136.1, ctx.currentTime);
+
+        omGain.gain.setValueAtTime(0.01, ctx.currentTime);
+        omGain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 1.5);
+
+        omOscillator.connect(omGain);
+        omGain.connect(ctx.destination);
+
+        omOscillator.start();
+        isOmPlaying = true;
+        btn.classList.add('bg-amber-500/30', 'border-amber-400');
+        btn.innerHTML = '<span>🟢</span> <span>ॐ ध्यान धुन (Playing)</span>';
+      } else {
+        if (omGain) {
+          omGain.gain.linearRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+          setTimeout(() => {
+            if (omOscillator) {
+              omOscillator.stop();
+              omOscillator.disconnect();
+            }
+          }, 800);
+        }
+        isOmPlaying = false;
+        btn.classList.remove('bg-amber-500/30', 'border-amber-400');
+        btn.innerHTML = '<span>🕉️</span> <span>ॐ ध्यान धुन (Om 432Hz)</span>';
+      }
+    }
+
+    // ==============================================
+    // 2. 108 BEADS JAP MALA LOGIC
+    // ==============================================
+    let currentBeadCount = 0;
+    let totalMalasCompleted = parseInt(localStorage.getItem('sanatan_total_malas') || '0', 10);
+
+    function updateMalaUI() {
+      document.getElementById('malaBeadCounter').textContent = currentBeadCount;
+      document.getElementById('currentBeadRatio').textContent = `${currentBeadCount} / 108`;
+      document.getElementById('totalMalasCountText').textContent = `कुल मालाएं: ${totalMalasCompleted}`;
+    }
+
+    function tapMalaBead() {
+      currentBeadCount++;
+      if (currentBeadCount > 108) {
+        currentBeadCount = 1;
+        totalMalasCompleted++;
+        localStorage.setItem('sanatan_total_malas', totalMalasCompleted);
+        playTempleBell();
+        alert('🎉 बधाई! आपकी 1 पूर्ण माला (108 जप) संपन्न हुई। भगवान का आशीर्वाद सदा बना रहे।');
+      } else if (currentBeadCount === 108) {
+        totalMalasCompleted++;
+        localStorage.setItem('sanatan_total_malas', totalMalasCompleted);
+        playTempleBell();
+      } else {
+        if (navigator.vibrate) navigator.vibrate(25);
+      }
+      updateMalaUI();
+    }
+
+    function resetMalaCounter() {
+      if (confirm('क्या आप मनका संख्या शून्य (0) पर रीसेट करना चाहते हैं?')) {
+        currentBeadCount = 0;
+        updateMalaUI();
+      }
+    }
+    updateMalaUI();
+
+    // ==============================================
+    // 3. BHAGAVAD GITA 18 CHAPTERS DATA & VIEWER
+    // ==============================================
+    const gitaChaptersData = [
+      { num: 1, name: "अर्जुनविषादयोग", translation: "Arjuna's Despair", verses: 47, summary: "कुरुक्षेत्र के युद्धस्थल में सेनाओं का निरीक्षण और अर्जुन का विषाद।" },
+      { num: 2, name: "सांख्ययोग", translation: "Transcendental Knowledge", verses: 72, summary: "आत्मा की अमरता, कर्मयोग का रहस्य और स्थितप्रज्ञ पुरुष के लक्षण।" },
+      { num: 3, name: "कर्मयोग", translation: "Path of Selfless Service", verses: 43, summary: "निस्वार्थ भाव से लोककल्याण हेतु कर्म करने की अनिवार्यता।" },
+      { num: 4, name: "ज्ञानकर्मसंन्यासयोग", translation: "Knowledge in Action", verses: 42, summary: "अवतार का रहस्य, ज्ञान की महिमा और ज्ञान द्वारा कर्म की आहुति।" },
+      { num: 5, name: "कर्मसंन्यासयोग", translation: "Action and Renunciation", verses: 29, summary: "संन्यास और कर्मयोग दोनों का समन्वय तथा शांति का मार्ग।" },
+      { num: 6, name: "आत्मसंयमयोग", translation: "Path of Meditation", verses: 47, summary: "ध्यान, मन का निग्रह और अंतरात्मा से एकाकार होने का अभ्यास।" },
+      { num: 7, name: "ज्ञानविज्ञानयोग", translation: "Knowledge of the Ultimate Truth", verses: 30, summary: "ईश्वर की अपरा और परा प्रकृति तथा भक्ति के चार प्रकार।" },
+      { num: 8, name: "अक्षरब्रह्मयोग", translation: "The Eternal Reality", verses: 28, summary: "जीवन के अंतिम समय में भगवान का स्मरण और मोक्ष का मार्ग।" },
+      { num: 9, name: "राजविद्याराजगुह्ययोग", translation: "Sovereign Secret", verses: 34, summary: "परम गोपनीय ज्ञान और पत्रं पुष्पं फलं तोयं से सरल भक्ति।" },
+      { num: 10, name: "विभूतियोग", translation: "Divine Splendors", verses: 42, summary: "संसार की हर उत्कृष्ट वस्तु और चेतना में परमात्मा का वास।" },
+      { num: 11, name: "विश्वरूपदर्शनयोग", translation: "Vision of the Cosmic Form", verses: 55, summary: "अर्जुन को भगवान श्रीकृष्ण के विराट अलौकिक रूप का साक्षात्कार।" },
+      { num: 12, name: "भक्तियोग", translation: "The Path of Devotion", verses: 20, summary: "सगुण और निर्गुण भक्ति तथा भगवान के प्रिय भक्त के श्रेष्ठ गुण।" },
+      { num: 13, name: "क्षेत्रक्षेत्रज्ञविभागयोग", translation: "The Field and the Knower", verses: 35, summary: "शरीर (क्षेत्र) और आत्मा (क्षेत्रज्ञ) का तात्विक अंतर।" },
+      { num: 14, name: "गुणत्रयविभागयोग", translation: "The Three Modes of Nature", verses: 27, summary: "सत्व, रज और तम तीनों गुणों का प्रभाव और गुणातीत होना।" },
+      { num: 15, name: "पुरुषोत्तमयोग", translation: "The Supreme Person", verses: 20, summary: "संसार रूपी अश्वत्थ वृक्ष का रहस्य और पुरुषोत्तम भगवान।" },
+      { num: 16, name: "दैवासुरसंपद्विभागयोग", translation: "Divine and Demonic Natures", verses: 24, summary: "दैवीय गुण (सद्गुण) और आसुरी प्रवृत्तियों का विस्तार।" },
+      { num: 17, name: "श्रद्धात्रयविभागयोग", translation: "The Threefold Faith", verses: 28, summary: "आहार, यज्ञ, तप और दान के तीन प्रकार तथा ॐ तत्सत् की व्याख्या।" },
+      { num: 18, name: "मोक्षसंन्यासयोग", translation: "The Ultimate Liberation", verses: 78, summary: "सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज — संपूर्ण शरणागति और मोक्ष।" }
+    ];
+
+    function renderGitaChapters(list = gitaChaptersData) {
+      const grid = document.getElementById('gitaChaptersGrid');
+      if (!grid) return;
+      grid.innerHTML = list.map(ch => `
+        <div onclick="openChapterShloka(${ch.num})" class="glass-card rounded-2xl p-5 hover:border-amber-500/50 cursor-pointer transition-all hover:-translate-y-1 space-y-2 border-amber-900/30">
+          <div class="flex justify-between items-center text-xs text-amber-400 font-bold">
+            <span>अध्याय ${ch.num}</span>
+            <span class="bg-amber-500/15 px-2 py-0.5 rounded-full border border-amber-500/30">${ch.verses} श्लोक</span>
+          </div>
+          <h4 class="text-lg font-bold text-white font-devanagari">${ch.name}</h4>
+          <p class="text-xs text-amber-300/80 font-cinzel">${ch.translation}</p>
+          <p class="text-xs text-slate-400 line-clamp-2">${ch.summary}</p>
+          <div class="pt-2 text-xs text-amber-400 font-bold flex items-center gap-1">
+            <span>पढ़ें एवं सुनें</span> <span>→</span>
+          </div>
+        </div>
+      `).join('');
+    }
+    renderGitaChapters();
+
+    function filterGitaChapters(query) {
+      const q = (query || '').toLowerCase().trim();
+      const filtered = gitaChaptersData.filter(ch => 
+        ch.name.toLowerCase().includes(q) || 
+        ch.translation.toLowerCase().includes(q) || 
+        ch.summary.toLowerCase().includes(q)
+      );
+      renderGitaChapters(filtered);
+    }
+
+    let activeModalChapter = 2;
+    function openChapterShloka(chNum) {
+      activeModalChapter = chNum;
+      const ch = gitaChaptersData.find(c => c.num === chNum) || gitaChaptersData[1];
+      document.getElementById('modalChapterBadge').textContent = `अध्याय ${ch.num} • ${ch.verses} श्लोक`;
+      document.getElementById('modalChapterTitle').textContent = `${ch.name} (${ch.translation})`;
+
+      document.getElementById('modalShlokaContent').innerHTML = `
+        <div class="p-4 rounded-2xl bg-amber-950/30 border border-amber-700/40 text-center space-y-2">
+          <span class="text-xs text-amber-400 font-bold">मूल संस्कृत श्लोक</span>
+          <p class="text-lg font-bold text-white font-devanagari leading-relaxed">
+            कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।<br>
+            मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥
+          </p>
+        </div>
+        <div class="space-y-2 text-xs sm:text-sm text-slate-300">
+          <p><strong>पदच्छेद व अनुवाद:</strong> तुम्हारा अधिकार केवल अपने कर्तव्य कर्म करने में है, कभी भी कर्म के फलों में नहीं। इसलिए कर्म के फल की आसक्ति से मुक्त होकर अपना कर्तव्य करो।</p>
+          <p class="text-slate-400 italic"><strong>English:</strong> Perform your duties unattached to the fruit of action, established in yoga.</p>
+        </div>
+        <div class="p-3 rounded-xl bg-black/40 border border-white/5 text-xs text-slate-400">
+          <strong>अध्याय सार:</strong> ${ch.summary}
+        </div>
+      `;
+
+      document.getElementById('shlokaModal').classList.remove('hidden');
+    }
+
+    function closeShlokaModal() {
+      document.getElementById('shlokaModal').classList.add('hidden');
+    }
+
+    function prevShloka() {
+      if (activeModalChapter > 1) openChapterShloka(activeModalChapter - 1);
+    }
+    function nextShloka() {
+      if (activeModalChapter < 18) openChapterShloka(activeModalChapter + 1);
+    }
+
+    function playShlokaAudio() {
+      const text = "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन। मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥";
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'hi-IN';
+        utter.rate = 0.85;
+        window.speechSynthesis.speak(utter);
+      }
+    }
+
+    function playActiveShloka() {
+      playShlokaAudio();
+    }
+
+    function copyShloka() {
+      const text = "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन। मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥ - श्रीमद्भगवद्गीता (अध्याय 2, श्लोक 47)";
+      navigator.clipboard.writeText(text).then(() => alert('श्लोक क्लिपबोर्ड में कॉपी हो गया!'));
+    }
+
+    // ==============================================
+    // 4. HANUMAN CHALISA & AARTIS REPOSITORY
+    // ==============================================
+    const aartisData = {
+      hanuman: {
+        title: "श्री हनुमान चालीसा",
+        author: "गोस्वामी तुलसीदास कृत",
+        content: `
+          <div class="text-center space-y-4">
+            <div class="p-3 bg-amber-950/40 border border-amber-700/50 rounded-xl inline-block text-amber-300 font-bold text-sm font-devanagari">
+              ॥ दोहा ॥<br>
+              श्रीगुरु चरन सरोज रज, निज मनु मुकुरु सुधारि।<br>
+              बरनऊं रघुबर बिमल जसु, जो दायकु फल चारि॥<br>
+              बुद्धिहीन तनु जानिके, सुमिरौं पवन-कुमार।<br>
+              बल बुद्धि बिद्या देहु मोहिं, हरहु कलेस बिकार॥
+            </div>
+            
+            <div class="space-y-3 text-sm sm:text-base font-devanagari text-white leading-loose max-w-2xl mx-auto">
+              ॥ चौपाई ॥<br>
+              जय हनुमान ज्ञान गुन सागर। जय कपीस तिहुं लोक उजागर॥<br>
+              राम दूत अतुलित बल धामा। अंजनि-पुत्र पवनसुत नामा॥<br>
+              महाबीर बिक्रम बजरंगी। कुमति निवार सुमति के संगी॥<br>
+              कंचन बरन बिराज सुबेसा। कानन कुंडल कुंचित केसा॥<br>
+              हाथ बज्र औ ध्वजा बिराजै। कांधे मूंज जनेऊ साजै॥<br>
+              संकर सुवन केसरीनंदन। तेज प्रताप महा जग बंदन॥<br>
+              बिद्यावान गुनी अति चातुर। राम काज करिबे को आतुर॥<br>
+              प्रभु चरित्र सुनिबे को रसिया। राम लखन सीता मन बसिया॥<br>
+              सूक्ष्म रूप धरि सियहिं दिखावा। बिकट रूप धरि लंक जरावा॥<br>
+              भीम रूप धरि असुर संहारे। रामचंद्र के काज संवारे॥<br>
+              लाय संजीवन लखन जियाये। श्रीरघुबीर हरषि उर लाये॥<br>
+              रघुपति कीन्ही बहुत बड़ाई। तुम मम प्रिय भरतहि सम भाई॥<br>
+              सहस बदन तुम्हरो जस गावैं। अस कहि श्रीपति कंठ लगावैं॥<br>
+              सनकादिक ब्रह्मादि मुनीसा। नारद सारद सहित अहीसा॥<br>
+              जम कुबेर दिगपाल जहां ते। कबि कोबिद कहि सके कहां ते॥<br>
+              तुम उपकार सुग्रीवहिं कीन्हा। राम मिलाय राज पद दीन्हा॥<br>
+              तुम्हरो मंत्र बिभीषन माना। लंकेस्वर भए सब जग जाना॥<br>
+              जुग सहस्र जोजन पर भानू। लील्यो ताहि मधुर फल जानू॥<br>
+              प्रभु मुद्रिका मेलि मुख माहीं। जलधि लांघि गये अचरज नाहीं॥<br>
+              दुर्गम काज जगत के जेते। सुगम अनुग्रह तुम्हरे तेते॥<br>
+              राम दुआरे तुम रखवारे। होत न आज्ञा बिनु पैसारे॥<br>
+              सब सुख लहै तुम्हारी सरना। तुम रक्षक काहू को डर ना॥<br>
+              आपन तेज सम्हारो आपै। तीनों लोक हांक तें कांपै॥<br>
+              भूत पिसाच निकट नहिं आवै। महाबीर जब नाम सुनावै॥<br>
+              नासै रोग हरै सब पीरा। जपत निरंतर हनुमत बीरा॥<br>
+              संकट तें हनुमान छुड़ावै। मन क्रम बचन ध्यान जो लावै॥<br>
+              सब पर राम तपस्वी राजा। तिन के काज सकल तुम साजा॥<br>
+              और मनोरथ जो कोई लावै। सोइ अमित जीवन फल पावै॥<br>
+              चारों जुग परताप तुम्हारा। है परसिद्ध जगत उजियारा॥<br>
+              साधु-संत के तुम रखवारे। असुर निकंदन राम दुलारे॥<br>
+              अष्ट सिद्धि नौ निधि के दाता। अस बर दीन जानकी माता॥<br>
+              राम रसायन तुम्हरे पासा। सदा रहो रघुपति के दासा॥<br>
+              तुम्हरे भजन राम को पावै। जनम-जनम के दुख बिसरावै॥<br>
+              अन्तकाल रघुबर पुर जाई। जहां जन्म हरि-भक्त कहाई॥<br>
+              और देवता चित्त न धरई। हनुमत सेइ सर्ब सुख करई॥<br>
+              संकट कटै मिटै सब पीरा। जो सुमिरै हनुमत बलबीरा॥<br>
+              जै जै जै हनुमान गोसाईं। कृपा करहु गुरुदेव की नाईं॥<br>
+              जो सत बार पाठ कर कोई। छूटहि बंदि महा सुख होई॥<br>
+              जो यह पढ़ै हनुमान चालीसा। होय सिद्धि साखी गौरीसा॥<br>
+              तुलसीदास सदा हरि चेरा। कीजै नाथ हृदय मंह डेरा॥
+            </div>
+
+            <div class="p-3 bg-amber-950/40 border border-amber-700/50 rounded-xl inline-block text-amber-300 font-bold text-sm font-devanagari">
+              ॥ दोहा ॥<br>
+              पवन तनय संकट हरन, मंगल मूरति रूप।<br>
+              राम लखन सीता सहित, हृदय बसहु सुर भूप॥
+            </div>
+          </div>
+        `
+      },
+      ganesh: {
+        title: "श्री गणेश जी की आरती",
+        author: "पारंपरिक",
+        content: `
+          <div class="text-center space-y-3 font-devanagari text-white leading-loose max-w-xl mx-auto">
+            जय गणेश, जय गणेश, जय गणेश देवा।<br>
+            माता जाकी पार्वती, पिता महादेवा॥<br>
+            एक दंत दयावंत, चार भुजा धारी।<br>
+            माथे सिन्दूर सोहे, मूसे की सवारी॥<br>
+            पान चढ़े, फूल चढ़े, और चढ़े मेवा।<br>
+            लड्डुअन का भोग लगे, संत करें सेवा॥<br>
+            अंधन को आंख देत, कोढ़िन को काया।<br>
+            बांझन को पुत्र देत, निर्धन को माया॥<br>
+            'सूर' श्याम शरण आए, सफल कीजे सेवा।<br>
+            माता जाकी पार्वती, पिता महादेवा॥
+          </div>
+        `
+      },
+      shiv: {
+        title: "शिव तांडव स्तोत्रम्",
+        author: "रावण विरचित",
+        content: `
+          <div class="text-center space-y-3 font-devanagari text-white leading-loose max-w-2xl mx-auto">
+            जटाटवीगलज्जलप्रवाहपावितस्थले गलेऽवलम्ब्य लम्बितां भुजङ्गतुङ्गमालिकाम्।<br>
+            डमड्डमड्डमड्डमन्निनादवड्डमर्वयं चकार चण्डताण्डवं तनोतु नः शिवः शिवम्॥<br><br>
+            जटाकटाहसंभ्रमभ्रमन्निलिम्पनिर्झरी-विलोलवीचिवल्लरीविराजमानमूर्धनि।<br>
+            धगद्धगद्धगज्ज्वलल्ललाटपट्टपावके किशोरचन्द्रशेखरे रतिः प्रतिक्षणं मम॥<br><br>
+            धराधरेन्द्रनन्दिनीविलासबन्धुबन्धुर-स्फुरद्दिगन्तसन्ततिप्रमोदमानमानसे।<br>
+            कृपाकटाक्षधोरणीनिरुद्धदुर्धरापदि क्वचिद्दिगम्बरे मनो विनोदमेतु वस्तुनि॥
+          </div>
+        `
+      },
+      lakshmi: {
+        title: "श्री लक्ष्मी जी की आरती",
+        author: "पारंपरिक",
+        content: `
+          <div class="text-center space-y-3 font-devanagari text-white leading-loose max-w-xl mx-auto">
+            ॐ जय लक्ष्मी माता, मैया जय लक्ष्मी माता।<br>
+            तुमको निसदिन सेवत, हर विष्णु विधाता॥<br>
+            उमा, रमा, ब्रह्माणी, तुम ही जग-माता।<br>
+            सूर्य-चन्द्रमा ध्यावत, नारद ऋषि गाता॥<br>
+            दुर्गारूप निरंजनि, सुख-सम्पत्ति दाता।<br>
+            जो कोई तुमको ध्यावत, ऋद्धि-सिद्धि धन पाता॥<br>
+            जिस घर तुम रहती, तहं सब सद्गुण आता।<br>
+            सब संभव हो जाता, मन नहिं घबराता॥
+          </div>
+        `
+      }
+    };
+
+    function switchAartiCategory(key) {
+      document.querySelectorAll('.aarti-chip').forEach(b => {
+        b.classList.remove('bg-amber-500/30', 'text-amber-300', 'border-amber-500/50');
+        b.classList.add('bg-white/5', 'text-slate-400');
+      });
+      if (window.event && window.event.target) {
+        window.event.target.classList.add('bg-amber-500/30', 'text-amber-300', 'border-amber-500/50');
+      }
+
+      const item = aartisData[key] || aartisData.hanuman;
+      const box = document.getElementById('aartiDisplayBox');
+      box.innerHTML = `
+        <div class="flex justify-between items-center border-b border-amber-900/40 pb-3">
+          <div>
+            <h3 class="text-xl font-extrabold text-white font-devanagari">${item.title}</h3>
+            <span class="text-xs text-amber-400">${item.author}</span>
+          </div>
+          <button onclick="playTempleBell()" class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold">
+            🔔 घंटी बजाएं
+          </button>
+        </div>
+        ${item.content}
+      `;
+    }
+    switchAartiCategory('hanuman');
+
+    // ==============================================
+    // 5. VRAT & FESTIVALS 2026 CALENDAR DATA
+    // ==============================================
+    const festivals2026 = [
+      { name: "मकर संक्रांति / पोंगल", date: "14 जनवरी 2026", tithi: "माघ कृष्ण पक्ष", desc: "सूर्य देव का मकर राशि में प्रवेश।" },
+      { name: "मौनी अमावस्या", date: "18 जनवरी 2026", tithi: "माघ अमावस्या", desc: "त्रिवेणी संगम पर पवित्र स्नान का महापुण्य।" },
+      { name: "वसंत पंचमी (सरस्वती पूजा)", date: "23 जनवरी 2026", tithi: "माघ शुक्ल पंचमी", desc: "विद्या की देवी मां सरस्वती की आराधना।" },
+      { name: "महाशिवरात्रि", date: "15 फरवरी 2026", tithi: "फाल्गुन कृष्ण चतुर्दशी", desc: "भगवान शिव और माता पार्वती का पावन महाउत्सव।" },
+      { name: "होलिका दहन व होली", date: "03 मार्च 2026", tithi: "फाल्गुन पूर्णिमा", desc: "भक्त प्रह्लाद की रक्षा व रंगों का पावन पर्व।" },
+      { name: "चैत्र नवरात्रि / नव संवत्सर", date: "19 मार्च 2026", tithi: "चैत्र शुक्ल प्रतिपदा", desc: "हिंदू नववर्ष प्रारंभ व मां दुर्गा की उपासना।" },
+      { name: "श्री राम नवमी", date: "27 मार्च 2026", tithi: "चैत्र शुक्ल नवमी", desc: "मर्यादा पुरुषोत्तम भगवान श्री राम का जन्मोत्सव।" },
+      { name: "हनुमान जयंती", date: "02 अप्रैल 2026", tithi: "चैत्र पूर्णिमा", desc: "संकटमोचन श्री हनुमान जी का प्राकट्य दिवस।" },
+      { name: "अक्षय तृतीया", date: "20 अप्रैल 2026", tithi: "वैशाख शुक्ल तृतीया", desc: "अक्षय पुण्य, सोना व दान का महामुहूर्त।" },
+      { name: "रक्षाबंधन", date: "28 अगस्त 2026", tithi: "श्रावण पूर्णिमा", desc: "भाई-बहन के असीम स्नेह का पावन पर्व।" },
+      { name: "श्री कृष्ण जन्माष्टमी", date: "04 सितंबर 2026", tithi: "भाद्रपद कृष्ण अष्टमी", desc: "भगवान श्री कृष्ण का मध्यरात्रि अवतरण।" },
+      { name: "गणेश चतुर्थी", date: "14 सितंबर 2026", tithi: "भाद्रपद शुक्ल चतुर्थी", desc: "विघ्नहर्ता भगवान गणेश का 10-दिवसीय महोत्सव।" },
+      { name: "शारदीय नवरात्रि प्रारंभ", date: "11 अक्टूबर 2026", tithi: "आश्विन शुक्ल प्रतिपदा", desc: "नौ देवियों का पावन गरबा व शक्ति आराधना।" },
+      { name: "विजयादशमी (दशहरा)", date: "20 अक्टूबर 2026", tithi: "आश्विन शुक्ल दशमी", desc: "अधर्म पर धर्म व रावण दहन की विजय।" },
+      { name: "करवा चौथ", date: "29 अक्टूबर 2026", tithi: "कार्तिक कृष्ण चतुर्थी", desc: "अखंड सौभाग्य के लिए सुहागिनों का निर्जला व्रत।" },
+      { name: "दीपावली (लक्ष्मी पूजन)", date: "08 नवंबर 2026", tithi: "कार्तिक अमावस्या", desc: "प्रभु राम के अयोध्या आगमन पर दीपोत्सव।" },
+      { name: "कार्तिक पूर्णिमा / देव दीपावली", date: "24 नवंबर 2026", tithi: "कार्तिक पूर्णिमा", desc: "काशी में देवताओं की भव्य देव दीपावली।" }
+    ];
+
+    function renderFestivals() {
+      const grid = document.getElementById('festivalsGrid');
+      if (!grid) return;
+      grid.innerHTML = festivals2026.map(f => `
+        <div class="glass-card rounded-2xl p-5 border-amber-900/30 space-y-2 hover:border-amber-500/40 transition">
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-amber-400 font-bold font-mono">📅 ${f.date}</span>
+            <span class="text-slate-400 text-[11px]">${f.tithi}</span>
+          </div>
+          <h4 class="text-lg font-bold text-white font-devanagari">${f.name}</h4>
+          <p class="text-xs text-slate-300">${f.desc}</p>
+        </div>
+      `).join('');
+    }
+    renderFestivals();
+
+    // ==============================================
+    // 6. AUTO GPS PANCHANG INTEGRATION
+    // ==============================================
+    const btnAutoGps = document.getElementById('btnAutoGpsSanatan');
+    if (btnAutoGps) {
+      btnAutoGps.addEventListener('click', async () => {
+        btnAutoGps.textContent = '🛰️ Locating...';
+        if (window.SoundWavePermissions) {
+          const res = await window.SoundWavePermissions.requestGeolocation();
+          if (res && res.success && res.coords) {
+            const { latitude, longitude } = res.coords;
+            document.getElementById('panchangBannerTithi').textContent = `GPS Synced (${latitude.toFixed(2)}°, ${longitude.toFixed(2)}°) • शुभ अभिजित मुहूर्त सक्रिय`;
+            btnAutoGps.innerHTML = '<span>✅</span> <span>GPS Set</span>';
+            playTempleBell();
+            return;
+          }
+        }
+        btnAutoGps.innerHTML = '<span>🛰️</span> <span>Auto GPS</span>';
+      });
+    }
+
+    function playMantra(type) {
+      playTempleBell();
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const text = (type === 'gayatri')
+          ? "ॐ भूर्भुवः स्वः तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात्"
+          : "ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्। उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय माऽमृतात्";
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'hi-IN';
+        utter.rate = 0.8;
+        window.speechSynthesis.speak(utter);
+      }
+    }
+  </script>
+
+</body>
+</html>

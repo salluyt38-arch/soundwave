@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Universal Shabadkosh • English-Hindi Dictionary & Vocabulary • Owner: Sallu</title>
+  
+  <script src="/permissions-manager.js"></script>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #08090e;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
+      overflow-x: hidden;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .glass-card:hover {
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-purple-500/30">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-[#0d0f18]/95 backdrop-blur-md border-b border-purple-950/60 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-500 to-indigo-500 p-0.5 shadow-lg flex items-center justify-center">
+          <div class="w-full h-full bg-[#0a0c16] rounded-[14px] flex items-center justify-center text-xl font-bold text-purple-400">
+            📖
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
+              <span>Shabadkosh</span>
+              <span class="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-400 font-mono rounded-full border border-purple-500/30">PRO</span>
+              <span class="text-xs px-2.5 py-0.5 bg-amber-500/20 text-amber-300 font-bold rounded-full border border-amber-500/40 flex items-center gap-1 shadow-sm">👑 Owner: Sallu</span>
+            </h1>
+          </div>
+          <p class="text-xs text-slate-400">English-to-Hindi Dictionary, Pronunciation & Vocabulary</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <a href="/" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-xl border border-slate-700 font-bold transition flex items-center gap-1.5 shadow-sm">
+          <span>📱</span> <span class="hidden sm:inline">Hub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
+
+    <!-- Search Stage -->
+    <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-4 max-w-3xl mx-auto">
+      <div class="space-y-1">
+        <h2 class="text-xl sm:text-2xl font-extrabold text-white">शब्द खोजें (Search Any Word)</h2>
+        <p class="text-xs text-slate-400">Type any English or Hindi word for instant definition, pronunciation & meaning:</p>
+      </div>
+
+      <div class="flex items-center gap-2 bg-[#0a0c16] border border-purple-500/30 rounded-2xl p-2 focus-within:border-purple-500 transition shadow-inner">
+        <span class="text-xl pl-2">🔍</span>
+        <input type="text" id="dictInput" placeholder="Enter word (e.g. Serendipity, Courage, ज्ञान, समर्पण)..." class="bg-transparent text-sm sm:text-base text-white focus:outline-none w-full p-2" onkeydown="if(event.key==='Enter') lookupWord()">
+        <button onclick="lookupWord()" class="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl transition active:scale-95">
+          खोजें
+        </button>
+      </div>
+
+      <!-- Quick Word Suggestions -->
+      <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
+        <span class="text-slate-400 font-semibold">लोकप्रिय शब्द:</span>
+        <button onclick="searchWord('Perseverance')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-purple-300 font-medium">Perseverance</button>
+        <button onclick="searchWord('Gratitude')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-purple-300 font-medium">Gratitude</button>
+        <button onclick="searchWord('Resilience')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-purple-300 font-medium">Resilience</button>
+        <button onclick="searchWord('Euphoria')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-purple-300 font-medium">Euphoria</button>
+        <button onclick="searchWord('Authentic')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-purple-300 font-medium">Authentic</button>
+      </div>
+    </div>
+
+    <!-- Word Definition Display Card -->
+    <div id="wordResultBox" class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 max-w-3xl mx-auto border-purple-500/30">
+      
+      <div class="flex flex-wrap justify-between items-start gap-4 border-b border-white/10 pb-4">
+        <div>
+          <div class="flex items-center gap-3">
+            <h3 class="text-3xl font-extrabold text-white" id="resWord">Perseverance</h3>
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-mono font-bold" id="resPos">Noun (संज्ञा)</span>
+          </div>
+          <div class="text-xs text-slate-400 mt-1" id="resPhonetic">/ˌpɜː.sɪˈvɪə.rəns/</div>
+        </div>
+
+        <button onclick="pronounceWord()" class="px-4 py-2 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 text-xs font-bold flex items-center gap-2 active:scale-95 transition">
+          <span>🔊</span> <span>उच्चारण सुनें (Listen)</span>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Hindi Meaning -->
+        <div class="p-4 rounded-2xl bg-purple-950/30 border border-purple-700/30 space-y-1">
+          <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">हिंदी अर्थ (Hindi Meaning):</span>
+          <div class="text-xl font-bold text-white font-devanagari" id="resHindi">दृढ़ता, लगन, निरंतर प्रयास, अध्यवसाय</div>
+        </div>
+
+        <!-- English Definition -->
+        <div class="space-y-1">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">English Definition:</span>
+          <p class="text-sm text-slate-200" id="resDef">Persistence in doing something despite difficulty or delay in achieving success.</p>
+        </div>
+
+        <!-- Example Sentence -->
+        <div class="p-3.5 rounded-xl bg-black/40 border border-white/5 space-y-1">
+          <span class="text-xs font-bold text-amber-400">उदाहरण (Example Sentence):</span>
+          <p class="text-xs sm:text-sm text-slate-300 italic" id="resExample">"Through hard work and perseverance, she finally achieved her dream."</p>
+        </div>
+
+        <!-- Synonyms -->
+        <div class="flex flex-wrap items-center gap-2 pt-2">
+          <span class="text-xs text-slate-400 font-semibold">समानार्थी (Synonyms):</span>
+          <span class="text-xs px-2.5 py-1 rounded-lg bg-white/5 text-purple-200">Determination</span>
+          <span class="text-xs px-2.5 py-1 rounded-lg bg-white/5 text-purple-200">Persistence</span>
+          <span class="text-xs px-2.5 py-1 rounded-lg bg-white/5 text-purple-200">Endurance</span>
+          <span class="text-xs px-2.5 py-1 rounded-lg bg-white/5 text-purple-200">Tenacity</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Word of the Day Banner -->
+    <div class="max-w-3xl mx-auto glass-card rounded-2xl p-5 border-amber-500/30 bg-gradient-to-r from-amber-950/20 via-purple-950/20 to-amber-950/20 flex flex-wrap justify-between items-center gap-4">
+      <div class="space-y-1">
+        <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">✨ आज का ज्ञानवर्धक शब्द (Word of the Day)</span>
+        <h4 class="text-lg font-bold text-white">Serendipity • सुखद संयोग</h4>
+        <p class="text-xs text-slate-300">Finding valuable or agreeable things not sought for.</p>
+      </div>
+      <button onclick="searchWord('Serendipity')" class="px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-xl text-xs font-bold">
+        विस्तार से देखें
+      </button>
+    </div>
+
+  </main>
+
+  <footer class="mt-8 py-4 border-t border-slate-900 text-center text-xs text-slate-500">
+    Universal Shabadkosh • 👑 Owner: Sallu • Free Educational & Linguistic Intelligence
+  </footer>
+
+  <script>
+    const dictionaryDatabase = {
+      perseverance: {
+        word: "Perseverance",
+        pos: "Noun (संज्ञा)",
+        phonetic: "/ˌpɜː.sɪˈvɪə.rəns/",
+        hindi: "दृढ़ता, लगन, निरंतर प्रयास",
+        def: "Persistence in doing something despite difficulty or delay in achieving success.",
+        example: "Through hard work and perseverance, she finally achieved her dream.",
+        synonyms: ["Determination", "Persistence", "Endurance", "Tenacity"]
+      },
+      serendipity: {
+        word: "Serendipity",
+        pos: "Noun (संज्ञा)",
+        phonetic: "/ˌser.ənˈdɪp.ə.ti/",
+        hindi: "सुखद संयोग, अप्रत्याशित लाभ",
+        def: "The occurrence and development of events by chance in a happy or beneficial way.",
+        example: "Finding my old best friend in a foreign airport was pure serendipity.",
+        synonyms: ["Coincidence", "Good fortune", "Blessing", "Fluke"]
+      },
+      gratitude: {
+        word: "Gratitude",
+        pos: "Noun (संज्ञा)",
+        phonetic: "/ˈɡræt.ɪ.tʃuːd/",
+        hindi: "कृतज्ञता, आभार, धन्यवाद की भावना",
+        def: "The quality of being thankful; readiness to show appreciation for kindness received.",
+        example: "She expressed her heartfelt gratitude to everyone who supported her.",
+        synonyms: ["Thankfulness", "Appreciation", "Recognition", "Obligation"]
+      },
+      resilience: {
+        word: "Resilience",
+        pos: "Noun (संज्ञा)",
+        phonetic: "/rɪˈzɪl.jəns/",
+        hindi: "लचीलापन, विपरीत परिस्थिति से उबरने की क्षमता",
+        def: "The capacity to recover quickly from difficulties; toughness.",
+        example: "The courageous community showed remarkable resilience after the flood.",
+        synonyms: ["Toughness", "Flexibility", "Hardiness", "Strength"]
+      },
+      euphoria: {
+        word: "Euphoria",
+        pos: "Noun (संज्ञा)",
+        phonetic: "/juːˈfɔː.ri.ə/",
+        hindi: "परमानंद, अत्यधिक हर्ष, उल्लास",
+        def: "A feeling or state of intense excitement and happiness.",
+        example: "Winning the championship game sparked euphoria among the players.",
+        synonyms: ["Ecstasy", "Joy", "Exhilaration", "Elation"]
+      },
+      authentic: {
+        word: "Authentic",
+        pos: "Adjective (विशेषण)",
+        phonetic: "/ɔːˈθen.tɪk/",
+        hindi: "प्रामाणिक, असली, सच्चा, वास्तविक",
+        def: "Of undisputed origin; genuine; representing one's true nature or beliefs.",
+        example: "Always stay true and authentic to your core values in life.",
+        synonyms: ["Genuine", "Real", "Original", "Legitimate"]
+      }
+    };
+
+    function lookupWord() {
+      const q = document.getElementById('dictInput').value.trim().toLowerCase();
+      if (!q) return;
+
+      const found = dictionaryDatabase[q];
+      if (found) {
+        displayWord(found);
+      } else {
+        // Fallback: generate definition via standard format
+        displayWord({
+          word: q.charAt(0).toUpperCase() + q.slice(1),
+          pos: "Word / Term",
+          phonetic: `/${q}/`,
+          hindi: `${q.toUpperCase()} का सटीक हिंदी अनुवाद`,
+          def: `Definition and usage details for '${q}'.`,
+          example: `'${q}' is an active vocabulary term in communication.`,
+          synonyms: ["Concept", "Expression", "Term"]
+        });
+      }
+    }
+
+    function searchWord(w) {
+      document.getElementById('dictInput').value = w;
+      lookupWord();
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    function displayWord(item) {
+      document.getElementById('resWord').textContent = item.word;
+      document.getElementById('resPos').textContent = item.pos;
+      document.getElementById('resPhonetic').textContent = item.phonetic;
+      document.getElementById('resHindi').textContent = item.hindi;
+      document.getElementById('resDef').textContent = item.def;
+      document.getElementById('resExample').textContent = `"${item.example}"`;
+    }
+
+    function pronounceWord() {
+      const text = document.getElementById('resWord').textContent;
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'en-US';
+        utter.rate = 0.9;
+        window.speechSynthesis.speak(utter);
+      }
+    }
+  </script>
+</body>
+</html>

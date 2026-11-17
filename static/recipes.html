@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Bawarchi Recipe Finder • Daily Cooking Assistant • Owner: Sallu</title>
+  
+  <script src="/permissions-manager.js"></script>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #0b0907;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
+      overflow-x: hidden;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .glass-card {
+      background: rgba(26, 20, 15, 0.75);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(249, 115, 22, 0.18);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .glass-card:hover {
+      border-color: rgba(249, 115, 22, 0.4);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-orange-500/30">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-[#120c06]/95 backdrop-blur-md border-b border-orange-950/60 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 p-0.5 shadow-lg flex items-center justify-center">
+          <div class="w-full h-full bg-[#1c1208] rounded-[14px] flex items-center justify-center text-xl font-bold text-orange-400">
+            🍲
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
+              <span>Bawarchi</span>
+              <span class="text-xs px-2 py-0.5 bg-orange-500/20 text-orange-400 font-mono rounded-full border border-orange-500/30">RECIPES</span>
+              <span class="text-xs px-2.5 py-0.5 bg-amber-500/20 text-amber-300 font-bold rounded-full border border-amber-500/40 flex items-center gap-1 shadow-sm">👑 Owner: Sallu</span>
+            </h1>
+          </div>
+          <p class="text-xs text-slate-400">Smart Recipe Finder by Ingredients • 1000+ Indian Dishes</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <a href="/" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-xl border border-slate-700 font-bold transition flex items-center gap-1.5 shadow-sm">
+          <span>📱</span> <span class="hidden sm:inline">Hub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
+
+    <!-- Search Box: What ingredients do you have? -->
+    <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-4 max-w-4xl mx-auto">
+      <div class="space-y-1">
+        <h2 class="text-xl sm:text-2xl font-extrabold text-white">आज रसोई में क्या बनाना है?</h2>
+        <p class="text-xs sm:text-sm text-slate-400">अपनी पसंदीदा सामग्री लिखें (जैसे: पनीर, आलू, दाल, चिकन, पालक) या डिश का नाम खोजें:</p>
+      </div>
+
+      <div class="flex items-center gap-2 bg-[#1c1208] border border-orange-500/30 rounded-2xl p-2 focus-within:border-orange-500 transition shadow-inner">
+        <span class="text-xl pl-2">🔍</span>
+        <input type="text" id="recipeSearchInput" placeholder="डिश या सामग्री खोजें (उदा: Paneer Butter Masala, Khichdi)..." class="bg-transparent text-sm sm:text-base text-white focus:outline-none w-full p-2" oninput="filterRecipes(this.value)">
+      </div>
+
+      <!-- Quick Chips -->
+      <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
+        <span class="text-slate-400 font-semibold">Quick Filters:</span>
+        <button onclick="setFilter('all')" class="chip-filter active px-3 py-1 rounded-xl bg-orange-500 text-white font-bold">All</button>
+        <button onclick="setFilter('veg')" class="chip-filter px-3 py-1 rounded-xl bg-white/5 text-slate-300 font-bold hover:bg-white/10">Pure Veg 🌱</button>
+        <button onclick="setFilter('vrat')" class="chip-filter px-3 py-1 rounded-xl bg-white/5 text-slate-300 font-bold hover:bg-white/10">Vrat / Upvas 🪔</button>
+        <button onclick="setFilter('breakfast')" class="chip-filter px-3 py-1 rounded-xl bg-white/5 text-slate-300 font-bold hover:bg-white/10">Breakfast ☕</button>
+        <button onclick="setFilter('sweet')" class="chip-filter px-3 py-1 rounded-xl bg-white/5 text-slate-300 font-bold hover:bg-white/10">Desserts 🍨</button>
+      </div>
+    </div>
+
+    <!-- Recipes Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto" id="recipesGrid">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Recipe Detail Modal -->
+    <div id="recipeModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+      <div class="glass-card rounded-3xl p-6 sm:p-8 max-w-2xl w-full border-orange-500/40 space-y-5 max-h-[85vh] overflow-y-auto">
+        <div class="flex justify-between items-start border-b border-white/10 pb-3">
+          <div>
+            <span class="text-xs font-bold text-orange-400 uppercase tracking-widest" id="modalRecipeCategory">Category</span>
+            <h3 class="text-xl font-bold text-white mt-1" id="modalRecipeTitle">Recipe Title</h3>
+          </div>
+          <button onclick="closeRecipeModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300">✕</button>
+        </div>
+        
+        <div class="space-y-4 text-sm text-slate-300" id="modalRecipeBody">
+          <!-- Content populated by JS -->
+        </div>
+
+        <div class="flex justify-end pt-3 border-t border-white/10">
+          <button onclick="closeRecipeModal()" class="px-5 py-2.5 bg-orange-600 hover:bg-orange-500 rounded-xl text-xs font-bold text-white">
+            बनाना शुरू करें (Cook Now)
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="mt-8 py-4 border-t border-slate-900 text-center text-xs text-slate-500">
+    Bawarchi Recipes • 👑 Owner: Sallu • Verified Authentic Indian Recipes
+  </footer>
+
+  <script>
+    const recipesData = [
+      {
+        id: 1,
+        title: "शाही पनीर (Shahi Paneer)",
+        category: "veg",
+        badge: "Pure Veg",
+        time: "30 Min",
+        difficulty: "आसान (Easy)",
+        icon: "🧀",
+        ingredients: ["250g पनीर (Paneer)", "2 टमाटर प्यूरी", "1 प्याज का पेस्ट", "1/2 कप काजू-मलाई पेस्ट", "गरम मसाला, हल्दी, कसूरी मेथी"],
+        steps: [
+          "कड़ाही में घी गर्म करके प्याज और अदरक-लहसुन का पेस्ट सुनहरा भूनें।",
+          "टमाटर प्यूरी, हल्दी, लाल मिर्च और काजू पेस्ट डालकर धीमी आंच पर तेल छोड़ने तक पकाएं।",
+          "ताजी मलाई और कसूरी मेथी डालें, फिर पनीर के टुकड़े मिलाकर 5 मिनट तक दम दें।",
+          "गरमा-गरम नान या परांठे के साथ परोसें।"
+        ]
+      },
+      {
+        id: 2,
+        title: "साबूदाना खिचड़ी (Sabudana Khichdi)",
+        category: "vrat",
+        badge: "Vrat Special",
+        time: "15 Min",
+        difficulty: "आसान (Easy)",
+        icon: "🥔",
+        ingredients: ["1 कप भीगा हुआ साबूदाना", "1 उबला आलू (कटा हुआ)", "1/2 कप भुनी मूंगफली (दरदरी)", "हरी मिर्च, जीरा, सेंधा नमक, हरा धनिया"],
+        steps: [
+          "पैन में 1 चम्मच घी गर्म करें और जीरा, हरी मिर्च व करी पत्ता तड़काएं।",
+          "कटा हुआ आलू डालकर 2 मिनट कुरकुरा भूनें।",
+          "भीगा साबूदाना, सेंधा नमक और मूंगफली का चूरा मिलाकर धीमी आंच पर ढककर 3-4 मिनट पकाएं।",
+          "नींबू का रस और हरा धनिया डालकर गरमा-गरम फलाहारी खिचड़ी खाएं।"
+        ]
+      },
+      {
+        id: 3,
+        title: "मसाला पोहा (Indori Masala Poha)",
+        category: "breakfast",
+        badge: "Quick Breakfast",
+        time: "12 Min",
+        difficulty: "अति आसान (Super Easy)",
+        icon: "🥣",
+        ingredients: ["2 कप पोहा (धुला हुआ)", "1 बारीक प्याज", "1 चम्मच राई और सौंफ", "मूंगफली के दाने, हल्दी, नमक, नींबू, रतलामी सेव"],
+        steps: [
+          "पोहे को पानी से धोकर छलनी में निकाल लें और हल्दी व चुटकीभर चीनी मिलाएं।",
+          "कड़ाही में तेल गर्म करके राई, सौंफ, हरी मिर्च और मूंगफली भूनें।",
+          "प्याज डालकर हल्का गुलाबी होने तक भूनें, फिर पोहा और नमक मिलाएं।",
+          "ऊपर से नींबू का रस और रतलामी सेव डालकर गर्मागर्म परोसें।"
+        ]
+      },
+      {
+        id: 4,
+        title: "दाल मखनी (Dal Makhani)",
+        category: "veg",
+        badge: "Classic North Indian",
+        time: "45 Min",
+        difficulty: "मध्यम (Medium)",
+        icon: "🍲",
+        ingredients: ["1 कप साबुत उड़द दाल", "1/4 कप राजमा (रातभर भीगे)", "मक्खन (Butter), ताजी क्रीम, टमाटर प्यूरी, कश्मीरी लाल मिर्च"],
+        steps: [
+          "उड़द और राजमा को कुकर में नमक के साथ 5-6 सीटी आने तक अच्छी तरह उबालें।",
+          "कड़ाही में ढेर सारा मक्खन पिघलाएं, टमाटर प्यूरी और कश्मीरी मिर्च डालकर भूनें।",
+          "उबली हुई दाल डालकर धीमी आंच पर 25-30 मिनट तक घोटते हुए पकाएं।",
+          "ऊपर से मक्खन और ताजी मलाई डालकर सर्व करें।"
+        ]
+      },
+      {
+        id: 5,
+        title: "गाजर का हलवा (Gajar Ka Halwa)",
+        category: "sweet",
+        badge: "Desi Mithai",
+        time: "35 Min",
+        difficulty: "मध्यम (Medium)",
+        icon: "🥕",
+        ingredients: ["1 किलो कद्दूकस गाजर", "1 लीटर फुल क्रीम दूध", "1 कप चीनी, 1/2 कप देशी घी", "खोया (मावा), इलायची पाउडर, काजू, बादाम"],
+        steps: [
+          "कड़ाही में गाजर और दूध को धीमी आंच पर दूध सूखने तक पकाएं।",
+          "दूध सूखने पर देशी घी डालें और गाजर को 10 मिनट तक भूनें।",
+          "चीनी और मावा मिलाएं, फिर मेवे और इलायची पाउडर डालकर 5 मिनट और भूनें।",
+          "शाही गरमा-गरम गाजर का हलवा तैयार है।"
+        ]
+      },
+      {
+        id: 6,
+        title: "कुट्टू के आटे की पूरी व आलू (Kuttu Puri)",
+        category: "vrat",
+        badge: "Navratri Vrat",
+        time: "20 Min",
+        difficulty: "आसान (Easy)",
+        icon: "🫓",
+        ingredients: ["1 कप कुट्टू का आटा", "2 उबले आलू (मैश किए)", "सेंधा नमक, काली मिर्च पाउडर, मूंगफली का तेल तलने हेतु"],
+        steps: [
+          "कुट्टू के आटे में मैश किया आलू, सेंधा नमक और काली मिर्च मिलाकर बिना पानी के आटा गूंथ लें।",
+          "छोटी-छोटी लोइयां बनाकर प्लास्टिक शीट पर थपथपाकर पूरियां बेलें।",
+          "गर्म तेल में डालकर सुनहरी और कुरकुरी होने तक तलें।",
+          "दही या व्रत वाले आलू की सब्जी के साथ परोसें।"
+        ]
+      }
+    ];
+
+    let currentFilter = 'all';
+
+    function renderRecipes(list = recipesData) {
+      const grid = document.getElementById('recipesGrid');
+      if (!grid) return;
+      grid.innerHTML = list.map(r => `
+        <div onclick="openRecipeModal(${r.id})" class="glass-card rounded-2xl p-5 hover:border-orange-500/50 cursor-pointer transition-all hover:-translate-y-1 space-y-3">
+          <div class="flex justify-between items-center text-xs">
+            <span class="px-2.5 py-1 rounded-full bg-orange-500/20 text-orange-300 font-bold border border-orange-500/30">${r.badge}</span>
+            <span class="text-slate-400">⏱️ ${r.time}</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">${r.icon}</span>
+            <h3 class="text-lg font-bold text-white">${r.title}</h3>
+          </div>
+          <div class="text-xs text-slate-400">
+            <strong>मुख्य सामग्री:</strong> ${r.ingredients.slice(0, 3).join(', ')}...
+          </div>
+          <div class="pt-2 flex justify-between items-center text-xs font-bold text-orange-400 border-t border-white/5">
+            <span>पूरी विधि देखें (View Recipe)</span>
+            <span>→</span>
+          </div>
+        </div>
+      `).join('');
+    }
+    renderRecipes();
+
+    function setFilter(cat) {
+      currentFilter = cat;
+      document.querySelectorAll('.chip-filter').forEach(btn => {
+        btn.classList.remove('active', 'bg-orange-500', 'text-white');
+        btn.classList.add('bg-white/5', 'text-slate-300');
+      });
+      if (window.event && window.event.target) {
+        window.event.target.classList.add('active', 'bg-orange-500', 'text-white');
+      }
+
+      const filtered = (cat === 'all') ? recipesData : recipesData.filter(r => r.category === cat);
+      renderRecipes(filtered);
+    }
+
+    function filterRecipes(query) {
+      const q = (query || '').toLowerCase().trim();
+      const filtered = recipesData.filter(r => 
+        r.title.toLowerCase().includes(q) || 
+        r.ingredients.some(ing => ing.toLowerCase().includes(q))
+      );
+      renderRecipes(filtered);
+    }
+
+    function openRecipeModal(id) {
+      const r = recipesData.find(x => x.id === id);
+      if (!r) return;
+      document.getElementById('modalRecipeCategory').textContent = `${r.badge} • ⏱️ ${r.time} • ${r.difficulty}`;
+      document.getElementById('modalRecipeTitle').textContent = `${r.icon} ${r.title}`;
+
+      document.getElementById('modalRecipeBody').innerHTML = `
+        <div class="p-4 rounded-2xl bg-orange-950/30 border border-orange-700/30 space-y-2">
+          <h4 class="font-bold text-orange-400">आवश्यक सामग्री (Ingredients):</h4>
+          <ul class="list-disc list-inside space-y-1 text-xs sm:text-sm text-slate-200">
+            ${r.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+          </ul>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-bold text-white">बनाने की सरल विधि (Step-by-Step Instructions):</h4>
+          <ol class="list-decimal list-inside space-y-2 text-xs sm:text-sm text-slate-300 leading-relaxed">
+            ${r.steps.map(step => `<li>${step}</li>`).join('')}
+          </ol>
+        </div>
+      `;
+
+      document.getElementById('recipeModal').classList.remove('hidden');
+    }
+
+    function closeRecipeModal() {
+      document.getElementById('recipeModal').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>

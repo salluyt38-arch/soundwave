@@ -9288,6 +9288,21 @@ html, body {
 .service-icon-box.islamic {
     background: linear-gradient(135deg, #059669, #047857);
 }
+.service-icon-box.sanatan {
+    background: linear-gradient(135deg, #ea580c, #d97706);
+}
+.service-icon-box.currency {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+.service-icon-box.recipes {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+.service-icon-box.dictionary {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+}
+.service-icon-box.pincode {
+    background: linear-gradient(135deg, #e11d48, #be123c);
+}
 .service-icon-box.sm {
     width: 42px;
     height: 42px;
@@ -9371,6 +9386,26 @@ html, body {
     background: rgba(16, 185, 129, 0.15);
     border: 1px solid rgba(16, 185, 129, 0.35);
     color: #34d399;
+}
+.service-stat-badge.saffron {
+    background: rgba(234, 88, 12, 0.2);
+    color: #fb923c;
+    border: 1px solid rgba(234, 88, 12, 0.4);
+}
+.service-stat-badge.indigo {
+    background: rgba(99, 102, 241, 0.2);
+    color: #818cf8;
+    border: 1px solid rgba(99, 102, 241, 0.4);
+}
+.service-stat-badge.rose {
+    background: rgba(225, 29, 72, 0.2);
+    color: #fb7185;
+    border: 1px solid rgba(225, 29, 72, 0.4);
+}
+.service-stat-badge.gold {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.4);
 }
 
 .service-card-actions {

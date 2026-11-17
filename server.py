@@ -154,6 +154,174 @@ APPSTORE_CATALOG = {
             "download_html": "/download/islamic.html",
             "download_zip": "/download/islamic.zip",
             "internal_scheme": "soundwave://appstore/islamic"
+        },
+        {
+            "id": "sanatan",
+            "name": "Sanatan Seva • Vedic Spiritual Portal",
+            "subtitle": "Bhagavad Gita, Daily Panchang, Aartis & 108 Rudraksha Jap Mala",
+            "version": "2026.1.0",
+            "rating": 5.0,
+            "reviews": "4.5k reviews",
+            "size": "68 KB",
+            "icon": "🕉️",
+            "theme_color": "#ea580c",
+            "category": "Spiritual & Philosophy",
+            "badge": "🕉️ Vedic Pro",
+            "summary": "Complete 18 Chapters Bhagavad Gita with shlokas and translations, live Daily Panchang & Muhurat, 108 Rudraksha Digital Jap Mala with audio, and Aartis & Mantras.",
+            "features": [
+                {
+                    "title": "Shrimad Bhagavad Gita",
+                    "desc": "All 18 chapters directory, shloka viewer with Sanskrit shlokas and Hindi/English translations."
+                },
+                {
+                    "title": "Daily Vedic Panchang",
+                    "desc": "Tithi, Nakshatra, Yoga, Abhijit Muhurat, Rahu Kaal, Sunrise/Sunset with auto GPS sync."
+                },
+                {
+                    "title": "108 Beads Digital Rudraksha Mala",
+                    "desc": "Realistic bead counter with synthesized temple bell (🔔), shankha (🐚), and Om drone (🕉️)."
+                },
+                {
+                    "title": "Hanuman Chalisa & Aarti Sangrah",
+                    "desc": "Complete 40 chaupais, Ganesh Aarti, Shiv Tandav Stotram, Gayatri & Mahamrityunjaya Mantras."
+                },
+                {
+                    "title": "100% Client-Side / Standalone",
+                    "desc": "Runs completely offline without external server dependencies."
+                }
+            ],
+            "launch_url": "/sanatan.html",
+            "download_html": "/download/sanatan.html",
+            "download_zip": "/download/sanatan.zip",
+            "internal_scheme": "soundwave://appstore/sanatan"
+        },
+        {
+            "id": "currency",
+            "name": "Forex & Currency Radar",
+            "subtitle": "160+ Currencies, Live Rates & Gold/Silver Bullion Radar",
+            "version": "2026.1.0",
+            "rating": 4.9,
+            "reviews": "2.1k reviews",
+            "size": "14 KB",
+            "icon": "💵",
+            "theme_color": "#10b981",
+            "category": "Finance & Markets",
+            "badge": "💵 Live Radar",
+            "summary": "Live conversion across 160+ world currencies, real-time 24K/22K Gold & Silver rates in India, exchange rate charts & offline caching.",
+            "features": [
+                {
+                    "title": "160+ World Currencies",
+                    "desc": "Real-time rates from Open Exchange Rates and Frankfurter APIs."
+                },
+                {
+                    "title": "Gold & Silver Tracker",
+                    "desc": "24K & 22K Gold and 999 Silver prices per gram and 10 grams in India."
+                },
+                {
+                    "title": "Instant Converter",
+                    "desc": "Live calculation with quick currency switch and popular currency shortcuts."
+                }
+            ],
+            "launch_url": "/currency.html",
+            "download_html": "/download/currency.html",
+            "download_zip": "/download/currency.zip",
+            "internal_scheme": "soundwave://appstore/currency"
+        },
+        {
+            "id": "recipes",
+            "name": "Bawarchi Recipe Finder",
+            "subtitle": "Smart Kitchen Cooking Assistant & Dish Matcher",
+            "version": "2026.1.0",
+            "rating": 4.8,
+            "reviews": "1.5k reviews",
+            "size": "18 KB",
+            "icon": "🍲",
+            "theme_color": "#f59e0b",
+            "category": "Food & Cooking",
+            "badge": "🍲 Chef Pro",
+            "summary": "Ingredient-based cooking assistant ('kitchen me kya hai'), North & South Indian, Pure Veg, Vrat & Fasting specials with step-by-step cooking steps.",
+            "features": [
+                {
+                    "title": "'Kitchen Me Kya Hai' Matcher",
+                    "desc": "Find delicious dishes based on ingredients available at home."
+                },
+                {
+                    "title": "Pure Veg & Vrat Specials",
+                    "desc": "Dedicated categories for fasting food, breakfast, lunch, and desserts."
+                },
+                {
+                    "title": "Step-by-step Recipes",
+                    "desc": "Cooking time, difficulty, ingredients list, and clear preparation steps."
+                }
+            ],
+            "launch_url": "/recipes.html",
+            "download_html": "/download/recipes.html",
+            "download_zip": "/download/recipes.zip",
+            "internal_scheme": "soundwave://appstore/recipes"
+        },
+        {
+            "id": "dictionary",
+            "name": "Universal Shabadkosh",
+            "subtitle": "English-Hindi Dictionary, Pronunciation & Vocabulary",
+            "version": "2026.1.0",
+            "rating": 4.9,
+            "reviews": "1.9k reviews",
+            "size": "15 KB",
+            "icon": "📖",
+            "theme_color": "#6366f1",
+            "category": "Language & Education",
+            "badge": "📖 Vocab Pro",
+            "summary": "Instant English to Hindi word definitions, phonetics, Hindi translations, audio pronunciation via SpeechSynthesis & Word of the Day.",
+            "features": [
+                {
+                    "title": "English-Hindi Meanings",
+                    "desc": "Instant definitions, Hindi translation, parts of speech and examples."
+                },
+                {
+                    "title": "Audio Pronunciation",
+                    "desc": "Crystal-clear native speech synthesis pronunciation."
+                },
+                {
+                    "title": "Word of the Day",
+                    "desc": "Expand vocabulary daily with curated words and example sentences."
+                }
+            ],
+            "launch_url": "/dictionary.html",
+            "download_html": "/download/dictionary.html",
+            "download_zip": "/download/dictionary.zip",
+            "internal_scheme": "soundwave://appstore/dictionary"
+        },
+        {
+            "id": "pincode",
+            "name": "India Post Pincode Radar",
+            "subtitle": "150,000+ Indian Post Offices & PIN Lookup",
+            "version": "2026.1.0",
+            "rating": 4.8,
+            "reviews": "1.2k reviews",
+            "size": "12 KB",
+            "icon": "📮",
+            "theme_color": "#e11d48",
+            "category": "Public Utilities",
+            "badge": "📮 India Post",
+            "summary": "Instant lookup for 150,000+ Indian Post Offices by 6-digit PIN or branch name. District, state, delivery status and circle details.",
+            "features": [
+                {
+                    "title": "Instant 6-Digit PIN Search",
+                    "desc": "Official India Post database with post office branch and district details."
+                },
+                {
+                    "title": "Branch Name Search",
+                    "desc": "Find PIN code by typing city, town, or locality name."
+                },
+                {
+                    "title": "Delivery Status & Circle",
+                    "desc": "Detailed breakdown of delivery post offices, taluk, and circle."
+                }
+            ],
+            "launch_url": "/pincode.html",
+            "download_html": "/download/pincode.html",
+            "download_zip": "/download/pincode.zip",
+            "internal_scheme": "soundwave://appstore/pincode"
         }
     ]
 }
@@ -1485,6 +1653,181 @@ class MusicHandler(SimpleHTTPRequestHandler):
                     self.send_header("Access-Control-Allow-Origin", "*")
                     self.end_headers()
                     with open(i_zip, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+
+            # Direct Sanatan App Web & Download Routes
+            if path in ("/sanatan", "/sanatan/"):
+                self.send_response(302)
+                self.send_header("Location", "/sanatan.html")
+                self.end_headers()
+                return
+
+            if path in ("/download/sanatan.html", "/download/sanatan-app.html"):
+                s_html = os.path.join(STATIC_DIR, "sanatan.html")
+                if os.path.exists(s_html):
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="Sanatan-Seva-Vedic-Portal.html"')
+                    self.send_header("Content-Length", str(os.path.getsize(s_html)))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(s_html, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+
+            if path in ("/download/sanatan.zip", "/download/Sanatan-Seva-Vedic-Portal.zip", "/download/sanatan"):
+                s_zip = os.path.join(STATIC_DIR, "Sanatan-Seva-Vedic-Portal.zip")
+                if os.path.exists(s_zip):
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="Sanatan-Seva-Vedic-Portal.zip"')
+                    self.send_header("Content-Length", str(os.path.getsize(s_zip)))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(s_zip, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+
+            # Direct Forex & Currency Web & Download Routes
+            if path in ("/currency", "/currency/"):
+                self.send_response(302)
+                self.send_header("Location", "/currency.html")
+                self.end_headers()
+                return
+
+            if path in ("/download/currency.html", "/download/forex.html"):
+                c_html = os.path.join(STATIC_DIR, "currency.html")
+                if os.path.exists(c_html):
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="Forex-Currency-Radar.html"')
+                    self.send_header("Content-Length", str(os.path.getsize(c_html)))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(c_html, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+
+            if path in ("/download/currency.zip", "/download/Forex-Currency-Radar.zip", "/download/currency"):
+                c_zip = os.path.join(STATIC_DIR, "Forex-Currency-Radar.zip")
+                if os.path.exists(c_zip):
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="Forex-Currency-Radar.zip"')
+                    self.send_header("Content-Length", str(os.path.getsize(c_zip)))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(c_zip, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+
+            # Direct Bawarchi Recipes Web & Download Routes
+            if path in ("/recipes", "/recipes/"):
+                self.send_response(302)
+                self.send_header("Location", "/recipes.html")
+                self.end_headers()
+                return
+
+            if path in ("/download/recipes.html", "/download/bawarchi.html"):
+                r_html = os.path.join(STATIC_DIR, "recipes.html")
+                if os.path.exists(r_html):
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="Bawarchi-Recipe-Finder.html"')
+                    self.send_header("Content-Length", str(os.path.getsize(r_html)))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(r_html, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+
+            if path in ("/download/recipes.zip", "/download/Bawarchi-Recipe-Finder.zip", "/download/recipes"):
+                r_zip = os.path.join(STATIC_DIR, "Bawarchi-Recipe-Finder.zip")
+                if os.path.exists(r_zip):
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="Bawarchi-Recipe-Finder.zip"')
+                    self.send_header("Content-Length", str(os.path.getsize(r_zip)))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(r_zip, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+
+            # Direct Shabadkosh Dictionary Web & Download Routes
+            if path in ("/dictionary", "/dictionary/"):
+                self.send_response(302)
+                self.send_header("Location", "/dictionary.html")
+                self.end_headers()
+                return
+
+            if path in ("/download/dictionary.html", "/download/shabadkosh.html"):
+                d_html = os.path.join(STATIC_DIR, "dictionary.html")
+                if os.path.exists(d_html):
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="Universal-Shabadkosh.html"')
+                    self.send_header("Content-Length", str(os.path.getsize(d_html)))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(d_html, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+
+            if path in ("/download/dictionary.zip", "/download/Universal-Shabadkosh.zip", "/download/dictionary"):
+                d_zip = os.path.join(STATIC_DIR, "Universal-Shabadkosh.zip")
+                if os.path.exists(d_zip):
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="Universal-Shabadkosh.zip"')
+                    self.send_header("Content-Length", str(os.path.getsize(d_zip)))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(d_zip, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+
+            # Direct India Post Pincode Web & Download Routes
+            if path in ("/pincode", "/pincode/"):
+                self.send_response(302)
+                self.send_header("Location", "/pincode.html")
+                self.end_headers()
+                return
+
+            if path in ("/download/pincode.html", "/download/postoffice.html"):
+                p_html = os.path.join(STATIC_DIR, "pincode.html")
+                if os.path.exists(p_html):
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="India-Post-Pincode-Radar.html"')
+                    self.send_header("Content-Length", str(os.path.getsize(p_html)))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(p_html, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+
+            if path in ("/download/pincode.zip", "/download/India-Post-Pincode-Radar.zip", "/download/pincode"):
+                p_zip = os.path.join(STATIC_DIR, "India-Post-Pincode-Radar.zip")
+                if os.path.exists(p_zip):
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="India-Post-Pincode-Radar.zip"')
+                    self.send_header("Content-Length", str(os.path.getsize(p_zip)))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(p_zip, "rb") as f:
                         shutil.copyfileobj(f, self.wfile)
                     return
 

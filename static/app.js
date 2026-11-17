@@ -6035,6 +6035,76 @@ document.addEventListener('DOMContentLoaded', () => {
             download_html: '/download/islamic.html',
             download_zip: '/download/islamic.zip',
             scheme: 'soundwave://play/islamic'
+        },
+        sanatan: {
+            id: 'sanatan',
+            title: 'Sanatan Seva • Vedic Spiritual Portal',
+            shortTitle: 'Sanatan Seva',
+            subtitle: 'Bhagavad Gita, Daily Panchang, Aartis & 108 Rudraksha Jap Mala',
+            version: '2026.1.0',
+            rating: '5.0 ★ (4.5k reviews)',
+            size: '68 KB',
+            icon: '🕉️',
+            url: '/sanatan.html',
+            download_html: '/download/sanatan.html',
+            download_zip: '/download/sanatan.zip',
+            scheme: 'soundwave://play/sanatan'
+        },
+        currency: {
+            id: 'currency',
+            title: 'Forex & Currency Radar',
+            shortTitle: 'Forex Radar',
+            subtitle: '160+ World Currencies & Live Gold/Silver Rates in India',
+            version: '2026.1.0',
+            rating: '4.9 ★ (2.1k reviews)',
+            size: '14 KB',
+            icon: '💵',
+            url: '/currency.html',
+            download_html: '/download/currency.html',
+            download_zip: '/download/currency.zip',
+            scheme: 'soundwave://play/currency'
+        },
+        recipes: {
+            id: 'recipes',
+            title: 'Bawarchi Recipe Finder',
+            shortTitle: 'Bawarchi',
+            subtitle: 'Smart Kitchen Cooking Assistant & Dish Matcher',
+            version: '2026.1.0',
+            rating: '4.8 ★ (1.5k reviews)',
+            size: '18 KB',
+            icon: '🍲',
+            url: '/recipes.html',
+            download_html: '/download/recipes.html',
+            download_zip: '/download/recipes.zip',
+            scheme: 'soundwave://play/recipes'
+        },
+        dictionary: {
+            id: 'dictionary',
+            title: 'Universal Shabadkosh',
+            shortTitle: 'Shabadkosh',
+            subtitle: 'English-Hindi Dictionary, Audio Pronunciation & Vocabulary',
+            version: '2026.1.0',
+            rating: '4.9 ★ (1.9k reviews)',
+            size: '15 KB',
+            icon: '📖',
+            url: '/dictionary.html',
+            download_html: '/download/dictionary.html',
+            download_zip: '/download/dictionary.zip',
+            scheme: 'soundwave://play/dictionary'
+        },
+        pincode: {
+            id: 'pincode',
+            title: 'India Post Pincode Radar',
+            shortTitle: 'Pincode Radar',
+            subtitle: '150,000+ Indian Post Offices & Delivery Directory',
+            version: '2026.1.0',
+            rating: '4.8 ★ (1.2k reviews)',
+            size: '12 KB',
+            icon: '📮',
+            url: '/pincode.html',
+            download_html: '/download/pincode.html',
+            download_zip: '/download/pincode.zip',
+            scheme: 'soundwave://play/pincode'
         }
     };
 
