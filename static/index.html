@@ -33,7 +33,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20261028_v61_lockscreen_voice_fix">
+    <link rel="stylesheet" href="style.css?v=20261028_v62_appstore_suite">
     <link rel="manifest" href="manifest.json">
 
 
@@ -121,6 +121,16 @@
                             <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4zM8 17H6v-2h2v2zm0-4H6v-2h2v2zm0-4H6V7h2v2zm10 8h-8v-2h8v2zm0-4h-8v-2h8v2zm0-4h-8V7h8v2z"/>
                         </svg>
                         <span>Movies</span>
+                    </button>
+                    <button class="side-link" data-tab="appstore" id="sideNavAppStore">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                        </svg>
+                        <span>App Store</span>
+                        <span class="nav-ai-glow-tag" style="background: linear-gradient(135deg, #00d2ff, #3a7bd5); color: #fff;">NEW</span>
                     </button>
                     <button class="side-link" data-tab="sports" id="sideNavSports">
                         <svg viewBox="0 0 24 24" width="22" height="22" fill="#1DB954">
@@ -1937,6 +1947,149 @@
                             </div>
 
                         </div>
+                    </div>
+
+                    <!-- TAB: SOUNDWAVE APP STORE & MINI APPS SUITE -->
+                    <div class="tab-panel" id="tabAppStore">
+                        <div class="appstore-container">
+                            
+                            <!-- Hero Banner -->
+                            <div class="appstore-hero">
+                                <div class="appstore-hero-pill">
+                                    <span class="dot"></span>
+                                    <span>SOUNDWAVE MINI-APPS & WEB ECOSYSTEM</span>
+                                </div>
+                                <h1 class="appstore-hero-title">SoundWave App Store</h1>
+                                <p class="appstore-hero-desc">
+                                    Specialized standalone applications & libraries. Har app ko SoundWave ke andar hi <strong>Site ki tarah live chalayein</strong> ya <strong>Offline download</strong> karke use karein!
+                                </p>
+                                <div class="appstore-search-bar">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </svg>
+                                    <input type="text" id="appstoreSearchInput" placeholder="Search apps, utilities, libraries...">
+                                </div>
+                            </div>
+
+                            <!-- Section Header -->
+                            <div class="appstore-section-heading">
+                                <h2>Featured Web Apps & Tools</h2>
+                                <span class="appstore-section-badge">2 Available Now</span>
+                            </div>
+
+                            <div class="appstore-grid" id="appstoreGrid">
+                                
+                                <!-- APP 1: WEATHER EXPERIENCE (2026) -->
+                                <div class="appstore-card" data-app-name="weather experience 2026 doppler radar aqi forecast meteorology rainviewer open-meteo">
+                                    <div>
+                                        <div class="appstore-card-top">
+                                            <div class="appstore-app-icon weather">🌦️</div>
+                                            <div class="appstore-card-info">
+                                                <span class="appstore-card-badge weather">✨ 2026 Edition</span>
+                                                <h3 class="appstore-app-title">Weather Experience (2026)</h3>
+                                                <p class="appstore-app-subtitle">Next-Gen Meteorological & Radar Intelligence</p>
+                                                <div class="appstore-rating-row">
+                                                    <span class="appstore-stars">★★★★★</span>
+                                                    <span>4.9 (1.8k reviews)</span>
+                                                    <span>•</span>
+                                                    <span>110 KB (Ultra Fast)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="appstore-features-box">
+                                            <div class="appstore-features-title">Core Engine & Capabilities:</div>
+                                            <div class="appstore-feature-item">
+                                                <span class="icon">🛰️</span>
+                                                <span><strong>RainViewer Doppler Radar Player:</strong> Real-time animated precipitation & storm satellite radar map.</span>
+                                            </div>
+                                            <div class="appstore-feature-item">
+                                                <span class="icon">⚡</span>
+                                                <span><strong>Open-Meteo High-Resolution Engine:</strong> Real-time atmospheric forecasts with zero latency.</span>
+                                            </div>
+                                            <div class="appstore-feature-item">
+                                                <span class="icon">💨</span>
+                                                <span><strong>AQI & UV Index Gauges:</strong> Accurate Air Quality, solar radiation and hourly forecasts.</span>
+                                            </div>
+                                            <div class="appstore-feature-item">
+                                                <span class="icon">📅</span>
+                                                <span><strong>7-Day Synoptic Precision:</strong> Barometric pressure, humidity, wind gusts and sunrise/sunset.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="appstore-actions">
+                                        <button class="btn-appstore-play" data-action="launch" data-app-url="/weather.html" data-app-name="Weather Experience (2026)" data-app-icon="🌦️" data-download-url="/download/weather.html" title="Site Chalayein (Run inside SoundWave)">
+                                            <span>🌐</span> Open Web App
+                                        </button>
+                                        <div style="display:flex; gap:6px;">
+                                            <a href="/download/weather.html" download="Weather-Experience-2026.html" class="btn-appstore-download" style="flex:1;" title="Download Standalone HTML App">
+                                                <span>⬇️</span> HTML
+                                            </a>
+                                            <a href="/download/weather.zip" download="Weather-Experience-2026.zip" class="btn-appstore-download" style="flex:1;" title="Download Full Offline ZIP Package">
+                                                <span>📦</span> ZIP
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- APP 2: ISLAMIC & HADITH LIBRARY -->
+                                <div class="appstore-card" data-app-name="islamic hadith library nur-ul-islam quran bukhari muslim nawawi prayer times arabic urdu hindi english">
+                                    <div>
+                                        <div class="appstore-card-top">
+                                            <div class="appstore-app-icon islamic">🌙</div>
+                                            <div class="appstore-card-info">
+                                                <span class="appstore-card-badge islamic">📖 Authentic Library</span>
+                                                <h3 class="appstore-app-title">Islamic & Hadith Library</h3>
+                                                <p class="appstore-app-subtitle">Nur-ul-Islam • Hadith Collections, Quran & Prayer Suite</p>
+                                                <div class="appstore-rating-row">
+                                                    <span class="appstore-stars">★★★★★</span>
+                                                    <span>5.0 (3.2k reviews)</span>
+                                                    <span>•</span>
+                                                    <span>124 KB (Zero Delay)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="appstore-features-box">
+                                            <div class="appstore-features-title">Core Engine & Capabilities:</div>
+                                            <div class="appstore-feature-item">
+                                                <span class="icon">📚</span>
+                                                <span><strong>Bukhari, Muslim & Nawawi Collections:</strong> Complete authentic hadith database with book navigation.</span>
+                                            </div>
+                                            <div class="appstore-feature-item">
+                                                <span class="icon">🌐</span>
+                                                <span><strong>4-Language Instant Support:</strong> Seamless translation in Arabic, Hindi, Urdu, and English.</span>
+                                            </div>
+                                            <div class="appstore-feature-item">
+                                                <span class="icon">🎙️</span>
+                                                <span><strong>Authentic Arabic Recitation:</strong> Crystal-clear verse audio player with visualizer.</span>
+                                            </div>
+                                            <div class="appstore-feature-item">
+                                                <span class="icon">🧭</span>
+                                                <span><strong>TTS Fallback & Spiritual Hub:</strong> Offline Speech synthesis, Prayer Times, Qibla & Tasbeeh.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="appstore-actions">
+                                        <button class="btn-appstore-play" data-action="launch" data-app-url="/islamic.html" data-app-name="Islamic & Hadith Library" data-app-icon="🌙" data-download-url="/download/islamic.html" title="Site Chalayein (Run inside SoundWave)">
+                                            <span>🌐</span> Open Web App
+                                        </button>
+                                        <div style="display:flex; gap:6px;">
+                                            <a href="/download/islamic.html" download="Islamic-Hadith-Library.html" class="btn-appstore-download" style="flex:1;" title="Download Standalone HTML App">
+                                                <span>⬇️</span> HTML
+                                            </a>
+                                            <a href="/download/islamic.zip" download="Islamic-Hadith-Library.zip" class="btn-appstore-download" style="flex:1;" title="Download Full Offline ZIP Package">
+                                                <span>📦</span> ZIP
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
                     </div></div>
             </section>
         </div>
@@ -2111,6 +2264,15 @@
                     <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
                 </svg>
                 <span>Movies</span>
+            </button>
+            <button class="mob-tab-btn" data-tab="appstore" id="mobTabAppStore">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                </svg>
+                <span>App Store</span>
             </button>
             <button class="mob-tab-btn" data-tab="library" id="mobTabLibrary">
                 <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
@@ -2891,7 +3053,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=20261028_v61_lockscreen_voice_fix"></script>
+    <script src="app.js?v=20261028_v62_appstore_suite"></script>
 
   <!-- DMCA & COPYRIGHT LEGAL MODAL -->
   <div class="movie-modal-overlay hidden" id="dmcaModal">
@@ -3017,6 +3179,41 @@
                     <button class="btn-cancel-create-pl" id="btnCancelCreatePlaylist">Cancel</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- IN-APP APP VIEWER FULLSCREEN MODAL -->
+    <div class="appstore-viewer-modal hidden" id="appstoreViewerModal">
+        <div class="appstore-viewer-topbar">
+            <div class="appstore-viewer-brand">
+                <span id="appstoreViewerIcon" style="font-size: 20px;">📱</span>
+                <span class="appstore-viewer-title" id="appstoreViewerTitle">Web App</span>
+                <span class="appstore-viewer-badge">Running in SoundWave</span>
+            </div>
+            <div class="appstore-viewer-actions">
+                <a href="#" target="_blank" class="btn-viewer-action" id="btnViewerOpenExternal" title="Open in Browser New Tab">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                    <span>New Tab</span>
+                </a>
+                <a href="#" download class="btn-viewer-action" id="btnViewerDownload" title="Download App Package">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span>Download</span>
+                </a>
+                <button class="btn-viewer-close" id="btnViewerClose" title="Back to SoundWave">
+                    ✕ Back to SoundWave
+                </button>
+            </div>
+        </div>
+        <div class="appstore-viewer-iframe-wrap">
+            <iframe id="appstoreViewerIframe" class="appstore-viewer-iframe" src="about:blank" allow="geolocation; microphone; camera; midi; encrypted-media; autoplay"></iframe>
         </div>
     </div>
 

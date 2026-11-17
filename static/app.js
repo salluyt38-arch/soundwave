@@ -149,6 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabAiDj = document.getElementById('tabAiDj');
     const sideNavAiDj = document.getElementById('sideNavAiDj');
     const mobTabAiDj = document.getElementById('mobTabAiDj');
+    const tabAppStore = document.getElementById('tabAppStore');
+    const sideNavAppStore = document.getElementById('sideNavAppStore');
+    const mobTabAppStore = document.getElementById('mobTabAppStore');
     const btnTopbarAiDj = document.getElementById('btnTopbarAiDj');
     const viewportScroll = document.getElementById('viewportScroll');
 
@@ -350,7 +353,8 @@ document.addEventListener('DOMContentLoaded', () => {
             movies: { panel: tabMovies, sideLink: sideNavMovies, mobBtn: mobTabMovies },
             library: { panel: tabLibrary, sideLink: sideNavLibrary, mobBtn: mobTabLibrary },
             premium: { panel: tabPremium, sideLink: sideNavPremium, mobBtn: mobTabPremium },
-            aidj: { panel: tabAiDj, sideLink: sideNavAiDj, mobBtn: mobTabAiDj }
+            aidj: { panel: tabAiDj, sideLink: sideNavAiDj, mobBtn: mobTabAiDj },
+            appstore: { panel: tabAppStore, sideLink: sideNavAppStore, mobBtn: mobTabAppStore }
         };
 
         if (!tabs[tabName]) return;
@@ -409,6 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sideNavSearch) sideNavSearch.addEventListener('click', () => switchTab('search'));
         if (sideNavVideo) sideNavVideo.addEventListener('click', () => switchTab('video'));
         if (sideNavMovies) sideNavMovies.addEventListener('click', () => switchTab('movies'));
+        if (sideNavAppStore) sideNavAppStore.addEventListener('click', () => switchTab('appstore'));
         if (sideNavLibrary) sideNavLibrary.addEventListener('click', () => switchTab('library'));
         if (sideNavPremium) sideNavPremium.addEventListener('click', () => switchTab('premium'));
         if (sideNavAiDj) sideNavAiDj.addEventListener('click', () => switchTab('aidj'));
@@ -428,6 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mobTabSearch) mobTabSearch.addEventListener('click', () => switchTab('search'));
         if (mobTabVideo) mobTabVideo.addEventListener('click', () => switchTab('video'));
         if (mobTabMovies) mobTabMovies.addEventListener('click', () => switchTab('movies'));
+        if (mobTabAppStore) mobTabAppStore.addEventListener('click', () => switchTab('appstore'));
         if (mobTabLibrary) mobTabLibrary.addEventListener('click', () => switchTab('library'));
         if (mobTabPremium) mobTabPremium.addEventListener('click', () => switchTab('premium'));
 
@@ -5985,5 +5991,72 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+
+    // =========================================================================
+    // SOUNDWAVE APP STORE (MINI APPS VIEWER & DOWNLOAD SYSTEM)
+    // =========================================================================
+    const appstoreViewerModal = document.getElementById('appstoreViewerModal');
+    const appstoreViewerTitle = document.getElementById('appstoreViewerTitle');
+    const appstoreViewerIcon = document.getElementById('appstoreViewerIcon');
+    const appstoreViewerIframe = document.getElementById('appstoreViewerIframe');
+    const btnViewerOpenExternal = document.getElementById('btnViewerOpenExternal');
+    const btnViewerDownload = document.getElementById('btnViewerDownload');
+    const btnViewerClose = document.getElementById('btnViewerClose');
+    const appstoreSearchInput = document.getElementById('appstoreSearchInput');
+
+    window.openAppInViewer = function(url, title, icon, downloadUrl) {
+        if (!appstoreViewerModal || !appstoreViewerIframe) {
+            window.open(url, '_blank');
+            return;
+        }
+        if (appstoreViewerTitle) appstoreViewerTitle.textContent = title || 'Web App';
+        if (appstoreViewerIcon) appstoreViewerIcon.textContent = icon || '📱';
+        if (btnViewerOpenExternal) btnViewerOpenExternal.href = url || '#';
+        if (btnViewerDownload) {
+            btnViewerDownload.href = downloadUrl || url || '#';
+        }
+        appstoreViewerIframe.src = url || 'about:blank';
+        appstoreViewerModal.classList.remove('hidden');
+        showToast('🚀 Launching ' + (title || 'App') + ' in SoundWave...');
+    };
+
+    window.closeAppViewer = function() {
+        if (!appstoreViewerModal || !appstoreViewerIframe) return;
+        appstoreViewerModal.classList.add('hidden');
+        appstoreViewerIframe.src = 'about:blank';
+    };
+
+    if (btnViewerClose) {
+        btnViewerClose.addEventListener('click', window.closeAppViewer);
+    }
+
+    // Attach click events to all Launch buttons
+    document.querySelectorAll('.btn-appstore-play').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const url = btn.getAttribute('data-app-url');
+            const name = btn.getAttribute('data-app-name') || 'Web App';
+            const icon = btn.getAttribute('data-app-icon') || '🌐';
+            const downloadUrl = btn.getAttribute('data-download-url') || url;
+            window.openAppInViewer(url, name, icon, downloadUrl);
+        });
+    });
+
+    // In-Page App Store Search Filter
+    if (appstoreSearchInput) {
+        appstoreSearchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.appstore-card');
+            cards.forEach(card => {
+                const searchData = (card.getAttribute('data-app-name') || card.textContent).toLowerCase();
+                if (!query || searchData.includes(query)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    }
 
 });

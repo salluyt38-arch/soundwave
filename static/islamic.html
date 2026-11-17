@@ -1,0 +1,2373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nur-ul-Islam • Premium Islamic Portal & Holy Quran Suite</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Scheherazade+New:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-ui: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-arabic: 'Amiri', 'Scheherazade New', serif;
+      --font-quran: 'Amiri Quran', 'Amiri', serif;
+    }
+    body {
+      font-family: var(--font-ui);
+      background-color: #03140e;
+      background-image: 
+        radial-gradient(at 10% 20%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+        radial-gradient(at 90% 80%, rgba(234, 179, 8, 0.08) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(6, 78, 59, 0.2) 0px, transparent 60%);
+      color: #f1f5f9;
+      min-height: 100vh;
+    }
+    .font-arabic { font-family: var(--font-arabic); }
+    .font-quran { font-family: var(--font-quran); }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #041d15; }
+    ::-webkit-scrollbar-thumb { background: #0d4a36; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #10b981; }
+
+    /* Soundwave Visualizer Bar Animations */
+    @keyframes soundwaveAnim {
+      0%, 100% { height: 6px; }
+      50% { height: 28px; }
+    }
+    .wave-bar-anim {
+      animation: soundwaveAnim 1.2s ease-in-out infinite;
+    }
+
+    /* Subtle Islamic Star Pattern Overlay */
+    .islamic-pattern {
+      background-image: radial-gradient(rgba(16, 185, 129, 0.15) 1px, transparent 0);
+      background-size: 24px 24px;
+    }
+
+    /* Glassmorphism Cards */
+    .glass-card {
+      background: rgba(6, 38, 28, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .glass-card:hover {
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    /* Active Tab */
+    .nav-tab.active {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: #ffffff;
+      border-color: #34d399;
+      box-shadow: 0 4px 20px rgba(5, 150, 105, 0.35);
+    }
+
+    /* Prayer Times Active Highlight */
+    .prayer-card.current {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(6, 78, 59, 0.6) 100%);
+      border: 2px solid #34d399;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.25);
+    }
+  </style>
+</head>
+<body class="islamic-pattern flex flex-col justify-between">
+
+  <!-- ==============================================
+       TOP GLOBAL APP HEADER
+       ============================================== -->
+  <header class="sticky top-0 z-40 bg-[#031911]/90 backdrop-blur-md border-b border-emerald-900/60 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+      
+      <!-- Brand & Bismillah Calligraphy -->
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-600 to-amber-500 p-0.5 shadow-lg flex items-center justify-center">
+          <div class="w-full h-full bg-[#031d16] rounded-[14px] flex items-center justify-center text-xl">
+            🕌
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
+              <span>Nur-ul-Islam</span>
+              <span class="text-xs px-2 py-0.5 bg-emerald-500/20 text-emerald-400 font-mono rounded-full border border-emerald-500/30">PRO</span>
+            </h1>
+            <span class="text-amber-400 font-arabic text-sm hidden sm:inline">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>
+          </div>
+          <p class="text-xs text-emerald-400/80 font-medium">Holy Quran, Prayer Times & Islamic Companion</p>
+        </div>
+      </div>
+
+      <!-- Live Hijri Date & Gregorian Info -->
+      <div class="flex items-center gap-3">
+        <div class="text-right hidden md:block">
+          <div class="text-sm font-bold text-amber-300 font-arabic flex items-center justify-end gap-1.5">
+            <span id="headerHijriDate">Loading Hijri Date...</span>
+            <span>🌙</span>
+          </div>
+          <div class="text-xs text-slate-400" id="headerGregorianDate">Loading Date...</div>
+        </div>
+
+        <!-- City Selector Quick Pill -->
+        <div class="flex items-center gap-2 bg-[#062c20] border border-emerald-800/80 rounded-xl px-3 py-1.5 shadow-inner">
+          <span class="text-emerald-400 text-sm">📍</span>
+          <select id="quickCitySelect" class="bg-transparent text-xs font-bold text-white focus:outline-none cursor-pointer">
+            <option value="Mumbai" class="bg-[#031911]">Mumbai, India</option>
+            <option value="Delhi" class="bg-[#031911]" selected>Delhi, India</option>
+            <option value="Hyderabad" class="bg-[#031911]">Hyderabad, India</option>
+            <option value="Lucknow" class="bg-[#031911]">Lucknow, India</option>
+            <option value="Karachi" class="bg-[#031911]">Karachi, Pakistan</option>
+            <option value="Dhaka" class="bg-[#031911]">Dhaka, Bangladesh</option>
+            <option value="Makkah" class="bg-[#031911]">Makkah, Saudi Arabia</option>
+            <option value="Medina" class="bg-[#031911]">Medina, Saudi Arabia</option>
+            <option value="Dubai" class="bg-[#031911]">Dubai, UAE</option>
+            <option value="London" class="bg-[#031911]">London, UK</option>
+            <option value="New York" class="bg-[#031911]">New York, USA</option>
+          </select>
+        </div>
+
+        <!-- Back to OS Pill -->
+        <a href="/" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-xl border border-slate-700 font-bold transition flex items-center gap-1.5 shadow-sm">
+          <span>📱</span> <span class="hidden sm:inline">V-Device OS</span>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Live Next Prayer Countdown Ribbon -->
+    <div class="bg-gradient-to-r from-emerald-950 via-emerald-900 to-emerald-950 border-t border-b border-emerald-800/40 px-4 py-2 text-xs">
+      <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span class="text-emerald-300 font-bold uppercase tracking-wider">Prayer Radar:</span>
+          <span id="nextPrayerBanner" class="text-white font-extrabold font-mono text-sm">Calculating Next Prayer...</span>
+        </div>
+        <div class="flex items-center gap-4 text-emerald-300/80">
+          <span>Qibla Direction: <strong class="text-amber-400 font-mono" id="bannerQiblaAngle">266.6° (West)</strong></span>
+          <span class="hidden md:inline">•</span>
+          <span class="hidden md:inline">Method: <strong class="text-white" id="bannerMethodName">Karachi Standard</strong></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       MAIN CONTAINER & NAVIGATION TABS
+       ============================================== -->
+  <main class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 flex-1 w-full space-y-6 pb-24 md:pb-6">
+
+    <!-- Navigation Tab Bar -->
+    <div class="flex gap-2 overflow-x-auto pb-2 text-xs sm:text-sm font-bold no-scrollbar">
+      <button class="nav-tab active flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-emerald-800/80 bg-[#062c20] text-emerald-200 hover:bg-[#0a3f2e] transition flex-shrink-0" data-view="prayerView">
+        <span>🕌</span> <span>Namaz Timings & Qibla</span>
+      </button>
+      <button class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-emerald-800/80 bg-[#062c20] text-emerald-200 hover:bg-[#0a3f2e] transition flex-shrink-0" data-view="quranView">
+        <span>📖</span> <span>Al-Quran Al-Kareem (114 Surahs)</span>
+      </button>
+      <button class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-emerald-800/80 bg-[#062c20] text-emerald-200 hover:bg-[#0a3f2e] transition flex-shrink-0" data-view="playerView">
+        <span>🎧</span> <span>Live Tilawat & Soundwave Player</span>
+      </button>
+      <button class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-emerald-800/80 bg-[#062c20] text-emerald-200 hover:bg-[#0a3f2e] transition flex-shrink-0" data-view="hadithView">
+        <span>📜</span> <span>Sahih Hadith Library</span>
+      </button>
+      <button class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-emerald-800/80 bg-[#062c20] text-emerald-200 hover:bg-[#0a3f2e] transition flex-shrink-0" data-view="duasView">
+        <span>🤲</span> <span>Daily Duas & Adhkar (Audio)</span>
+      </button>
+      <button class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-emerald-800/80 bg-[#062c20] text-emerald-200 hover:bg-[#0a3f2e] transition flex-shrink-0" data-view="namesView">
+        <span>✨</span> <span>99 Names of Allah</span>
+      </button>
+      <button class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-emerald-800/80 bg-[#062c20] text-emerald-200 hover:bg-[#0a3f2e] transition flex-shrink-0" data-view="tasbeehView">
+        <span>📿</span> <span>Digital Tasbeeh Counter</span>
+      </button>
+    </div>
+
+    <!-- ==============================================
+         TAB 1: NAMAZ TIMINGS & AZAN RADAR + QIBLA
+         ============================================== -->
+    <div id="prayerView" class="view-panel space-y-6">
+      
+      <!-- Top City Custom Search & Method Card -->
+      <div class="glass-card rounded-3xl p-5 shadow-xl">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Global Aladhan Sync Engine</span>
+            <h2 class="text-2xl font-black text-white flex items-center gap-2 mt-0.5">
+              <span>Today's Daily Prayer Timings for</span>
+              <span class="text-amber-400" id="currentCityHeading">Delhi, India</span>
+            </h2>
+            <p class="text-xs text-slate-300 mt-1">Second-accurate calculation based on sun position and astronomical twilight</p>
+          </div>
+
+          <div class="flex flex-wrap gap-2 w-full md:w-auto">
+            <input type="text" id="cityInputCustom" placeholder="Enter City (e.g. Bangalore, Dubai)..." class="bg-[#031d16] border border-emerald-700/60 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-400 flex-1 md:w-60">
+            <button id="searchCityBtn" class="bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold text-sm px-5 py-2 rounded-xl transition shadow-lg flex items-center gap-2">
+              <span>🔍</span> <span>Find Timings</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prayer Cards Grid (Fajr to Isha + Imsak + Midnight) -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5" id="prayerCardsGrid">
+        <!-- Fajr -->
+        <div class="prayer-card glass-card rounded-2xl p-4 flex flex-col justify-between transition relative overflow-hidden" id="cardFajr">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-emerald-400">FAJR</span>
+            <span class="font-arabic text-emerald-300 text-lg">الفجر</span>
+          </div>
+          <div class="my-3">
+            <div class="text-3xl font-black text-white font-mono tracking-tight" id="timeFajr">--:--</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Dawn Prayer</div>
+          </div>
+          <div class="text-[10px] text-emerald-400/90 font-semibold flex items-center gap-1">
+            <span>●</span> <span>Pre-Dawn</span>
+          </div>
+        </div>
+
+        <!-- Sunrise -->
+        <div class="prayer-card glass-card rounded-2xl p-4 flex flex-col justify-between transition relative overflow-hidden" id="cardSunrise">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-amber-400">SUNRISE</span>
+            <span class="font-arabic text-amber-300 text-lg">الشروق</span>
+          </div>
+          <div class="my-3">
+            <div class="text-3xl font-black text-white font-mono tracking-tight" id="timeSunrise">--:--</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Ishraq Time</div>
+          </div>
+          <div class="text-[10px] text-amber-400/90 font-semibold flex items-center gap-1">
+            <span>☀️</span> <span>Sunrise</span>
+          </div>
+        </div>
+
+        <!-- Dhuhr -->
+        <div class="prayer-card glass-card rounded-2xl p-4 flex flex-col justify-between transition relative overflow-hidden" id="cardDhuhr">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-emerald-400">DHUHR</span>
+            <span class="font-arabic text-emerald-300 text-lg">الظهر</span>
+          </div>
+          <div class="my-3">
+            <div class="text-3xl font-black text-white font-mono tracking-tight" id="timeDhuhr">--:--</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Noon Prayer</div>
+          </div>
+          <div class="text-[10px] text-emerald-400/90 font-semibold flex items-center gap-1">
+            <span>●</span> <span>Midday</span>
+          </div>
+        </div>
+
+        <!-- Asr -->
+        <div class="prayer-card glass-card rounded-2xl p-4 flex flex-col justify-between transition relative overflow-hidden" id="cardAsr">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-emerald-400">ASR</span>
+            <span class="font-arabic text-emerald-300 text-lg">العصر</span>
+          </div>
+          <div class="my-3">
+            <div class="text-3xl font-black text-white font-mono tracking-tight" id="timeAsr">--:--</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Afternoon Prayer</div>
+          </div>
+          <div class="text-[10px] text-emerald-400/90 font-semibold flex items-center gap-1">
+            <span>●</span> <span>Afternoon</span>
+          </div>
+        </div>
+
+        <!-- Maghrib -->
+        <div class="prayer-card glass-card rounded-2xl p-4 flex flex-col justify-between transition relative overflow-hidden" id="cardMaghrib">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-amber-400">MAGHRIB</span>
+            <span class="font-arabic text-amber-300 text-lg">المغرب</span>
+          </div>
+          <div class="my-3">
+            <div class="text-3xl font-black text-white font-mono tracking-tight" id="timeMaghrib">--:--</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Sunset / Iftar Time</div>
+          </div>
+          <div class="text-[10px] text-amber-400/90 font-semibold flex items-center gap-1">
+            <span>🌆</span> <span>Sunset</span>
+          </div>
+        </div>
+
+        <!-- Isha -->
+        <div class="prayer-card glass-card rounded-2xl p-4 flex flex-col justify-between transition relative overflow-hidden" id="cardIsha">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-emerald-400">ISHA</span>
+            <span class="font-arabic text-emerald-300 text-lg">العشاء</span>
+          </div>
+          <div class="my-3">
+            <div class="text-3xl font-black text-white font-mono tracking-tight" id="timeIsha">--:--</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Night Prayer</div>
+          </div>
+          <div class="text-[10px] text-emerald-400/90 font-semibold flex items-center gap-1">
+            <span>🌙</span> <span>Night</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Metrics: Imsak, Midnight & Interactive Qibla Compass -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        
+        <!-- Imsak & Tahajjud Timing Box -->
+        <div class="glass-card rounded-3xl p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 text-xs font-bold text-amber-400 mb-2">
+              <span>⏱️</span> <span>SEHRI & TAHAJJUD RADAR</span>
+            </div>
+            <h3 class="text-lg font-bold text-white">Fasting & Voluntary Timings</h3>
+            <div class="space-y-3 mt-4">
+              <div class="flex justify-between items-center p-3 rounded-xl bg-[#031d16] border border-emerald-900/60">
+                <span class="text-xs text-slate-300">Imsak (Sehri Ends):</span>
+                <span class="text-base font-extrabold text-amber-400 font-mono" id="timeImsak">--:--</span>
+              </div>
+              <div class="flex justify-between items-center p-3 rounded-xl bg-[#031d16] border border-emerald-900/60">
+                <span class="text-xs text-slate-300">Islamic Midnight (Tahajjud Peak):</span>
+                <span class="text-base font-extrabold text-sky-400 font-mono" id="timeMidnight">--:--</span>
+              </div>
+              <div class="flex justify-between items-center p-3 rounded-xl bg-[#031d16] border border-emerald-900/60">
+                <span class="text-xs text-slate-300">Sunset (Roza Iftar):</span>
+                <span class="text-base font-extrabold text-emerald-400 font-mono" id="timeSunset">--:--</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-emerald-900/60 text-[11px] text-slate-400">
+            Calculated automatically based on latitude and regional solar noon.
+          </div>
+        </div>
+
+        <!-- Interactive Animated Qibla Compass Dial -->
+        <div class="glass-card rounded-3xl p-5 flex flex-col items-center justify-between text-center relative overflow-hidden">
+          <div class="w-full text-left">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Qibla Direction Engine</span>
+            <h3 class="text-lg font-bold text-white mt-0.5">Direction to Holy Kaaba</h3>
+          </div>
+
+          <!-- Compass Graphic -->
+          <div class="relative w-44 h-44 my-2 flex items-center justify-center">
+            <!-- Compass Dial Outer Ring -->
+            <div class="absolute inset-0 rounded-full border-4 border-dashed border-emerald-700/60 flex items-center justify-center">
+              <span class="absolute top-1 text-[11px] font-bold text-emerald-400">N</span>
+              <span class="absolute bottom-1 text-[11px] font-bold text-slate-500">S</span>
+              <span class="absolute right-1 text-[11px] font-bold text-slate-500">E</span>
+              <span class="absolute left-1 text-[11px] font-bold text-slate-500">W</span>
+            </div>
+            
+            <!-- Rotating Needle Indicator -->
+            <div id="qiblaNeedle" class="w-full h-full flex items-center justify-center transition-transform duration-700 ease-out" style="transform: rotate(266deg);">
+              <div class="w-1.5 h-36 bg-gradient-to-t from-transparent via-amber-400 to-amber-300 rounded-full relative flex items-start justify-center">
+                <!-- Kaaba Marker Head -->
+                <div class="w-6 h-6 rounded-lg bg-black border-2 border-amber-400 -mt-2 shadow-lg flex items-center justify-center text-[10px]" title="Holy Kaaba">
+                  🕋
+                </div>
+              </div>
+            </div>
+
+            <!-- Compass Center Hub -->
+            <div class="w-8 h-8 rounded-full bg-[#031d16] border-2 border-emerald-500 flex items-center justify-center text-xs text-white z-10 shadow">
+              🧭
+            </div>
+          </div>
+
+          <div>
+            <div class="text-2xl font-black text-amber-400 font-mono" id="qiblaDegreeText">266.6° WNW</div>
+            <div class="text-xs text-slate-400 mt-0.5">Turn your phone or body to face Kaaba</div>
+          </div>
+        </div>
+
+        <!-- Calculation Standards & Juristic Settings -->
+        <div class="glass-card rounded-3xl p-5 flex flex-col justify-between">
+          <div>
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Juristic & Calculation Rules</span>
+            <h3 class="text-lg font-bold text-white mt-0.5">Fiqh & Calculation Method</h3>
+            <p class="text-xs text-slate-300 mt-1">Select the official authority used by your local mosque</p>
+
+            <div class="space-y-3 mt-4">
+              <div>
+                <label class="text-xs text-slate-400 block mb-1">Calculation Method:</label>
+                <select id="methodSelect" class="w-full bg-[#031d16] border border-emerald-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-400">
+                  <option value="1" selected>University of Islamic Sciences, Karachi (India, Pakistan, Bangladesh)</option>
+                  <option value="4">Umm Al-Qura University, Makkah (Saudi Arabia, Gulf)</option>
+                  <option value="3">Muslim World League (Europe, Far East)</option>
+                  <option value="2">ISNA - Islamic Society of North America (USA, Canada)</option>
+                  <option value="5">Egyptian General Authority of Survey (Middle East, Africa)</option>
+                </select>
+              </div>
+
+              <div class="p-3 rounded-xl bg-[#031d16] border border-emerald-900/60 text-xs text-slate-300">
+                <span class="text-emerald-400 font-bold block mb-1">✓ Realtime Islamic Astronomical Service</span>
+                High precision calculations based on sun altitude and twilight angle.
+              </div>
+            </div>
+          </div>
+
+          <button id="applyMethodBtn" class="mt-4 w-full bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs py-2.5 rounded-xl transition shadow">
+            Update Timings with Selected Fiqh
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==============================================
+         TAB 2: HOLY QURAN (AL-QURAN AL-KAREEM)
+         ============================================== -->
+    <div id="quranView" class="view-panel space-y-6" style="display: none;">
+      
+      <!-- Quran Directory Header & Search Filter -->
+      <div class="glass-card rounded-3xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Al-Quran Al-Kareem • 114 Surahs</span>
+          <h2 class="text-3xl font-black text-white flex items-center gap-3 mt-0.5 font-arabic">
+            <span>القرآن الكريم</span>
+            <span class="font-sans text-xl font-bold text-amber-400">• The Holy Quran</span>
+          </h2>
+          <p class="text-xs text-slate-300 mt-1">Arabic Uthmani Script, Urdu & English Translations, and Complete Audio Recitations</p>
+        </div>
+
+        <!-- Search Surah Filter -->
+        <div class="relative w-full md:w-80">
+          <input type="text" id="surahSearchInput" placeholder="Search Surah (e.g. Yaseen, Rahman, 36, Kahf)..." class="w-full bg-[#031d16] border border-emerald-700/60 rounded-2xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-400 shadow-inner">
+          <span class="absolute left-3.5 top-3 text-slate-400 text-sm">🔍</span>
+        </div>
+      </div>
+
+      <!-- Surah Cards Grid Container -->
+      <div id="surahGridContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <!-- Rendered dynamically -->
+        <div class="col-span-full py-12 text-center text-slate-400">Loading 114 Surahs from Quran Cloud API...</div>
+      </div>
+
+    </div>
+
+    <!-- ==============================================
+         TAB 3: LIVE TILAWAT & SOUNDWAVE PLAYER
+         ============================================== -->
+    <div id="playerView" class="view-panel space-y-6" style="display: none;">
+      
+      <div class="glass-card rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          <!-- Left: Rotating Calligraphic Record + Soundwave Graphic -->
+          <div class="lg:col-span-5 flex flex-col items-center justify-center text-center">
+            
+            <div class="relative w-56 h-56 sm:w-64 sm:h-64 my-4 flex items-center justify-center">
+              
+              <!-- Spinning Vinyl Disc with Islamic Pattern -->
+              <div id="tilawatDisc" class="w-full h-full rounded-full bg-gradient-to-tr from-black via-[#062c20] to-black border-4 border-emerald-500/40 p-4 shadow-2xl flex items-center justify-center transition-transform">
+                <div class="w-full h-full rounded-full border border-dashed border-emerald-400/50 flex flex-col items-center justify-center text-center p-4 bg-[#031a12]">
+                  <span class="text-3xl mb-1">📖</span>
+                  <span class="font-arabic text-xl font-bold text-amber-300" id="playerSurahArabic">سُورَةُ الفَاتِحَة</span>
+                  <span class="text-xs text-emerald-400 font-bold mt-1" id="playerSurahEnglish">Al-Faatiha</span>
+                  <span class="text-[10px] text-slate-400 font-mono">128 kbps HD Audio</span>
+                </div>
+              </div>
+
+              <!-- Center Hub -->
+              <div class="absolute w-10 h-10 rounded-full bg-amber-500 border-4 border-black flex items-center justify-center text-black font-extrabold text-xs shadow-lg">
+                ●
+              </div>
+            </div>
+
+            <!-- Live Animated Soundwave Frequency Bars -->
+            <div class="flex items-end justify-center gap-1.5 h-10 mt-2 px-4" id="soundwaveContainer">
+              <span class="w-1.5 bg-emerald-400 rounded-full wave-bar-anim" style="animation-duration: 0.8s;"></span>
+              <span class="w-1.5 bg-amber-400 rounded-full wave-bar-anim" style="animation-duration: 1.1s;"></span>
+              <span class="w-1.5 bg-emerald-300 rounded-full wave-bar-anim" style="animation-duration: 0.7s;"></span>
+              <span class="w-1.5 bg-teal-400 rounded-full wave-bar-anim" style="animation-duration: 1.3s;"></span>
+              <span class="w-1.5 bg-emerald-500 rounded-full wave-bar-anim" style="animation-duration: 0.9s;"></span>
+              <span class="w-1.5 bg-amber-300 rounded-full wave-bar-anim" style="animation-duration: 1.4s;"></span>
+              <span class="w-1.5 bg-emerald-400 rounded-full wave-bar-anim" style="animation-duration: 0.85s;"></span>
+              <span class="w-1.5 bg-sky-400 rounded-full wave-bar-anim" style="animation-duration: 1.2s;"></span>
+              <span class="w-1.5 bg-emerald-400 rounded-full wave-bar-anim" style="animation-duration: 0.75s;"></span>
+            </div>
+
+          </div>
+
+          <!-- Right: Player Controls, Reciter Switcher, Playlist -->
+          <div class="lg:col-span-7 space-y-5">
+            <div>
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">High-Fidelity Audio Tilawat Engine</span>
+              <h2 class="text-2xl sm:text-3xl font-black text-white mt-1" id="playerMainTitle">Surah Al-Faatiha (The Opening)</h2>
+              <div class="text-sm text-slate-300 mt-1 flex items-center gap-2">
+                <span>Recited by:</span>
+                <strong class="text-amber-400" id="currentReciterName">Qari Mishary Rashid Alafasy</strong>
+              </div>
+            </div>
+
+            <!-- Reciter Selection Dropdown -->
+            <div class="bg-[#031d16] border border-emerald-900/80 rounded-2xl p-4 space-y-2">
+              <label class="text-xs font-bold text-emerald-400 block">Choose World-Renowned Qari (Reciter):</label>
+              <select id="reciterSelector" class="w-full bg-[#062c20] border border-emerald-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-400">
+                <option value="ar.alafasy" selected>Mishary Rashid Alafasy (العفاسي) - Most Popular</option>
+                <option value="ar.abdulbasitmurattal">Abdul Basit Abdul Samad Murattal (عبد الباسط)</option>
+                <option value="ar.husary">Mahmoud Khalil Al-Husary (الحصري)</option>
+                <option value="ar.minshawi">Mohamed Siddiq Al-Minshawi (المنشاوي)</option>
+                <option value="ar.ahmedajamy">Ahmed ibn Ali al-Ajamy (العجمي)</option>
+              </select>
+            </div>
+
+            <!-- Audio Scrub Bar & Timers -->
+            <div class="space-y-1.5">
+              <input type="range" id="audioSeekBar" class="w-full accent-emerald-500 cursor-pointer h-1.5 bg-emerald-950 rounded-lg" value="0" min="0" max="100">
+              <div class="flex justify-between text-xs text-slate-400 font-mono">
+                <span id="audioCurrentTime">00:00</span>
+                <span id="audioTotalTime">00:00</span>
+              </div>
+            </div>
+
+            <!-- Main Control Buttons -->
+            <div class="flex items-center justify-center sm:justify-start gap-4">
+              <button id="prevTrackBtn" class="w-11 h-11 rounded-2xl bg-[#062c20] border border-emerald-800/80 hover:bg-[#093f2f] text-white flex items-center justify-center transition shadow">
+                ⏮
+              </button>
+
+              <button id="masterPlayBtn" class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-emerald-500 to-amber-400 hover:scale-105 text-black font-extrabold flex items-center justify-center text-2xl transition shadow-xl">
+                ▶
+              </button>
+
+              <button id="nextTrackBtn" class="w-11 h-11 rounded-2xl bg-[#062c20] border border-emerald-800/80 hover:bg-[#093f2f] text-white flex items-center justify-center transition shadow">
+                ⏭
+              </button>
+
+              <div class="ml-auto hidden sm:flex items-center gap-2">
+                <span class="text-xs text-slate-400">🔊</span>
+                <input type="range" id="volumeBar" class="w-24 accent-emerald-500 h-1.5 bg-emerald-950 rounded-lg" value="90" min="0" max="100">
+              </div>
+            </div>
+
+            <!-- Quick Popular Surahs Playlist Strip -->
+            <div>
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Beloved Surahs Quick Play:</span>
+              <div class="flex gap-2 overflow-x-auto pb-1 text-xs">
+                <button class="quick-surah-btn bg-[#031d16] hover:bg-emerald-800/60 border border-emerald-800/60 text-emerald-200 px-3 py-1.5 rounded-xl flex-shrink-0" data-surah="1">
+                  1. Al-Fatiha
+                </button>
+                <button class="quick-surah-btn bg-[#031d16] hover:bg-emerald-800/60 border border-emerald-800/60 text-emerald-200 px-3 py-1.5 rounded-xl flex-shrink-0" data-surah="36">
+                  36. Yaseen (Heart of Quran)
+                </button>
+                <button class="quick-surah-btn bg-[#031d16] hover:bg-emerald-800/60 border border-emerald-800/60 text-emerald-200 px-3 py-1.5 rounded-xl flex-shrink-0" data-surah="55">
+                  55. Ar-Rahman
+                </button>
+                <button class="quick-surah-btn bg-[#031d16] hover:bg-emerald-800/60 border border-emerald-800/60 text-emerald-200 px-3 py-1.5 rounded-xl flex-shrink-0" data-surah="67">
+                  67. Al-Mulk
+                </button>
+                <button class="quick-surah-btn bg-[#031d16] hover:bg-emerald-800/60 border border-emerald-800/60 text-emerald-200 px-3 py-1.5 rounded-xl flex-shrink-0" data-surah="18">
+                  18. Al-Kahf
+                </button>
+                <button class="quick-surah-btn bg-[#031d16] hover:bg-emerald-800/60 border border-emerald-800/60 text-emerald-200 px-3 py-1.5 rounded-xl flex-shrink-0" data-surah="112">
+                  112. Al-Ikhlas
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==============================================
+         TAB 4: 99 NAMES OF ALLAH (ASMA-UL-HUSNA)
+         ============================================== -->
+    <div id="namesView" class="view-panel space-y-6" style="display: none;">
+      
+      <div class="glass-card rounded-3xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">Asma-ul-Husna • 99 Blessed Attributes</span>
+          <h2 class="text-3xl font-black text-white font-arabic mt-0.5">
+            <span>أَسْمَاءُ ٱللَّٰهِ ٱلْحُسْنَىٰ</span>
+            <span class="font-sans text-xl font-bold text-emerald-400 ml-2">• 99 Names of Allah</span>
+          </h2>
+          <p class="text-xs text-slate-300 mt-1">Arabic Calligraphy, Transliteration, and Deep Meanings</p>
+        </div>
+
+        <div class="w-full md:w-72">
+          <input type="text" id="namesSearchInput" placeholder="Search by name or meaning..." class="w-full bg-[#031d16] border border-emerald-700/60 rounded-2xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-400 shadow-inner">
+        </div>
+      </div>
+
+      <!-- 99 Names Grid -->
+      <div id="namesGridContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        <!-- Rendered dynamically -->
+        <div class="col-span-full py-12 text-center text-slate-400">Loading 99 Names of Allah...</div>
+      </div>
+
+    </div>
+
+    <!-- ==============================================
+         TAB 5: DIGITAL TASBEEH COUNTER
+         ============================================== -->
+    <div id="tasbeehView" class="view-panel space-y-6" style="display: none;">
+      
+      <div class="max-w-xl mx-auto glass-card rounded-3xl p-8 shadow-2xl text-center space-y-6">
+        <div>
+          <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Interactive Dhikr Companion</span>
+          <h2 class="text-3xl font-black text-white font-arabic mt-1">سُبْحَانَ اللَّهِ</h2>
+          <p class="text-sm text-amber-300 font-semibold" id="tasbeehMeaningText">Glory be to Allah</p>
+        </div>
+
+        <!-- Dhikr Preset Selector Buttons -->
+        <div class="flex flex-wrap justify-center gap-2 text-xs">
+          <button class="tasbeeh-preset active bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl border border-emerald-400 shadow transition" data-phrase="سُبْحَانَ اللَّهِ" data-meaning="Glory be to Allah">
+            SubhanAllah
+          </button>
+          <button class="tasbeeh-preset bg-[#031d16] text-slate-300 hover:bg-emerald-900 font-medium px-3 py-1.5 rounded-xl border border-emerald-800 transition" data-phrase="الْحَمْدُ لِلَّهِ" data-meaning="All praise is due to Allah">
+            Alhamdulillah
+          </button>
+          <button class="tasbeeh-preset bg-[#031d16] text-slate-300 hover:bg-emerald-900 font-medium px-3 py-1.5 rounded-xl border border-emerald-800 transition" data-phrase="اللَّهُ أَكْبَرُ" data-meaning="Allah is the Greatest">
+            Allahu Akbar
+          </button>
+          <button class="tasbeeh-preset bg-[#031d16] text-slate-300 hover:bg-emerald-900 font-medium px-3 py-1.5 rounded-xl border border-emerald-800 transition" data-phrase="أَسْتَغْفِرُ اللَّهَ" data-meaning="I seek forgiveness from Allah">
+            Astaghfirullah
+          </button>
+          <button class="tasbeeh-preset bg-[#031d16] text-slate-300 hover:bg-emerald-900 font-medium px-3 py-1.5 rounded-xl border border-emerald-800 transition" data-phrase="لَا إِلَٰهَ إِلَّا اللَّهُ" data-meaning="There is no deity except Allah">
+            La ilaha illallah
+          </button>
+        </div>
+
+        <!-- Giant Tap Counter Circle Button -->
+        <div class="py-4">
+          <button id="tasbeehCountBtn" class="w-48 h-48 sm:w-56 sm:h-56 mx-auto rounded-full bg-gradient-to-tr from-[#064e3b] via-[#047857] to-[#10b981] border-8 border-[#031d16] text-white shadow-2xl flex flex-col items-center justify-center transform active:scale-95 transition cursor-pointer select-none">
+            <span class="text-5xl sm:text-6xl font-black font-mono tracking-tight" id="tasbeehCounterDisplay">0</span>
+            <span class="text-xs uppercase tracking-widest text-emerald-200 font-bold mt-2">TAP TO COUNT</span>
+          </button>
+        </div>
+
+        <!-- Target Progress & Reset -->
+        <div class="flex justify-between items-center px-4 py-3 rounded-2xl bg-[#031d16] border border-emerald-900/60 text-xs">
+          <div class="text-left">
+            <span class="text-slate-400 block">Current Target:</span>
+            <span class="text-emerald-400 font-bold text-sm" id="tasbeehTargetText">0 / 33 Loop</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="setTarget33Btn" class="bg-[#062c20] hover:bg-emerald-800 text-xs px-2.5 py-1.5 rounded-lg border border-emerald-700 font-bold text-white">33</button>
+            <button id="setTarget100Btn" class="bg-[#062c20] hover:bg-emerald-800 text-xs px-2.5 py-1.5 rounded-lg border border-emerald-700 font-bold text-white">100</button>
+            <button id="resetTasbeehBtn" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 text-xs px-3 py-1.5 rounded-lg border border-rose-800 font-bold ml-2">Reset ↺</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==============================================
+         TAB: COMPLETE HADITH LIBRARY (BUKHARI, MUSLIM, NAWAWI 42)
+         ============================================== -->
+    <div id="hadithView" class="view-panel space-y-6" style="display: none;">
+      
+      <!-- Top Title & Search Banner -->
+      <div class="glass-card rounded-3xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">Kutub al-Sittah & Classical Sunnah • 4-Language Audio System</span>
+          <h2 class="text-3xl font-black text-white font-arabic mt-0.5">
+            <span>الْحَدِيثُ النَّبَوِيُّ الشَّرِيفُ</span>
+            <span class="font-sans text-xl font-bold text-emerald-400 ml-2">• Complete Hadith Library</span>
+          </h2>
+          <p class="text-xs text-slate-300 mt-1">Authentic Arabic Uthmani text, verified recitations, Urdu, Hindi & English translations</p>
+        </div>
+
+        <div class="w-full md:w-80 flex gap-2">
+          <input type="text" id="hadithSearchInput" placeholder="Search Hadith text, narrator, or #..." class="w-full bg-[#031d16] border border-emerald-700/60 rounded-2xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-400 shadow-inner">
+          <button id="hadithSearchBtn" class="px-3.5 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow transition">🔍</button>
+        </div>
+      </div>
+
+      <!-- Collection Switcher Tabs -->
+      <div class="glass-card rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap gap-2 text-xs font-bold" id="hadithBookPills">
+          <button class="hadith-book-btn active bg-emerald-600 text-white px-4 py-2 rounded-xl border border-emerald-400 shadow transition flex items-center gap-1.5" data-book="bukhari">
+            <span>📗</span> <span>Sahih al-Bukhari (صحيح البخاري)</span> <span class="text-[10px] bg-black/30 px-1.5 py-0.5 rounded-full font-mono">7563</span>
+          </button>
+          <button class="hadith-book-btn bg-[#031d16] text-slate-300 hover:bg-emerald-900 px-4 py-2 rounded-xl border border-emerald-800 transition flex items-center gap-1.5" data-book="muslim">
+            <span>📘</span> <span>Sahih Muslim (صحيح مسلم)</span> <span class="text-[10px] bg-black/30 px-1.5 py-0.5 rounded-full font-mono">7563</span>
+          </button>
+          <button class="hadith-book-btn bg-[#031d16] text-slate-300 hover:bg-emerald-900 px-4 py-2 rounded-xl border border-emerald-800 transition flex items-center gap-1.5" data-book="nawawi">
+            <span>📙</span> <span>Forty Hadith of Imam Nawawi (الأربعون النووية)</span> <span class="text-[10px] bg-black/30 px-1.5 py-0.5 rounded-full font-mono">42</span>
+          </button>
+        </div>
+
+        <!-- 4-Language System Selector -->
+        <div class="flex items-center gap-1.5 bg-[#031d16] p-1 rounded-xl border border-emerald-800/80" id="hadithLangSelector">
+          <span class="text-[11px] font-bold text-slate-400 px-2 hidden sm:inline">Translation:</span>
+          <button class="hadith-lang-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-700 text-white border border-emerald-500 shadow transition" data-lang="ur">اردو</button>
+          <button class="hadith-lang-btn px-2.5 py-1 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition" data-lang="hi">हिन्दी</button>
+          <button class="hadith-lang-btn px-2.5 py-1 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition" data-lang="en">English</button>
+          <button class="hadith-lang-btn px-2.5 py-1 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition" data-lang="ar">العربية</button>
+        </div>
+      </div>
+
+      <!-- Navigation & Filters Bar -->
+      <div class="glass-card rounded-2xl p-4 flex flex-wrap justify-between items-center gap-3">
+        <!-- Quick Sub-View Filters -->
+        <div class="flex items-center gap-2 text-xs font-bold" id="hadithSubViewPills">
+          <button class="hadith-subview-btn active bg-emerald-600/30 text-emerald-300 border border-emerald-500/50 px-3 py-1.5 rounded-xl transition" data-subview="all">
+            📖 All Hadiths
+          </button>
+          <button class="hadith-subview-btn bg-[#031d16] text-slate-300 hover:bg-emerald-900 px-3 py-1.5 rounded-xl border border-emerald-800 transition" data-subview="daily">
+            🌟 Daily Hadith
+          </button>
+          <button class="hadith-subview-btn bg-[#031d16] text-slate-300 hover:bg-emerald-900 px-3 py-1.5 rounded-xl border border-emerald-800 transition" data-subview="bookmarks">
+            🔖 Bookmarks (<span id="hadithBookmarksCount">0</span>)
+          </button>
+          <button class="hadith-subview-btn bg-[#031d16] text-slate-300 hover:bg-emerald-900 px-3 py-1.5 rounded-xl border border-emerald-800 transition" data-subview="recent">
+            🕒 Recently Viewed
+          </button>
+        </div>
+
+        <!-- Chapter Selector & Jump to Hadith # -->
+        <div class="flex flex-wrap items-center gap-3 text-xs" id="hadithChapterNavContainer">
+          <div class="flex items-center gap-1.5">
+            <span class="text-emerald-400 font-bold">Chapter:</span>
+            <select id="hadithChapterSelect" class="bg-[#031d16] border border-emerald-800 text-white rounded-xl px-3 py-1.5 focus:outline-none font-medium max-w-[220px] truncate">
+              <!-- Loaded dynamically from API with all chapters -->
+            </select>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <input type="number" id="hadithJumpInput" placeholder="Hadith #" min="1" class="w-20 bg-[#031d16] border border-emerald-800 text-white rounded-xl px-2.5 py-1.5 focus:outline-none text-center font-mono">
+            <button id="hadithJumpBtn" class="bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl transition shadow">
+              Go
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hadiths List Container -->
+      <div id="hadithsContainer" class="space-y-4">
+        <div class="text-center text-slate-400 py-12"><span class="animate-spin text-2xl inline-block mb-3">⏳</span><br>Loading Hadiths in Arabic, Urdu & English...</div>
+      </div>
+
+      <!-- Pagination Toolbar -->
+      <div id="hadithPaginationBar" class="glass-card rounded-2xl p-4 flex justify-between items-center shadow-lg" style="display: none;">
+        <button id="hadithPrevPageBtn" class="px-4 py-2 rounded-xl bg-[#031d16] hover:bg-emerald-900 border border-emerald-800 text-white text-xs font-bold transition flex items-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed">
+          <span>◀</span> <span>Previous Page</span>
+        </button>
+        <span class="text-xs text-slate-300 font-mono font-bold" id="hadithPageIndicator">Page 1 of 1</span>
+        <button id="hadithNextPageBtn" class="px-4 py-2 rounded-xl bg-[#031d16] hover:bg-emerald-900 border border-emerald-800 text-white text-xs font-bold transition flex items-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed">
+          <span>Next Page</span> <span>▶</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ==============================================
+         TAB: DAILY DUAS & ADHKAR (WITH AUDIO RECITER)
+         ============================================== -->
+    <div id="duasView" class="view-panel space-y-6" style="display: none;">
+      
+      <div class="glass-card rounded-3xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Hisn al-Muslim & Prophetic Duas</span>
+          <h2 class="text-3xl font-black text-white font-arabic mt-0.5">
+            <span>الأَدْعِيَةُ وَالأَذْكَارُ</span>
+            <span class="font-sans text-xl font-bold text-amber-400 ml-2">• Daily Duas with Audio Recitation</span>
+          </h2>
+          <p class="text-xs text-slate-300 mt-1">Arabic text, Roman transliteration, Urdu & English translations, and direct one-click Tilawat</p>
+        </div>
+
+        <!-- Category Filter Chips -->
+        <div class="flex flex-wrap gap-2 text-xs font-bold" id="duaCategoryPills">
+          <button class="dua-filter-chip active bg-emerald-600 text-white px-3 py-1.5 rounded-xl border border-emerald-400 shadow" data-cat="all">All Duas</button>
+          <button class="dua-filter-chip bg-[#031d16] text-slate-300 hover:bg-emerald-900 px-3 py-1.5 rounded-xl border border-emerald-800" data-cat="Protection">Protection</button>
+          <button class="dua-filter-chip bg-[#031d16] text-slate-300 hover:bg-emerald-900 px-3 py-1.5 rounded-xl border border-emerald-800" data-cat="Forgiveness">Forgiveness</button>
+          <button class="dua-filter-chip bg-[#031d16] text-slate-300 hover:bg-emerald-900 px-3 py-1.5 rounded-xl border border-emerald-800" data-cat="Wisdom">Wisdom</button>
+          <button class="dua-filter-chip bg-[#031d16] text-slate-300 hover:bg-emerald-900 px-3 py-1.5 rounded-xl border border-emerald-800" data-cat="Family">Family</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="duasContainer">
+        <!-- Injected dynamically with live audio buttons -->
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ==============================================
+       FULL SURAH READER MODAL / OVERLAY
+       ============================================== -->
+  <div id="surahReaderModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex flex-col justify-between" style="display: none;">
+    <!-- Modal Toolbar -->
+    <div class="px-6 py-4 bg-[#031911] border-b border-emerald-900 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <button id="closeReaderModalBtn" class="bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 border border-rose-500/30 text-xs font-bold px-3 py-1.5 rounded-xl transition">
+          ✕ Close Reader
+        </button>
+        <div>
+          <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+            <span id="modalSurahTitle">Surah Name</span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono" id="modalSurahInfo">Meccan • 7 Ayahs</span>
+          </h3>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="playFullSurahBtn" class="bg-gradient-to-r from-emerald-600 to-amber-500 hover:opacity-90 text-black font-extrabold text-xs px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg">
+          <span>▶</span> <span>Play Full Tilawat</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Ayah by Ayah Reader Container -->
+    <div class="flex-1 overflow-y-auto px-4 py-8 max-w-4xl mx-auto w-full space-y-6" id="modalAyahsContainer">
+      <!-- Injected dynamically -->
+    </div>
+  </div>
+
+  <!-- Global Audio Element for Quran Recitation -->
+  <audio id="globalQuranAudio" preload="auto"></audio>
+  <!-- Global Dedicated TTS Voice Audio Element -->
+  <audio id="ttsAudioPlayer" preload="auto"></audio>
+
+  <!-- ==============================================
+       PROFESSIONAL AUDIO PLAYER DOCK (HADITH & QURAN)
+       ============================================== -->
+  <div id="floatingAudioBar" class="sticky bottom-16 md:bottom-3 z-30 max-w-4xl mx-auto w-full px-4" style="display: none;">
+    <div class="bg-[#031d16]/95 border border-emerald-500/60 rounded-3xl p-3.5 shadow-2xl backdrop-blur-2xl space-y-2">
+      <!-- Upper Section: Track Info & Controls -->
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        
+        <!-- Track Title & Language Status Badge -->
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-600 to-amber-500 p-0.5 shadow flex-shrink-0 flex items-center justify-center">
+            <div class="w-full h-full bg-[#031d16] rounded-[14px] flex items-center justify-center text-lg" id="floatingTrackIcon">
+              🎙️
+            </div>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-extrabold text-white truncate max-w-[180px] sm:max-w-xs" id="floatingTrackTitle">Sahih al-Bukhari #1</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex-shrink-0" id="floatingVoiceTypeBadge">Verified Recitation</span>
+            </div>
+            <div class="text-xs text-amber-300 truncate" id="floatingTrackSub">Revelation • Chapter 1</div>
+          </div>
+        </div>
+
+        <!-- Center Controls: Prev, Play/Pause, Stop, Next -->
+        <div class="flex items-center gap-2">
+          <button id="floatingPrevBtn" class="w-8 h-8 rounded-xl bg-[#062c20] hover:bg-[#0a3f2e] text-slate-300 hover:text-white flex items-center justify-center text-xs transition border border-emerald-800" title="Previous Hadith">
+            ⏮
+          </button>
+          <button id="floatingPlayPauseBtn" class="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-500 to-amber-400 text-black font-extrabold flex items-center justify-center text-sm shadow hover:scale-105 transition" title="Play / Pause">
+            ⏸
+          </button>
+          <button id="floatingStopBtn" class="w-8 h-8 rounded-xl bg-[#062c20] hover:bg-rose-950/80 text-slate-300 hover:text-rose-400 flex items-center justify-center text-xs transition border border-emerald-800" title="Stop Playback">
+            ⏹
+          </button>
+          <button id="floatingNextBtn" class="w-8 h-8 rounded-xl bg-[#062c20] hover:bg-[#0a3f2e] text-slate-300 hover:text-white flex items-center justify-center text-xs transition border border-emerald-800" title="Next Hadith">
+            ⏭
+          </button>
+        </div>
+
+        <!-- Right Side: Options, Speed, Volume, Close -->
+        <div class="flex items-center gap-2 text-xs">
+          <!-- Continuous Playback Toggle -->
+          <button id="floatingAutoNextBtn" class="px-2.5 py-1 rounded-xl bg-[#062c20] text-slate-300 border border-emerald-800 hover:text-white transition font-mono text-[11px]" title="Continuous Auto-Play Next Hadith">
+            🔁 Auto-Next: <span id="floatingAutoNextStatus">OFF</span>
+          </button>
+
+          <!-- Repeat Toggle -->
+          <button id="floatingRepeatBtn" class="px-2.5 py-1 rounded-xl bg-[#062c20] text-slate-300 border border-emerald-800 hover:text-white transition font-mono text-[11px]" title="Repeat Current Track">
+            🔂 Repeat: <span id="floatingRepeatStatus">OFF</span>
+          </button>
+
+          <!-- Playback Speed Dropdown -->
+          <select id="floatingSpeedSelect" class="bg-[#062c20] border border-emerald-800 text-white rounded-xl px-2 py-1 focus:outline-none font-mono text-[11px]">
+            <option value="0.75">0.75x</option>
+            <option value="1.0" selected>1.0x</option>
+            <option value="1.25">1.25x</option>
+            <option value="1.5">1.5x</option>
+          </select>
+
+          <!-- Volume Slider (Desktop) -->
+          <div class="hidden sm:flex items-center gap-1.5 bg-[#062c20] px-2 py-1 rounded-xl border border-emerald-800">
+            <span id="floatingVolumeIcon" class="text-xs cursor-pointer">🔊</span>
+            <input type="range" id="floatingVolumeSlider" min="0" max="1" step="0.05" value="1" class="w-16 accent-emerald-500 h-1.5 cursor-pointer">
+          </div>
+
+          <button id="floatingCloseBtn" class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-400 text-sm flex items-center justify-center" title="Close Player">✕</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       MOBILE BOTTOM NAVIGATION BAR (Native App Experience)
+       ============================================== -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#031911]/95 backdrop-blur-xl border-t border-emerald-900/80 px-2 py-1.5 shadow-2xl">
+    <div class="flex justify-around items-center text-[10px] font-bold">
+      <button class="mobile-nav-btn active flex flex-col items-center py-1 px-2.5 rounded-xl text-emerald-400 transition" data-view="prayerView">
+        <span class="text-lg">🕌</span>
+        <span class="mt-0.5">Namaz</span>
+      </button>
+      <button class="mobile-nav-btn flex flex-col items-center py-1 px-2.5 rounded-xl text-slate-400 hover:text-emerald-300 transition" data-view="quranView">
+        <span class="text-lg">📖</span>
+        <span class="mt-0.5">Quran</span>
+      </button>
+      <button class="mobile-nav-btn flex flex-col items-center py-1 px-2.5 rounded-xl text-slate-400 hover:text-emerald-300 transition" data-view="playerView">
+        <span class="text-lg">🎧</span>
+        <span class="mt-0.5">Tilawat</span>
+      </button>
+      <button class="mobile-nav-btn flex flex-col items-center py-1 px-2.5 rounded-xl text-slate-400 hover:text-emerald-300 transition" data-view="hadithView">
+        <span class="text-lg">📜</span>
+        <span class="mt-0.5">Hadith</span>
+      </button>
+      <button class="mobile-nav-btn flex flex-col items-center py-1 px-2.5 rounded-xl text-slate-400 hover:text-emerald-300 transition" data-view="duasView">
+        <span class="text-lg">🤲</span>
+        <span class="mt-0.5">Duas</span>
+      </button>
+      <button class="mobile-nav-btn flex flex-col items-center py-1 px-2.5 rounded-xl text-slate-400 hover:text-emerald-300 transition" data-view="tasbeehView">
+        <span class="text-lg">📿</span>
+        <span class="mt-0.5">Tasbeeh</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- App Footer -->
+  <footer class="bg-[#02130d] border-t border-emerald-950 px-4 py-6 text-center text-xs text-slate-500 space-y-1">
+    <div>Nur-ul-Islam • Digital Holy Quran & Islamic Prayer Companion</div>
+    <div class="text-[11px] text-emerald-600">Authentic Islamic Scripture & Realtime Global Prayer Radar</div>
+  </footer>
+
+  <!-- ==============================================
+       FRONTEND LOGIC & ENGINE JAVASCRIPT
+       ============================================== -->
+  <script>
+    // Global State
+    let currentCity = 'Delhi';
+    let currentCountry = 'India';
+    let currentMethod = '1';
+    let currentSurahList = [];
+    let activeAudioSurah = 1;
+    let currentReciter = 'ar.alafasy';
+    const audioEl = document.getElementById('globalQuranAudio');
+
+    // 1. NAVIGATION TABS CONTROLLER (Unified for Desktop and Mobile Bottom Bar)
+    function switchActiveTab(targetView) {
+      // Update top pills
+      document.querySelectorAll('.nav-tab').forEach(t => {
+        if (t.getAttribute('data-view') === targetView) {
+          t.classList.add('active');
+        } else {
+          t.classList.remove('active');
+        }
+      });
+
+      // Update mobile bottom nav
+      document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+        if (btn.getAttribute('data-view') === targetView) {
+          btn.classList.add('active', 'text-emerald-400');
+          btn.classList.remove('text-slate-400');
+        } else {
+          btn.classList.remove('active', 'text-emerald-400');
+          btn.classList.add('text-slate-400');
+        }
+      });
+
+      // Show view panel
+      document.querySelectorAll('.view-panel').forEach(p => p.style.display = 'none');
+      const panel = document.getElementById(targetView);
+      if (panel) {
+        panel.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // Lazy load views if needed
+      if (targetView === 'quranView' && currentSurahList.length === 0) loadQuranSurahs();
+      if (targetView === 'hadithView') loadHadithChapter(currentHadithBook, currentHadithChapter);
+      if (targetView === 'namesView') load99Names();
+      if (targetView === 'duasView') loadDuas();
+    }
+
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        switchActiveTab(tab.getAttribute('data-view'));
+      });
+    });
+
+    document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchActiveTab(btn.getAttribute('data-view'));
+      });
+    });
+
+    // 2. FETCH PRAYER TIMINGS & HIJRI CALENDAR (Aladhan API)
+    async function loadPrayerTimings(city = currentCity, country = currentCountry, method = currentMethod) {
+      try {
+        const res = await fetch(`/api/app/prayer-times?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&method=${method}`);
+        const data = await res.json();
+        if (!data.success) throw new Error('Prayer times lookup failed');
+
+        const t = data.timings;
+        document.getElementById('timeFajr').textContent = t.Fajr;
+        document.getElementById('timeSunrise').textContent = t.Sunrise;
+        document.getElementById('timeDhuhr').textContent = t.Dhuhr;
+        document.getElementById('timeAsr').textContent = t.Asr;
+        document.getElementById('timeMaghrib').textContent = t.Maghrib;
+        document.getElementById('timeIsha').textContent = t.Isha;
+        document.getElementById('timeImsak').textContent = t.Imsak;
+        document.getElementById('timeMidnight').textContent = t.Midnight;
+        document.getElementById('timeSunset').textContent = t.Sunset;
+
+        // Update Headers
+        const h = data.hijri;
+        document.getElementById('headerHijriDate').textContent = `${h.day} ${h.month} ${h.year} AH`;
+        document.getElementById('headerGregorianDate').textContent = `${data.gregorian.weekday}, ${data.gregorian.date}`;
+        document.getElementById('currentCityHeading').textContent = `${city}, ${country}`;
+        document.getElementById('bannerMethodName').textContent = data.meta.method_name || 'Standard';
+
+        // Calculate next prayer countdown
+        calculateNextPrayer(t);
+
+        // Fetch Qibla angle for this city
+        loadQiblaForCity(city);
+
+      } catch (err) {
+        console.error('Error loading prayer timings:', err);
+      }
+    }
+
+    // 3. CALCULATE NEXT PRAYER & HIGHLIGHT CURRENT PRAYER
+    function calculateNextPrayer(timings) {
+      const now = new Date();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+      const prayerOrder = [
+        { name: 'Fajr', time: timings.Fajr, cardId: 'cardFajr' },
+        { name: 'Sunrise', time: timings.Sunrise, cardId: 'cardSunrise' },
+        { name: 'Dhuhr', time: timings.Dhuhr, cardId: 'cardDhuhr' },
+        { name: 'Asr', time: timings.Asr, cardId: 'cardAsr' },
+        { name: 'Maghrib', time: timings.Maghrib, cardId: 'cardMaghrib' },
+        { name: 'Isha', time: timings.Isha, cardId: 'cardIsha' }
+      ];
+
+      // Remove existing current highlights
+      prayerOrder.forEach(p => {
+        const c = document.getElementById(p.cardId);
+        if (c) c.classList.remove('current');
+      });
+
+      let nextPrayer = null;
+      let diffMinutes = 9999;
+
+      for (let i = 0; i < prayerOrder.length; i++) {
+        const [h, m] = prayerOrder[i].time.split(':').map(Number);
+        const prayerMins = h * 60 + m;
+        if (prayerMins > currentMinutes) {
+          nextPrayer = prayerOrder[i];
+          diffMinutes = prayerMins - currentMinutes;
+          // Current active prayer is the previous one
+          const prevIdx = i > 0 ? i - 1 : prayerOrder.length - 1;
+          const prevCard = document.getElementById(prayerOrder[prevIdx].cardId);
+          if (prevCard) prevCard.classList.add('current');
+          break;
+        }
+      }
+
+      // If all prayers passed today, next prayer is Fajr tomorrow
+      if (!nextPrayer) {
+        nextPrayer = prayerOrder[0];
+        const [h, m] = nextPrayer.time.split(':').map(Number);
+        diffMinutes = (24 * 60 - currentMinutes) + (h * 60 + m);
+        const ishaCard = document.getElementById('cardIsha');
+        if (ishaCard) ishaCard.classList.add('current');
+      }
+
+      const hrs = Math.floor(diffMinutes / 60);
+      const mins = diffMinutes % 60;
+      document.getElementById('nextPrayerBanner').textContent = `${nextPrayer.name} in ${hrs}h ${mins}m (${nextPrayer.time})`;
+    }
+
+    // 4. LOAD QIBLA DIRECTION
+    async function loadQiblaForCity(city) {
+      // Coordinates mapping for quick cities
+      const coords = {
+        'Delhi': { lat: 28.6139, lon: 77.2090 },
+        'Mumbai': { lat: 19.0760, lon: 72.8777 },
+        'Hyderabad': { lat: 17.3850, lon: 78.4867 },
+        'Lucknow': { lat: 26.8467, lon: 80.9462 },
+        'Karachi': { lat: 24.8607, lon: 67.0011 },
+        'Dhaka': { lat: 23.8103, lon: 90.4125 },
+        'London': { lat: 51.5074, lon: -0.1278 },
+        'New York': { lat: 40.7128, lon: -74.0060 },
+        'Dubai': { lat: 25.2048, lon: 55.2708 },
+        'Makkah': { lat: 21.4225, lon: 39.8262 },
+        'Medina': { lat: 24.4672, lon: 39.6111 }
+      };
+
+      const loc = coords[city] || { lat: 28.6139, lon: 77.2090 };
+      try {
+        const res = await fetch(`/api/app/qibla?lat=${loc.lat}&lon=${loc.lon}`);
+        const data = await res.json();
+        if (data.success) {
+          const deg = data.direction;
+          document.getElementById('bannerQiblaAngle').textContent = `${deg}°`;
+          document.getElementById('qiblaDegreeText').textContent = `${deg}° Towards Makkah`;
+          const needle = document.getElementById('qiblaNeedle');
+          if (needle) needle.style.transform = `rotate(${deg}deg)`;
+        }
+      } catch (e) {
+        console.warn('Qibla error:', e);
+      }
+    }
+
+    // City Quick Switcher
+    document.getElementById('quickCitySelect').addEventListener('change', (e) => {
+      currentCity = e.target.value;
+      loadPrayerTimings(currentCity, currentCountry, currentMethod);
+    });
+
+    document.getElementById('searchCityBtn').addEventListener('click', () => {
+      const custom = document.getElementById('cityInputCustom').value.trim();
+      if (custom) {
+        currentCity = custom;
+        loadPrayerTimings(currentCity, '', currentMethod);
+      }
+    });
+
+    document.getElementById('applyMethodBtn').addEventListener('click', () => {
+      currentMethod = document.getElementById('methodSelect').value;
+      loadPrayerTimings(currentCity, currentCountry, currentMethod);
+    });
+
+    // 5. HOLY QURAN DIRECTORY (114 SURAHS)
+    async function loadQuranSurahs() {
+      const container = document.getElementById('surahGridContainer');
+      try {
+        const res = await fetch('/api/app/quran/surahs');
+        const data = await res.json();
+        if (!data.success) throw new Error('Surahs failed to load');
+        currentSurahList = data.surahs || [];
+
+        renderSurahCards(currentSurahList);
+      } catch (e) {
+        container.innerHTML = `<div class="col-span-full text-center text-rose-400 py-10">⚠️ Failed to load Holy Quran directory. Please verify connection.</div>`;
+      }
+    }
+
+    function renderSurahCards(list) {
+      const container = document.getElementById('surahGridContainer');
+      container.innerHTML = '';
+      if (list.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center text-slate-400 py-10">No Surahs found matching your search.</div>`;
+        return;
+      }
+
+      list.forEach(s => {
+        const card = document.createElement('div');
+        card.className = 'glass-card rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition hover:scale-[1.02] hover:border-emerald-400 group';
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-start">
+              <span class="w-8 h-8 rounded-xl bg-[#031d16] border border-emerald-800/80 flex items-center justify-center font-mono text-xs font-bold text-amber-400 group-hover:border-amber-400">
+                ${s.number}
+              </span>
+              <span class="font-arabic text-xl font-bold text-emerald-300 group-hover:text-amber-300">
+                ${s.name}
+              </span>
+            </div>
+            <div class="mt-3">
+              <h4 class="text-sm font-bold text-white group-hover:text-emerald-400">${s.englishName}</h4>
+              <div class="text-xs text-slate-400">${s.englishNameTranslation}</div>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-emerald-900/60 flex justify-between items-center text-xs">
+            <span class="text-[11px] text-slate-400 font-mono">${s.numberOfAyahs} Ayahs • ${s.revelationType}</span>
+            <span class="text-emerald-400 font-bold group-hover:underline">Read & Listen ↗</span>
+          </div>
+        `;
+        card.addEventListener('click', () => openSurahReader(s.number));
+        container.appendChild(card);
+      });
+    }
+
+    document.getElementById('surahSearchInput').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      const filtered = currentSurahList.filter(s => 
+        s.number.toString().includes(q) ||
+        s.englishName.toLowerCase().includes(q) ||
+        s.englishNameTranslation.toLowerCase().includes(q) ||
+        s.name.includes(q)
+      );
+      renderSurahCards(filtered);
+    });
+
+    // 6. AYAH-BY-AYAH READER MODAL
+    async function openSurahReader(surahNum) {
+      const modal = document.getElementById('surahReaderModal');
+      const container = document.getElementById('modalAyahsContainer');
+      const titleEl = document.getElementById('modalSurahTitle');
+      const infoEl = document.getElementById('modalSurahInfo');
+
+      modal.style.display = 'flex';
+      container.innerHTML = `<div class="text-center text-slate-400 py-20"><span class="animate-spin text-2xl inline-block mb-3">⏳</span><br>Loading Surah ${surahNum} text, translations & audio...</div>`;
+
+      try {
+        const res = await fetch(`/api/app/quran/surah?surah=${surahNum}&reciter=${currentReciter}`);
+        const data = await res.json();
+        if (!data.success) throw new Error('Surah load failed');
+
+        const s = data.surah;
+        activeAudioSurah = s.number;
+        titleEl.textContent = `${s.number}. ${s.englishName} (${s.name})`;
+        infoEl.textContent = `${s.revelationType} • ${s.numberOfAyahs} Ayahs • ${s.englishNameTranslation}`;
+
+        // Bismillah Banner (Except Surah At-Tawbah #9)
+        let html = '';
+        if (s.number !== 9) {
+          html += `
+            <div class="text-center py-6 border-b border-emerald-900/60 mb-6">
+              <span class="font-arabic text-3xl sm:text-4xl text-amber-300 tracking-wider">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>
+              <p class="text-xs text-slate-400 mt-2">In the name of Allah, the Entirely Merciful, the Especially Merciful.</p>
+            </div>
+          `;
+        }
+
+        s.ayahs.forEach(a => {
+          html += `
+            <div class="glass-card rounded-2xl p-5 space-y-4 border border-emerald-900/60 hover:border-emerald-500/40 transition">
+              <div class="flex justify-between items-center">
+                <span class="w-8 h-8 rounded-full bg-[#031d16] border border-emerald-700 text-xs font-mono font-bold text-amber-400 flex items-center justify-center">
+                  ${a.number}
+                </span>
+                <div class="flex items-center gap-2">
+                  <button onclick="playSingleAyahAudio('${a.audio}', '${s.englishName}', ${a.number})" class="text-xs bg-emerald-700/40 hover:bg-emerald-600 text-emerald-200 px-3 py-1.5 rounded-xl border border-emerald-600/40 flex items-center gap-1.5 transition">
+                    <span>▶</span> <span>Tilawat</span>
+                  </button>
+                  <button onclick="playTextVoiceTTS(this, 'ur', '${encodeURIComponent(a.urdu)}')" class="text-xs bg-[#062c20] hover:bg-emerald-800 text-amber-300 px-2.5 py-1.5 rounded-xl border border-emerald-700/60 flex items-center gap-1 transition" title="Listen Urdu Translation Voice">
+                    <span>🔊</span> <span>Urdu Awaz</span>
+                  </button>
+                  <button onclick="playTextVoiceTTS(this, 'hi', '${encodeURIComponent(a.urdu)}')" class="text-xs bg-[#062c20] hover:bg-emerald-800 text-sky-300 px-2.5 py-1.5 rounded-xl border border-emerald-700/60 flex items-center gap-1 transition" title="Listen Hindi Translation Voice">
+                    <span>🔊</span> <span>Hindi Awaz</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Arabic Uthmani Text -->
+              <div class="text-right font-quran text-2xl sm:text-3xl text-emerald-100 leading-loose tracking-wide select-text">
+                ${a.arabic} <span class="text-amber-400 font-arabic text-lg mr-1">۝${a.number}</span>
+              </div>
+
+              <!-- Translations (Urdu & English) -->
+              <div class="pt-3 border-t border-emerald-900/60 space-y-2">
+                <div class="text-right font-arabic text-sm sm:text-base text-amber-200/90 leading-relaxed">
+                  ${a.urdu}
+                </div>
+                <div class="text-left text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                  ${a.english}
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+
+        // Hook Play Full Surah Button
+        document.getElementById('playFullSurahBtn').onclick = () => {
+          playSurahInMasterPlayer(s.number, s.englishName, s.name);
+        };
+
+      } catch (e) {
+        container.innerHTML = `<div class="text-center text-rose-400 py-20">⚠️ ${e.message}</div>`;
+      }
+    }
+
+    document.getElementById('closeReaderModalBtn').addEventListener('click', () => {
+      document.getElementById('surahReaderModal').style.display = 'none';
+    });
+
+    // 7. AUDIO TILAWAT & SOUNDWAVE PLAYER CONTROLLER
+    function playSingleAyahAudio(audioUrl, surahTitle, ayahNum) {
+      if (!audioUrl) return;
+      audioEl.src = audioUrl;
+      audioEl.play().catch(e => console.warn('Audio play error:', e));
+
+      // Show floating bottom bar
+      const bar = document.getElementById('floatingAudioBar');
+      bar.style.display = 'block';
+      document.getElementById('floatingTrackTitle').textContent = `${surahTitle} • Ayah ${ayahNum}`;
+      document.getElementById('floatingTrackSub').textContent = `Recited by ${currentReciter.replace('ar.', '').toUpperCase()}`;
+      document.getElementById('floatingPlayPauseBtn').textContent = '⏸';
+    }
+
+    function playSurahInMasterPlayer(surahNum, englishTitle, arabicName) {
+      activeAudioSurah = surahNum;
+      // Switch to Player View
+      document.querySelector('[data-view="playerView"]').click();
+
+      document.getElementById('playerSurahArabic').textContent = arabicName || 'سُورَة';
+      document.getElementById('playerSurahEnglish').textContent = englishTitle || `Surah ${surahNum}`;
+      document.getElementById('playerMainTitle').textContent = `Surah ${englishTitle || surahNum}`;
+
+      // Set audio stream link (Full Surah streaming CDN)
+      const formattedSurah = surahNum.toString().padStart(3, '0');
+      // High quality direct mp3 stream from Quranic CDN
+      const streamUrl = `https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/${formattedSurah}.mp3`;
+      audioEl.src = streamUrl;
+      audioEl.play().then(() => {
+        updatePlayerUI(true);
+      }).catch(e => {
+        console.warn('Playback error:', e);
+        updatePlayerUI(false);
+      });
+    }
+
+    function updatePlayerUI(isPlaying) {
+      const disc = document.getElementById('tilawatDisc');
+      const wave = document.getElementById('soundwaveContainer');
+      const masterBtn = document.getElementById('masterPlayBtn');
+      const floatBtn = document.getElementById('floatingPlayPauseBtn');
+
+      if (masterBtn) masterBtn.textContent = isPlaying ? '⏸' : '▶';
+      if (floatBtn) floatBtn.textContent = isPlaying ? '⏸' : '▶';
+      
+      if (disc) {
+        if (isPlaying) disc.classList.add('wave-bar-anim');
+        else disc.classList.remove('wave-bar-anim');
+      }
+      if (wave) {
+        wave.style.opacity = isPlaying ? '1' : '0.2';
+      }
+    }
+
+    document.getElementById('masterPlayBtn').addEventListener('click', () => {
+      if (!audioEl.src) {
+        playSurahInMasterPlayer(1, 'Al-Faatiha', 'سُورَةُ الفَاتِحَة');
+        return;
+      }
+      if (audioEl.paused) {
+        audioEl.play();
+        updatePlayerUI(true);
+      } else {
+        audioEl.pause();
+        updatePlayerUI(false);
+      }
+    });
+
+    document.getElementById('floatingPlayPauseBtn').addEventListener('click', () => {
+      if (audioEl.paused) {
+        audioEl.play();
+        updatePlayerUI(true);
+      } else {
+        audioEl.pause();
+        updatePlayerUI(false);
+      }
+    });
+
+    document.getElementById('floatingCloseBtn').addEventListener('click', () => {
+      audioEl.pause();
+      document.getElementById('floatingAudioBar').style.display = 'none';
+    });
+
+    // Time scrubbers
+    audioEl.addEventListener('timeupdate', () => {
+      if (audioEl.duration) {
+        const pct = (audioEl.currentTime / audioEl.duration) * 100;
+        document.getElementById('audioSeekBar').value = pct;
+        
+        const curMins = Math.floor(audioEl.currentTime / 60).toString().padStart(2, '0');
+        const curSecs = Math.floor(audioEl.currentTime % 60).toString().padStart(2, '0');
+        const totMins = Math.floor(audioEl.duration / 60).toString().padStart(2, '0');
+        const totSecs = Math.floor(audioEl.duration % 60).toString().padStart(2, '0');
+        document.getElementById('audioCurrentTime').textContent = `${curMins}:${curSecs}`;
+        document.getElementById('audioTotalTime').textContent = `${totMins}:${totSecs}`;
+      }
+    });
+
+    document.getElementById('audioSeekBar').addEventListener('input', (e) => {
+      if (audioEl.duration) {
+        audioEl.currentTime = (e.target.value / 100) * audioEl.duration;
+      }
+    });
+
+    document.getElementById('volumeBar').addEventListener('input', (e) => {
+      audioEl.volume = e.target.value / 100;
+    });
+
+    // Quick Surah buttons on Player Tab
+    document.querySelectorAll('.quick-surah-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const num = btn.getAttribute('data-surah');
+        playSurahInMasterPlayer(num, btn.textContent.trim(), 'سورة');
+      });
+    });
+
+    // 8. 99 NAMES OF ALLAH (ASMA-UL-HUSNA)
+    let namesListGlobal = [];
+    async function load99Names() {
+      const container = document.getElementById('namesGridContainer');
+      if (namesListGlobal.length > 0) return;
+
+      try {
+        const res = await fetch('/api/app/asmaulhusna');
+        const data = await res.json();
+        if (!data.success) throw new Error('99 Names lookup failed');
+        namesListGlobal = data.names || [];
+
+        renderNamesGrid(namesListGlobal);
+      } catch (e) {
+        container.innerHTML = `<div class="col-span-full text-center text-rose-400 py-10">⚠️ Failed to load 99 Names of Allah.</div>`;
+      }
+    }
+
+    function renderNamesGrid(list) {
+      const container = document.getElementById('namesGridContainer');
+      container.innerHTML = '';
+      list.forEach(n => {
+        const card = document.createElement('div');
+        card.className = 'glass-card rounded-2xl p-3.5 text-center flex flex-col justify-between hover:border-amber-400/60 transition group cursor-pointer';
+        card.innerHTML = `
+          <div class="flex justify-between items-center text-[10px] text-slate-400 font-mono">
+            <span>#${n.number}</span>
+            <span class="text-emerald-400">●</span>
+          </div>
+          <div class="my-2">
+            <div class="font-arabic text-2xl font-bold text-amber-300 group-hover:scale-105 transition">${n.name}</div>
+            <div class="text-xs font-bold text-white mt-1">${n.transliteration}</div>
+          </div>
+          <div class="text-[11px] text-slate-300 font-medium pt-2 border-t border-emerald-900/60">
+            ${n.en?.meaning || ''}
+          </div>
+        `;
+        card.addEventListener('click', () => {
+          alert(`Name: ${n.transliteration} (${n.name})\nMeaning: ${n.en?.meaning}\n\nOne of the 99 beautiful attributes of Allah.`);
+        });
+        container.appendChild(card);
+      });
+    }
+
+    document.getElementById('namesSearchInput').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      const filtered = namesListGlobal.filter(n => 
+        n.transliteration.toLowerCase().includes(q) ||
+        (n.en?.meaning || '').toLowerCase().includes(q) ||
+        n.name.includes(q) ||
+        n.number.toString().includes(q)
+      );
+      renderNamesGrid(filtered);
+    });
+
+    // 9. DIGITAL TASBEEH COUNTER
+    let tasbeehCount = 0;
+    let tasbeehTarget = 33;
+    const countDisplay = document.getElementById('tasbeehCounterDisplay');
+    const targetText = document.getElementById('tasbeehTargetText');
+
+    document.getElementById('tasbeehCountBtn').addEventListener('click', () => {
+      tasbeehCount++;
+      countDisplay.textContent = tasbeehCount;
+      targetText.textContent = `${tasbeehCount % tasbeehTarget} / ${tasbeehTarget} Loop (Total: ${tasbeehCount})`;
+
+      // Haptic/audio cue on target hit
+      if (tasbeehCount % tasbeehTarget === 0) {
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+      }
+    });
+
+    document.getElementById('resetTasbeehBtn').addEventListener('click', () => {
+      tasbeehCount = 0;
+      countDisplay.textContent = '0';
+      targetText.textContent = `0 / ${tasbeehTarget} Loop`;
+    });
+
+    document.getElementById('setTarget33Btn').addEventListener('click', () => {
+      tasbeehTarget = 33;
+      targetText.textContent = `${tasbeehCount % tasbeehTarget} / 33 Loop (Total: ${tasbeehCount})`;
+    });
+
+    document.getElementById('setTarget100Btn').addEventListener('click', () => {
+      tasbeehTarget = 100;
+      targetText.textContent = `${tasbeehCount % tasbeehTarget} / 100 Loop (Total: ${tasbeehCount})`;
+    });
+
+    document.querySelectorAll('.tasbeeh-preset').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tasbeeh-preset').forEach(b => {
+          b.className = 'tasbeeh-preset bg-[#031d16] text-slate-300 hover:bg-emerald-900 font-medium px-3 py-1.5 rounded-xl border border-emerald-800 transition';
+        });
+        btn.className = 'tasbeeh-preset active bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl border border-emerald-400 shadow transition';
+
+        const phrase = btn.getAttribute('data-phrase');
+        const meaning = btn.getAttribute('data-meaning');
+        document.querySelector('#tasbeehView h2').textContent = phrase;
+        document.getElementById('tasbeehMeaningText').textContent = meaning;
+      });
+    });
+
+    // ==============================================
+    // 10. COMPLETE HADITH SYSTEM – FOUR LANGUAGE API + AUDIO
+    // (Bukhari, Muslim, Nawawi 42 • 4 Languages • Authentic Recitation & Studio TTS)
+    // ==============================================
+    let currentHadithBook = 'bukhari';
+    let currentHadithChapter = '1';
+    let currentHadithLang = 'ur'; // 'ur', 'hi', 'en', 'ar'
+    let currentHadithPage = 1;
+    let currentHadithLimit = 15;
+    let totalHadithPages = 1;
+    let currentHadithSubView = 'all'; // 'all', 'daily', 'bookmarks', 'recent'
+    let allHadiths = [];
+    let hadithCollectionsMeta = [];
+    let currentActiveHadithCardBtn = null;
+
+    // Professional Sticky Audio Player State
+    let currentPlayingHadith = null;
+    let currentPlayingLang = 'ar';
+    let isAutoNext = false;
+    let isRepeat = false;
+    let currentPlaybackSpeed = 1.0;
+
+    // Bookmarks and Recently Viewed (Local Persistence)
+    let hadithBookmarks = JSON.parse(localStorage.getItem('nur_hadith_bookmarks') || '[]');
+    let hadithRecents = JSON.parse(localStorage.getItem('nur_hadith_recents') || '[]');
+
+    function updateBookmarksCountBadge() {
+      const el = document.getElementById('hadithBookmarksCount');
+      if (el) el.textContent = hadithBookmarks.length;
+    }
+    updateBookmarksCountBadge();
+
+    function recordRecentHadith(hadith) {
+      if (!hadith) return;
+      hadithRecents = hadithRecents.filter(h => !(h.book === hadith.book && h.hadithnumber == hadith.hadithnumber));
+      hadithRecents.unshift(hadith);
+      if (hadithRecents.length > 30) hadithRecents.pop();
+      try { localStorage.setItem('nur_hadith_recents', JSON.stringify(hadithRecents)); } catch(e){}
+    }
+
+    function getBookTitle(slug) {
+      if (slug === 'bukhari') return 'Sahih al-Bukhari';
+      if (slug === 'muslim') return 'Sahih Muslim';
+      if (slug === 'nawawi') return "Imam Nawawi's 40 Hadith";
+      return 'Sahih Hadith';
+    }
+
+    // 1. Initial Load: Fetch All Collections & Chapters Metadata
+    async function initHadithCollections() {
+      try {
+        const res = await fetch('/api/app/hadith/collections');
+        const data = await res.json();
+        if (data.success && data.collections) {
+          hadithCollectionsMeta = data.collections;
+          updateChapterDropdownForBook(currentHadithBook);
+        }
+      } catch (e) {
+        console.warn('Failed to load collections metadata:', e);
+      }
+    }
+
+    function updateChapterDropdownForBook(book) {
+      const select = document.getElementById('hadithChapterSelect');
+      select.innerHTML = '';
+
+      const col = hadithCollectionsMeta.find(c => c.id === book);
+      if (col && col.chapters && col.chapters.length > 0) {
+        col.chapters.forEach(ch => {
+          const opt = document.createElement('option');
+          opt.value = ch.id;
+          opt.textContent = `${ch.name} (${ch.hadiths_count} hadiths)`;
+          select.appendChild(opt);
+        });
+        currentHadithChapter = col.chapters[0].id;
+      } else {
+        // Fallback default chapters
+        if (book === 'bukhari') {
+          select.innerHTML = '<option value="1">1. Revelation (بدء الوحي)</option><option value="2">2. Belief / Faith (الإيمان)</option><option value="3">3. Knowledge (العلم)</option>';
+        } else if (book === 'muslim') {
+          select.innerHTML = '<option value="1">1. The Book of Faith (كتاب الإيمان)</option><option value="2">2. The Book of Purification (كتاب الطهارة)</option>';
+        } else if (book === 'nawawi') {
+          select.innerHTML = '<option value="1">1. Forty Hadith of an-Nawawi (الأربعون النووية) (42 hadiths)</option>';
+        }
+        currentHadithChapter = '1';
+      }
+    }
+
+    // Book switcher buttons (Bukhari, Muslim, Nawawi 42)
+    document.querySelectorAll('.hadith-book-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.hadith-book-btn').forEach(b => {
+          b.className = 'hadith-book-btn bg-[#031d16] text-slate-300 hover:bg-emerald-900 px-4 py-2 rounded-xl border border-emerald-800 transition flex items-center gap-1.5';
+        });
+        btn.className = 'hadith-book-btn active bg-emerald-600 text-white px-4 py-2 rounded-xl border border-emerald-400 shadow transition flex items-center gap-1.5';
+
+        currentHadithBook = btn.getAttribute('data-book');
+        currentHadithSubView = 'all';
+        currentHadithPage = 1;
+        updateSubViewActiveTab();
+        updateChapterDropdownForBook(currentHadithBook);
+        loadHadithChapter(currentHadithBook, currentHadithChapter, 1);
+      });
+    });
+
+    // 4-Language System Selector
+    document.querySelectorAll('.hadith-lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.hadith-lang-btn').forEach(b => {
+          b.className = 'hadith-lang-btn px-2.5 py-1 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition';
+        });
+        btn.className = 'hadith-lang-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-700 text-white border border-emerald-500 shadow transition';
+
+        currentHadithLang = btn.getAttribute('data-lang');
+        renderHadithCards(allHadiths);
+      });
+    });
+
+    // Sub-view Filter Switcher (All, Daily, Bookmarks, Recent)
+    document.querySelectorAll('.hadith-subview-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const subview = btn.getAttribute('data-subview');
+        currentHadithSubView = subview;
+        updateSubViewActiveTab();
+
+        const navContainer = document.getElementById('hadithChapterNavContainer');
+        const paginationBar = document.getElementById('hadithPaginationBar');
+
+        if (subview === 'all') {
+          navContainer.style.display = 'flex';
+          loadHadithChapter(currentHadithBook, currentHadithChapter, currentHadithPage);
+        } else if (subview === 'daily') {
+          navContainer.style.display = 'none';
+          paginationBar.style.display = 'none';
+          loadDailyHadith();
+        } else if (subview === 'bookmarks') {
+          navContainer.style.display = 'none';
+          paginationBar.style.display = 'none';
+          allHadiths = hadithBookmarks;
+          renderHadithCards(allHadiths);
+        } else if (subview === 'recent') {
+          navContainer.style.display = 'none';
+          paginationBar.style.display = 'none';
+          allHadiths = hadithRecents;
+          renderHadithCards(allHadiths);
+        }
+      });
+    });
+
+    function updateSubViewActiveTab() {
+      document.querySelectorAll('.hadith-subview-btn').forEach(b => {
+        if (b.getAttribute('data-subview') === currentHadithSubView) {
+          b.className = 'hadith-subview-btn active bg-emerald-600/30 text-emerald-300 border border-emerald-500/50 px-3 py-1.5 rounded-xl transition';
+        } else {
+          b.className = 'hadith-subview-btn bg-[#031d16] text-slate-300 hover:bg-emerald-900 px-3 py-1.5 rounded-xl border border-emerald-800 transition';
+        }
+      });
+    }
+
+    // Chapter dropdown change
+    document.getElementById('hadithChapterSelect').addEventListener('change', (e) => {
+      currentHadithChapter = e.target.value;
+      currentHadithPage = 1;
+      loadHadithChapter(currentHadithBook, currentHadithChapter, 1);
+    });
+
+    // Jump to Hadith #
+    document.getElementById('hadithJumpBtn').addEventListener('click', () => {
+      const num = parseInt(document.getElementById('hadithJumpInput').value.trim(), 10);
+      if (num && num > 0) {
+        jumpToHadithNumber(num);
+      }
+    });
+
+    document.getElementById('hadithJumpInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const num = parseInt(e.target.value.trim(), 10);
+        if (num && num > 0) jumpToHadithNumber(num);
+      }
+    });
+
+    async function jumpToHadithNumber(num) {
+      const container = document.getElementById('hadithsContainer');
+      container.innerHTML = `<div class="text-center text-slate-400 py-16"><span class="animate-spin text-3xl inline-block mb-3">⏳</span><br>Navigating directly to Hadith #${num}...</div>`;
+      try {
+        const res = await fetch(`/api/app/hadith/single?book=${currentHadithBook}&number=${num}`);
+        const data = await res.json();
+        if (data.success && data.hadith) {
+          allHadiths = [data.hadith];
+          renderHadithCards(allHadiths);
+          document.getElementById('hadithPaginationBar').style.display = 'none';
+        } else {
+          container.innerHTML = `<div class="glass-card rounded-2xl p-8 text-center text-rose-400">⚠️ Hadith #${num} not found in ${getBookTitle(currentHadithBook)}.</div>`;
+        }
+      } catch (e) {
+        container.innerHTML = `<div class="text-center text-rose-400 py-16">⚠️ Direct lookup failed.</div>`;
+      }
+    }
+
+    // Live Search
+    document.getElementById('hadithSearchInput').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      if (!q) {
+        renderHadithCards(allHadiths);
+        return;
+      }
+      const filtered = allHadiths.filter(h =>
+        h.hadithnumber.toString().includes(q) ||
+        (h.english || '').toLowerCase().includes(q) ||
+        (h.urdu || '').includes(q) ||
+        (h.hindi || '').includes(q) ||
+        (h.arabic || '').includes(q) ||
+        (h.narrator_en || '').toLowerCase().includes(q) ||
+        (h.narrator_ar || '').includes(q)
+      );
+      renderHadithCards(filtered);
+    });
+
+    document.getElementById('hadithSearchBtn').addEventListener('click', async () => {
+      const q = document.getElementById('hadithSearchInput').value.trim();
+      if (!q) return;
+      const container = document.getElementById('hadithsContainer');
+      container.innerHTML = `<div class="text-center text-slate-400 py-16"><span class="animate-spin text-3xl inline-block mb-3">🔍</span><br>Searching across ${getBookTitle(currentHadithBook)}...</div>`;
+      try {
+        const res = await fetch(`/api/app/hadith/search?book=${currentHadithBook}&q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        if (data.success && data.hadiths && data.hadiths.length > 0) {
+          allHadiths = data.hadiths;
+          renderHadithCards(allHadiths);
+          document.getElementById('hadithPaginationBar').style.display = 'none';
+        } else {
+          container.innerHTML = `<div class="glass-card rounded-2xl p-8 text-center text-slate-300">No Hadiths found matching "${q}".</div>`;
+        }
+      } catch (e) {
+        container.innerHTML = `<div class="text-center text-rose-400 py-16">⚠️ Search request failed.</div>`;
+      }
+    });
+
+    // Pagination Buttons
+    document.getElementById('hadithPrevPageBtn').addEventListener('click', () => {
+      if (currentHadithPage > 1) {
+        loadHadithChapter(currentHadithBook, currentHadithChapter, currentHadithPage - 1);
+      }
+    });
+
+    document.getElementById('hadithNextPageBtn').addEventListener('click', () => {
+      if (currentHadithPage < totalHadithPages) {
+        loadHadithChapter(currentHadithBook, currentHadithChapter, currentHadithPage + 1);
+      }
+    });
+
+    // Core Chapter Loader (with Pagination & Skeletons)
+    async function loadHadithChapter(book = currentHadithBook, chapter = currentHadithChapter, page = 1, callback = null) {
+      currentHadithBook = book;
+      currentHadithChapter = chapter;
+      currentHadithPage = page;
+
+      const container = document.getElementById('hadithsContainer');
+      // Render Skeleton Cards while fetching
+      container.innerHTML = `
+        <div class="glass-card rounded-3xl p-6 space-y-4 animate-pulse border border-emerald-900/60">
+          <div class="h-4 bg-emerald-950 rounded w-1/3"></div>
+          <div class="h-8 bg-emerald-900/40 rounded w-full"></div>
+          <div class="h-16 bg-emerald-900/30 rounded w-5/6"></div>
+          <div class="h-10 bg-emerald-950 rounded w-full"></div>
+        </div>
+        <div class="glass-card rounded-3xl p-6 space-y-4 animate-pulse border border-emerald-900/60">
+          <div class="h-4 bg-emerald-950 rounded w-1/4"></div>
+          <div class="h-8 bg-emerald-900/40 rounded w-full"></div>
+          <div class="h-16 bg-emerald-900/30 rounded w-4/5"></div>
+          <div class="h-10 bg-emerald-950 rounded w-full"></div>
+        </div>
+      `;
+
+      try {
+        const res = await fetch(`/api/app/hadith/chapter?book=${book}&chapter=${chapter}&page=${page}&limit=${currentHadithLimit}`);
+        const data = await res.json();
+        if (!data.success) throw new Error('Hadith fetch failed');
+
+        allHadiths = data.hadiths || [];
+        totalHadithPages = data.total_pages || 1;
+
+        // Update pagination bar
+        const paginationBar = document.getElementById('hadithPaginationBar');
+        paginationBar.style.display = totalHadithPages > 1 ? 'flex' : 'none';
+        document.getElementById('hadithPageIndicator').textContent = `Page ${data.page} of ${data.total_pages} (${data.total_records} Hadiths in chapter)`;
+        document.getElementById('hadithPrevPageBtn').disabled = !data.has_prev;
+        document.getElementById('hadithNextPageBtn').disabled = !data.has_next;
+
+        renderHadithCards(allHadiths);
+        if (callback) callback();
+      } catch (e) {
+        container.innerHTML = `
+          <div class="glass-card rounded-3xl p-10 text-center space-y-3 border border-rose-900/60">
+            <span class="text-3xl">⚠️</span>
+            <h3 class="text-base font-bold text-rose-300">Failed to Load Hadiths</h3>
+            <p class="text-xs text-slate-400">Please verify network connection and try again.</p>
+            <button onclick="loadHadithChapter('${book}', '${chapter}', ${page})" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition">
+              🔄 Retry Load
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    // Daily Hadith Loader
+    async function loadDailyHadith() {
+      const container = document.getElementById('hadithsContainer');
+      container.innerHTML = `<div class="text-center text-slate-400 py-16"><span class="animate-spin text-3xl inline-block mb-3">🌟</span><br>Loading Daily Prophetic Hadith...</div>`;
+      try {
+        const res = await fetch('/api/app/hadith/daily');
+        const data = await res.json();
+        if (data.success && data.hadith) {
+          allHadiths = [data.hadith];
+          renderHadithCards(allHadiths, true);
+        } else {
+          container.innerHTML = `<div class="text-center text-slate-400 py-12">Daily Hadith unavailable right now.</div>`;
+        }
+      } catch (e) {
+        container.innerHTML = `<div class="text-center text-rose-400 py-16">⚠️ Failed to load Daily Hadith.</div>`;
+      }
+    }
+
+    // Render Cards in Sacred UI
+    function renderHadithCards(list, isDaily = false) {
+      const container = document.getElementById('hadithsContainer');
+      container.innerHTML = '';
+
+      if (!list || list.length === 0) {
+        container.innerHTML = `
+          <div class="glass-card rounded-3xl p-12 text-center space-y-3">
+            <span class="text-4xl">📖</span>
+            <h3 class="text-lg font-bold text-white">No Hadith Records Found</h3>
+            <p class="text-xs text-slate-400">Try adjusting your search query, chapter selection, or filter.</p>
+          </div>
+        `;
+        return;
+      }
+
+      list.forEach(h => {
+        const isBookmarked = hadithBookmarks.some(b => (b.book || currentHadithBook) === (h.book || currentHadithBook) && b.hadithnumber == h.hadithnumber);
+        const card = document.createElement('div');
+        card.className = `glass-card rounded-3xl p-5 sm:p-7 space-y-4 border ${isDaily ? 'border-amber-400/80 shadow-2xl bg-[#052b1e]' : 'border-emerald-900/60 hover:border-emerald-500/40'} transition`;
+        card.id = `hadithCard_${h.hadithnumber}`;
+
+        // Prepare translation text according to active currentHadithLang
+        let translationHtml = '';
+        if (currentHadithLang === 'ur') {
+          translationHtml = `
+            <div class="pt-3 border-t border-emerald-900/60 text-right font-arabic text-base sm:text-lg text-amber-200 leading-relaxed" dir="rtl">
+              ${h.urdu || '<span class="text-xs text-slate-400 font-sans">اردو ترجمہ اس باب میں دستیاب نہیں ہے۔</span>'}
+            </div>
+          `;
+        } else if (currentHadithLang === 'hi') {
+          translationHtml = `
+            <div class="pt-3 border-t border-emerald-900/60 text-left space-y-1">
+              <div class="flex items-center gap-1.5 text-[11px] text-sky-400 font-bold">
+                <span>🇮🇳</span> <span>हिन्दी अनुवाद (Devanagari Script):</span>
+                <span class="text-[10px] text-slate-400 bg-sky-950/60 border border-sky-800/60 px-2 py-0.5 rounded-full font-mono">शास्त्रीय स्रोत</span>
+              </div>
+              <div class="font-sans text-sm sm:text-base text-sky-100 leading-relaxed">
+                ${h.hindi || '<span class="text-xs text-slate-400">इस हदीस का प्रामाणिक हिन्दी अनुवाद उपलब्ध नहीं है।</span>'}
+              </div>
+            </div>
+          `;
+        } else if (currentHadithLang === 'en') {
+          translationHtml = `
+            <div class="pt-3 border-t border-emerald-900/60 text-left space-y-1">
+              <div class="text-[11px] text-emerald-400 font-bold">English Translation (Verified Canonical):</div>
+              <div class="font-sans text-xs sm:text-sm text-slate-200 leading-relaxed">
+                ${h.english || '<span class="text-xs text-slate-400">English translation not available.</span>'}
+              </div>
+            </div>
+          `;
+        } else if (currentHadithLang === 'ar') {
+          translationHtml = `
+            <div class="pt-2 text-right text-xs text-emerald-400 font-arabic">
+              نَصُّ الْحَدِيثِ الشَّرِيفِ بِالرَّسْمِ الْعُثْمَانِيِّ مَعَ كَامِلِ التَّشْكِيلِ
+            </div>
+          `;
+        }
+
+        // Narrator ribbon display
+        const narratorDisplay = (currentHadithLang === 'ur' || currentHadithLang === 'ar')
+          ? (h.narrator_ar || 'عن رسول الله ﷺ')
+          : (h.narrator_en || 'Prophetic Narration');
+
+        card.innerHTML = `
+          <!-- Card Header -->
+          <div class="flex flex-wrap justify-between items-center border-b border-emerald-900/60 pb-3 gap-2">
+            <div class="flex items-center gap-2">
+              <span class="w-9 h-9 rounded-xl bg-[#031d16] text-amber-400 border border-emerald-700/80 flex items-center justify-center font-mono text-xs font-black shadow-inner">
+                #${h.hadithnumber}
+              </span>
+              <div>
+                <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">${getBookTitle(h.book || currentHadithBook)}</span>
+                <div class="text-[11px] text-slate-400 font-medium">Chapter ${h.chapter || currentHadithChapter}</div>
+              </div>
+            </div>
+
+            <!-- Grade & Actions -->
+            <div class="flex items-center gap-2">
+              ${isDaily ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">🌟 Daily Hadith</span>' : ''}
+              <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-sm" title="${h.grades?.[0]?.name || 'Canonical Grade'}">
+                ✓ Sahih (صحيح)
+              </span>
+
+              <!-- Action Icons -->
+              <button onclick="copyHadithRecord(${h.hadithnumber})" class="p-1.5 rounded-lg bg-[#031d16] hover:bg-emerald-800 text-slate-300 hover:text-white transition border border-emerald-800/80 text-xs" title="Copy Hadith">
+                📋
+              </button>
+              <button onclick="shareHadithRecord(${h.hadithnumber})" class="p-1.5 rounded-lg bg-[#031d16] hover:bg-emerald-800 text-slate-300 hover:text-white transition border border-emerald-800/80 text-xs" title="Share Hadith">
+                🔗
+              </button>
+              <button onclick="toggleHadithBookmark(${h.hadithnumber})" class="p-1.5 rounded-lg bg-[#031d16] hover:bg-amber-900/80 text-slate-300 hover:text-amber-300 transition border border-emerald-800/80 text-xs ${isBookmarked ? 'text-amber-400 border-amber-500' : ''}" title="Bookmark Hadith">
+                ${isBookmarked ? '★' : '☆'}
+              </button>
+            </div>
+          </div>
+
+          <!-- Narrator Ribbon -->
+          <div class="flex items-center gap-2 text-xs text-amber-300/90 font-medium bg-[#031d16]/80 px-3 py-1.5 rounded-xl border border-emerald-900/50">
+            <span class="text-amber-400 font-bold">📜 سند / Narrator:</span>
+            <span class="truncate">${narratorDisplay}</span>
+          </div>
+
+          <!-- Original Arabic Text (Always Prominently Displayed with Tashkeel) -->
+          ${h.arabic ? `
+            <div class="text-right font-quran text-xl sm:text-2xl text-emerald-50 leading-loose py-2 select-text" dir="rtl">
+              ${h.arabic}
+            </div>
+          ` : ''}
+
+          <!-- Active Selected Translation -->
+          ${translationHtml}
+
+          <!-- 4-Language Audio Control Bar -->
+          <div class="p-3.5 rounded-2xl bg-[#031d16] border border-emerald-800/80 mt-3 shadow-lg space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5 text-xs text-amber-300 font-bold">
+                <span class="text-sm">🎧</span>
+                <span>Listen Audio (Verified Recitation & Studio Voice):</span>
+              </div>
+              <span class="text-[10px] text-emerald-400 font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-800">4 Languages</span>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <!-- Arabic Verified Recitation -->
+              <button onclick="triggerCardAudio(this, ${h.hadithnumber}, 'ar')" class="hadith-audio-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-800 to-emerald-700 hover:from-emerald-700 hover:to-emerald-600 text-white text-xs font-bold transition shadow transform active:scale-95 border border-emerald-600/40" title="Listen Authentic Arabic Recitation">
+                <span>🎙️</span> <span>عربي Recitation</span>
+              </button>
+
+              <!-- Urdu Studio Voice -->
+              <button onclick="triggerCardAudio(this, ${h.hadithnumber}, 'ur')" class="hadith-audio-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-[#062c20] hover:bg-amber-900/60 border border-emerald-800 hover:border-amber-500/50 text-amber-200 text-xs font-bold transition shadow transform active:scale-95" title="Listen Urdu Translation (Studio Voice)">
+                <span>🔊</span> <span>اردو Audio</span>
+              </button>
+
+              <!-- Hindi Studio Voice -->
+              <button onclick="triggerCardAudio(this, ${h.hadithnumber}, 'hi')" class="hadith-audio-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-[#062c20] hover:bg-sky-900/60 border border-emerald-800 hover:border-sky-500/50 text-sky-200 text-xs font-bold transition shadow transform active:scale-95" title="Listen Hindi Translation (Studio Voice)">
+                <span>🔊</span> <span>हिंदी Audio</span>
+              </button>
+
+              <!-- English Studio Voice -->
+              <button onclick="triggerCardAudio(this, ${h.hadithnumber}, 'en')" class="hadith-audio-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-[#062c20] hover:bg-emerald-900 border border-emerald-800 hover:border-emerald-500/50 text-emerald-200 text-xs font-bold transition shadow transform active:scale-95" title="Listen English Translation (Studio Voice)">
+                <span>🔊</span> <span>English Audio</span>
+              </button>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    // Audio Playback Engine
+    const hadithAudioPlayer = document.getElementById('ttsAudioPlayer');
+
+    window.triggerCardAudio = function(btn, hadithNum, lang) {
+      const hadith = allHadiths.find(x => x.hadithnumber == hadithNum);
+      if (hadith) {
+        playHadithAudio(hadith, lang, btn);
+      }
+    };
+
+    window.playHadithAudio = function(hadith, lang, btn = null) {
+      // Mutual exclusivity: pause any running Quran audio or other players
+      if (audioEl && !audioEl.paused) audioEl.pause();
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+      // Check if clicking currently active track
+      if (currentPlayingHadith && currentPlayingHadith.hadithnumber == hadith.hadithnumber && currentPlayingLang === lang && !hadithAudioPlayer.paused) {
+        hadithAudioPlayer.pause();
+        document.getElementById('floatingPlayPauseBtn').textContent = '▶';
+        if (btn) resetVoiceBtn(btn);
+        return;
+      }
+
+      if (currentActiveHadithCardBtn) resetVoiceBtn(currentActiveHadithCardBtn);
+
+      currentPlayingHadith = hadith;
+      currentPlayingLang = lang;
+      currentActiveHadithCardBtn = btn;
+
+      // Add to recently viewed
+      recordRecentHadith(hadith);
+
+      const bar = document.getElementById('floatingAudioBar');
+      bar.style.display = 'block';
+
+      const bookTitle = getBookTitle(hadith.book || currentHadithBook);
+      document.getElementById('floatingTrackTitle').textContent = `${bookTitle} #${hadith.hadithnumber}`;
+      document.getElementById('floatingTrackSub').textContent = `${hadith.narrator_en || hadith.narrator_ar || 'Prophetic Hadith'}`;
+      document.getElementById('floatingPlayPauseBtn').textContent = '⏸';
+
+      // Language specifics
+      if (lang === 'ar') {
+        document.getElementById('floatingTrackIcon').textContent = '🎙️';
+        const badge = document.getElementById('floatingVoiceTypeBadge');
+        badge.textContent = 'Verified Arabic Recitation';
+        badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex-shrink-0';
+
+        const audioUrl = hadith.audio?.arabic_url;
+        if (!audioUrl) {
+          alert('Recorded Arabic recitation unavailable for this Hadith.');
+          stopHadithAudio();
+          return;
+        }
+
+        if (btn) setButtonPlayingState(btn, 'Reciting... ⏸');
+
+        hadithAudioPlayer.src = audioUrl;
+        hadithAudioPlayer.playbackRate = currentPlaybackSpeed;
+        hadithAudioPlayer.play().catch(e => {
+          console.warn('Audio playback error:', e);
+          alert('Arabic audio stream error. Recitation not available.');
+          stopHadithAudio();
+        });
+      } else {
+        // Translation audio (Urdu, Hindi, English)
+        document.getElementById('floatingTrackIcon').textContent = '🤖';
+        const badge = document.getElementById('floatingVoiceTypeBadge');
+        const langLabel = lang === 'ur' ? 'Urdu' : (lang === 'hi' ? 'Hindi' : 'English');
+        badge.textContent = `Synthetic Voice (${langLabel})`;
+        badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 flex-shrink-0';
+
+        let text = '';
+        if (lang === 'ur') text = hadith.urdu || hadith.arabic;
+        else if (lang === 'hi') text = hadith.hindi || hadith.urdu || hadith.arabic;
+        else if (lang === 'en') text = hadith.english;
+
+        if (!text) {
+          alert(`Translation text not available for ${langLabel}.`);
+          stopHadithAudio();
+          return;
+        }
+
+        if (btn) setButtonPlayingState(btn, 'Playing... ⏸');
+
+        const ttsUrl = `/api/app/tts?lang=${lang}&text=${encodeURIComponent(text)}`;
+        hadithAudioPlayer.src = ttsUrl;
+        hadithAudioPlayer.playbackRate = currentPlaybackSpeed;
+        hadithAudioPlayer.play().catch(e => {
+          // Fallback to browser speechSynthesis
+          fallbackClientTTS(text, lang, btn);
+        });
+      }
+    };
+
+    function setButtonPlayingState(btn, text) {
+      btn.dataset.origHtml = btn.innerHTML;
+      btn.innerHTML = `
+        <span class="flex items-center gap-1">
+          <span class="w-1.5 h-3 bg-amber-400 animate-pulse rounded-full"></span>
+          <span class="w-1.5 h-4 bg-emerald-400 animate-pulse delay-75 rounded-full"></span>
+          <span class="w-1.5 h-2 bg-sky-400 animate-pulse delay-150 rounded-full"></span>
+        </span>
+        <span class="text-amber-300 font-bold">${text}</span>
+      `;
+      btn.classList.add('border-amber-400', 'bg-[#083827]');
+    }
+
+    function resetVoiceBtn(btn) {
+      if (btn && btn.dataset.origHtml) {
+        btn.innerHTML = btn.dataset.origHtml;
+        btn.classList.remove('border-amber-400', 'bg-[#083827]');
+      }
+    }
+
+    function stopHadithAudio() {
+      hadithAudioPlayer.pause();
+      hadithAudioPlayer.currentTime = 0;
+      if (currentActiveHadithCardBtn) resetVoiceBtn(currentActiveHadithCardBtn);
+      currentActiveHadithCardBtn = null;
+      document.getElementById('floatingPlayPauseBtn').textContent = '▶';
+    }
+
+    // Professional Player Controls Wiring
+    document.getElementById('floatingPlayPauseBtn').addEventListener('click', () => {
+      if (!currentPlayingHadith) return;
+      if (hadithAudioPlayer.paused) {
+        hadithAudioPlayer.play();
+        document.getElementById('floatingPlayPauseBtn').textContent = '⏸';
+      } else {
+        hadithAudioPlayer.pause();
+        document.getElementById('floatingPlayPauseBtn').textContent = '▶';
+      }
+    });
+
+    document.getElementById('floatingStopBtn').addEventListener('click', () => {
+      stopHadithAudio();
+    });
+
+    document.getElementById('floatingPrevBtn').addEventListener('click', () => {
+      playAdjacentHadith(-1);
+    });
+
+    document.getElementById('floatingNextBtn').addEventListener('click', () => {
+      playAdjacentHadith(1);
+    });
+
+    document.getElementById('floatingAutoNextBtn').addEventListener('click', () => {
+      isAutoNext = !isAutoNext;
+      document.getElementById('floatingAutoNextStatus').textContent = isAutoNext ? 'ON' : 'OFF';
+      document.getElementById('floatingAutoNextBtn').className = isAutoNext 
+        ? 'px-2.5 py-1 rounded-xl bg-emerald-600 text-white border border-emerald-400 font-mono text-[11px] shadow'
+        : 'px-2.5 py-1 rounded-xl bg-[#062c20] text-slate-300 border border-emerald-800 hover:text-white transition font-mono text-[11px]';
+    });
+
+    document.getElementById('floatingRepeatBtn').addEventListener('click', () => {
+      isRepeat = !isRepeat;
+      document.getElementById('floatingRepeatStatus').textContent = isRepeat ? 'ON' : 'OFF';
+      document.getElementById('floatingRepeatBtn').className = isRepeat
+        ? 'px-2.5 py-1 rounded-xl bg-amber-600 text-white border border-amber-400 font-mono text-[11px] shadow'
+        : 'px-2.5 py-1 rounded-xl bg-[#062c20] text-slate-300 border border-emerald-800 hover:text-white transition font-mono text-[11px]';
+    });
+
+    document.getElementById('floatingSpeedSelect').addEventListener('change', (e) => {
+      currentPlaybackSpeed = parseFloat(e.target.value);
+      hadithAudioPlayer.playbackRate = currentPlaybackSpeed;
+    });
+
+    document.getElementById('floatingVolumeSlider').addEventListener('input', (e) => {
+      hadithAudioPlayer.volume = parseFloat(e.target.value);
+    });
+
+    document.getElementById('floatingCloseBtn').addEventListener('click', () => {
+      stopHadithAudio();
+      document.getElementById('floatingAudioBar').style.display = 'none';
+    });
+
+    hadithAudioPlayer.onended = () => {
+      if (isRepeat) {
+        hadithAudioPlayer.currentTime = 0;
+        hadithAudioPlayer.play();
+      } else if (isAutoNext) {
+        playAdjacentHadith(1);
+      } else {
+        document.getElementById('floatingPlayPauseBtn').textContent = '▶';
+        if (currentActiveHadithCardBtn) resetVoiceBtn(currentActiveHadithCardBtn);
+      }
+    };
+
+    function playAdjacentHadith(direction) {
+      if (!currentPlayingHadith || allHadiths.length === 0) return;
+      const currIdx = allHadiths.findIndex(h => h.hadithnumber == currentPlayingHadith.hadithnumber);
+      let targetIdx = currIdx + direction;
+      if (targetIdx >= 0 && targetIdx < allHadiths.length) {
+        playHadithAudio(allHadiths[targetIdx], currentPlayingLang);
+      } else {
+        // If reached end and auto-next is on, try next page!
+        if (direction > 0 && currentHadithPage < totalHadithPages) {
+          loadHadithChapter(currentHadithBook, currentHadithChapter, currentHadithPage + 1, () => {
+            if (allHadiths.length > 0) playHadithAudio(allHadiths[0], currentPlayingLang);
+          });
+        }
+      }
+    }
+
+    // Card Actions: Copy, Share, Bookmark
+    window.copyHadithRecord = function(hadithNum) {
+      const hadith = allHadiths.find(x => x.hadithnumber == hadithNum);
+      if (!hadith) return;
+      let textToCopy = `Hadith #${hadith.hadithnumber} - ${getBookTitle(hadith.book || currentHadithBook)}\n`;
+      if (hadith.narrator_en) textToCopy += `Narrated by: ${hadith.narrator_en}\n\n`;
+      if (hadith.arabic) textToCopy += `${hadith.arabic}\n\n`;
+      if (currentHadithLang === 'ur' && hadith.urdu) textToCopy += `اردو ترجمہ:\n${hadith.urdu}\n\n`;
+      else if (currentHadithLang === 'hi' && hadith.hindi) textToCopy += `हिन्दी अनुवाद:\n${hadith.hindi}\n\n`;
+      else if (hadith.english) textToCopy += `English Translation:\n${hadith.english}\n\n`;
+      textToCopy += `[Nur-ul-Islam • Authentic Hadith Library]`;
+
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        showGlobalToast(`Hadith #${hadithNum} copied to clipboard!`);
+      }).catch(() => {
+        alert('Copied Hadith to clipboard.');
+      });
+    };
+
+    window.shareHadithRecord = function(hadithNum) {
+      const hadith = allHadiths.find(x => x.hadithnumber == hadithNum);
+      if (!hadith) return;
+      const title = `${getBookTitle(hadith.book || currentHadithBook)} #${hadith.hadithnumber}`;
+      const text = `${hadith.arabic ? hadith.arabic.substring(0, 100) + '...' : ''}\n${hadith.english || hadith.urdu || ''}`;
+      if (navigator.share) {
+        navigator.share({ title: title, text: text, url: window.location.href }).catch(() => {});
+      } else {
+        copyHadithRecord(hadithNum);
+      }
+    };
+
+    window.toggleHadithBookmark = function(hadithNum) {
+      const hadith = allHadiths.find(x => x.hadithnumber == hadithNum);
+      if (!hadith) return;
+      const existingIdx = hadithBookmarks.findIndex(b => (b.book || currentHadithBook) === (hadith.book || currentHadithBook) && b.hadithnumber == hadith.hadithnumber);
+      if (existingIdx >= 0) {
+        hadithBookmarks.splice(existingIdx, 1);
+        showGlobalToast(`Hadith #${hadithNum} removed from Bookmarks.`);
+      } else {
+        hadithBookmarks.push(hadith);
+        showGlobalToast(`Hadith #${hadithNum} saved to Bookmarks!`);
+      }
+      localStorage.setItem('nur_hadith_bookmarks', JSON.stringify(hadithBookmarks));
+      updateBookmarksCountBadge();
+      renderHadithCards(allHadiths);
+    };
+
+    function showGlobalToast(msg) {
+      let toast = document.getElementById('globalAppToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'globalAppToast';
+        toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-emerald-600 text-white font-bold px-4 py-2 rounded-2xl shadow-2xl text-xs flex items-center gap-2 border border-emerald-400 transition transform duration-300';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = msg;
+      toast.style.display = 'flex';
+      toast.style.opacity = '1';
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.style.display = 'none', 300);
+      }, 2500);
+    }
+
+    // Initialize Hadith metadata on startup
+    initHadithCollections();
+
+    // 11. DAILY DUAS & ADHKAR WITH AUDIO RECITER
+    let globalDuas = [];
+    async function loadDuas() {
+      const container = document.getElementById('duasContainer');
+      container.innerHTML = `<div class="col-span-full text-center text-slate-400 py-12"><span class="animate-spin text-2xl inline-block mb-2">⏳</span><br>Loading Authentic Duas with Audio Streams...</div>`;
+
+      try {
+        const res = await fetch('/api/app/duas');
+        const data = await res.json();
+        if (!data.success) throw new Error('Failed to load Duas');
+
+        globalDuas = data.duas || [];
+        renderDuasCards(globalDuas);
+      } catch (e) {
+        container.innerHTML = `<div class="col-span-full text-center text-rose-400 py-12">⚠️ Failed to load Duas.</div>`;
+      }
+    }
+
+    function renderDuasCards(list) {
+      const container = document.getElementById('duasContainer');
+      container.innerHTML = '';
+      list.forEach(d => {
+        const card = document.createElement('div');
+        card.className = 'glass-card rounded-2xl p-5 space-y-3.5 border border-emerald-900/60 hover:border-emerald-500/50 transition';
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">${d.category}</span>
+              <h3 class="text-base font-bold text-white mt-1">${d.title}</h3>
+            </div>
+            
+            <!-- One-Click Audio Play Button -->
+            <button onclick="playDuaAudio('${d.audio}', '${d.title.replace(/'/g, '')}')" class="bg-gradient-to-tr from-emerald-600 to-amber-500 hover:opacity-90 text-black font-extrabold text-xs px-3 py-1.5 rounded-xl shadow flex items-center gap-1.5 transition transform active:scale-95">
+              <span>▶</span> <span>Listen Audio</span>
+            </button>
+          </div>
+
+          <!-- Arabic Calligraphy -->
+          <div class="text-right font-quran text-xl sm:text-2xl text-amber-300 py-1 leading-loose">
+            ${d.arabic}
+          </div>
+
+          <!-- Transliteration -->
+          <div class="text-xs text-emerald-300/90 font-mono italic">
+            ${d.transliteration}
+          </div>
+
+          <!-- Urdu Translation -->
+          <div class="text-right font-arabic text-sm text-amber-200/90 pt-2 border-t border-emerald-900/60 leading-relaxed">
+            ${d.urdu}
+          </div>
+
+          <!-- English Translation -->
+          <div class="text-left text-xs text-slate-300 leading-relaxed">
+            "${d.english}"
+          </div>
+
+          <!-- Virtue -->
+          <div class="text-[11px] text-amber-400/95 font-medium bg-[#031d16] p-2.5 rounded-xl border border-emerald-900/60">
+            💡 <strong>Virtue / Reference:</strong> ${d.virtue}
+          </div>
+
+          <!-- Additional Voice TTS Options -->
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-emerald-900/60">
+            <span class="text-xs text-slate-400 font-bold">🎙️ Voice Narration (TTS):</span>
+            <div class="flex items-center gap-2">
+              <button onclick="playTextVoiceTTS(this, 'ur', '${encodeURIComponent(d.urdu)}')" class="text-xs bg-[#062c20] hover:bg-emerald-800 text-amber-300 px-2.5 py-1 rounded-xl border border-emerald-700/60 flex items-center gap-1 transition" title="Listen Urdu Tarjuma">
+                <span>🔊</span> <span>اردو Awaz</span>
+              </button>
+              <button onclick="playTextVoiceTTS(this, 'hi', '${encodeURIComponent(d.urdu)}')" class="text-xs bg-[#062c20] hover:bg-emerald-800 text-sky-300 px-2.5 py-1 rounded-xl border border-emerald-700/60 flex items-center gap-1 transition" title="Listen Hindi Voice">
+                <span>🔊</span> <span>हिंदी Awaz</span>
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function playDuaAudio(audioUrl, title) {
+      if (!audioUrl) return;
+      audioEl.src = audioUrl;
+      audioEl.play().catch(e => console.warn('Audio play error:', e));
+
+      // Show floating bottom bar
+      const bar = document.getElementById('floatingAudioBar');
+      bar.style.display = 'block';
+      document.getElementById('floatingTrackTitle').textContent = title;
+      document.getElementById('floatingTrackSub').textContent = 'Qari Mishary Rashid Alafasy • Audio Stream';
+      document.getElementById('floatingPlayPauseBtn').textContent = '⏸';
+    }
+
+    // Dua Category Filter Chips
+    document.querySelectorAll('.dua-filter-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.dua-filter-chip').forEach(c => {
+          c.className = 'dua-filter-chip bg-[#031d16] text-slate-300 hover:bg-emerald-900 px-3 py-1.5 rounded-xl border border-emerald-800';
+        });
+        chip.className = 'dua-filter-chip active bg-emerald-600 text-white px-3 py-1.5 rounded-xl border border-emerald-400 shadow';
+
+        const cat = chip.getAttribute('data-cat');
+        if (cat === 'all') {
+          renderDuasCards(globalDuas);
+        } else {
+          const filtered = globalDuas.filter(d => d.category.toLowerCase().includes(cat.toLowerCase()));
+          renderDuasCards(filtered);
+        }
+      });
+    });
+
+    // Auto-init on load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadPrayerTimings(currentCity, currentCountry, currentMethod);
+
+      // Deep link support: direct access to Sahih Hadith Library or Quran
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabParam = urlParams.get('tab') || window.location.hash.replace('#', '');
+      if (tabParam === 'hadith' || tabParam === 'hadithView') {
+        switchActiveTab('hadithView');
+      } else if (tabParam === 'quran' || tabParam === 'quranView') {
+        switchActiveTab('quranView');
+      } else if (tabParam === 'duas' || tabParam === 'duasView') {
+        switchActiveTab('duasView');
+      }
+    });
+  </script>
+</body>
+</html>

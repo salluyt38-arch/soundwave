@@ -29,6 +29,10 @@ Thumbs.db
 # Whitelist soundwave app downloads
 !static/soundwave.apk
 !static/soundwave-app.zip
+!static/Weather-Experience-2026.zip
+!static/Islamic-Hadith-Library.zip
+!static/weather.html
+!static/islamic.html
 
 *.keystore
 

@@ -1293,6 +1293,76 @@ class MusicHandler(SimpleHTTPRequestHandler):
                     self.send_json({"error": "SoundWave App Zip not found on server"}, status=404)
                     return
 
+            # Direct Weather App Web & Download Routes
+            if path in ("/weather", "/weather/"):
+                self.send_response(302)
+                self.send_header("Location", "/weather.html")
+                self.end_headers()
+                return
+
+            if path in ("/download/weather.html", "/download/weather-app.html"):
+                w_html = os.path.join(STATIC_DIR, "weather.html")
+                if os.path.exists(w_html):
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="Weather-Experience-2026.html"')
+                    self.send_header("Content-Length", str(os.path.getsize(w_html)))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(w_html, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+
+            if path in ("/download/weather.zip", "/download/Weather-Experience-2026.zip", "/download/weather"):
+                w_zip = os.path.join(STATIC_DIR, "Weather-Experience-2026.zip")
+                if os.path.exists(w_zip):
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="Weather-Experience-2026.zip"')
+                    self.send_header("Content-Length", str(os.path.getsize(w_zip)))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(w_zip, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+
+            # Direct Islamic App Web & Download Routes
+            if path in ("/islamic", "/islamic/"):
+                self.send_response(302)
+                self.send_header("Location", "/islamic.html")
+                self.end_headers()
+                return
+
+            if path in ("/download/islamic.html", "/download/islamic-app.html"):
+                i_html = os.path.join(STATIC_DIR, "islamic.html")
+                if os.path.exists(i_html):
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="Islamic-Hadith-Library.html"')
+                    self.send_header("Content-Length", str(os.path.getsize(i_html)))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(i_html, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+
+            if path in ("/download/islamic.zip", "/download/Islamic-Hadith-Library.zip", "/download/islamic"):
+                i_zip = os.path.join(STATIC_DIR, "Islamic-Hadith-Library.zip")
+                if os.path.exists(i_zip):
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="Islamic-Hadith-Library.zip"')
+                    self.send_header("Content-Length", str(os.path.getsize(i_zip)))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    with open(i_zip, "rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    return
+
             if path == "/api/test_extract":
                 vid = query.get("id", ["BddP6PYo2gs"])[0].strip()
                 log_capture = []
