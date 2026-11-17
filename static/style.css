@@ -8854,498 +8854,540 @@ body {
 
 
 /* ========================================================================== */
-/* SOUNDWAVE APP STORE & MINI APPS ECOSYSTEM */
 /* ========================================================================== */
-.appstore-container {
-    max-width: 1280px;
+/* SOUNDWAVE GOOGLE PLAY STORE & IN-APP TABBED BROWSER ECOSYSTEM */
+/* ========================================================================== */
+
+/* In-App Tab Strip at top of Store */
+.playstore-tabstrip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #111216;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex-shrink: 0;
+}
+.playstore-tabstrip::-webkit-scrollbar {
+    display: none;
+}
+
+.playstore-tab-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #9ca3af;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+.playstore-tab-pill:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+.playstore-tab-pill.active {
+    background: rgba(1, 135, 95, 0.2);
+    color: #34d399;
+    border-color: #01875f;
+    box-shadow: 0 0 12px rgba(1, 135, 95, 0.25);
+}
+
+.playstore-dynamic-tabs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-close-x {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: 11px;
+    color: #9ca3af;
+    margin-left: 4px;
+    transition: all 0.15s ease;
+}
+.tab-close-x:hover {
+    background: rgba(239, 68, 68, 0.3);
+    color: #f87171;
+}
+
+/* Play Store Container & Views */
+.playstore-view {
+    width: 100%;
+}
+.playstore-view.hidden {
+    display: none !important;
+}
+
+.playstore-container {
+    max-width: 1080px;
     margin: 0 auto;
     padding: 24px 20px 80px;
     box-sizing: border-box;
 }
 
-.appstore-hero {
-    background: linear-gradient(135deg, rgba(29, 185, 84, 0.15), rgba(18, 19, 24, 0.8) 60%, rgba(58, 123, 213, 0.15));
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    padding: 32px 28px;
-    margin-bottom: 32px;
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-}
-
-.appstore-hero::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 380px;
-    height: 380px;
-    background: radial-gradient(circle, rgba(29, 185, 84, 0.25) 0%, transparent 70%);
-    pointer-events: none;
-    filter: blur(50px);
-}
-
-.appstore-hero-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(29, 185, 84, 0.15);
-    border: 1px solid rgba(29, 185, 84, 0.4);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-    color: #1ed760;
-    margin-bottom: 14px;
-    letter-spacing: 0.5px;
-}
-
-.appstore-hero-pill .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #1ed760;
-    box-shadow: 0 0 10px #1ed760;
-}
-
-.appstore-hero-title {
-    font-size: clamp(24px, 4vw, 36px);
-    font-weight: 800;
-    color: #ffffff;
-    margin: 0 0 10px 0;
-    letter-spacing: -0.5px;
-    line-height: 1.2;
-}
-
-.appstore-hero-desc {
-    font-size: 14px;
-    color: #a7a7a7;
-    max-width: 680px;
-    margin: 0 0 24px 0;
-    line-height: 1.6;
-}
-
-.appstore-search-bar {
+/* Play Store Header & Search */
+.playstore-header {
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 16px;
-    padding: 10px 18px;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.playstore-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.playstore-brand-text {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.4px;
+}
+
+.playstore-online-badge {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.playstore-search-bar {
+    flex: 1;
     max-width: 480px;
-    gap: 12px;
-    transition: all 0.3s ease;
+    min-width: 260px;
+    height: 46px;
+    background: #202124;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 28px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #9ca3af;
+    transition: all 0.2s ease;
 }
-
-.appstore-search-bar:focus-within {
-    border-color: #1db954;
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 15px rgba(29, 185, 84, 0.2);
+.playstore-search-bar:focus-within {
+    border-color: #01875f;
+    box-shadow: 0 0 14px rgba(1, 135, 95, 0.25);
+    background: #282a2e;
 }
-
-.appstore-search-bar input {
+.playstore-search-bar input {
+    flex: 1;
     background: transparent;
     border: none;
     outline: none;
     color: #fff;
     font-size: 14px;
-    width: 100%;
+}
+.playstore-search-bar input::placeholder {
+    color: #80868b;
 }
 
-.appstore-search-bar input::placeholder {
-    color: #71717a;
+.playstore-mic-btn {
+    background: transparent;
+    border: none;
+    color: #80868b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    transition: color 0.2s;
+}
+.playstore-mic-btn:hover {
+    color: #01875f;
 }
 
-/* App Grid */
-.appstore-section-heading {
+/* Play Store Category Chips */
+.playstore-category-chips {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 8px;
+    margin-bottom: 24px;
+}
+.playstore-category-chips::-webkit-scrollbar {
+    display: none;
+}
+
+.play-chip {
+    background: #202124;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #bdc1c6;
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+.play-chip:hover {
+    background: #2d2f34;
+    color: #fff;
+}
+.play-chip.active {
+    background: #01875f;
+    color: #ffffff;
+    border-color: #01875f;
+    font-weight: 700;
+}
+
+/* Hero Featured App Banner */
+.playstore-hero-banner {
+    background: linear-gradient(135deg, #132238 0%, #0d1624 50%, #151922 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 22px;
+    padding: 24px 28px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.appstore-section-heading h2 {
-    font-size: 20px;
-    font-weight: 700;
-    color: #fff;
-    margin: 0;
-}
-
-.appstore-section-badge {
-    font-size: 12px;
-    color: #1db954;
-    background: rgba(29, 185, 84, 0.1);
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-weight: 600;
-}
-
-.appstore-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-    gap: 24px;
-    margin-bottom: 40px;
-}
-
-/* App Card */
-.appstore-card {
-    background: #121318;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 32px;
+    cursor: pointer;
     position: relative;
     overflow: hidden;
-    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
-
-.appstore-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(29, 185, 84, 0.4);
+.playstore-hero-banner:hover {
+    transform: translateY(-2px);
+    border-color: rgba(14, 165, 233, 0.5);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
 }
 
-.appstore-card-top {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 18px;
-}
-
-.appstore-app-icon {
-    width: 68px;
-    height: 68px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-    flex-shrink: 0;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-}
-
-.appstore-app-icon.weather {
-    background: linear-gradient(135deg, #0ea5e9, #38bdf8, #0284c7);
-}
-
-.appstore-app-icon.islamic {
-    background: linear-gradient(135deg, #064e3b, #10b981, #047857);
-}
-
-.appstore-card-info {
+.playstore-hero-content {
     flex: 1;
     min-width: 0;
 }
 
-.appstore-card-badge {
-    display: inline-block;
+.playstore-hero-tag {
     font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 6px;
-    margin-bottom: 6px;
-    letter-spacing: 0.5px;
-}
-
-.appstore-card-badge.weather {
-    background: rgba(14, 165, 233, 0.15);
+    font-weight: 800;
+    letter-spacing: 0.8px;
     color: #38bdf8;
-    border: 1px solid rgba(14, 165, 233, 0.3);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: inline-block;
 }
 
-.appstore-card-badge.islamic {
-    background: rgba(16, 185, 129, 0.15);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.appstore-app-title {
-    font-size: 18px;
+.playstore-hero-title {
+    font-size: 22px;
     font-weight: 800;
     color: #ffffff;
-    margin: 0 0 4px 0;
-    line-height: 1.3;
+    margin: 0 0 6px 0;
+    line-height: 1.25;
 }
 
-.appstore-app-subtitle {
-    font-size: 13px;
-    color: #a7a7a7;
-    margin: 0 0 8px 0;
-}
-
-.appstore-rating-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    color: #b3b3b3;
-}
-
-.appstore-stars {
-    color: #fbbf24;
-}
-
-.appstore-features-box {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 14px;
-    padding: 14px 16px;
-    margin-bottom: 20px;
-}
-
-.appstore-features-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: #d1d5db;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
-}
-
-.appstore-feature-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    font-size: 12.5px;
+.playstore-hero-desc {
+    font-size: 13.5px;
     color: #9ca3af;
+    margin: 0 0 10px 0;
     line-height: 1.45;
-    margin-bottom: 6px;
 }
 
-.appstore-feature-item:last-child {
-    margin-bottom: 0;
-}
-
-.appstore-feature-item span.icon {
-    flex-shrink: 0;
-    margin-top: 1px;
-}
-
-.appstore-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 12px;
-}
-
-.btn-appstore-play {
+.playstore-hero-meta {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 6px;
-    background: #1db954;
-    color: #000 !important;
-    font-weight: 800;
-    font-size: 13px;
-    padding: 12px 14px;
-    border-radius: 30px;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 14px rgba(29, 185, 84, 0.3);
+    gap: 8px;
+    font-size: 12px;
+    color: #9ca3af;
 }
 
-.btn-appstore-play:hover {
-    background: #1ed760;
-    transform: scale(1.02);
-}
-
-.btn-appstore-download {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #fff !important;
+.play-stars {
+    color: #fbbf24;
     font-weight: 700;
-    font-size: 13px;
-    padding: 12px 14px;
-    border-radius: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s ease;
 }
 
-.btn-appstore-download:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: #fff;
-    transform: scale(1.02);
+.meta-dot {
+    color: #6b7280;
 }
 
-/* In-App App Viewer Fullscreen Modal */
-.appstore-viewer-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 99999999;
-    background: #08090d;
+.playstore-hero-action {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
 }
 
-.appstore-viewer-modal.hidden {
-    display: none !important;
+.playstore-hero-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+.playstore-hero-icon.weather {
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
 }
 
-.appstore-viewer-topbar {
-    height: 54px;
-    background: #121318;
-    border-bottom: 1px solid #24252e;
+.btn-play-open {
+    background: #01875f;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 9px 22px;
+    border-radius: 24px;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(1, 135, 95, 0.35);
+}
+.btn-play-open:hover {
+    background: #00a86b;
+    transform: scale(1.02);
+}
+
+/* Play Store Sections */
+.playstore-section {
+    margin-bottom: 30px;
+}
+
+.playstore-section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 16px;
-    flex-shrink: 0;
+    margin-bottom: 16px;
 }
 
-.appstore-viewer-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.appstore-viewer-title {
-    font-size: 15px;
+.playstore-section-title {
+    font-size: 18px;
     font-weight: 800;
-    color: #fff;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: -0.2px;
 }
 
-.appstore-viewer-badge {
-    font-size: 11px;
-    background: rgba(29, 185, 84, 0.2);
-    color: #1db954;
-    padding: 2px 8px;
-    border-radius: 10px;
+.playstore-section-more {
+    font-size: 13px;
+    color: #01875f;
     font-weight: 700;
+    cursor: pointer;
+}
+.playstore-section-more:hover {
+    text-decoration: underline;
 }
 
-.appstore-viewer-actions {
+/* Play Store App Cards Grid / Row */
+.playstore-apps-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+.play-app-card {
+    background: #1c1d22;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 18px;
+    padding: 16px;
     display: flex;
     align-items: center;
-    gap: 8px;
-}
-
-.btn-viewer-action {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: #e4e4e7;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s ease;
-}
-
-.btn-viewer-action:hover {
-    background: rgba(255, 255, 255, 0.16);
-    color: #fff;
-}
-
-.btn-viewer-close {
-    background: #dc2626;
-    border: none;
-    color: #fff;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 800;
+    gap: 14px;
     cursor: pointer;
     transition: all 0.2s ease;
-}
-
-.btn-viewer-close:hover {
-    background: #ef4444;
-}
-
-.appstore-viewer-iframe-wrap {
-    flex: 1;
-    width: 100%;
-    height: calc(100vh - 54px);
-    background: #000;
     position: relative;
 }
-
-.appstore-viewer-iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
+.play-app-card:hover {
+    background: #24262d;
+    border-color: rgba(1, 135, 95, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
-@media (max-width: 600px) {
-    .appstore-grid {
-        grid-template-columns: 1fr;
-    }
-    .appstore-actions {
-        grid-template-columns: 1fr;
-    }
-    .appstore-viewer-title {
-        font-size: 13px;
-        max-width: 150px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-}
-
-
-/* ========================================================================== */
-/* SOUNDWAVE IN-APP BROWSER & APP STAGE STYLES */
-/* ========================================================================== */
-.appstore-subview {
-    width: 100%;
-}
-.appstore-subview.hidden {
-    display: none !important;
-}
-
-.btn-appstore-features {
+.play-icon-wrap {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #e4e4e7 !important;
-    font-weight: 700;
-    font-size: 13px;
-    padding: 12px 14px;
-    border-radius: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s ease;
+    font-size: 28px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
-.btn-appstore-features:hover {
-    background: rgba(255, 255, 255, 0.16);
-    border-color: #fff;
-    color: #fff !important;
+.play-icon-wrap.weather {
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+}
+.play-icon-wrap.islamic {
+    background: linear-gradient(135deg, #059669, #047857);
+}
+.play-icon-wrap.small {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    font-size: 22px;
 }
 
+.play-app-meta {
+    flex: 1;
+    min-width: 0;
+}
+
+.play-app-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 2px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.play-app-category {
+    font-size: 12.5px;
+    color: #9ca3af;
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.play-rating-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: #9ca3af;
+}
+
+.rate-val {
+    color: #fbbf24;
+    font-weight: 700;
+}
+
+.btn-play-install {
+    background: #01875f;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 7px 18px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+.btn-play-install:hover {
+    background: #00a86b;
+    transform: scale(1.03);
+}
+
+.play-dl-dropdown-trigger {
+    font-size: 18px;
+    color: #6b7280;
+    padding: 6px 4px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: color 0.2s;
+    user-select: none;
+}
+.play-dl-dropdown-trigger:hover {
+    color: #fff;
+}
+
+/* Play Store Ranking List */
+.playstore-rank-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.play-rank-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #18191e;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 14px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.play-rank-item:hover {
+    background: #20222a;
+    border-color: rgba(1, 135, 95, 0.3);
+}
+
+.rank-number {
+    font-size: 16px;
+    font-weight: 800;
+    color: #6b7280;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* Dropdown popover for HTML/ZIP */
+.play-download-popover {
+    position: fixed;
+    background: #1c1d22;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    z-index: 100000;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 220px;
+}
+.play-download-popover.hidden {
+    display: none !important;
+}
+
+.popover-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #e4e4e7;
+    text-decoration: none;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background 0.15s;
+}
+.popover-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+/* In-App Browser Viewport inside SoundWave */
 .sw-browser-wrapper {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 140px);
+    height: calc(100vh - 130px);
     min-height: 580px;
     background: #08090d;
-    border-radius: 20px;
     overflow: hidden;
-    border: 1px solid #27272a;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     position: relative;
-    margin: 12px 16px 30px;
 }
 
 .sw-browser-topbar {
@@ -9354,8 +9396,8 @@ body {
     justify-content: space-between;
     gap: 12px;
     background: #121318;
-    border-bottom: 1px solid #27272a;
-    padding: 10px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 8px 16px;
     flex-shrink: 0;
     flex-wrap: wrap;
 }
@@ -9366,8 +9408,8 @@ body {
     gap: 6px;
     background: rgba(255, 255, 255, 0.08);
     color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    padding: 7px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    padding: 6px 14px;
     border-radius: 20px;
     font-size: 12.5px;
     font-weight: 700;
@@ -9376,26 +9418,26 @@ body {
     white-space: nowrap;
 }
 .sw-browser-btn-back:hover {
-    background: #1db954;
-    color: #000;
-    border-color: #1db954;
+    background: #01875f;
+    color: #fff;
+    border-color: #01875f;
 }
 
 .sw-browser-omnibar {
     flex: 1;
     min-width: 200px;
-    max-width: 480px;
+    max-width: 440px;
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #08090d;
-    border: 1px solid #3f3f46;
+    background: #090a0f;
+    border: 1px solid #2d2f34;
     border-radius: 20px;
-    padding: 6px 14px;
+    padding: 5px 14px;
 }
 
 .sw-browser-padlock {
-    font-size: 13px;
+    font-size: 12px;
     color: #22c55e;
 }
 
@@ -9403,7 +9445,7 @@ body {
     flex: 1;
     font-family: 'JetBrains Mono', monospace, sans-serif;
     font-size: 12px;
-    color: #a1a1aa;
+    color: #9ca3af;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -9414,8 +9456,7 @@ body {
     border: none;
     cursor: pointer;
     font-size: 13px;
-    padding: 2px 4px;
-    color: #a1a1aa;
+    color: #9ca3af;
     transition: transform 0.2s ease;
 }
 .sw-browser-icon-btn:hover {
@@ -9435,8 +9476,8 @@ body {
     align-items: center;
     gap: 5px;
     background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    color: #f4f4f5 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #e4e4e7 !important;
     padding: 6px 12px;
     border-radius: 18px;
     font-size: 12px;
@@ -9448,86 +9489,35 @@ body {
 }
 .sw-browser-btn:hover {
     background: rgba(255, 255, 255, 0.18);
-    border-color: #fff;
     color: #fff !important;
 }
 
-/* Collapsible Features Sheet */
-.sw-app-features-sheet {
-    position: absolute;
-    top: 56px;
-    left: 0;
-    width: 100%;
-    max-height: 80%;
-    background: rgba(18, 19, 24, 0.96);
-    backdrop-filter: blur(24px);
-    border-bottom: 2px solid #1db954;
-    z-index: 1000;
-    padding: 24px;
-    box-sizing: border-box;
-    overflow-y: auto;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-    animation: slideDownFeatures 0.25s ease;
-}
-
-@keyframes slideDownFeatures {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-.sw-features-sheet-header {
-    display: flex;
+.sw-browser-btn-close {
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 4px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #f87171;
+    padding: 6px 12px;
+    border-radius: 18px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
-
-.sw-features-sheet-close {
+.sw-browser-btn-close:hover {
     background: #ef4444;
     color: #fff;
-    border: none;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 800;
-    cursor: pointer;
-}
-
-.sw-features-sheet-body {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
-}
-
-.sw-spec-card {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 14px;
-    padding: 16px;
-}
-
-.sw-spec-card h4 {
-    margin: 0 0 6px 0;
-    font-size: 14px;
-    font-weight: 700;
-    color: #22c55e;
-}
-
-.sw-spec-card p {
-    margin: 0;
-    font-size: 12.5px;
-    color: #a1a1aa;
-    line-height: 1.5;
 }
 
 .sw-browser-viewport {
     flex: 1;
     width: 100%;
     height: 100%;
-    position: relative;
     background: #000;
+    position: relative;
 }
 
 .sw-browser-frame {
@@ -9538,19 +9528,33 @@ body {
     background: #000;
 }
 
-@media (max-width: 768px) {
-    .sw-browser-wrapper {
-        margin: 0;
-        border-radius: 0;
-        height: calc(100vh - 120px);
+@media (max-width: 680px) {
+    .playstore-header {
+        flex-direction: column;
+        align-items: stretch;
     }
-    .sw-browser-topbar {
-        padding: 8px 10px;
+    .playstore-search-bar {
+        max-width: 100%;
+    }
+    .playstore-hero-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 18px;
+    }
+    .playstore-hero-action {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .playstore-apps-row {
+        grid-template-columns: 1fr;
+    }
+    .sw-browser-wrapper {
+        height: calc(100vh - 120px);
     }
     .sw-browser-omnibar {
         order: 3;
         width: 100%;
         max-width: 100%;
-        margin-top: 6px;
     }
 }
