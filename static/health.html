@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Swasthya Seva • Generic Medicine, First Aid SOS & Emergency • Owner: Sallu</title>
+  
+  <script src="/permissions-manager.js"></script>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #070d0a;
+      color: #f3f4f6;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .glass-card {
+      background: rgba(14, 28, 22, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .glass-card:hover {
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+    .nav-tab.active {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(5, 150, 105, 0.25));
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col justify-between selection:bg-emerald-500/30 selection:text-emerald-200">
+
+  <!-- TOP HEADER (OWNER: SALLU + BACK TO SERVICES) -->
+  <header class="sticky top-0 z-40 bg-[#07130e]/95 backdrop-blur-md border-b border-emerald-900/60 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+      
+      <div class="flex items-center gap-3">
+        <!-- Back to Services Button -->
+        <a href="/index.html?tab=appstore" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-white transition active:scale-95 shadow-sm" title="Back to Services Hub">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Services</span>
+        </a>
+
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 p-0.5 shadow-lg flex items-center justify-center shadow-emerald-600/30">
+          <div class="w-full h-full bg-[#0a1a13] rounded-[14px] flex items-center justify-center text-xl">
+            🏥
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-extrabold tracking-tight text-white flex items-center gap-1.5">
+              <span>Swasthya Seva</span>
+              <span class="text-xs px-2 py-0.5 bg-emerald-500/20 text-emerald-300 font-mono rounded-full border border-emerald-500/30">HEALTH PRO</span>
+              <span class="text-xs px-2.5 py-0.5 bg-amber-500/20 text-amber-300 font-bold rounded-full border border-amber-500/40 flex items-center gap-1 shadow-sm">👑 Owner: Sallu</span>
+            </h1>
+          </div>
+          <p class="text-xs text-emerald-400/80 font-medium">Generic Medicine & Salt Finder • Offline First Aid SOS • Blood Bank</p>
+        </div>
+      </div>
+
+      <!-- Quick Emergency Call SOS -->
+      <div class="flex items-center gap-2">
+        <a href="tel:112" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-red-600/30 active:scale-95 transition">
+          <span class="animate-pulse">🚨</span>
+          <span>SOS: 112</span>
+        </a>
+        <a href="/download/health.zip" class="px-3 py-1.5 bg-emerald-700/60 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold border border-emerald-500/40 flex items-center gap-1 transition">
+          <span>📦 ZIP</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <div class="sticky top-[57px] z-30 bg-[#070d0a]/90 backdrop-blur-md border-b border-emerald-950 px-4 py-2">
+    <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar">
+      <button onclick="switchTab('medicine')" id="tab-medicine" class="nav-tab active px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap">
+        <span>💊 Generic Medicine Finder</span>
+      </button>
+      <button onclick="switchTab('firstaid')" id="tab-firstaid" class="nav-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap text-slate-400">
+        <span>🩹 First Aid SOS (Offline)</span>
+      </button>
+      <button onclick="switchTab('emergency')" id="tab-emergency" class="nav-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap text-slate-400">
+        <span>📞 Emergency & Blood Bank</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow">
+
+    <!-- SECTION 1: GENERIC MEDICINE & SALT FINDER -->
+    <section id="sec-medicine" class="space-y-6">
+      
+      <!-- Search Banner -->
+      <div class="glass-card rounded-2xl p-5 border border-emerald-500/30">
+        <h2 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
+          <span>💊 Generic Medicine & Salt Finder</span>
+          <span class="text-xs px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded-full font-mono">Pradhan Mantri Jan Aushadhi Sync</span>
+        </h2>
+        <p class="text-xs text-slate-300 mb-4">Mehngi branded dawai ka naam search karein aur uska sasta generic vikalp, salt composition aur sahi upyog janein.</p>
+        
+        <div class="relative">
+          <input type="text" id="medSearch" oninput="searchMedicines()" placeholder="Search brand or salt (e.g., Dolo, Pan D, Augmentin, Paracetamol, Azithral)..." class="w-full bg-[#0a1812] border border-emerald-600/40 rounded-xl px-4 py-3 pl-11 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-emerald-400 transition shadow-inner">
+          <span class="absolute left-4 top-3.5 text-slate-400">🔍</span>
+        </div>
+      </div>
+
+      <!-- Medicine Grid -->
+      <div id="medGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- SECTION 2: FIRST AID SOS (100% OFFLINE) -->
+    <section id="sec-firstaid" class="hidden space-y-6">
+      <div class="glass-card rounded-2xl p-5 border border-red-500/30">
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <span>🩹 First Aid & Life-Saving SOS</span>
+            <span class="text-xs px-2 py-0.5 bg-red-500/20 text-red-300 rounded-full font-mono">100% OFFLINE READY</span>
+          </h2>
+        </div>
+        <p class="text-xs text-slate-300">Apatkaleen sthiti me doctor ke aane tak kya karein aur kya bilkul na karein. Click on any emergency below:</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="firstAidGrid">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- SECTION 3: EMERGENCY & BLOOD BANK -->
+    <section id="sec-emergency" class="hidden space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- Emergency Helplines -->
+        <div class="glass-card rounded-2xl p-5 border border-emerald-500/30">
+          <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+            <span>🚨 24/7 National Emergency Helplines</span>
+          </h3>
+          <div class="space-y-3">
+            <a href="tel:112" class="flex items-center justify-between p-3 rounded-xl bg-red-950/40 border border-red-800/50 hover:bg-red-900/40 transition">
+              <div>
+                <div class="font-bold text-red-300">112 - National Emergency All-in-One</div>
+                <div class="text-xs text-slate-400">Police, Fire, Ambulance</div>
+              </div>
+              <span class="px-3 py-1 bg-red-600 text-white rounded-lg text-xs font-bold">Call Now</span>
+            </a>
+            <a href="tel:108" class="flex items-center justify-between p-3 rounded-xl bg-emerald-950/40 border border-emerald-800/50 hover:bg-emerald-900/40 transition">
+              <div>
+                <div class="font-bold text-emerald-300">108 - Emergency Medical & Ambulance</div>
+                <div class="text-xs text-slate-400">Government Free Ambulance Service</div>
+              </div>
+              <span class="px-3 py-1 bg-emerald-600 text-white rounded-lg text-xs font-bold">Call Now</span>
+            </a>
+            <a href="tel:102" class="flex items-center justify-between p-3 rounded-xl bg-teal-950/40 border border-teal-800/50 hover:bg-teal-900/40 transition">
+              <div>
+                <div class="font-bold text-teal-300">102 - Pregnant Women & Child Care</div>
+                <div class="text-xs text-slate-400">Janani Shishu Suraksha Karyakram</div>
+              </div>
+              <span class="px-3 py-1 bg-teal-600 text-white rounded-lg text-xs font-bold">Call Now</span>
+            </a>
+            <a href="tel:1075" class="flex items-center justify-between p-3 rounded-xl bg-sky-950/40 border border-sky-800/50 hover:bg-sky-900/40 transition">
+              <div>
+                <div class="font-bold text-sky-300">1075 - National Health Helpline</div>
+                <div class="text-xs text-slate-400">Ministry of Health & Family Welfare</div>
+              </div>
+              <span class="px-3 py-1 bg-sky-600 text-white rounded-lg text-xs font-bold">Call Now</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Blood Bank Directory & Info -->
+        <div class="glass-card rounded-2xl p-5 border border-emerald-500/30">
+          <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+            <span>🩸 Blood Compatibility Radar & Donor Guide</span>
+          </h3>
+          <p class="text-xs text-slate-300 mb-3">Universal Donor: <strong class="text-red-400">O Negative (O-)</strong> | Universal Recipient: <strong class="text-emerald-400">AB Positive (AB+)</strong></p>
+          
+          <div class="overflow-x-auto text-xs">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-emerald-900/60 text-slate-400">
+                  <th class="py-2">Blood Group</th>
+                  <th>Can Give To</th>
+                  <th>Can Receive From</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-emerald-950/60">
+                <tr><td class="py-1.5 font-bold text-red-300">O-</td><td>Everyone (Universal)</td><td>O- only</td></tr>
+                <tr><td class="py-1.5 font-bold text-red-300">O+</td><td>O+, A+, B+, AB+</td><td>O+, O-</td></tr>
+                <tr><td class="py-1.5 font-bold text-red-300">A+</td><td>A+, AB+</td><td>A+, A-, O+, O-</td></tr>
+                <tr><td class="py-1.5 font-bold text-red-300">B+</td><td>B+, AB+</td><td>B+, B-, O+, O-</td></tr>
+                <tr><td class="py-1.5 font-bold text-red-300">AB+</td><td>AB+ only</td><td>Everyone (Universal)</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-emerald-950 flex justify-between items-center">
+            <span class="text-xs text-slate-400">e-RaktKosh Portal</span>
+            <a href="https://www.eraktkosh.in" target="_blank" class="text-xs text-emerald-400 hover:underline">Official National Blood Portal ↗</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER BRANDING -->
+  <footer class="border-t border-emerald-950 bg-[#050a08] py-4 text-center text-xs text-slate-500">
+    <p>Swasthya Seva Suite 2026 • <strong>👑 Owner: Sallu</strong> • SoundWave Services Pro</p>
+  </footer>
+
+  <script>
+    const medicines = [
+      { brand: "Dolo 650 / Calpol", salt: "Paracetamol (650mg)", use: "Bukhar, Sar dard, Body pain", genericCost: "₹15 (10 tabs)", brandCost: "₹35+", advice: "Khana khane ke baad lein. 24 ghante me 3-4 se zyada na lein." },
+      { brand: "Pan 40 / Pantocid", salt: "Pantoprazole (40mg)", use: "Gas, Acidity, Seene me jalan, Ulcer", genericCost: "₹18 (10 tabs)", brandCost: "₹95+", advice: "Subah khali pet (empty stomach) lene par sabse asardar." },
+      { brand: "Augmentin 625 Duo", salt: "Amoxicillin + Clavulanic Acid", use: "Gale ka infection, Khansi, Foda-funsi", genericCost: "₹60 (10 tabs)", brandCost: "₹220+", advice: "Doctor ki salah se course poora karein, beech me na chhorein." },
+      { brand: "Azithral 500", salt: "Azithromycin (500mg)", use: "Throat infection, Lungs/chest infection, Typhoid", genericCost: "₹45 (5 tabs)", brandCost: "₹130+", advice: "Din me ek baar, lagatar 3 ya 5 din tak liya jata hai." },
+      { brand: "Allegra / Cetcip", salt: "Cetirizine / Fexofenadine", use: "Chheenkein, Allergy, Khujli, Nazla", genericCost: "₹8 (10 tabs)", brandCost: "₹45+", advice: "Sote waqt lein kyonki thodi neend ya susti aa sakti hai." },
+      { brand: "Combiflam", salt: "Ibuprofen + Paracetamol", use: "Dard, Daant dard, Moch, Soojan", genericCost: "₹12 (10 tabs)", brandCost: "₹45+", advice: "Pet ki samasya ya ulcer ho to bina doctor ke na lein." },
+      { brand: "Glycomet 500", salt: "Metformin (500mg)", use: "Type-2 Sugar (Diabetes) control", genericCost: "₹14 (10 tabs)", brandCost: "₹42+", advice: "Khane ke turant baad lein, blood sugar niyamit check karein." },
+      { brand: "Telma 40", salt: "Telmisartan (40mg)", use: "High Blood Pressure (Hypertension)", genericCost: "₹20 (10 tabs)", brandCost: "₹90+", advice: "Roj niyamit ek hi samay par lein. Doctor se bina pooche band na karein." },
+      { brand: "Montair LC", salt: "Montelukast + Levocetirizine", use: "Asthma, Dama, Saans phoolna, Allergic khansi", genericCost: "₹30 (10 tabs)", brandCost: "₹160+", advice: "Raat ko sote waqt lein." },
+      { brand: "Omez / Ocid", salt: "Omeprazole (20mg)", use: "Pet ki jalan, Acid reflux, GERD", genericCost: "₹12 (10 tabs)", brandCost: "₹65+", advice: "Subah khali pet lein." },
+      { brand: "Electral / ORS", salt: "Oral Rehydration Salts (WHO formula)", use: "Dast, Vomiting, Dehydration, Kamzori", genericCost: "₹15 (sachet)", brandCost: "₹25+", advice: "1 packet ko 1 litre saaf uble hue thande paani me gholein." }
+    ];
+
+    const firstAidGuides = [
+      {
+        title: "❤️ Heart Attack (दिल का दौरा)",
+        dos: ["Fauran 112 ya 108 par call karein.", "Mareez ko araam se baitha dein (half-sitting posture).", "Tite kapde dheele karein.", "Agar upalabdha ho to Aspirin (300mg) chabane ko dein."],
+        donts: ["Mareez ko paidal na chalayein.", "Paani ya khana zabardasti na pilayein.", "Akela na chhorein."]
+      },
+      {
+        title: "🫁 CPR (Behosh & Saans Rukna)",
+        dos: ["Check karein mareez bol ya hil raha hai kya.", "Fauran Emergency ko call karein.", "Seene ke beech me dono haath rakh kar 100-120 per minute ki speed se hard & fast push karein (Chest compressions).", "Hospital pahunchne tak band na karein."],
+        donts: ["Saans chal rahi ho to CPR na karein.", "Dheemey compressions na karein."]
+      },
+      {
+        title: "🔥 Burns (जलने पर प्राथमिक उपचार)",
+        dos: ["Jali hui jagah ko 10-15 minute tak behate hue taaze saaf paani ke neeche rakhein.", "Saaf sooti kapde ya patti se dheele se cover karein."],
+        donts: ["Barf (ice) bilkul na lagayein (tissue damage hota hai).", "Toothpaste, ghee ya tel na lagayein.", "Chhale (blisters) ko na phodein."]
+      },
+      {
+        title: "🐍 Snake Bite (सांप के काटने पर)",
+        dos: ["Mareez ko shaant rakhein aur hilne-dulne na dein.", "Kaati hui jagah ko dil ke level se neeche rakhein.", "Fauran najdeeki hospital le jayein jahan Anti-Snake Venom (ASV) ho."],
+        donts: ["Blade se cut na lagayein.", "Munh se zeher choosne ki koshish na karein.", "Tite rassi ya taar se na baandhein (gangrene ho sakta hai)."]
+      },
+      {
+        title: "🦴 Fracture (हड्डी टूटने पर)",
+        dos: ["Haddi ko bilkul hilne na dein.", "Lakdi ki patti ya cardboard ka sahara dekar bande.", "Soojan kam karne ke liye kapde me lapet kar barf lagayein."],
+        donts: ["Haddi ko seedha karne ki koshish na karein.", "Bina sahare mareez ko utha kar na le jayein."]
+      },
+      {
+        title: "🗣️ Choking (गले में खाना अटकना)",
+        dos: ["Mareez ko khansne ko kahein.", "Peechhe khade hokar dono haathon se pet ke upari hisse ko tezi se andar aur upar ki taraf dabayein (Heimlich Maneuver)."],
+        donts: ["Peeth par achanak zor se na maarein jab tak aage na jhukaya ho.", "Unglise gale ke andar dhundne ki koshish na karein."]
+      }
+    ];
+
+    function renderMedicines(list) {
+      const grid = document.getElementById('medGrid');
+      grid.innerHTML = list.map(m => `
+        <div class="glass-card rounded-2xl p-4 border border-emerald-500/20 hover:border-emerald-500/50 transition">
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <div>
+              <h3 class="font-bold text-white text-base">${m.brand}</h3>
+              <p class="text-xs text-emerald-400 font-medium">${m.salt}</p>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 bg-emerald-500/20 text-emerald-300 font-bold rounded-full">GENERIC</span>
+          </div>
+          <p class="text-xs text-slate-300 mb-3"><strong class="text-slate-400">Use:</strong> ${m.use}</p>
+          <div class="grid grid-cols-2 gap-2 bg-[#091710] p-2.5 rounded-xl text-xs mb-2">
+            <div>
+              <div class="text-[10px] text-slate-400">Branded MRP:</div>
+              <div class="font-bold text-red-400 line-through">${m.brandCost}</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-emerald-400">Jan Aushadhi:</div>
+              <div class="font-bold text-emerald-300">${m.genericCost}</div>
+            </div>
+          </div>
+          <p class="text-[11px] text-amber-300/80 bg-amber-500/10 p-2 rounded-lg">💡 ${m.advice}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderFirstAid() {
+      const grid = document.getElementById('firstAidGrid');
+      grid.innerHTML = firstAidGuides.map(g => `
+        <div class="glass-card rounded-2xl p-5 border border-red-500/20 hover:border-red-500/40 transition">
+          <h3 class="font-bold text-base text-white mb-3">${g.title}</h3>
+          
+          <div class="mb-3">
+            <h4 class="text-xs font-bold text-emerald-400 mb-1 flex items-center gap-1">✅ KYA KAREIN (DO):</h4>
+            <ul class="text-xs text-slate-300 space-y-1 list-disc list-inside">
+              ${g.dos.map(d => `<li>${d}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-xs font-bold text-red-400 mb-1 flex items-center gap-1">❌ KYA NA KAREIN (DON'T):</h4>
+            <ul class="text-xs text-slate-300 space-y-1 list-disc list-inside">
+              ${g.donts.map(d => `<li>${d}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function searchMedicines() {
+      const q = document.getElementById('medSearch').value.toLowerCase().trim();
+      const filtered = medicines.filter(m => 
+        m.brand.toLowerCase().includes(q) || 
+        m.salt.toLowerCase().includes(q) || 
+        m.use.toLowerCase().includes(q)
+      );
+      renderMedicines(filtered);
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.nav-tab').forEach(b => {
+        b.classList.remove('active', 'text-slate-100');
+        b.classList.add('text-slate-400');
+      });
+      document.getElementById('tab-' + tabId).classList.add('active', 'text-slate-100');
+      document.getElementById('tab-' + tabId).classList.remove('text-slate-400');
+
+      document.getElementById('sec-medicine').classList.add('hidden');
+      document.getElementById('sec-firstaid').classList.add('hidden');
+      document.getElementById('sec-emergency').classList.add('hidden');
+
+      document.getElementById('sec-' + tabId).classList.remove('hidden');
+    }
+
+    // Initialize
+    renderMedicines(medicines);
+    renderFirstAid();
+  </script>
+</body>
+</html>

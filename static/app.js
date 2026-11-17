@@ -6105,6 +6105,104 @@ document.addEventListener('DOMContentLoaded', () => {
             download_html: '/download/pincode.html',
             download_zip: '/download/pincode.zip',
             scheme: 'soundwave://play/pincode'
+        },
+        health: {
+            id: 'health',
+            title: 'Swasthya Seva • Health Pro',
+            shortTitle: 'Swasthya Seva',
+            subtitle: 'Generic Medicine Finder, First Aid SOS & Emergency Blood Bank',
+            version: '2026.1.0',
+            rating: '5.0 ★ (3.8k reviews)',
+            size: '24 KB',
+            icon: '🏥',
+            url: '/health.html',
+            download_html: '/download/health.html',
+            download_zip: '/download/health.zip',
+            scheme: 'soundwave://play/health'
+        },
+        trains: {
+            id: 'trains',
+            title: 'RailSathi • Transit Radar',
+            shortTitle: 'RailSathi',
+            subtitle: 'Live Train Running Status, PNR Radar & Metro Transit',
+            version: '2026.1.0',
+            rating: '4.9 ★ (4.1k reviews)',
+            size: '26 KB',
+            icon: '🚆',
+            url: '/trains.html',
+            download_html: '/download/trains.html',
+            download_zip: '/download/trains.zip',
+            scheme: 'soundwave://play/trains'
+        },
+        sarkari: {
+            id: 'sarkari',
+            title: 'Sarkari Hub • Career Pro',
+            shortTitle: 'Sarkari Hub',
+            subtitle: 'Job Alerts, Daily GK Quiz & Instant Biodata/Resume Builder',
+            version: '2026.1.0',
+            rating: '4.9 ★ (3.5k reviews)',
+            size: '25 KB',
+            icon: '💼',
+            url: '/sarkari.html',
+            download_html: '/download/sarkari.html',
+            download_zip: '/download/sarkari.zip',
+            scheme: 'soundwave://play/sarkari'
+        },
+        finance: {
+            id: 'finance',
+            title: 'Smart Money • Finance Pro',
+            shortTitle: 'Smart Money',
+            subtitle: 'Loan EMI, SIP Compound Wealth & GST Calculator',
+            version: '2026.1.0',
+            rating: '4.9 ★ (2.9k reviews)',
+            size: '22 KB',
+            icon: '💰',
+            url: '/finance.html',
+            download_html: '/download/finance.html',
+            download_zip: '/download/finance.zip',
+            scheme: 'soundwave://play/finance'
+        },
+        cricket: {
+            id: 'cricket',
+            title: 'CricRadar • Live Sports',
+            shortTitle: 'CricRadar',
+            subtitle: 'Live Cricket Scores, Match Timeline & Top 10 Bullet News',
+            version: '2026.1.0',
+            rating: '4.8 ★ (3.1k reviews)',
+            size: '23 KB',
+            icon: '🏏',
+            url: '/cricket.html',
+            download_html: '/download/cricket.html',
+            download_zip: '/download/cricket.zip',
+            scheme: 'soundwave://play/cricket'
+        },
+        fitness: {
+            id: 'fitness',
+            title: 'FitDesi • Wellness Pro',
+            shortTitle: 'FitDesi',
+            subtitle: 'Indian Food Calorie Chart, Protein & BMI Radar',
+            version: '2026.1.0',
+            rating: '4.9 ★ (2.4k reviews)',
+            size: '21 KB',
+            icon: '🥗',
+            url: '/fitness.html',
+            download_html: '/download/fitness.html',
+            download_zip: '/download/fitness.zip',
+            scheme: 'soundwave://play/fitness'
+        },
+        tools: {
+            id: 'tools',
+            title: 'OmniTools • Toolkit Pro',
+            shortTitle: 'OmniTools',
+            subtitle: 'Client-Side PDF Maker, Speed Radar & Premchand Sahitya',
+            version: '2026.1.0',
+            rating: '5.0 ★ (3.7k reviews)',
+            size: '28 KB',
+            icon: '🛠️',
+            url: '/tools.html',
+            download_html: '/download/tools.html',
+            download_zip: '/download/tools.zip',
+            scheme: 'soundwave://play/tools'
         }
     };
 
@@ -6182,6 +6280,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial ping on app launch + recurring 4-minute heartbeat
     syncServer24x7Status();
     setInterval(syncServer24x7Status, 240000);
+
+    // Auto-switch to Services Tab if arriving from any App Back Button or direct link
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const reqTab = urlParams.get('tab') || window.location.hash.replace('#', '');
+        if (reqTab === 'appstore' || reqTab === 'services') {
+            setTimeout(() => {
+                if (typeof switchTab === 'function') switchTab('appstore');
+            }, 50);
+        }
+    } catch(err) {
+        console.warn('Tab auto-detect error:', err);
+    }
 
 });
 

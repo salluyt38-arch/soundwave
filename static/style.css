@@ -9303,6 +9303,27 @@ html, body {
 .service-icon-box.pincode {
     background: linear-gradient(135deg, #e11d48, #be123c);
 }
+.service-icon-box.health {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+.service-icon-box.trains {
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+}
+.service-icon-box.sarkari {
+    background: linear-gradient(135deg, #a855f7, #7e22ce);
+}
+.service-icon-box.finance {
+    background: linear-gradient(135deg, #22c55e, #15803d);
+}
+.service-icon-box.cricket {
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+}
+.service-icon-box.fitness {
+    background: linear-gradient(135deg, #84cc16, #4d7c0f);
+}
+.service-icon-box.tools {
+    background: linear-gradient(135deg, #ec4899, #be185d);
+}
 .service-icon-box.sm {
     width: 42px;
     height: 42px;

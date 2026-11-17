@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>CricRadar • Live Cricket Scores & Ad-Free Bullet News • Owner: Sallu</title>
+  
+  <script src="/permissions-manager.js"></script>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #060e14;
+      color: #f3f4f6;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .glass-card {
+      background: rgba(10, 24, 34, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(14, 165, 233, 0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .glass-card:hover {
+      border-color: rgba(14, 165, 233, 0.4);
+    }
+    .nav-tab.active {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.4), rgba(3, 105, 161, 0.3));
+      color: #38bdf8;
+      border: 1px solid rgba(14, 165, 233, 0.5);
+      box-shadow: 0 0 15px rgba(14, 165, 233, 0.25);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col justify-between selection:bg-cyan-500/30 selection:text-cyan-200">
+
+  <!-- TOP HEADER (OWNER: SALLU + BACK TO SERVICES) -->
+  <header class="sticky top-0 z-40 bg-[#071622]/95 backdrop-blur-md border-b border-cyan-900/60 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+      
+      <div class="flex items-center gap-3">
+        <!-- Back to Services Button -->
+        <a href="/index.html?tab=appstore" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-white transition active:scale-95 shadow-sm" title="Back to Services Hub">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Services</span>
+        </a>
+
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 p-0.5 shadow-lg flex items-center justify-center shadow-cyan-600/30">
+          <div class="w-full h-full bg-[#0a2030] rounded-[14px] flex items-center justify-center text-xl">
+            🏏
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-extrabold tracking-tight text-white flex items-center gap-1.5">
+              <span>CricRadar</span>
+              <span class="text-xs px-2 py-0.5 bg-cyan-500/20 text-cyan-300 font-mono rounded-full border border-cyan-500/30">LIVE SPORTS</span>
+              <span class="text-xs px-2.5 py-0.5 bg-amber-500/20 text-amber-300 font-bold rounded-full border border-amber-500/40 flex items-center gap-1 shadow-sm">👑 Owner: Sallu</span>
+            </h1>
+          </div>
+          <p class="text-xs text-cyan-400/80 font-medium">Live Cricket Scores • Ball-by-Ball Timeline • Ad-Free Top 10 Bullet News</p>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-2">
+        <span class="flex items-center gap-1.5 text-xs text-emerald-400 font-bold px-2.5 py-1 bg-emerald-950/60 rounded-lg border border-emerald-800">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>LIVE</span>
+        </span>
+        <a href="/download/cricket.zip" class="px-3 py-1.5 bg-cyan-700/60 hover:bg-cyan-600 text-white rounded-xl text-xs font-bold border border-cyan-500/40 flex items-center gap-1 transition">
+          <span>📦 ZIP</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <div class="sticky top-[57px] z-30 bg-[#060e14]/90 backdrop-blur-md border-b border-cyan-950 px-4 py-2">
+    <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar">
+      <button onclick="switchTab('cricket')" id="tab-cricket" class="nav-tab active px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap">
+        <span>🏏 Live Cricket Radar</span>
+      </button>
+      <button onclick="switchTab('fixtures')" id="tab-fixtures" class="nav-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap text-slate-400">
+        <span>📅 Upcoming Match Fixtures</span>
+      </button>
+      <button onclick="switchTab('news')" id="tab-news" class="nav-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap text-slate-400">
+        <span>⚡ Ad-Free Top 10 Bullet News</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow space-y-6">
+
+    <!-- SECTION 1: LIVE CRICKET SCORECARD -->
+    <section id="sec-cricket" class="space-y-6">
+      
+      <!-- Live Match Spotlight Card -->
+      <div class="glass-card rounded-2xl p-6 border border-cyan-500/30">
+        
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-cyan-900/60 pb-3 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 bg-red-600/30 border border-red-500 text-red-300 text-[10px] font-bold rounded-md animate-pulse">LIVE MATCH</span>
+            <span class="text-xs text-slate-300 font-semibold">T20 International • Narendra Modi Stadium, Ahmedabad</span>
+          </div>
+          <span class="text-xs text-cyan-400 font-mono">Target: 198 | Req RR: 8.85</span>
+        </div>
+
+        <!-- Teams Score Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          
+          <!-- Team India -->
+          <div class="flex items-center justify-between p-4 rounded-xl bg-[#092233]/70 border border-cyan-700/40">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">🇮🇳</span>
+              <div>
+                <h3 class="text-lg font-bold text-white">India (IND)</h3>
+                <p class="text-xs text-slate-400">Chasing 198</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-extrabold text-white font-mono" id="scoreRuns">142/3</div>
+              <div class="text-xs text-cyan-400 font-mono" id="scoreOvers">(14.2 / 20 ov)</div>
+            </div>
+          </div>
+
+          <!-- Team Opponent -->
+          <div class="flex items-center justify-between p-4 rounded-xl bg-[#071824]/50 border border-cyan-900/40">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">🇦🇺</span>
+              <div>
+                <h3 class="text-lg font-bold text-slate-300">Australia (AUS)</h3>
+                <p class="text-xs text-slate-500">1st Innings (Completed)</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-2xl font-bold text-slate-400 font-mono">197/6</div>
+              <div class="text-xs text-slate-500 font-mono">(20.0 ov)</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Equation Status -->
+        <div class="mt-4 p-3 rounded-xl bg-cyan-950/40 border border-cyan-800/40 flex items-center justify-between text-xs">
+          <span class="text-slate-200 font-semibold flex items-center gap-1.5" id="matchEquation">
+            ⚡ <strong>India need 56 runs in 34 balls</strong> to win (CR: 9.91)
+          </span>
+          <button onclick="simulateNextBall()" class="px-3 py-1 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg font-bold text-xs shadow-md transition">
+            Next Ball ➔
+          </button>
+        </div>
+
+        <!-- Recent Overs Timeline -->
+        <div class="mt-4">
+          <span class="text-xs text-slate-400 mb-1.5 block">Recent Balls This Over:</span>
+          <div class="flex items-center gap-2" id="ballTimeline">
+            <span class="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shadow">4</span>
+            <span class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 font-bold text-xs flex items-center justify-center">1</span>
+            <span class="w-8 h-8 rounded-full bg-purple-600 text-white font-bold text-xs flex items-center justify-center shadow">6</span>
+            <span class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 font-bold text-xs flex items-center justify-center">0</span>
+            <span class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 font-bold text-xs flex items-center justify-center">2</span>
+            <span class="w-8 h-8 rounded-full bg-red-600 text-white font-bold text-xs flex items-center justify-center shadow">W</span>
+          </div>
+        </div>
+
+        <!-- Batsmen & Bowler Stats Table -->
+        <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="bg-[#091b29] p-3 rounded-xl">
+            <span class="text-slate-400 font-bold block mb-2 border-b border-cyan-900 pb-1">Batters on Crease</span>
+            <div class="flex justify-between py-1 border-b border-cyan-950">
+              <span class="font-bold text-white">Suryakumar Yadav *</span>
+              <span class="font-mono text-cyan-300 font-bold">54 (28) • 5x4 3x6</span>
+            </div>
+            <div class="flex justify-between py-1">
+              <span class="font-bold text-slate-300">Hardik Pandya</span>
+              <span class="font-mono text-cyan-300 font-bold">22 (11) • 2x4 1x6</span>
+            </div>
+          </div>
+          <div class="bg-[#091b29] p-3 rounded-xl">
+            <span class="text-slate-400 font-bold block mb-2 border-b border-cyan-900 pb-1">Bowler</span>
+            <div class="flex justify-between py-1">
+              <span class="font-bold text-white">Mitchell Starc</span>
+              <span class="font-mono text-amber-300 font-bold">3.2 - 0 - 32 - 2 (Eco 9.6)</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 2: UPCOMING MATCH FIXTURES -->
+    <section id="sec-fixtures" class="hidden space-y-4">
+      <div class="glass-card rounded-2xl p-5 border border-cyan-500/30">
+        <h2 class="text-xl font-bold text-white mb-3">📅 Upcoming Match Schedule (2026)</h2>
+        <div class="space-y-3" id="fixturesList">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: TOP 10 AD-FREE BULLET NEWS -->
+    <section id="sec-news" class="hidden space-y-4">
+      <div class="glass-card rounded-2xl p-5 border border-cyan-500/30">
+        <div class="flex items-center justify-between border-b border-cyan-900 pb-3 mb-4">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <span>⚡ Top 10 Ad-Free Bullet News</span>
+            </h2>
+            <p class="text-xs text-cyan-400">Pure headlines in 1 clean bullet • Zero clickbait • Zero advertisements</p>
+          </div>
+          <span class="text-xs px-2.5 py-1 bg-emerald-500/20 text-emerald-300 font-bold rounded-lg font-mono">DAILY BULLET</span>
+        </div>
+
+        <div class="space-y-3" id="newsList">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER BRANDING -->
+  <footer class="border-t border-cyan-950 bg-[#04090e] py-4 text-center text-xs text-slate-500">
+    <p>CricRadar 2026 • <strong>👑 Owner: Sallu</strong> • SoundWave Sports Network</p>
+  </footer>
+
+  <script>
+    const fixtures = [
+      { teams: "🇮🇳 India vs 🏴󠁧󠁢󠁥󠁮󠁧󠁿 England", series: "T20 Super Series 2026", date: "Friday, 21 Nov • 07:00 PM IST", venue: "Wankhede Stadium, Mumbai" },
+      { teams: "🇮🇳 India vs 🇿🇦 South Africa", series: "ODI Championship", date: "Sunday, 23 Nov • 01:30 PM IST", venue: "Eden Gardens, Kolkata" },
+      { teams: "🇮🇳 Chennai Super Kings vs 🇮🇳 Mumbai Indians", series: "IPL 2026 Opening Climax", date: "Saturday, 28 Mar • 07:30 PM IST", venue: "M. A. Chidambaram Stadium, Chennai" },
+      { teams: "🇦🇺 Australia vs 🏴󠁧󠁢󠁥󠁮󠁧󠁿 England", series: "The Ashes Test Series", date: "Thursday, 04 Dec • 05:30 AM IST", venue: "MCG, Melbourne" }
+    ];
+
+    const bulletNews = [
+      { cat: "Tech", text: "ISRO activates new high-throughput communications satellite, improving 5G bandwidth in remote Himalayan and island regions." },
+      { cat: "Economy", text: "India's foreign exchange reserves touch all-time high amid robust foreign institutional inflows and stable crude oil prices." },
+      { cat: "Sports", text: "Indian cricket team seals top spot in ICC T20 team rankings following consecutive series triumphs." },
+      { cat: "Railways", text: "Indian Railways announces 50 additional Vande Bharat Sleeper trains on high-density New Delhi-Patna-Howrah corridors." },
+      { cat: "Science", text: "AI-driven monsoon forecasting engine achieves 98.4% hyper-local accuracy in trial runs across agricultural districts." },
+      { cat: "Education", text: "UPSC announces streamlined digital document verification system for civil services examination aspirants." },
+      { cat: "Automotive", text: "National EV charging infrastructure expands past 25,000 public fast chargers along all major national expressways." },
+      { cat: "Environment", text: "Delhi-NCR air quality index registers marked improvement as wind speeds rise and anti-smog operations expand." },
+      { cat: "Space", text: "NASA-ISRO SAR satellite (NISAR) begins transmission of high-resolution global land and ice mass displacement data." },
+      { cat: "Health", text: "Government Jan Aushadhi generic pharmacy network crosses 12,000 centers, providing essential medicines at 70% lower prices." }
+    ];
+
+    function renderFixtures() {
+      document.getElementById('fixturesList').innerHTML = fixtures.map(f => `
+        <div class="p-3.5 rounded-xl bg-[#091f2e] border border-cyan-800/40 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="font-bold text-white text-sm">${f.teams}</h3>
+            <p class="text-xs text-cyan-300 font-medium">${f.series} • ${f.venue}</p>
+          </div>
+          <span class="text-xs px-2.5 py-1 bg-cyan-950 text-cyan-300 rounded-lg font-mono font-bold border border-cyan-800">${f.date}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderNews() {
+      document.getElementById('newsList').innerHTML = bulletNews.map((n, idx) => `
+        <div class="flex items-start gap-3 p-3 rounded-xl bg-[#091c2b] border border-cyan-900/50 hover:border-cyan-700/60 transition">
+          <span class="text-xs font-bold font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 shrink-0 mt-0.5">${n.cat}</span>
+          <p class="text-xs text-slate-200 leading-relaxed"><strong class="text-cyan-400">#${idx+1}</strong> ${n.text}</p>
+        </div>
+      `).join('');
+    }
+
+    let runs = 142;
+    let wickets = 3;
+    let balls = 86; // 14.2 ov
+
+    function simulateNextBall() {
+      const outcomes = ['1', '2', '4', '6', '1', '0', '4'];
+      const r = outcomes[Math.floor(Math.random() * outcomes.length)];
+      const num = parseInt(r) || 0;
+      runs += num;
+      balls++;
+
+      const ov = Math.floor(balls / 6);
+      const bInOv = balls % 6;
+      document.getElementById('scoreRuns').innerText = `${runs}/${wickets}`;
+      document.getElementById('scoreOvers').innerText = `(${ov}.${bInOv} / 20 ov)`;
+
+      const needed = Math.max(0, 198 - runs);
+      const ballsLeft = Math.max(0, 120 - balls);
+      if (needed === 0) {
+        document.getElementById('matchEquation').innerHTML = `🎉 <strong>INDIA WON THE MATCH BY ${10 - wickets} WICKETS!</strong>`;
+      } else {
+        document.getElementById('matchEquation').innerHTML = `⚡ <strong>India need ${needed} runs in ${ballsLeft} balls</strong> to win (CR: ${(runs/(balls/6)).toFixed(2)})`;
+      }
+
+      const timeline = document.getElementById('ballTimeline');
+      const badge = document.createElement('span');
+      badge.className = `w-8 h-8 rounded-full ${num===6?'bg-purple-600':num===4?'bg-emerald-600':'bg-slate-800'} text-white font-bold text-xs flex items-center justify-center shadow animate-bounce`;
+      badge.innerText = r;
+      timeline.prepend(badge);
+      if (timeline.children.length > 7) timeline.removeChild(timeline.lastChild);
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.nav-tab').forEach(b => {
+        b.classList.remove('active', 'text-slate-100');
+        b.classList.add('text-slate-400');
+      });
+      document.getElementById('tab-' + tabId).classList.add('active', 'text-slate-100');
+      document.getElementById('tab-' + tabId).classList.remove('text-slate-400');
+
+      ['cricket', 'fixtures', 'news'].forEach(s => {
+        document.getElementById('sec-' + s).classList.add('hidden');
+      });
+      document.getElementById('sec-' + tabId).classList.remove('hidden');
+    }
+
+    // Init
+    renderFixtures();
+    renderNews();
+  </script>
+</body>
+</html>

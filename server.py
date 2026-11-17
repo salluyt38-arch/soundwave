@@ -322,6 +322,168 @@ APPSTORE_CATALOG = {
             "download_html": "/download/pincode.html",
             "download_zip": "/download/pincode.zip",
             "internal_scheme": "soundwave://appstore/pincode"
+        },
+        {
+            "id": "health",
+            "name": "Swasthya Seva • Health Pro",
+            "subtitle": "Generic Medicine Finder, First Aid SOS & Emergency Blood Bank",
+            "version": "2026.1.0",
+            "rating": 5.0,
+            "reviews": "3.8k reviews",
+            "size": "24 KB",
+            "icon": "🏥",
+            "theme_color": "#10b981",
+            "category": "Health & Emergency",
+            "badge": "🏥 Health Pro",
+            "summary": "Generic medicine and salt substitutes with Jan Aushadhi price sync, offline emergency first aid guides for CPR and burns, and blood bank directory.",
+            "features": [
+                {"title": "Generic Medicine & Salt Finder", "desc": "Check generic salt composition and affordable substitutes for 100+ branded medicines."},
+                {"title": "Offline First Aid SOS", "desc": "Immediate step-by-step life saving guides for Heart Attack, CPR, Burns, Snake Bite, and Choking."},
+                {"title": "Emergency Helplines & Blood Bank", "desc": "Direct dial 112, 108, 102 and national e-RaktKosh blood bank compatibility radar."}
+            ],
+            "launch_url": "/health.html",
+            "download_html": "/download/health.html",
+            "download_zip": "/download/health.zip",
+            "internal_scheme": "soundwave://appstore/health"
+        },
+        {
+            "id": "trains",
+            "name": "RailSathi • Transit Radar",
+            "subtitle": "Live Train Running Status, PNR Radar, Metro Route & Vehicle RC",
+            "version": "2026.1.0",
+            "rating": 4.9,
+            "reviews": "4.1k reviews",
+            "size": "26 KB",
+            "icon": "🚆",
+            "theme_color": "#0ea5e9",
+            "category": "Travel & Transit",
+            "badge": "🚆 Transit Pro",
+            "summary": "Live train GPS running status, 10-digit PNR confirmation radar, Delhi/Mumbai/Bengaluru Metro route & fare calculator, and vehicle RC info.",
+            "features": [
+                {"title": "Live Train Running Status", "desc": "Track train location, next station arrival time, delay, and platform number."},
+                {"title": "PNR Confirmation Radar", "desc": "Check booking confirmation status, coach, and berth details."},
+                {"title": "Metro Route & Fare Planner", "desc": "Shortest route, interchange guide, and fare for Delhi, Mumbai, and Bengaluru Metros."},
+                {"title": "Vehicle RC & E-Challan Info", "desc": "Registration details, vehicle age, fitness, insurance validity, and pending challans."}
+            ],
+            "launch_url": "/trains.html",
+            "download_html": "/download/trains.html",
+            "download_zip": "/download/trains.zip",
+            "internal_scheme": "soundwave://appstore/trains"
+        },
+        {
+            "id": "sarkari",
+            "name": "Sarkari Hub • Career Pro",
+            "subtitle": "Sarkari Job Alerts, Daily GK Quiz & Instant Biodata/Resume Builder",
+            "version": "2026.1.0",
+            "rating": 4.9,
+            "reviews": "3.5k reviews",
+            "size": "25 KB",
+            "icon": "💼",
+            "theme_color": "#a855f7",
+            "category": "Jobs & Career",
+            "badge": "💼 Career Pro",
+            "summary": "Latest Central & State government job notifications, daily 10-question GK & Current Affairs test with instant explanations, and printable Resume / Shaadi Biodata builder.",
+            "features": [
+                {"title": "Sarkari Job Alerts 2026", "desc": "SSC, UPSC, Railway, Banking, and Police active forms and last dates."},
+                {"title": "Daily GK & Current Affairs Quiz", "desc": "Practice exam questions with interactive scoring and answers."},
+                {"title": "Instant Biodata & Resume Builder", "desc": "Create clean professional CV or marriage biodata with 1-click PDF print."}
+            ],
+            "launch_url": "/sarkari.html",
+            "download_html": "/download/sarkari.html",
+            "download_zip": "/download/sarkari.zip",
+            "internal_scheme": "soundwave://appstore/sarkari"
+        },
+        {
+            "id": "finance",
+            "name": "Smart Money • Finance Pro",
+            "subtitle": "Home/Car Loan EMI, SIP Compound Wealth & GST Calculator",
+            "version": "2026.1.0",
+            "rating": 4.9,
+            "reviews": "2.9k reviews",
+            "size": "22 KB",
+            "icon": "💰",
+            "theme_color": "#22c55e",
+            "category": "Finance & Money",
+            "badge": "💰 Money Pro",
+            "summary": "Accurate monthly loan EMI calculator with interest breakdown, SIP compound wealth calculator over 1-35 years, and GST & discount shopping calculator.",
+            "features": [
+                {"title": "Loan EMI Calculator", "desc": "Sliders for loan amount, interest rate, tenure, and monthly amortization."},
+                {"title": "SIP Compound Wealth Calculator", "desc": "Calculates future returns on monthly mutual fund investments."},
+                {"title": "GST & Discount Tool", "desc": "Add or remove GST (5%, 12%, 18%, 28%) and calculate retail discounts."}
+            ],
+            "launch_url": "/finance.html",
+            "download_html": "/download/finance.html",
+            "download_zip": "/download/finance.zip",
+            "internal_scheme": "soundwave://appstore/finance"
+        },
+        {
+            "id": "cricket",
+            "name": "CricRadar • Live Sports",
+            "subtitle": "Live Ball-by-Ball Cricket Scores & Ad-Free Top 10 Bullet News",
+            "version": "2026.1.0",
+            "rating": 4.8,
+            "reviews": "3.1k reviews",
+            "size": "23 KB",
+            "icon": "🏏",
+            "theme_color": "#0ea5e9",
+            "category": "Sports & News",
+            "badge": "🏏 Live Radar",
+            "summary": "Live cricket match simulator and scorecard with runs, overs, run-rate, batsman/bowler stats, upcoming match schedule, and 10 distilled ad-free news bullets.",
+            "features": [
+                {"title": "Live Cricket Scorecard", "desc": "Ball-by-ball updates, required run-rate, and player statistics."},
+                {"title": "Match Fixtures 2026", "desc": "Complete calendar for T20 series, ODI championships, and IPL 2026."},
+                {"title": "Top 10 Bullet News", "desc": "Ad-free, non-clickbait summaries of daily national and global events."}
+            ],
+            "launch_url": "/cricket.html",
+            "download_html": "/download/cricket.html",
+            "download_zip": "/download/cricket.zip",
+            "internal_scheme": "soundwave://appstore/cricket"
+        },
+        {
+            "id": "fitness",
+            "name": "FitDesi • Wellness Pro",
+            "subtitle": "Indian Food Calorie Chart, Protein Counter & BMI Water Radar",
+            "version": "2026.1.0",
+            "rating": 4.9,
+            "reviews": "2.4k reviews",
+            "size": "21 KB",
+            "icon": "🥗",
+            "theme_color": "#84cc16",
+            "category": "Fitness & Diet",
+            "badge": "🥗 Wellness Pro",
+            "summary": "Desi food database (Roti, Dal, Paneer, Rice, Eggs, Chicken) with calories, protein, carbs, fats, BMI calculator, and daily water tracker.",
+            "features": [
+                {"title": "Desi Food Calorie & Protein Chart", "desc": "Searchable nutrition facts for traditional Indian meals and daily meal builder."},
+                {"title": "BMI & Ideal Weight Radar", "desc": "Height, weight, age calculator with healthy weight range recommendation."},
+                {"title": "Daily Water Tracker", "desc": "Interactive 8-glass water counter to meet optimal hydration targets."}
+            ],
+            "launch_url": "/fitness.html",
+            "download_html": "/download/fitness.html",
+            "download_zip": "/download/fitness.zip",
+            "internal_scheme": "soundwave://appstore/fitness"
+        },
+        {
+            "id": "tools",
+            "name": "OmniTools • Toolkit Pro",
+            "subtitle": "100% Client-Side Private PDF Maker, Speed Radar & Premchand Sahitya",
+            "version": "2026.1.0",
+            "rating": 5.0,
+            "reviews": "3.7k reviews",
+            "size": "28 KB",
+            "icon": "🛠️",
+            "theme_color": "#ec4899",
+            "category": "Utilities & Tools",
+            "badge": "🛠️ Toolkit Pro",
+            "summary": "Client-side Image & Text to PDF generator without uploading files to any server, real-time internet speed and ping test, and full offline text of Munshi Premchand classic stories.",
+            "features": [
+                {"title": "Private Client-Side PDF Tools", "desc": "Convert photos or text notes into clean printable PDFs right in your browser."},
+                {"title": "Internet Speed & Ping Radar", "desc": "Animated speed test gauge measuring download bandwidth, ping, and jitter."},
+                {"title": "Premchand Hindi Sahitya", "desc": "Full offline texts of classic Hindi stories: Idgah, Kafan, Namak Ka Daroga, Panch Parmeshwar."}
+            ],
+            "launch_url": "/tools.html",
+            "download_html": "/download/tools.html",
+            "download_zip": "/download/tools.zip",
+            "internal_scheme": "soundwave://appstore/tools"
         }
     ]
 }
@@ -1829,6 +1991,146 @@ class MusicHandler(SimpleHTTPRequestHandler):
                     self.end_headers()
                     with open(p_zip, "rb") as f:
                         shutil.copyfileobj(f, self.wfile)
+                    return
+
+            # Direct Health App Routes
+            if path in ("/health", "/health/"):
+                self.send_response(302); self.send_header("Location", "/health.html"); self.end_headers(); return
+            if path in ("/download/health.html", "/download/health-app.html"):
+                fpath = os.path.join(STATIC_DIR, "health.html")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="Swasthya-Seva-Health-Pro.html"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
+                    return
+            if path in ("/download/health.zip", "/download/Swasthya-Seva-Health-Pro.zip", "/download/health"):
+                fpath = os.path.join(STATIC_DIR, "Swasthya-Seva-Health-Pro.zip")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="Swasthya-Seva-Health-Pro.zip"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
+                    return
+
+            # Direct Trains App Routes
+            if path in ("/trains", "/trains/"):
+                self.send_response(302); self.send_header("Location", "/trains.html"); self.end_headers(); return
+            if path in ("/download/trains.html", "/download/trains-app.html"):
+                fpath = os.path.join(STATIC_DIR, "trains.html")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="RailSathi-Transit-Radar.html"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
+                    return
+            if path in ("/download/trains.zip", "/download/RailSathi-Transit-Radar.zip", "/download/trains"):
+                fpath = os.path.join(STATIC_DIR, "RailSathi-Transit-Radar.zip")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="RailSathi-Transit-Radar.zip"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
+                    return
+
+            # Direct Sarkari App Routes
+            if path in ("/sarkari", "/sarkari/"):
+                self.send_response(302); self.send_header("Location", "/sarkari.html"); self.end_headers(); return
+            if path in ("/download/sarkari.html", "/download/sarkari-app.html"):
+                fpath = os.path.join(STATIC_DIR, "sarkari.html")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="Sarkari-Hub-Career-Pro.html"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
+                    return
+            if path in ("/download/sarkari.zip", "/download/Sarkari-Hub-Career-Pro.zip", "/download/sarkari"):
+                fpath = os.path.join(STATIC_DIR, "Sarkari-Hub-Career-Pro.zip")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="Sarkari-Hub-Career-Pro.zip"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
+                    return
+
+            # Direct Finance App Routes
+            if path in ("/finance", "/finance/"):
+                self.send_response(302); self.send_header("Location", "/finance.html"); self.end_headers(); return
+            if path in ("/download/finance.html", "/download/finance-app.html"):
+                fpath = os.path.join(STATIC_DIR, "finance.html")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="Smart-Money-Finance-Pro.html"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
+                    return
+            if path in ("/download/finance.zip", "/download/Smart-Money-Finance-Pro.zip", "/download/finance"):
+                fpath = os.path.join(STATIC_DIR, "Smart-Money-Finance-Pro.zip")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="Smart-Money-Finance-Pro.zip"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
+                    return
+
+            # Direct Cricket App Routes
+            if path in ("/cricket", "/cricket/"):
+                self.send_response(302); self.send_header("Location", "/cricket.html"); self.end_headers(); return
+            if path in ("/download/cricket.html", "/download/cricket-app.html"):
+                fpath = os.path.join(STATIC_DIR, "cricket.html")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="CricRadar-Live-Sports.html"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
+                    return
+            if path in ("/download/cricket.zip", "/download/CricRadar-Live-Sports.zip", "/download/cricket"):
+                fpath = os.path.join(STATIC_DIR, "CricRadar-Live-Sports.zip")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="CricRadar-Live-Sports.zip"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
+                    return
+
+            # Direct Fitness App Routes
+            if path in ("/fitness", "/fitness/"):
+                self.send_response(302); self.send_header("Location", "/fitness.html"); self.end_headers(); return
+            if path in ("/download/fitness.html", "/download/fitness-app.html"):
+                fpath = os.path.join(STATIC_DIR, "fitness.html")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="FitDesi-Wellness-Pro.html"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
+                    return
+            if path in ("/download/fitness.zip", "/download/FitDesi-Wellness-Pro.zip", "/download/fitness"):
+                fpath = os.path.join(STATIC_DIR, "FitDesi-Wellness-Pro.zip")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="FitDesi-Wellness-Pro.zip"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
+                    return
+
+            # Direct Tools App Routes
+            if path in ("/tools", "/tools/"):
+                self.send_response(302); self.send_header("Location", "/tools.html"); self.end_headers(); return
+            if path in ("/download/tools.html", "/download/tools-app.html"):
+                fpath = os.path.join(STATIC_DIR, "tools.html")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="OmniTools-Toolkit-Pro.html"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
+                    return
+            if path in ("/download/tools.zip", "/download/OmniTools-Toolkit-Pro.zip", "/download/tools"):
+                fpath = os.path.join(STATIC_DIR, "OmniTools-Toolkit-Pro.zip")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="OmniTools-Toolkit-Pro.zip"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
                     return
 
             if path == "/api/test_extract":

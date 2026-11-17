@@ -280,6 +280,139 @@
                             </div>
                         </div>
 
+                        <!-- UNIFIED APPS & SERVICES HUB ON HOME (OWNER: SALLU) -->
+                        <div class="home-apps-hub" style="margin: 20px 0 25px 0;">
+                            
+                            <!-- 4 Core Pillars Quick Bar -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px;">
+                                <div onclick="if(typeof switchTab==='function') switchTab('home')" style="background: linear-gradient(135deg, rgba(29,185,84,0.18), rgba(29,185,84,0.06)); border: 1px solid rgba(29,185,84,0.35); border-radius: 16px; padding: 14px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                                    <span style="font-size: 26px;">🎵</span>
+                                    <div>
+                                        <div style="font-weight: 800; font-size: 14px; color: #fff;">Music MP3</div>
+                                        <div style="font-size: 11px; color: #1db954;">HD Audio & Mixes</div>
+                                    </div>
+                                </div>
+                                <div onclick="if(typeof switchTab==='function') switchTab('video')" style="background: linear-gradient(135deg, rgba(239,68,68,0.18), rgba(239,68,68,0.06)); border: 1px solid rgba(239,68,68,0.35); border-radius: 16px; padding: 14px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                                    <span style="font-size: 26px;">📺</span>
+                                    <div>
+                                        <div style="font-weight: 800; font-size: 14px; color: #fff;">SoundWave Video</div>
+                                        <div style="font-size: 11px; color: #f87171;">YouTube HD Stream</div>
+                                    </div>
+                                </div>
+                                <div onclick="if(typeof switchTab==='function') switchTab('movies')" style="background: linear-gradient(135deg, rgba(229,9,20,0.18), rgba(229,9,20,0.06)); border: 1px solid rgba(229,9,20,0.35); border-radius: 16px; padding: 14px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                                    <span style="font-size: 26px;">🎬</span>
+                                    <div>
+                                        <div style="font-weight: 800; font-size: 14px; color: #fff;">Cinema Movies</div>
+                                        <div style="font-size: 11px; color: #ef4444;">1080p Action & Hits</div>
+                                    </div>
+                                </div>
+                                <div onclick="if(typeof switchTab==='function') switchTab('appstore')" style="background: linear-gradient(135deg, rgba(168,85,247,0.18), rgba(168,85,247,0.06)); border: 1px solid rgba(168,85,247,0.35); border-radius: 16px; padding: 14px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                                    <span style="font-size: 26px;">⚡</span>
+                                    <div>
+                                        <div style="font-weight: 800; font-size: 14px; color: #fff;">Services Hub</div>
+                                        <div style="font-size: 11px; color: #c084fc;">14 Micro-Apps</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Services Horizontal Quick Slider -->
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin: 0;">⚡ Cloud Services & Micro-Apps</h3>
+                                    <span style="font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 99px; background: rgba(245,158,11,0.2); color: #fbbf24; border: 1px solid rgba(245,158,11,0.4);">👑 Owner: Sallu</span>
+                                </div>
+                                <button onclick="if(typeof switchTab==='function') switchTab('appstore')" style="background: none; border: none; font-size: 12px; font-weight: 700; color: #1db954; cursor: pointer;">See All 14 ↗</button>
+                            </div>
+
+                            <div style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none;" class="no-scrollbar">
+                                
+                                <div onclick="window.open('/sanatan.html', '_blank')" style="min-width: 140px; background: rgba(234,88,12,0.12); border: 1px solid rgba(234,88,12,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
+                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🕉️</span>
+                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Sanatan Seva</div>
+                                    <div style="font-size: 10px; color: #fb923c;">Gita & Panchang</div>
+                                </div>
+
+                                <div onclick="window.open('/islamic.html', '_blank')" style="min-width: 140px; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
+                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🌙</span>
+                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Islamic Library</div>
+                                    <div style="font-size: 10px; color: #34d399;">Hadith & Quran</div>
+                                </div>
+
+                                <div onclick="window.open('/health.html', '_blank')" style="min-width: 140px; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
+                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🏥</span>
+                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Swasthya Seva</div>
+                                    <div style="font-size: 10px; color: #34d399;">Medicine & First Aid</div>
+                                </div>
+
+                                <div onclick="window.open('/trains.html', '_blank')" style="min-width: 140px; background: rgba(14,165,233,0.12); border: 1px solid rgba(14,165,233,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
+                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🚆</span>
+                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">RailSathi</div>
+                                    <div style="font-size: 10px; color: #38bdf8;">Train & Metro Radar</div>
+                                </div>
+
+                                <div onclick="window.open('/sarkari.html', '_blank')" style="min-width: 140px; background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
+                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">💼</span>
+                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Sarkari Hub</div>
+                                    <div style="font-size: 10px; color: #c084fc;">Jobs & GK Quiz</div>
+                                </div>
+
+                                <div onclick="window.open('/weather.html', '_blank')" style="min-width: 140px; background: rgba(14,165,233,0.12); border: 1px solid rgba(14,165,233,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
+                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🌦️</span>
+                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Weather 2026</div>
+                                    <div style="font-size: 10px; color: #38bdf8;">Doppler Radar</div>
+                                </div>
+
+                                <div onclick="window.open('/finance.html', '_blank')" style="min-width: 140px; background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
+                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">💰</span>
+                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Smart Money</div>
+                                    <div style="font-size: 10px; color: #4ade80;">Loan EMI & SIP</div>
+                                </div>
+
+                                <div onclick="window.open('/cricket.html', '_blank')" style="min-width: 140px; background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
+                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🏏</span>
+                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">CricRadar</div>
+                                    <div style="font-size: 10px; color: #22d3ee;">Live Score & News</div>
+                                </div>
+
+                                <div onclick="window.open('/fitness.html', '_blank')" style="min-width: 140px; background: rgba(132,204,22,0.12); border: 1px solid rgba(132,204,22,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
+                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🥗</span>
+                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">FitDesi</div>
+                                    <div style="font-size: 10px; color: #a3e635;">Calorie & BMI</div>
+                                </div>
+
+                                <div onclick="window.open('/tools.html', '_blank')" style="min-width: 140px; background: rgba(236,72,153,0.12); border: 1px solid rgba(236,72,153,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
+                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🛠️</span>
+                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">OmniTools</div>
+                                    <div style="font-size: 10px; color: #f472b6;">PDF & Speed Radar</div>
+                                </div>
+
+                                <div onclick="window.open('/currency.html', '_blank')" style="min-width: 140px; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
+                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">💵</span>
+                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Forex & Gold</div>
+                                    <div style="font-size: 10px; color: #34d399;">160+ Currencies</div>
+                                </div>
+
+                                <div onclick="window.open('/recipes.html', '_blank')" style="min-width: 140px; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
+                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">🍲</span>
+                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Bawarchi</div>
+                                    <div style="font-size: 10px; color: #fbbf24;">Cooking Recipes</div>
+                                </div>
+
+                                <div onclick="window.open('/dictionary.html', '_blank')" style="min-width: 140px; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
+                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">📖</span>
+                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Shabadkosh</div>
+                                    <div style="font-size: 10px; color: #818cf8;">Eng-Hindi Vocab</div>
+                                </div>
+
+                                <div onclick="window.open('/pincode.html', '_blank')" style="min-width: 140px; background: rgba(225,29,72,0.12); border: 1px solid rgba(225,29,72,0.3); border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; shrink: 0;">
+                                    <span style="font-size: 26px; display: block; margin-bottom: 4px;">📮</span>
+                                    <div style="font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pincode Radar</div>
+                                    <div style="font-size: 10px; color: #fb7185;">150K+ Post Offices</div>
+                                </div>
+
+                            </div>
+                        </div>
+
                         <!-- Quick Picks (6 Cards) -->
                         <div class="quick-picks-shelf">
                             <div class="quick-cards-grid" id="quickPicksContainer">
@@ -1993,11 +2126,15 @@
 
                             <!-- Futuristic Category Filter Chips -->
                             <div class="services-category-chips">
-                                <button class="services-chip active" type="button" onclick="window.filterServicesCategory('all', this)">All Services (7)</button>
+                                <button class="services-chip active" type="button" onclick="window.filterServicesCategory('all', this)">All Services (14)</button>
                                 <button class="services-chip" type="button" onclick="window.filterServicesCategory('spiritual', this)">Spiritual & Faith (🕉️ 🌙)</button>
-                                <button class="services-chip" type="button" onclick="window.filterServicesCategory('weather', this)">Atmospheric Weather (🌦️)</button>
-                                <button class="services-chip" type="button" onclick="window.filterServicesCategory('finance', this)">Finance & Currency (💵)</button>
-                                <button class="services-chip" type="button" onclick="window.filterServicesCategory('utility', this)">Daily Utilities (🍲 📖 📮)</button>
+                                <button class="services-chip" type="button" onclick="window.filterServicesCategory('health', this)">Health & Medical (🏥)</button>
+                                <button class="services-chip" type="button" onclick="window.filterServicesCategory('transit', this)">Travel & Rail (🚆)</button>
+                                <button class="services-chip" type="button" onclick="window.filterServicesCategory('jobs', this)">Govt & Jobs (💼)</button>
+                                <button class="services-chip" type="button" onclick="window.filterServicesCategory('finance', this)">Finance & Money (💰 💵)</button>
+                                <button class="services-chip" type="button" onclick="window.filterServicesCategory('sports', this)">Sports & News (🏏)</button>
+                                <button class="services-chip" type="button" onclick="window.filterServicesCategory('fitness', this)">Fitness & Diet (🥗)</button>
+                                <button class="services-chip" type="button" onclick="window.filterServicesCategory('tools', this)">Utilities & Tools (📄 🌦️ 🍲 📖 📮)</button>
                             </div>
 
                             <!-- Futuristic Spotlight Featured Banner -->
@@ -2025,10 +2162,10 @@
                                             <span>⚡ Launch App ↗</span>
                                         </button>
                                         <div class="services-dl-row">
-                                            <a href="/download/sanatan.html" download="Sanatan-Seva-Vedic-Portal.html" class="btn-services-dl" onclick="event.stopPropagation()" title="Download Standalone HTML">
+                                            <a href="/download/sanatan.html" download="Sanatan-Seva-Vedic-Portal.html" class="btn-services-dl" onclick="event.stopPropagation()" title="Download HTML">
                                                 <span>⬇ HTML</span>
                                             </a>
-                                            <a href="/download/sanatan.zip" download="Sanatan-Seva-Vedic-Portal.zip" class="btn-services-dl" onclick="event.stopPropagation()" title="Download Offline ZIP">
+                                            <a href="/download/sanatan.zip" download="Sanatan-Seva-Vedic-Portal.zip" class="btn-services-dl" onclick="event.stopPropagation()" title="Download ZIP">
                                                 <span>📦 ZIP</span>
                                             </a>
                                         </div>
@@ -2040,7 +2177,7 @@
                             <div class="services-section">
                                 <div class="services-section-header">
                                     <div>
-                                        <h3 class="services-section-title">All Applications</h3>
+                                        <h3 class="services-section-title">All Applications & Micro-Engines (14)</h3>
                                         <p class="services-section-desc">Click any application to launch directly in a full-screen new tab</p>
                                     </div>
                                 </div>
@@ -2050,9 +2187,7 @@
                                     <!-- APP 1: Sanatan Seva -->
                                     <div class="service-card" data-category="spiritual sanatan hindu faith" onclick="window.open('/sanatan.html', '_blank')">
                                         <div class="service-card-top">
-                                            <div class="service-icon-box sanatan">
-                                                <span>🕉️</span>
-                                            </div>
+                                            <div class="service-icon-box sanatan"><span>🕉️</span></div>
                                             <div class="service-card-meta">
                                                 <div class="service-card-title-row">
                                                     <h4 class="service-card-title">Sanatan Seva • Vedic Portal</h4>
@@ -2070,24 +2205,16 @@
                                             <span class="service-stat-badge saffron">VEDIC PRO</span>
                                         </div>
                                         <div class="service-card-actions">
-                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/sanatan.html', '_blank')">
-                                                <span>⚡ Open App ↗</span>
-                                            </button>
-                                            <a href="/download/sanatan.html" download="Sanatan-Seva-Vedic-Portal.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML">
-                                                <span>⬇ HTML</span>
-                                            </a>
-                                            <a href="/download/sanatan.zip" download="Sanatan-Seva-Vedic-Portal.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP">
-                                                <span>📦 ZIP</span>
-                                            </a>
+                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/sanatan.html', '_blank')"><span>⚡ Open App ↗</span></button>
+                                            <a href="/download/sanatan.html" download="Sanatan-Seva-Vedic-Portal.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
+                                            <a href="/download/sanatan.zip" download="Sanatan-Seva-Vedic-Portal.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
                                         </div>
                                     </div>
 
                                     <!-- APP 2: Islamic & Hadith Library -->
                                     <div class="service-card" data-category="spiritual islamic faith" onclick="window.open('/islamic.html', '_blank')">
                                         <div class="service-card-top">
-                                            <div class="service-icon-box islamic">
-                                                <span>🌙</span>
-                                            </div>
+                                            <div class="service-icon-box islamic"><span>🌙</span></div>
                                             <div class="service-card-meta">
                                                 <div class="service-card-title-row">
                                                     <h4 class="service-card-title">Islamic & Hadith Library</h4>
@@ -2105,24 +2232,205 @@
                                             <span class="service-stat-badge emerald">VERIFIED</span>
                                         </div>
                                         <div class="service-card-actions">
-                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/islamic.html', '_blank')">
-                                                <span>⚡ Open App ↗</span>
-                                            </button>
-                                            <a href="/download/islamic.html" download="Islamic-Hadith-Library.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML">
-                                                <span>⬇ HTML</span>
-                                            </a>
-                                            <a href="/download/islamic.zip" download="Islamic-Hadith-Library.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP">
-                                                <span>📦 ZIP</span>
-                                            </a>
+                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/islamic.html', '_blank')"><span>⚡ Open App ↗</span></button>
+                                            <a href="/download/islamic.html" download="Islamic-Hadith-Library.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
+                                            <a href="/download/islamic.zip" download="Islamic-Hadith-Library.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
                                         </div>
                                     </div>
 
-                                    <!-- APP 3: Weather Experience -->
-                                    <div class="service-card" data-category="weather cloud atmospheric" onclick="window.open('/weather.html', '_blank')">
+                                    <!-- APP 3: Health & Emergency -->
+                                    <div class="service-card" data-category="health emergency medical" onclick="window.open('/health.html', '_blank')">
                                         <div class="service-card-top">
-                                            <div class="service-icon-box weather">
-                                                <span>🌦️</span>
+                                            <div class="service-icon-box health"><span>🏥</span></div>
+                                            <div class="service-card-meta">
+                                                <div class="service-card-title-row">
+                                                    <h4 class="service-card-title">Swasthya Seva • Health Pro</h4>
+                                                    <span class="service-card-owner">👑 Owner: Sallu</span>
+                                                </div>
+                                                <div class="service-card-category">Generic Medicine • Offline First Aid SOS • Blood Bank</div>
                                             </div>
+                                        </div>
+                                        <p class="service-card-description">Generic salt substitute finder with Jan Aushadhi price sync, offline life-saving First Aid guides for CPR & heart attack, and emergency numbers.</p>
+                                        <div class="service-card-stats">
+                                            <span class="service-stat-item">★ 5.0 (3.8k)</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-item">24 KB</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-badge emerald">HEALTH PRO</span>
+                                        </div>
+                                        <div class="service-card-actions">
+                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/health.html', '_blank')"><span>⚡ Open App ↗</span></button>
+                                            <a href="/download/health.html" download="Swasthya-Seva-Health-Pro.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
+                                            <a href="/download/health.zip" download="Swasthya-Seva-Health-Pro.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
+                                        </div>
+                                    </div>
+
+                                    <!-- APP 4: Rail & Transit Radar -->
+                                    <div class="service-card" data-category="transit travel rail" onclick="window.open('/trains.html', '_blank')">
+                                        <div class="service-card-top">
+                                            <div class="service-icon-box trains"><span>🚆</span></div>
+                                            <div class="service-card-meta">
+                                                <div class="service-card-title-row">
+                                                    <h4 class="service-card-title">RailSathi • Transit Radar</h4>
+                                                    <span class="service-card-owner">👑 Owner: Sallu</span>
+                                                </div>
+                                                <div class="service-card-category">Live Train GPS • PNR Radar • Metro Route Planner</div>
+                                            </div>
+                                        </div>
+                                        <p class="service-card-description">Live train GPS running status & delay tracking, 10-digit PNR confirmation radar, Metro route & fare calculator, and vehicle RC info.</p>
+                                        <div class="service-card-stats">
+                                            <span class="service-stat-item">★ 4.9 (4.1k)</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-item">26 KB</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-badge">TRANSIT PRO</span>
+                                        </div>
+                                        <div class="service-card-actions">
+                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/trains.html', '_blank')"><span>⚡ Open App ↗</span></button>
+                                            <a href="/download/trains.html" download="RailSathi-Transit-Radar.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
+                                            <a href="/download/trains.zip" download="RailSathi-Transit-Radar.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
+                                        </div>
+                                    </div>
+
+                                    <!-- APP 5: Sarkari Hub -->
+                                    <div class="service-card" data-category="jobs career sarkari" onclick="window.open('/sarkari.html', '_blank')">
+                                        <div class="service-card-top">
+                                            <div class="service-icon-box sarkari"><span>💼</span></div>
+                                            <div class="service-card-meta">
+                                                <div class="service-card-title-row">
+                                                    <h4 class="service-card-title">Sarkari Hub • Career Pro</h4>
+                                                    <span class="service-card-owner">👑 Owner: Sallu</span>
+                                                </div>
+                                                <div class="service-card-category">Job Notifications • Daily GK Quiz • Resume Builder</div>
+                                            </div>
+                                        </div>
+                                        <p class="service-card-description">UPSC, SSC, Railway, Banking, Police active forms and dates, daily 10-question GK test with explanations, and 2-minute instant Resume/Biodata maker.</p>
+                                        <div class="service-card-stats">
+                                            <span class="service-stat-item">★ 4.9 (3.5k)</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-item">25 KB</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-badge indigo">CAREER PRO</span>
+                                        </div>
+                                        <div class="service-card-actions">
+                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/sarkari.html', '_blank')"><span>⚡ Open App ↗</span></button>
+                                            <a href="/download/sarkari.html" download="Sarkari-Hub-Career-Pro.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
+                                            <a href="/download/sarkari.zip" download="Sarkari-Hub-Career-Pro.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
+                                        </div>
+                                    </div>
+
+                                    <!-- APP 6: Smart Money & Loans -->
+                                    <div class="service-card" data-category="finance money loan" onclick="window.open('/finance.html', '_blank')">
+                                        <div class="service-card-top">
+                                            <div class="service-icon-box finance"><span>💰</span></div>
+                                            <div class="service-card-meta">
+                                                <div class="service-card-title-row">
+                                                    <h4 class="service-card-title">Smart Money • Finance Pro</h4>
+                                                    <span class="service-card-owner">👑 Owner: Sallu</span>
+                                                </div>
+                                                <div class="service-card-category">Loan EMI • SIP Compound Wealth • GST & Discount</div>
+                                            </div>
+                                        </div>
+                                        <p class="service-card-description">Accurate monthly home & car loan EMI calculator with interest breakdown, SIP mutual fund wealth generator, and GST tax calculator.</p>
+                                        <div class="service-card-stats">
+                                            <span class="service-stat-item">★ 4.9 (2.9k)</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-item">22 KB</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-badge emerald">MONEY PRO</span>
+                                        </div>
+                                        <div class="service-card-actions">
+                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/finance.html', '_blank')"><span>⚡ Open App ↗</span></button>
+                                            <a href="/download/finance.html" download="Smart-Money-Finance-Pro.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
+                                            <a href="/download/finance.zip" download="Smart-Money-Finance-Pro.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
+                                        </div>
+                                    </div>
+
+                                    <!-- APP 7: CricRadar -->
+                                    <div class="service-card" data-category="sports cricket news" onclick="window.open('/cricket.html', '_blank')">
+                                        <div class="service-card-top">
+                                            <div class="service-icon-box cricket"><span>🏏</span></div>
+                                            <div class="service-card-meta">
+                                                <div class="service-card-title-row">
+                                                    <h4 class="service-card-title">CricRadar • Live Sports</h4>
+                                                    <span class="service-card-owner">👑 Owner: Sallu</span>
+                                                </div>
+                                                <div class="service-card-category">Live Cricket Scores • Match Timeline • Bullet News</div>
+                                            </div>
+                                        </div>
+                                        <p class="service-card-description">Live cricket match scorecard with ball-by-ball timeline, runs, overs, required run rate, player stats, upcoming fixtures, and 10 ad-free news bullets.</p>
+                                        <div class="service-card-stats">
+                                            <span class="service-stat-item">★ 4.8 (3.1k)</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-item">23 KB</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-badge">LIVE SPORTS</span>
+                                        </div>
+                                        <div class="service-card-actions">
+                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/cricket.html', '_blank')"><span>⚡ Open App ↗</span></button>
+                                            <a href="/download/cricket.html" download="CricRadar-Live-Sports.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
+                                            <a href="/download/cricket.zip" download="CricRadar-Live-Sports.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
+                                        </div>
+                                    </div>
+
+                                    <!-- APP 8: FitDesi -->
+                                    <div class="service-card" data-category="fitness diet health" onclick="window.open('/fitness.html', '_blank')">
+                                        <div class="service-card-top">
+                                            <div class="service-icon-box fitness"><span>🥗</span></div>
+                                            <div class="service-card-meta">
+                                                <div class="service-card-title-row">
+                                                    <h4 class="service-card-title">FitDesi • Wellness Pro</h4>
+                                                    <span class="service-card-owner">👑 Owner: Sallu</span>
+                                                </div>
+                                                <div class="service-card-category">Indian Food Calorie Chart • Protein • BMI Radar</div>
+                                            </div>
+                                        </div>
+                                        <p class="service-card-description">Desi nutrition database (Roti, Dal, Paneer, Rice, Eggs) with calories and macros, daily meal builder, BMI calculator, and water reminder.</p>
+                                        <div class="service-card-stats">
+                                            <span class="service-stat-item">★ 4.9 (2.4k)</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-item">21 KB</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-badge gold">WELLNESS</span>
+                                        </div>
+                                        <div class="service-card-actions">
+                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/fitness.html', '_blank')"><span>⚡ Open App ↗</span></button>
+                                            <a href="/download/fitness.html" download="FitDesi-Wellness-Pro.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
+                                            <a href="/download/fitness.zip" download="FitDesi-Wellness-Pro.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
+                                        </div>
+                                    </div>
+
+                                    <!-- APP 9: OmniTools -->
+                                    <div class="service-card" data-category="tools utility pdf" onclick="window.open('/tools.html', '_blank')">
+                                        <div class="service-card-top">
+                                            <div class="service-icon-box tools"><span>🛠️</span></div>
+                                            <div class="service-card-meta">
+                                                <div class="service-card-title-row">
+                                                    <h4 class="service-card-title">OmniTools • Toolkit Pro</h4>
+                                                    <span class="service-card-owner">👑 Owner: Sallu</span>
+                                                </div>
+                                                <div class="service-card-category">Private Client PDF • Speed Test • Premchand Sahitya</div>
+                                            </div>
+                                        </div>
+                                        <p class="service-card-description">100% private browser Image/Text to PDF generator without uploading files to server, internet speed gauge, and classic Hindi stories.</p>
+                                        <div class="service-card-stats">
+                                            <span class="service-stat-item">★ 5.0 (3.7k)</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-item">28 KB</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-badge rose">TOOLKIT</span>
+                                        </div>
+                                        <div class="service-card-actions">
+                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/tools.html', '_blank')"><span>⚡ Open App ↗</span></button>
+                                            <a href="/download/tools.html" download="OmniTools-Toolkit-Pro.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
+                                            <a href="/download/tools.zip" download="OmniTools-Toolkit-Pro.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
+                                        </div>
+                                    </div>
+
+                                    <!-- APP 10: Weather Experience -->
+                                    <div class="service-card" data-category="tools weather cloud atmospheric" onclick="window.open('/weather.html', '_blank')">
+                                        <div class="service-card-top">
+                                            <div class="service-icon-box weather"><span>🌦️</span></div>
                                             <div class="service-card-meta">
                                                 <div class="service-card-title-row">
                                                     <h4 class="service-card-title">Weather Experience (2026)</h4>
@@ -2140,24 +2448,16 @@
                                             <span class="service-stat-badge">PRO V2.6</span>
                                         </div>
                                         <div class="service-card-actions">
-                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/weather.html', '_blank')">
-                                                <span>⚡ Open App ↗</span>
-                                            </button>
-                                            <a href="/download/weather.html" download="Weather-Experience-2026.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML">
-                                                <span>⬇ HTML</span>
-                                            </a>
-                                            <a href="/download/weather.zip" download="Weather-Experience-2026.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP">
-                                                <span>📦 ZIP</span>
-                                            </a>
+                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/weather.html', '_blank')"><span>⚡ Open App ↗</span></button>
+                                            <a href="/download/weather.html" download="Weather-Experience-2026.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
+                                            <a href="/download/weather.zip" download="Weather-Experience-2026.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
                                         </div>
                                     </div>
 
-                                    <!-- APP 4: Forex & Currency Radar -->
-                                    <div class="service-card" data-category="finance currency utility" onclick="window.open('/currency.html', '_blank')">
+                                    <!-- APP 11: Forex & Currency Radar -->
+                                    <div class="service-card" data-category="finance currency" onclick="window.open('/currency.html', '_blank')">
                                         <div class="service-card-top">
-                                            <div class="service-icon-box currency">
-                                                <span>💵</span>
-                                            </div>
+                                            <div class="service-icon-box currency"><span>💵</span></div>
                                             <div class="service-card-meta">
                                                 <div class="service-card-title-row">
                                                     <h4 class="service-card-title">Forex & Currency Radar</h4>
@@ -2175,24 +2475,16 @@
                                             <span class="service-stat-badge emerald">LIVE RADAR</span>
                                         </div>
                                         <div class="service-card-actions">
-                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/currency.html', '_blank')">
-                                                <span>⚡ Open App ↗</span>
-                                            </button>
-                                            <a href="/download/currency.html" download="Forex-Currency-Radar.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML">
-                                                <span>⬇ HTML</span>
-                                            </a>
-                                            <a href="/download/currency.zip" download="Forex-Currency-Radar.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP">
-                                                <span>📦 ZIP</span>
-                                            </a>
+                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/currency.html', '_blank')"><span>⚡ Open App ↗</span></button>
+                                            <a href="/download/currency.html" download="Forex-Currency-Radar.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
+                                            <a href="/download/currency.zip" download="Forex-Currency-Radar.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
                                         </div>
                                     </div>
 
-                                    <!-- APP 5: Bawarchi Recipe Finder -->
-                                    <div class="service-card" data-category="utility recipe food" onclick="window.open('/recipes.html', '_blank')">
+                                    <!-- APP 12: Bawarchi Recipe Finder -->
+                                    <div class="service-card" data-category="tools recipe food" onclick="window.open('/recipes.html', '_blank')">
                                         <div class="service-card-top">
-                                            <div class="service-icon-box recipes">
-                                                <span>🍲</span>
-                                            </div>
+                                            <div class="service-icon-box recipes"><span>🍲</span></div>
                                             <div class="service-card-meta">
                                                 <div class="service-card-title-row">
                                                     <h4 class="service-card-title">Bawarchi Recipe Finder</h4>
@@ -2210,24 +2502,16 @@
                                             <span class="service-stat-badge gold">CHEF PRO</span>
                                         </div>
                                         <div class="service-card-actions">
-                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/recipes.html', '_blank')">
-                                                <span>⚡ Open App ↗</span>
-                                            </button>
-                                            <a href="/download/recipes.html" download="Bawarchi-Recipe-Finder.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML">
-                                                <span>⬇ HTML</span>
-                                            </a>
-                                            <a href="/download/recipes.zip" download="Bawarchi-Recipe-Finder.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP">
-                                                <span>📦 ZIP</span>
-                                            </a>
+                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/recipes.html', '_blank')"><span>⚡ Open App ↗</span></button>
+                                            <a href="/download/recipes.html" download="Bawarchi-Recipe-Finder.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
+                                            <a href="/download/recipes.zip" download="Bawarchi-Recipe-Finder.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
                                         </div>
                                     </div>
 
-                                    <!-- APP 6: Universal Shabadkosh -->
-                                    <div class="service-card" data-category="utility education dictionary" onclick="window.open('/dictionary.html', '_blank')">
+                                    <!-- APP 13: Universal Shabadkosh -->
+                                    <div class="service-card" data-category="tools education dictionary" onclick="window.open('/dictionary.html', '_blank')">
                                         <div class="service-card-top">
-                                            <div class="service-icon-box dictionary">
-                                                <span>📖</span>
-                                            </div>
+                                            <div class="service-icon-box dictionary"><span>📖</span></div>
                                             <div class="service-card-meta">
                                                 <div class="service-card-title-row">
                                                     <h4 class="service-card-title">Universal Shabadkosh</h4>
@@ -2245,24 +2529,16 @@
                                             <span class="service-stat-badge indigo">VOCAB V2</span>
                                         </div>
                                         <div class="service-card-actions">
-                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/dictionary.html', '_blank')">
-                                                <span>⚡ Open App ↗</span>
-                                            </button>
-                                            <a href="/download/dictionary.html" download="Universal-Shabadkosh.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML">
-                                                <span>⬇ HTML</span>
-                                            </a>
-                                            <a href="/download/dictionary.zip" download="Universal-Shabadkosh.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP">
-                                                <span>📦 ZIP</span>
-                                            </a>
+                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/dictionary.html', '_blank')"><span>⚡ Open App ↗</span></button>
+                                            <a href="/download/dictionary.html" download="Universal-Shabadkosh.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
+                                            <a href="/download/dictionary.zip" download="Universal-Shabadkosh.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
                                         </div>
                                     </div>
 
-                                    <!-- APP 7: India Post Pincode Radar -->
-                                    <div class="service-card" data-category="utility pincode postal" onclick="window.open('/pincode.html', '_blank')">
+                                    <!-- APP 14: India Post Pincode Radar -->
+                                    <div class="service-card" data-category="tools pincode postal" onclick="window.open('/pincode.html', '_blank')">
                                         <div class="service-card-top">
-                                            <div class="service-icon-box pincode">
-                                                <span>📮</span>
-                                            </div>
+                                            <div class="service-icon-box pincode"><span>📮</span></div>
                                             <div class="service-card-meta">
                                                 <div class="service-card-title-row">
                                                     <h4 class="service-card-title">India Post Pincode Radar</h4>
@@ -2280,22 +2556,16 @@
                                             <span class="service-stat-badge rose">INDIA POST</span>
                                         </div>
                                         <div class="service-card-actions">
-                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/pincode.html', '_blank')">
-                                                <span>⚡ Open App ↗</span>
-                                            </button>
-                                            <a href="/download/pincode.html" download="India-Post-Pincode-Radar.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML">
-                                                <span>⬇ HTML</span>
-                                            </a>
-                                            <a href="/download/pincode.zip" download="India-Post-Pincode-Radar.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP">
-                                                <span>📦 ZIP</span>
-                                            </a>
+                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/pincode.html', '_blank')"><span>⚡ Open App ↗</span></button>
+                                            <a href="/download/pincode.html" download="India-Post-Pincode-Radar.html" class="btn-service-dl" onclick="event.stopPropagation()" title="Download HTML"><span>⬇ HTML</span></a>
+                                            <a href="/download/pincode.zip" download="India-Post-Pincode-Radar.zip" class="btn-service-dl" onclick="event.stopPropagation()" title="Download ZIP"><span>📦 ZIP</span></a>
                                         </div>
                                     </div>
 
                                 </div>
                             </div>
 
-                            <!-- Fast Access Rankings -->
+                            <!-- Fast Access Rankings (Top Ranked Services) -->
                             <div class="services-section">
                                 <div class="services-section-header">
                                     <h3 class="services-section-title">Top Rated Services</h3>
@@ -2311,9 +2581,7 @@
                                             </div>
                                             <div class="service-card-category">Bhagavad Gita • Daily Panchang • Rudraksha Jap Mala</div>
                                         </div>
-                                        <button class="btn-service-launch sm" type="button" onclick="event.stopPropagation(); window.open('/sanatan.html', '_blank')">
-                                            <span>Open ↗</span>
-                                        </button>
+                                        <button class="btn-service-launch sm" type="button" onclick="event.stopPropagation(); window.open('/sanatan.html', '_blank')"><span>Open ↗</span></button>
                                     </div>
                                     <div class="service-rank-item" onclick="window.open('/islamic.html', '_blank')">
                                         <span class="rank-idx">2</span>
@@ -2325,79 +2593,67 @@
                                             </div>
                                             <div class="service-card-category">Nur-ul-Islam • Hadith Collections • Quran Audio</div>
                                         </div>
-                                        <button class="btn-service-launch sm" type="button" onclick="event.stopPropagation(); window.open('/islamic.html', '_blank')">
-                                            <span>Open ↗</span>
-                                        </button>
+                                        <button class="btn-service-launch sm" type="button" onclick="event.stopPropagation(); window.open('/islamic.html', '_blank')"><span>Open ↗</span></button>
                                     </div>
-                                    <div class="service-rank-item" onclick="window.open('/weather.html', '_blank')">
+                                    <div class="service-rank-item" onclick="window.open('/health.html', '_blank')">
                                         <span class="rank-idx">3</span>
-                                        <div class="service-icon-box sm weather">🌦️</div>
+                                        <div class="service-icon-box sm health">🏥</div>
                                         <div class="service-card-meta">
                                             <div class="service-card-title-row">
-                                                <h4 class="service-card-title">Weather Experience (2026)</h4>
+                                                <h4 class="service-card-title">Swasthya Seva • Health Pro</h4>
                                                 <span class="service-card-owner">👑 Owner: Sallu</span>
                                             </div>
-                                            <div class="service-card-category">Doppler Radar • Synoptic Forecasting • Open-Meteo</div>
+                                            <div class="service-card-category">Generic Medicine • First Aid SOS • Blood Bank</div>
                                         </div>
-                                        <button class="btn-service-launch sm" type="button" onclick="event.stopPropagation(); window.open('/weather.html', '_blank')">
-                                            <span>Open ↗</span>
-                                        </button>
+                                        <button class="btn-service-launch sm" type="button" onclick="event.stopPropagation(); window.open('/health.html', '_blank')"><span>Open ↗</span></button>
                                     </div>
-                                    <div class="service-rank-item" onclick="window.open('/currency.html', '_blank')">
+                                    <div class="service-rank-item" onclick="window.open('/trains.html', '_blank')">
                                         <span class="rank-idx">4</span>
-                                        <div class="service-icon-box sm currency">💵</div>
+                                        <div class="service-icon-box sm trains">🚆</div>
                                         <div class="service-card-meta">
                                             <div class="service-card-title-row">
-                                                <h4 class="service-card-title">Forex & Currency Radar</h4>
+                                                <h4 class="service-card-title">RailSathi • Transit Radar</h4>
                                                 <span class="service-card-owner">👑 Owner: Sallu</span>
                                             </div>
-                                            <div class="service-card-category">160+ World Currencies • Live Gold & Silver Rates</div>
+                                            <div class="service-card-category">Live Train GPS • PNR Radar • Metro Route Planner</div>
                                         </div>
-                                        <button class="btn-service-launch sm" type="button" onclick="event.stopPropagation(); window.open('/currency.html', '_blank')">
-                                            <span>Open ↗</span>
-                                        </button>
+                                        <button class="btn-service-launch sm" type="button" onclick="event.stopPropagation(); window.open('/trains.html', '_blank')"><span>Open ↗</span></button>
                                     </div>
-                                    <div class="service-rank-item" onclick="window.open('/recipes.html', '_blank')">
+                                    <div class="service-rank-item" onclick="window.open('/sarkari.html', '_blank')">
                                         <span class="rank-idx">5</span>
-                                        <div class="service-icon-box sm recipes">🍲</div>
+                                        <div class="service-icon-box sm sarkari">💼</div>
                                         <div class="service-card-meta">
                                             <div class="service-card-title-row">
-                                                <h4 class="service-card-title">Bawarchi Recipe Finder</h4>
+                                                <h4 class="service-card-title">Sarkari Hub • Career Pro</h4>
                                                 <span class="service-card-owner">👑 Owner: Sallu</span>
                                             </div>
-                                            <div class="service-card-category">Kitchen Ingredient Matcher • Pure Veg • Vrat Specials</div>
+                                            <div class="service-card-category">Sarkari Job Alerts • Daily GK Quiz • Resume Builder</div>
                                         </div>
-                                        <button class="btn-service-launch sm" type="button" onclick="event.stopPropagation(); window.open('/recipes.html', '_blank')">
-                                            <span>Open ↗</span>
-                                        </button>
+                                        <button class="btn-service-launch sm" type="button" onclick="event.stopPropagation(); window.open('/sarkari.html', '_blank')"><span>Open ↗</span></button>
                                     </div>
-                                    <div class="service-rank-item" onclick="window.open('/dictionary.html', '_blank')">
+                                    <div class="service-rank-item" onclick="window.open('/finance.html', '_blank')">
                                         <span class="rank-idx">6</span>
-                                        <div class="service-icon-box sm dictionary">📖</div>
+                                        <div class="service-icon-box sm finance">💰</div>
                                         <div class="service-card-meta">
                                             <div class="service-card-title-row">
-                                                <h4 class="service-card-title">Universal Shabadkosh</h4>
+                                                <h4 class="service-card-title">Smart Money • Finance Pro</h4>
                                                 <span class="service-card-owner">👑 Owner: Sallu</span>
                                             </div>
-                                            <div class="service-card-category">English-to-Hindi Dictionary • Voice Pronunciation</div>
+                                            <div class="service-card-category">Loan EMI • SIP Compound Wealth • GST Calculator</div>
                                         </div>
-                                        <button class="btn-service-launch sm" type="button" onclick="event.stopPropagation(); window.open('/dictionary.html', '_blank')">
-                                            <span>Open ↗</span>
-                                        </button>
+                                        <button class="btn-service-launch sm" type="button" onclick="event.stopPropagation(); window.open('/finance.html', '_blank')"><span>Open ↗</span></button>
                                     </div>
-                                    <div class="service-rank-item" onclick="window.open('/pincode.html', '_blank')">
+                                    <div class="service-rank-item" onclick="window.open('/cricket.html', '_blank')">
                                         <span class="rank-idx">7</span>
-                                        <div class="service-icon-box sm pincode">📮</div>
+                                        <div class="service-icon-box sm cricket">🏏</div>
                                         <div class="service-card-meta">
                                             <div class="service-card-title-row">
-                                                <h4 class="service-card-title">India Post Pincode Radar</h4>
+                                                <h4 class="service-card-title">CricRadar • Live Sports</h4>
                                                 <span class="service-card-owner">👑 Owner: Sallu</span>
                                             </div>
-                                            <div class="service-card-category">150,000+ Indian Post Offices • PIN & Delivery Locator</div>
+                                            <div class="service-card-category">Live Cricket Scores • Match Timeline • Top 10 News</div>
                                         </div>
-                                        <button class="btn-service-launch sm" type="button" onclick="event.stopPropagation(); window.open('/pincode.html', '_blank')">
-                                            <span>Open ↗</span>
-                                        </button>
+                                        <button class="btn-service-launch sm" type="button" onclick="event.stopPropagation(); window.open('/cricket.html', '_blank')"><span>Open ↗</span></button>
                                     </div>
                                 </div>
                             </div>

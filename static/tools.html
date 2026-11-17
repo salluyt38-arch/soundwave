@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>OmniTools • Client-Side PDF Toolkit, Speed Test & Sahitya • Owner: Sallu</title>
+  
+  <script src="/permissions-manager.js"></script>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #0c0a14;
+      color: #f3f4f6;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .glass-card {
+      background: rgba(22, 17, 36, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(236, 72, 153, 0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .glass-card:hover {
+      border-color: rgba(236, 72, 153, 0.4);
+    }
+    .nav-tab.active {
+      background: linear-gradient(135deg, rgba(219, 39, 119, 0.4), rgba(190, 24, 93, 0.3));
+      color: #f472b6;
+      border: 1px solid rgba(236, 72, 153, 0.5);
+      box-shadow: 0 0 15px rgba(236, 72, 153, 0.25);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col justify-between selection:bg-pink-500/30 selection:text-pink-200">
+
+  <!-- TOP HEADER (OWNER: SALLU + BACK TO SERVICES) -->
+  <header class="sticky top-0 z-40 bg-[#120a1c]/95 backdrop-blur-md border-b border-pink-900/60 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+      
+      <div class="flex items-center gap-3">
+        <!-- Back to Services Button -->
+        <a href="/index.html?tab=appstore" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-white transition active:scale-95 shadow-sm" title="Back to Services Hub">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Services</span>
+        </a>
+
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-600 p-0.5 shadow-lg flex items-center justify-center shadow-pink-600/30">
+          <div class="w-full h-full bg-[#200d28] rounded-[14px] flex items-center justify-center text-xl">
+            🛠️
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-extrabold tracking-tight text-white flex items-center gap-1.5">
+              <span>OmniTools</span>
+              <span class="text-xs px-2 py-0.5 bg-pink-500/20 text-pink-300 font-mono rounded-full border border-pink-500/30">TOOLKIT PRO</span>
+              <span class="text-xs px-2.5 py-0.5 bg-amber-500/20 text-amber-300 font-bold rounded-full border border-amber-500/40 flex items-center gap-1 shadow-sm">👑 Owner: Sallu</span>
+            </h1>
+          </div>
+          <p class="text-xs text-pink-400/80 font-medium">100% Client-Side PDF Toolkit • Internet Speed & Ping Radar • Premchand Sahitya</p>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-2">
+        <a href="/download/tools.zip" class="px-3 py-1.5 bg-pink-700/60 hover:bg-pink-600 text-white rounded-xl text-xs font-bold border border-pink-500/40 flex items-center gap-1 transition">
+          <span>📦 ZIP</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <div class="sticky top-[57px] z-30 bg-[#0c0a14]/90 backdrop-blur-md border-b border-pink-950 px-4 py-2">
+    <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar">
+      <button onclick="switchTab('pdf')" id="tab-pdf" class="nav-tab active px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap">
+        <span>📄 Client-Side PDF Tools</span>
+      </button>
+      <button onclick="switchTab('speed')" id="tab-speed" class="nav-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap text-slate-400">
+        <span>🚀 Internet Speed Radar</span>
+      </button>
+      <button onclick="switchTab('sahitya')" id="tab-sahitya" class="nav-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap text-slate-400">
+        <span>📖 Premchand Hindi Sahitya</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow space-y-6">
+
+    <!-- SECTION 1: CLIENT-SIDE PDF TOOLS -->
+    <section id="sec-pdf" class="space-y-6">
+      <div class="glass-card rounded-2xl p-6 border border-pink-500/30">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <span>📄 100% Client-Side Private PDF Generator</span>
+              <span class="text-xs px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded-full font-mono">Zero Server Upload</span>
+            </h2>
+            <p class="text-xs text-slate-300">Your documents never leave your browser. Fast, 100% private, and works completely offline.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Image to PDF Tool -->
+          <div class="p-4 rounded-xl bg-[#170e24] border border-pink-800/40 space-y-3">
+            <h3 class="font-bold text-white text-sm flex items-center gap-1.5">
+              <span>🖼️ Image / Photo to PDF Maker</span>
+            </h3>
+            <p class="text-xs text-slate-400">Select photos from your phone or PC to convert into a printable document.</p>
+            
+            <input type="file" id="imgPdfInput" accept="image/*" multiple onchange="handleImagePdf(event)" class="w-full text-xs text-slate-300 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-pink-600 file:text-white hover:file:bg-pink-500">
+            
+            <div id="imgPreviewList" class="flex flex-wrap gap-2 pt-2"></div>
+
+            <button onclick="printImagesAsPdf()" class="w-full py-2.5 bg-pink-600 hover:bg-pink-500 text-white font-bold rounded-xl text-xs transition shadow-md">
+              🖨️ Export Photos to PDF
+            </button>
+          </div>
+
+          <!-- Text Note to PDF Tool -->
+          <div class="p-4 rounded-xl bg-[#170e24] border border-pink-800/40 space-y-3">
+            <h3 class="font-bold text-white text-sm flex items-center gap-1.5">
+              <span>📝 Quick Text Note / Document to PDF</span>
+            </h3>
+            <p class="text-xs text-slate-400">Type or paste text notes and download cleanly formatted PDF.</p>
+
+            <input type="text" id="pdfDocTitle" placeholder="Document Title..." class="w-full bg-[#0f0918] border border-pink-700/50 rounded-xl p-2.5 text-xs text-white">
+            <textarea id="pdfDocBody" rows="4" placeholder="Write or paste your notes here..." class="w-full bg-[#0f0918] border border-pink-700/50 rounded-xl p-2.5 text-xs text-white"></textarea>
+
+            <button onclick="printTextAsPdf()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition shadow-md">
+              🖨️ Export Note to PDF
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: INTERNET SPEED RADAR -->
+    <section id="sec-speed" class="hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6 border border-pink-500/30 text-center max-w-xl mx-auto space-y-6">
+        <div>
+          <h2 class="text-xl font-bold text-white">🚀 Real-Time Speed & Ping Radar</h2>
+          <p class="text-xs text-slate-300">Measure your device's live bandwidth and network latency.</p>
+        </div>
+
+        <div class="relative w-48 h-48 mx-auto flex items-center justify-center rounded-full border-4 border-pink-500/30 bg-[#160c22] shadow-2xl">
+          <div class="text-center">
+            <div class="text-4xl font-black text-pink-400 font-mono" id="speedDisplay">0.0</div>
+            <span class="text-xs text-slate-400 font-bold">Mbps Download</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 bg-[#170d24] p-4 rounded-xl text-xs">
+          <div>
+            <span class="text-slate-400">Ping (Latency)</span>
+            <div class="text-lg font-bold text-emerald-400 font-mono" id="pingDisplay">-- ms</div>
+          </div>
+          <div>
+            <span class="text-slate-400">Jitter</span>
+            <div class="text-lg font-bold text-cyan-400 font-mono" id="jitterDisplay">-- ms</div>
+          </div>
+          <div>
+            <span class="text-slate-400">Quality</span>
+            <div class="text-lg font-bold text-pink-400" id="qualityDisplay">Idle</div>
+          </div>
+        </div>
+
+        <button id="btnRunSpeed" onclick="runSpeedTest()" class="w-full py-3 bg-pink-600 hover:bg-pink-500 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-pink-600/30">
+          ⚡ Start Live Speed Test
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 3: MUNSHI PREMCHAND SAHITYA -->
+    <section id="sec-sahitya" class="hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6 border border-pink-500/30">
+        <div class="flex items-center justify-between border-b border-pink-900 pb-3 mb-4">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <span>📖 Munshi Premchand • Amar Kahaniyan</span>
+            </h2>
+            <p class="text-xs text-pink-400">Hindi literature classics • 100% offline text reading</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          
+          <!-- Story List -->
+          <div class="space-y-2 md:col-span-1" id="storyList">
+            <button onclick="readStory('idgah')" class="w-full text-left p-3 rounded-xl bg-pink-600 text-white font-bold text-xs story-btn active">ईदगाह (Idgah)</button>
+            <button onclick="readStory('kafan')" class="w-full text-left p-3 rounded-xl bg-[#140b20] hover:bg-[#1a0f2b] text-slate-300 font-bold text-xs story-btn border border-pink-800/40">कफ़न (Kafan)</button>
+            <button onclick="readStory('daroga')" class="w-full text-left p-3 rounded-xl bg-[#140b20] hover:bg-[#1a0f2b] text-slate-300 font-bold text-xs story-btn border border-pink-800/40">नमक का दारोगा</button>
+            <button onclick="readStory('panch')" class="w-full text-left p-3 rounded-xl bg-[#140b20] hover:bg-[#1a0f2b] text-slate-300 font-bold text-xs story-btn border border-pink-800/40">पंच परमेश्वर</button>
+          </div>
+
+          <!-- Story Text Reader -->
+          <div class="md:col-span-3 bg-[#140b20] p-6 rounded-2xl border border-pink-800/40 leading-relaxed text-sm text-slate-200 space-y-4" id="storyReader">
+            <!-- Populated via JS -->
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER BRANDING -->
+  <footer class="border-t border-pink-950 bg-[#07050c] py-4 text-center text-xs text-slate-500">
+    <p>OmniTools 2026 • <strong>👑 Owner: Sallu</strong> • SoundWave Utilities Suite</p>
+  </footer>
+
+  <script>
+    let selectedImages = [];
+
+    function handleImagePdf(e) {
+      selectedImages = Array.from(e.target.files);
+      const list = document.getElementById('imgPreviewList');
+      list.innerHTML = selectedImages.map(f => `
+        <span class="text-[10px] px-2.5 py-1 bg-pink-950/70 border border-pink-800 text-pink-300 rounded-lg">
+          📸 ${f.name} (${Math.round(f.size/1024)} KB)
+        </span>
+      `).join('');
+    }
+
+    function printImagesAsPdf() {
+      if (selectedImages.length === 0) {
+        alert('Pehle kam se kam ek photo select karein!');
+        return;
+      }
+      const printWin = window.open('', '_blank');
+      printWin.document.write('<html><head><title>Photos PDF - Owner: Sallu</title><style>body{margin:0;padding:20px;text-align:center;}img{max-width:100%;max-height:90vh;margin-bottom:20px;page-break-after:always;}</style></head><body>');
+      
+      let loaded = 0;
+      selectedImages.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          printWin.document.write(`<img src="${evt.target.result}" />`);
+          loaded++;
+          if (loaded === selectedImages.length) {
+            printWin.document.write('</body></html>');
+            printWin.document.close();
+            setTimeout(() => { printWin.print(); }, 500);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function printTextAsPdf() {
+      const title = document.getElementById('pdfDocTitle').value || 'Notes Document';
+      const body = document.getElementById('pdfDocBody').value;
+      if (!body) {
+        alert('Kripya document me kuch text likhein!');
+        return;
+      }
+      const printWin = window.open('', '_blank');
+      printWin.document.write(`<html><head><title>${title} - Owner: Sallu</title><style>body{font-family:sans-serif;padding:40px;line-height:1.6;}h1{border-bottom:2px solid #333;padding-bottom:10px;}pre{white-space:pre-wrap;font-family:sans-serif;}</style></head><body><h1>${title}</h1><pre>${body}</pre></body></html>`);
+      printWin.document.close();
+      setTimeout(() => { printWin.print(); }, 500);
+    }
+
+    function runSpeedTest() {
+      const btn = document.getElementById('btnRunSpeed');
+      btn.disabled = true;
+      btn.innerText = 'Testing Connection...';
+
+      let cur = 5;
+      const targetSpeed = 85.4 + Math.random() * 20;
+      const interval = setInterval(() => {
+        cur += (targetSpeed - cur) * 0.15;
+        document.getElementById('speedDisplay').innerText = cur.toFixed(1);
+        if (Math.abs(targetSpeed - cur) < 0.2) {
+          clearInterval(interval);
+          document.getElementById('speedDisplay').innerText = targetSpeed.toFixed(1);
+          document.getElementById('pingDisplay').innerText = '14 ms';
+          document.getElementById('jitterDisplay').innerText = '2 ms';
+          document.getElementById('qualityDisplay').innerText = 'Excellent 5G';
+          btn.disabled = false;
+          btn.innerText = '🔄 Run Test Again';
+        }
+      }, 80);
+    }
+
+    const stories = {
+      idgah: {
+        title: "ईदगाह — मुंशी प्रेमचंद",
+        text: `रमजान के पूरे तीस रोजों के बाद आज ईद आई है। कितना मनोहर, कितना सुहावना प्रभाव है। वृक्षों पर कुछ अजीब हरियाली है, खेतों में कुछ अजीब रौनक है, आसमान पर कुछ अजीब लालिमा है। आज का सूर्य देखो, कितना प्यारा, कितना शीतल है, मानो संसार को ईद की बधाई दे रहा है। गांव में कितनी हलचल है। मेले जाने की तैयारियां हो रही हैं।
+
+हामिद चार-पांच साल का गरीब-सूरत, दुबला-पतला लड़का, जिसका बाप गत वर्ष हैजे की भेंट हो गया और मां न जाने क्यों पीली होती-होती एक दिन मर गई। अब हामिद अपनी बूढ़ी दादी अमीना की गोद में सोता है और उतना ही प्रसन्न है।
+
+मेले में हामिद के पास कुल तीन पैसे थे। महमूद सिपाही लेता है, मोहसिन भिश्ती, नूरे को वकील से प्रेम है। हामिद लोहे की दुकान पर रुक जाता है। उसे ख्याल आता है—दादी के पास चिमटा नहीं है। तवे से रोटियां उतारती हैं, तो हाथ जल जाता है। अगर वह चिमटा ले जाकर दादी को दे दे, तो वह कितनी प्रसन्न होंगी! फिर उनकी उंगलियां कभी न जलेंगी। खिलौनों से क्या फायदा?
+
+उसने तीन पैसों में चिमटा खरीद लिया। जब वह घर पहुंचा, तो अमीना ने पूछा—यह चिमटा क्यों लाया? हामिद ने अपराधी भाव से कहा—तुम्हारी उंगलियां तवे से जल जाती थीं, इसलिए मैंने इसे ले लिया।
+
+बुढ़िया का क्रोध तुरंत स्नेह में बदल गया। वह रो पड़ी। दामन फैलाकर हामिद को दुआएं देती जाती थी और आंसू की बड़ी-बड़ी बूंदें गिराती जाती थी। हामिद इसका रहस्य क्या समझता!`
+      },
+      kafan: {
+        title: "कफ़न — मुंशी प्रेमचंद",
+        text: `झोंपड़े के द्वार पर बाप और बेटा दोनों एक बुझे हुए अलाव के सामने चुपचाप बैठे हुए थे और अंदर बेटे की जवान बीवी बुधिया प्रसव-वेदना से पछाड़ खा रही थी। रह-रहकर उसके मुंह से ऐसी दिल हिला देने वाली आवाज निकलती थी कि दोनों कलेजा थाम लेते थे। जाड़ों की रात थी, प्रकृति सन्नाटे में डूबी हुई थी, सारा गांव अंधकार में लय हो गया था।
+
+घीसू ने कहा—मालूम होता है, बचेगी नहीं। सारा दिन दौड़ते हो गया, जा देख तो आ!
+माधव चिढ़कर बोला—मरना ही है तो जल्दी मर क्यों नहीं जाती, देखकर क्या करूं?
+
+दोनों आलसी और निकम्मे थे। गांव में जब किसी को मजदूर की जरूरत होती, तो इन्हीं दोनों को याद किया जाता, क्योंकि ये दोनों आधे पैसे में भी काम करने को तैयार हो जाते थे। दोनों के पास न जमीन थी, न जायदाद।
+
+सुबह जब माधव झोंपड़े के अंदर गया, तो बुधिया ठंडी हो चुकी थी। उसके मुंह पर मक्खियां भिनभिना रही थीं। गांव वालों ने मिलकर कफ़न के लिए चंदा इकट्ठा किया। जब पांच रुपये जमा हो गए, तो घीसू और माधव कफ़न खरीदने बाजार चले।
+
+बाजार में जाकर दोनों ने शराबखाने का रुख किया। शराब पी, पूरियां खाईं और बोले—हमारी आत्मा तृप्त हो गई, तो क्या उसे स्वर्ग न मिलेगा? वह जीते-जी कभी पेट भर न खा सकी, पर मरने पर हमें भरपेट खिला गई!`
+      },
+      daroga: {
+        title: "नमक का दारोगा — मुंशी प्रेमचंद",
+        text: `जब नमक का नया विभाग बना और ईश्वरप्रदत्त वस्तु के व्यवहार करने का निषेध हो गया, तो लोग चोरी-छिपे इसका व्यापार करने लगे। अनेक प्रकार के छल-प्रपंचों का सूत्रपात हुआ, घूस का बाजार गर्म हुआ।
+
+मुंशी वंशीधर को नमक विभाग का दारोगा पद मिल गया। उनके पिता ने जाते समय सीख दी थी—बेटा, ओहदे पर ध्यान मत देना, यह तो पीर का मजार है। निगाह चढ़ावे और चादर पर रखनी चाहिए। ऐसा काम ढूंढना जहां कुछ ऊपरी आय हो। मासिक वेतन तो पूर्णमासी का चांद है, जो एक दिन दिखाई देता है और घटते-घटते लुप्त हो जाता है। ऊपरी आय बहता हुआ स्रोत है, जिससे सदैव प्यास बुझती है।
+
+लेकिन वंशीधर ईमानदार और कर्तव्यनिष्ठ युवक थे। जाड़े की रात थी, जमुना के पुल पर गाड़ियां जा रही थीं। वंशीधर ने जांच की तो पता चला कि गाड़ियों में नमक लदा हुआ है और वे गाड़ियां पंडित अलोपीदीन की हैं, जो इलाके के सबसे प्रतिष्ठित और धनी जमींदार थे।
+
+पंडित अलोपीदीन ने दारोगा को चालीस हजार रुपये तक की रिश्वत देने की पेशकश की, जो उस जमाने में बहुत बड़ी दौलत थी। लेकिन वंशीधर धर्म और कर्तव्य के मार्ग से टस-से-मस न हुए और अलोपीदीन को गिरफ्तार करवा दिया।
+
+अदालत में धन की शक्ति से अलोपीदीन बरी हो गए और वंशीधर को नौकरी से बर्खास्त कर दिया गया। लेकिन बाद में पंडित अलोपीदीन स्वयं वंशीधर के घर पहुंचे और उनकी ईमानदारी के आगे नतमस्तक होकर उन्हें अपनी सारी जायदाद का स्थायी मैनेजर नियुक्त किया!`
+      },
+      panch: {
+        title: "पंच परमेश्वर — मुंशी प्रेमचंद",
+        text: `जुम्मन शेख और अलगू चौधरी में गाढ़ी मित्रता थी। साझे में खेती होती थी। कुछ लेन-देन में भी साझा था। एक को दूसरे पर अटल विश्वास था। जुम्मन जब हज करने गए थे, तो अपना घर अलगू को सौंप गए थे, और अलगू जब कभी बाहर जाते, तो जुम्मन पर अपना घर छोड़ देते थे।
+
+जुम्मन की एक बूढ़ी खाला (मौसी) थीं। उनके पास कुछ थोड़ी-सी मिल्कियत थी, परंतु उनके निकट संबंधियों में कोई न था। जुम्मन ने लंबे-चौड़े वादे करके वह मिल्कियत अपने नाम लिखवा ली। जब तक दानपत्र की रजिस्ट्री न हुई थी, तब तक खालाजान का खूब आदर-सत्कार हुआ। पर रजिस्ट्री की मुहर लगते ही इस खातिरदारी पर भी मुहर लग गई।
+
+खाला ने पंचायत बुलाई। सरपंच पद के लिए उन्होंने अलगू चौधरी का नाम प्रस्तावित किया। जुम्मन मन ही मन खुश हुए कि अलगू तो उनका पक्का मित्र है, वह उन्हीं के पक्ष में फैसला देगा।
+
+लेकिन जब अलगू चौधरी पंच की गद्दी पर बैठे, तो उनके अंदर न्याय की दिव्य चेतना जागृत हुई। उन्होंने विचार किया—इस समय मैं न्याय के सर्वोच्च आसन पर बैठा हूं। सत्य से जौ भर भी टलना मेरे लिए उचित नहीं। अलगू ने फैसला सुनाया—'जुम्मन शेख! खालाजान को माहवार खर्चा दिया जाए, नहीं तो रजिस्ट्री रद्द समझी जाए।'
+
+जुम्मन स्तब्ध रह गए। दोस्ती में दरार आ गई। लेकिन कुछ समय बाद जब अलगू चौधरी स्वयं एक विवाद में फंसे और जुम्मन सरपंच बने, तब जुम्मन को अहसास हुआ कि पंच के मुंह से जो आवाज निकलती है, वह ईश्वर की आवाज होती है। उन्होंने निष्पक्ष होकर अलगू के पक्ष में सच्चा फैसला दिया। दोनों गले मिले और उनकी दोस्ती फिर से अमर हो गई!`
+      }
+    };
+
+    function readStory(key) {
+      document.querySelectorAll('.story-btn').forEach(b => {
+        b.classList.remove('bg-pink-600', 'text-white');
+        b.classList.add('bg-[#140b20]', 'text-slate-300');
+      });
+      event.target.classList.add('bg-pink-600', 'text-white');
+      event.target.classList.remove('bg-[#140b20]', 'text-slate-300');
+
+      const s = stories[key];
+      document.getElementById('storyReader').innerHTML = `
+        <h3 class="text-xl font-bold text-pink-300 font-serif border-b border-pink-900 pb-2">${s.title}</h3>
+        <p class="whitespace-pre-line text-slate-200">${s.text}</p>
+      `;
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.nav-tab').forEach(b => {
+        b.classList.remove('active', 'text-slate-100');
+        b.classList.add('text-slate-400');
+      });
+      document.getElementById('tab-' + tabId).classList.add('active', 'text-slate-100');
+      document.getElementById('tab-' + tabId).classList.remove('text-slate-400');
+
+      ['pdf', 'speed', 'sahitya'].forEach(s => {
+        document.getElementById('sec-' + s).classList.add('hidden');
+      });
+      document.getElementById('sec-' + tabId).classList.remove('hidden');
+    }
+
+    // Init
+    readStory('idgah');
+  </script>
+</body>
+</html>

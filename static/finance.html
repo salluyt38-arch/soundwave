@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Smart Money • Loan EMI, SIP Compound & GST Calculator • Owner: Sallu</title>
+  
+  <script src="/permissions-manager.js"></script>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #070e0a;
+      color: #f3f4f6;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .glass-card {
+      background: rgba(13, 27, 19, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .glass-card:hover {
+      border-color: rgba(34, 197, 94, 0.4);
+    }
+    .nav-tab.active {
+      background: linear-gradient(135deg, rgba(22, 163, 74, 0.4), rgba(21, 128, 61, 0.3));
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.5);
+      box-shadow: 0 0 15px rgba(34, 197, 94, 0.25);
+    }
+    input[type=range] {
+      accent-color: #22c55e;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col justify-between selection:bg-emerald-500/30 selection:text-emerald-200">
+
+  <!-- TOP HEADER (OWNER: SALLU + BACK TO SERVICES) -->
+  <header class="sticky top-0 z-40 bg-[#07150e]/95 backdrop-blur-md border-b border-emerald-900/60 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+      
+      <div class="flex items-center gap-3">
+        <!-- Back to Services Button -->
+        <a href="/index.html?tab=appstore" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-white transition active:scale-95 shadow-sm" title="Back to Services Hub">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Services</span>
+        </a>
+
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-green-600 p-0.5 shadow-lg flex items-center justify-center shadow-emerald-600/30">
+          <div class="w-full h-full bg-[#0d2216] rounded-[14px] flex items-center justify-center text-xl">
+            💰
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-extrabold tracking-tight text-white flex items-center gap-1.5">
+              <span>Smart Money</span>
+              <span class="text-xs px-2 py-0.5 bg-emerald-500/20 text-emerald-300 font-mono rounded-full border border-emerald-500/30">FINANCE PRO</span>
+              <span class="text-xs px-2.5 py-0.5 bg-amber-500/20 text-amber-300 font-bold rounded-full border border-amber-500/40 flex items-center gap-1 shadow-sm">👑 Owner: Sallu</span>
+            </h1>
+          </div>
+          <p class="text-xs text-emerald-400/80 font-medium">Home & Car Loan EMI • SIP Compound Wealth • GST & Discount Calculator</p>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-2">
+        <a href="/download/finance.zip" class="px-3 py-1.5 bg-emerald-700/60 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold border border-emerald-500/40 flex items-center gap-1 transition">
+          <span>📦 ZIP</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <div class="sticky top-[57px] z-30 bg-[#070e0a]/90 backdrop-blur-md border-b border-emerald-950 px-4 py-2">
+    <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar">
+      <button onclick="switchTab('emi')" id="tab-emi" class="nav-tab active px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap">
+        <span>🏠 Smart EMI & Loan Calculator</span>
+      </button>
+      <button onclick="switchTab('sip')" id="tab-sip" class="nav-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap text-slate-400">
+        <span>📈 SIP Wealth & Compound Growth</span>
+      </button>
+      <button onclick="switchTab('gst')" id="tab-gst" class="nav-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap text-slate-400">
+        <span>🧾 GST & Discount Calculator</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow space-y-6">
+
+    <!-- SECTION 1: SMART LOAN EMI CALCULATOR -->
+    <section id="sec-emi" class="space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Controls -->
+        <div class="glass-card rounded-2xl p-6 border border-emerald-500/30 space-y-5">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <span>🏠 Loan & EMI Calculator</span>
+          </h2>
+
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-300">Loan Amount (मूलधन)</span>
+              <span class="font-bold text-emerald-400 font-mono text-sm" id="lblLoanAmt">₹25,00,000</span>
+            </div>
+            <input type="range" id="rngLoanAmt" min="50000" max="10000000" step="50000" value="2500000" oninput="calculateEMI()" class="w-full">
+            <div class="flex justify-between text-[10px] text-slate-500 mt-1"><span>₹50K</span><span>₹50L</span><span>₹1 Crore</span></div>
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-300">Interest Rate (% per annum)</span>
+              <span class="font-bold text-emerald-400 font-mono text-sm" id="lblInterest">8.5%</span>
+            </div>
+            <input type="range" id="rngInterest" min="5" max="24" step="0.1" value="8.5" oninput="calculateEMI()" class="w-full">
+            <div class="flex justify-between text-[10px] text-slate-500 mt-1"><span>5%</span><span>12%</span><span>24%</span></div>
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-300">Loan Tenure (लोन अवधि)</span>
+              <span class="font-bold text-emerald-400 font-mono text-sm" id="lblTenure">15 Years (180 Mos)</span>
+            </div>
+            <input type="range" id="rngTenure" min="1" max="30" step="1" value="15" oninput="calculateEMI()" class="w-full">
+            <div class="flex justify-between text-[10px] text-slate-500 mt-1"><span>1 Year</span><span>15 Years</span><span>30 Years</span></div>
+          </div>
+        </div>
+
+        <!-- Result Breakdown Card -->
+        <div class="glass-card rounded-2xl p-6 border border-emerald-500/30 flex flex-col justify-between">
+          <div>
+            <span class="text-xs text-slate-400">Monthly EMI Payable</span>
+            <div class="text-4xl font-extrabold text-emerald-400 font-mono mt-1" id="resEmi">₹24,628</div>
+            <p class="text-xs text-slate-400 mt-1">Total 180 monthly installments</p>
+
+            <div class="grid grid-cols-2 gap-3 bg-[#0a1b12] p-4 rounded-xl mt-5 text-xs">
+              <div>
+                <span class="text-slate-400">Total Interest (कुल ब्याज)</span>
+                <div class="text-lg font-bold text-amber-400 font-mono mt-0.5" id="resTotalInterest">₹19,33,040</div>
+              </div>
+              <div>
+                <span class="text-slate-400">Total Payment (मूलधन + ब्याज)</span>
+                <div class="text-lg font-bold text-white font-mono mt-0.5" id="resTotalPayment">₹44,33,040</div>
+              </div>
+            </div>
+
+            <!-- Visual Proportion Bar -->
+            <div class="mt-4">
+              <div class="flex justify-between text-[11px] mb-1">
+                <span class="text-emerald-400 font-semibold" id="resPctPrincipal">Principal: 56.4%</span>
+                <span class="text-amber-400 font-semibold" id="resPctInterest">Interest: 43.6%</span>
+              </div>
+              <div class="w-full h-3 rounded-full bg-amber-500 overflow-hidden flex">
+                <div id="barPrincipal" class="h-full bg-emerald-500" style="width: 56.4%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-emerald-950 text-xs text-slate-400 flex justify-between items-center">
+            <span>💡 Lower interest by just 0.5% saves thousands in interest!</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 2: SIP COMPOUND WEALTH CALCULATOR -->
+    <section id="sec-sip" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <div class="glass-card rounded-2xl p-6 border border-emerald-500/30 space-y-5">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <span>📈 SIP Compound Wealth Calculator</span>
+          </h2>
+
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-300">Monthly Investment (मासिक बचत)</span>
+              <span class="font-bold text-emerald-400 font-mono text-sm" id="lblSipAmt">₹5,000 / mo</span>
+            </div>
+            <input type="range" id="rngSipAmt" min="500" max="100000" step="500" value="5000" oninput="calculateSIP()" class="w-full">
+            <div class="flex justify-between text-[10px] text-slate-500 mt-1"><span>₹500</span><span>₹25,000</span><span>₹1,00,000</span></div>
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-300">Expected Annual Return Rate (CAGR %)</span>
+              <span class="font-bold text-emerald-400 font-mono text-sm" id="lblSipRate">12.0%</span>
+            </div>
+            <input type="range" id="rngSipRate" min="6" max="25" step="0.5" value="12" oninput="calculateSIP()" class="w-full">
+            <div class="flex justify-between text-[10px] text-slate-500 mt-1"><span>6% (FD)</span><span>12% (Index)</span><span>20% (Midcap)</span></div>
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-300">Time Horizon (निवेश की अवधि)</span>
+              <span class="font-bold text-emerald-400 font-mono text-sm" id="lblSipYears">15 Years</span>
+            </div>
+            <input type="range" id="rngSipYears" min="1" max="35" step="1" value="15" oninput="calculateSIP()" class="w-full">
+            <div class="flex justify-between text-[10px] text-slate-500 mt-1"><span>1 Yr</span><span>15 Yrs</span><span>35 Yrs</span></div>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 border border-emerald-500/30 flex flex-col justify-between">
+          <div>
+            <span class="text-xs text-slate-400">Total Future Corpus (अनुमानित कुल राशि)</span>
+            <div class="text-4xl font-extrabold text-emerald-400 font-mono mt-1" id="resSipTotal">₹25,22,880</div>
+            <p class="text-xs text-slate-400 mt-1">Power of compounding over 15 years</p>
+
+            <div class="grid grid-cols-2 gap-3 bg-[#0a1b12] p-4 rounded-xl mt-5 text-xs">
+              <div>
+                <span class="text-slate-400">Amount Invested (आपने जमा किया)</span>
+                <div class="text-lg font-bold text-white font-mono mt-0.5" id="resSipInvested">₹9,00,000</div>
+              </div>
+              <div>
+                <span class="text-slate-400">Wealth Gain (कंपाउंडिंग मुनाफा)</span>
+                <div class="text-lg font-bold text-emerald-300 font-mono mt-0.5" id="resSipGain">₹16,22,880</div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <div class="flex justify-between text-[11px] mb-1">
+                <span class="text-slate-300 font-semibold" id="resPctSipInvested">Invested: 35.7%</span>
+                <span class="text-emerald-400 font-semibold" id="resPctSipGain">Gains: 64.3%</span>
+              </div>
+              <div class="w-full h-3 rounded-full bg-slate-700 overflow-hidden flex">
+                <div id="barSipInvested" class="h-full bg-slate-500" style="width: 35.7%;"></div>
+                <div id="barSipGain" class="h-full bg-emerald-500" style="width: 64.3%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-emerald-950 text-xs text-emerald-400 flex items-center gap-1.5">
+            <span>🚀 Har mahine sirf ₹5,000 ki SIP 15 saal me ₹25 Lakh ban sakti hai!</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 3: GST & DISCOUNT CALCULATOR -->
+    <section id="sec-gst" class="hidden space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- GST Calculator -->
+        <div class="glass-card rounded-2xl p-6 border border-emerald-500/30 space-y-4">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <span>🧾 GST Calculator (CGST + SGST)</span>
+          </h2>
+
+          <div class="text-xs">
+            <label class="block text-slate-300 mb-1">Base Amount (₹)</label>
+            <input type="number" id="gstAmount" value="1000" oninput="calculateGST()" class="w-full bg-[#0a1811] border border-emerald-700/50 rounded-xl p-3 text-white font-mono text-base focus:outline-none">
+          </div>
+
+          <div class="text-xs">
+            <label class="block text-slate-300 mb-1">GST Tax Rate Slab</label>
+            <div class="grid grid-cols-4 gap-2">
+              <button onclick="setGstRate(5, this)" class="gst-btn py-2 rounded-xl bg-[#0a1811] border border-emerald-700/40 text-slate-300 font-bold hover:bg-emerald-600/30">5%</button>
+              <button onclick="setGstRate(12, this)" class="gst-btn py-2 rounded-xl bg-[#0a1811] border border-emerald-700/40 text-slate-300 font-bold hover:bg-emerald-600/30">12%</button>
+              <button onclick="setGstRate(18, this)" class="gst-btn active py-2 rounded-xl bg-emerald-600 text-white font-bold">18%</button>
+              <button onclick="setGstRate(28, this)" class="gst-btn py-2 rounded-xl bg-[#0a1811] border border-emerald-700/40 text-slate-300 font-bold hover:bg-emerald-600/30">28%</button>
+            </div>
+          </div>
+
+          <div class="flex gap-2 text-xs pt-1">
+            <button onclick="setGstMode('add', this)" class="gst-mode active flex-1 py-2 rounded-xl bg-emerald-600 text-white font-bold">Add GST (+)</button>
+            <button onclick="setGstMode('remove', this)" class="gst-mode flex-1 py-2 rounded-xl bg-[#0a1811] border border-emerald-700/40 text-slate-300 font-bold">Remove GST (-)</button>
+          </div>
+
+          <div class="bg-[#0a1b12] p-4 rounded-xl text-xs space-y-2 mt-4">
+            <div class="flex justify-between"><span class="text-slate-400">Net Amount:</span><span class="font-bold text-white font-mono" id="resGstNet">₹1,000.00</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">CGST + SGST:</span><span class="font-bold text-amber-400 font-mono" id="resGstTax">₹180.00</span></div>
+            <div class="flex justify-between pt-2 border-t border-emerald-900 text-sm"><span class="font-bold text-slate-200">Total Invoice:</span><span class="font-bold text-emerald-400 font-mono" id="resGstTotal">₹1,180.00</span></div>
+          </div>
+        </div>
+
+        <!-- Discount & Shopping Calculator -->
+        <div class="glass-card rounded-2xl p-6 border border-emerald-500/30 space-y-4">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <span>🏷️ Discount & Shopping Savings</span>
+          </h2>
+
+          <div class="text-xs">
+            <label class="block text-slate-300 mb-1">Original Price / MRP (₹)</label>
+            <input type="number" id="discOriginal" value="2500" oninput="calculateDiscount()" class="w-full bg-[#0a1811] border border-emerald-700/50 rounded-xl p-3 text-white font-mono text-base focus:outline-none">
+          </div>
+
+          <div class="text-xs">
+            <label class="block text-slate-300 mb-1">Discount Percentage (%)</label>
+            <input type="number" id="discPercent" value="25" min="0" max="100" oninput="calculateDiscount()" class="w-full bg-[#0a1811] border border-emerald-700/50 rounded-xl p-3 text-white font-mono text-base focus:outline-none">
+          </div>
+
+          <div class="bg-[#0a1b12] p-4 rounded-xl text-xs space-y-2 mt-4">
+            <div class="flex justify-between"><span class="text-slate-400">You Save (बचत):</span><span class="font-bold text-emerald-400 font-mono text-base" id="resDiscSaved">₹625.00</span></div>
+            <div class="flex justify-between pt-2 border-t border-emerald-900 text-sm"><span class="font-bold text-slate-200">Final Price to Pay:</span><span class="font-bold text-amber-300 font-mono text-lg" id="resDiscFinal">₹1,875.00</span></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER BRANDING -->
+  <footer class="border-t border-emerald-950 bg-[#050a08] py-4 text-center text-xs text-slate-500">
+    <p>Smart Money Calculator 2026 • <strong>👑 Owner: Sallu</strong> • SoundWave Financial Suite</p>
+  </footer>
+
+  <script>
+    function fmt(n) {
+      return '₹' + Math.round(n).toLocaleString('en-IN');
+    }
+
+    function calculateEMI() {
+      const p = parseFloat(document.getElementById('rngLoanAmt').value);
+      const r = parseFloat(document.getElementById('rngInterest').value) / (12 * 100);
+      const y = parseFloat(document.getElementById('rngTenure').value);
+      const n = y * 12;
+
+      document.getElementById('lblLoanAmt').innerText = fmt(p);
+      document.getElementById('lblInterest').innerText = document.getElementById('rngInterest').value + '%';
+      document.getElementById('lblTenure').innerText = `${y} Years (${n} Mos)`;
+
+      const emi = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+      const totalPay = emi * n;
+      const totalInt = totalPay - p;
+
+      document.getElementById('resEmi').innerText = fmt(emi);
+      document.getElementById('resTotalInterest').innerText = fmt(totalInt);
+      document.getElementById('resTotalPayment').innerText = fmt(totalPay);
+
+      const pPct = ((p / totalPay) * 100).toFixed(1);
+      const iPct = (100 - pPct).toFixed(1);
+      document.getElementById('resPctPrincipal').innerText = `Principal: ${pPct}%`;
+      document.getElementById('resPctInterest').innerText = `Interest: ${iPct}%`;
+      document.getElementById('barPrincipal').style.width = pPct + '%';
+    }
+
+    function calculateSIP() {
+      const m = parseFloat(document.getElementById('rngSipAmt').value);
+      const rate = parseFloat(document.getElementById('rngSipRate').value) / 100;
+      const y = parseFloat(document.getElementById('rngSipYears').value);
+      const n = y * 12;
+      const i = rate / 12;
+
+      document.getElementById('lblSipAmt').innerText = fmt(m) + ' / mo';
+      document.getElementById('lblSipRate').innerText = document.getElementById('rngSipRate').value + '%';
+      document.getElementById('lblSipYears').innerText = `${y} Years`;
+
+      const fv = m * ((Math.pow(1 + i, n) - 1) / i) * (1 + i);
+      const invested = m * n;
+      const gain = fv - invested;
+
+      document.getElementById('resSipTotal').innerText = fmt(fv);
+      document.getElementById('resSipInvested').innerText = fmt(invested);
+      document.getElementById('resSipGain').innerText = fmt(gain);
+
+      const invPct = ((invested / fv) * 100).toFixed(1);
+      const gainPct = (100 - invPct).toFixed(1);
+      document.getElementById('resPctSipInvested').innerText = `Invested: ${invPct}%`;
+      document.getElementById('resPctSipGain').innerText = `Gains: ${gainPct}%`;
+      document.getElementById('barSipInvested').style.width = invPct + '%';
+      document.getElementById('barSipGain').style.width = gainPct + '%';
+    }
+
+    let currentGstRate = 18;
+    let currentGstMode = 'add';
+
+    function setGstRate(rate, btn) {
+      currentGstRate = rate;
+      document.querySelectorAll('.gst-btn').forEach(b => {
+        b.classList.remove('bg-emerald-600', 'text-white');
+        b.classList.add('bg-[#0a1811]', 'text-slate-300');
+      });
+      btn.classList.add('bg-emerald-600', 'text-white');
+      btn.classList.remove('bg-[#0a1811]', 'text-slate-300');
+      calculateGST();
+    }
+
+    function setGstMode(mode, btn) {
+      currentGstMode = mode;
+      document.querySelectorAll('.gst-mode').forEach(b => {
+        b.classList.remove('bg-emerald-600', 'text-white');
+        b.classList.add('bg-[#0a1811]', 'text-slate-300');
+      });
+      btn.classList.add('bg-emerald-600', 'text-white');
+      btn.classList.remove('bg-[#0a1811]', 'text-slate-300');
+      calculateGST();
+    }
+
+    function calculateGST() {
+      const amt = parseFloat(document.getElementById('gstAmount').value) || 0;
+      let net, tax, total;
+      if (currentGstMode === 'add') {
+        net = amt;
+        tax = (amt * currentGstRate) / 100;
+        total = net + tax;
+      } else {
+        total = amt;
+        net = (amt * 100) / (100 + currentGstRate);
+        tax = total - net;
+      }
+      document.getElementById('resGstNet').innerText = fmt(net);
+      document.getElementById('resGstTax').innerText = fmt(tax);
+      document.getElementById('resGstTotal').innerText = fmt(total);
+    }
+
+    function calculateDiscount() {
+      const orig = parseFloat(document.getElementById('discOriginal').value) || 0;
+      const disc = parseFloat(document.getElementById('discPercent').value) || 0;
+      const saved = (orig * disc) / 100;
+      const finalPrice = Math.max(0, orig - saved);
+      document.getElementById('resDiscSaved').innerText = fmt(saved);
+      document.getElementById('resDiscFinal').innerText = fmt(finalPrice);
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.nav-tab').forEach(b => {
+        b.classList.remove('active', 'text-slate-100');
+        b.classList.add('text-slate-400');
+      });
+      document.getElementById('tab-' + tabId).classList.add('active', 'text-slate-100');
+      document.getElementById('tab-' + tabId).classList.remove('text-slate-400');
+
+      ['emi', 'sip', 'gst'].forEach(s => {
+        document.getElementById('sec-' + s).classList.add('hidden');
+      });
+      document.getElementById('sec-' + tabId).classList.remove('hidden');
+    }
+
+    // Init
+    calculateEMI();
+    calculateSIP();
+    calculateGST();
+    calculateDiscount();
+  </script>
+</body>
+</html>

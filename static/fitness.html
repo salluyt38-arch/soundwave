@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>FitDesi • Indian Food Calorie Counter & BMI Radar • Owner: Sallu</title>
+  
+  <script src="/permissions-manager.js"></script>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #0b0e07;
+      color: #f3f4f6;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .glass-card {
+      background: rgba(18, 26, 12, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(132, 204, 22, 0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .glass-card:hover {
+      border-color: rgba(132, 204, 22, 0.4);
+    }
+    .nav-tab.active {
+      background: linear-gradient(135deg, rgba(101, 163, 13, 0.4), rgba(77, 124, 15, 0.3));
+      color: #bef264;
+      border: 1px solid rgba(132, 204, 22, 0.5);
+      box-shadow: 0 0 15px rgba(132, 204, 22, 0.25);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col justify-between selection:bg-lime-500/30 selection:text-lime-200">
+
+  <!-- TOP HEADER (OWNER: SALLU + BACK TO SERVICES) -->
+  <header class="sticky top-0 z-40 bg-[#0e160a]/95 backdrop-blur-md border-b border-lime-900/60 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+      
+      <div class="flex items-center gap-3">
+        <!-- Back to Services Button -->
+        <a href="/index.html?tab=appstore" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-white transition active:scale-95 shadow-sm" title="Back to Services Hub">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Services</span>
+        </a>
+
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-lime-500 to-green-600 p-0.5 shadow-lg flex items-center justify-center shadow-lime-600/30">
+          <div class="w-full h-full bg-[#15220f] rounded-[14px] flex items-center justify-center text-xl">
+            🥗
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-extrabold tracking-tight text-white flex items-center gap-1.5">
+              <span>FitDesi</span>
+              <span class="text-xs px-2 py-0.5 bg-lime-500/20 text-lime-300 font-mono rounded-full border border-lime-500/30">FITNESS PRO</span>
+              <span class="text-xs px-2.5 py-0.5 bg-amber-500/20 text-amber-300 font-bold rounded-full border border-amber-500/40 flex items-center gap-1 shadow-sm">👑 Owner: Sallu</span>
+            </h1>
+          </div>
+          <p class="text-xs text-lime-400/80 font-medium">Indian Food Calorie & Protein Chart • BMI & Ideal Weight • Water Tracker</p>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-2">
+        <a href="/download/fitness.zip" class="px-3 py-1.5 bg-lime-700/60 hover:bg-lime-600 text-white rounded-xl text-xs font-bold border border-lime-500/40 flex items-center gap-1 transition">
+          <span>📦 ZIP</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <div class="sticky top-[57px] z-30 bg-[#0b0e07]/90 backdrop-blur-md border-b border-lime-950 px-4 py-2">
+    <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar">
+      <button onclick="switchTab('calorie')" id="tab-calorie" class="nav-tab active px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap">
+        <span>🥗 Desi Food Calorie & Protein</span>
+      </button>
+      <button onclick="switchTab('bmi')" id="tab-bmi" class="nav-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap text-slate-400">
+        <span>⚖️ BMI & Ideal Weight Radar</span>
+      </button>
+      <button onclick="switchTab('water')" id="tab-water" class="nav-tab px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap text-slate-400">
+        <span>💧 Daily Water Intake Reminder</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow space-y-6">
+
+    <!-- SECTION 1: DESI FOOD CALORIE & PROTEIN -->
+    <section id="sec-calorie" class="space-y-6">
+      
+      <!-- Search & Meal Builder Banner -->
+      <div class="glass-card rounded-2xl p-5 border border-lime-500/30">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <span>🥗 Indian Food Calorie & Protein Chart</span>
+            </h2>
+            <p class="text-xs text-slate-300">Click "+" to add foods to today's meal total.</p>
+          </div>
+          <div class="bg-[#12200e] px-4 py-2 rounded-xl border border-lime-700/50 text-right">
+            <span class="text-[10px] text-slate-400">Meal Total</span>
+            <div class="text-lg font-bold font-mono text-lime-400" id="totalMealDisplay">0 kcal • 0g Protein</div>
+          </div>
+        </div>
+
+        <input type="text" id="foodSearch" oninput="searchFood()" placeholder="Search food (e.g. Roti, Dal, Paneer, Rice, Egg, Dahi, Chicken, Idli)..." class="w-full bg-[#0d1609] border border-lime-600/40 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-lime-400 transition shadow-inner">
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="foodGrid">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- SECTION 2: BMI & IDEAL WEIGHT RADAR -->
+    <section id="sec-bmi" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <div class="glass-card rounded-2xl p-6 border border-lime-500/30 space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <span>⚖️ Calculate BMI (Body Mass Index)</span>
+          </h2>
+
+          <div class="text-xs">
+            <label class="block text-slate-300 mb-1">Height (in Centimeters)</label>
+            <input type="number" id="bmiHeight" value="172" min="100" max="230" oninput="calcBMI()" class="w-full bg-[#0e160a] border border-lime-700/50 rounded-xl p-3 text-white font-mono text-base">
+          </div>
+
+          <div class="text-xs">
+            <label class="block text-slate-300 mb-1">Weight (in Kilograms)</label>
+            <input type="number" id="bmiWeight" value="68" min="30" max="200" oninput="calcBMI()" class="w-full bg-[#0e160a] border border-lime-700/50 rounded-xl p-3 text-white font-mono text-base">
+          </div>
+
+          <div class="text-xs">
+            <label class="block text-slate-300 mb-1">Age & Gender</label>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="number" id="bmiAge" value="25" min="10" max="100" class="w-full bg-[#0e160a] border border-lime-700/50 rounded-xl p-2.5 text-white font-mono" placeholder="Age (years)">
+              <select id="bmiGender" class="w-full bg-[#0e160a] border border-lime-700/50 rounded-xl p-2.5 text-white">
+                <option value="male">Male (पुरुष)</option>
+                <option value="female">Female (महिला)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 border border-lime-500/30 flex flex-col justify-between">
+          <div>
+            <span class="text-xs text-slate-400">Your Body Mass Index (BMI)</span>
+            <div class="text-4xl font-extrabold text-lime-400 font-mono mt-1" id="resBmiVal">23.0</div>
+            <span class="inline-block mt-1 px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-xl text-xs font-bold" id="resBmiCat">NORMAL WEIGHT (स्वस्थ वजन)</span>
+
+            <div class="grid grid-cols-2 gap-3 bg-[#111e0c] p-4 rounded-xl mt-5 text-xs">
+              <div>
+                <span class="text-slate-400">Ideal Weight Range:</span>
+                <div class="text-base font-bold text-white mt-0.5" id="resIdealWeight">55 - 74 kg</div>
+              </div>
+              <div>
+                <span class="text-slate-400">Daily Calorie Target:</span>
+                <div class="text-base font-bold text-lime-300 mt-0.5" id="resDailyCal">~2,150 kcal</div>
+              </div>
+            </div>
+
+            <!-- BMI Scale Graphic -->
+            <div class="mt-4">
+              <div class="flex justify-between text-[10px] text-slate-400 mb-1">
+                <span>Underweight (&lt;18.5)</span>
+                <span>Normal (18.5-24.9)</span>
+                <span>Overweight (25-29.9)</span>
+                <span>Obese (30+)</span>
+              </div>
+              <div class="w-full h-2.5 rounded-full overflow-hidden flex">
+                <div class="h-full bg-sky-500 w-[25%]"></div>
+                <div class="h-full bg-emerald-500 w-[30%]"></div>
+                <div class="h-full bg-amber-500 w-[25%]"></div>
+                <div class="h-full bg-red-500 w-[20%]"></div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-400 mt-4 pt-3 border-t border-lime-950">💡 WHO standards consider a BMI between 18.5 and 24.9 optimal for long-term cardiovascular health.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 3: DAILY WATER INTAKE TRACKER -->
+    <section id="sec-water" class="hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6 border border-cyan-500/30 text-center max-w-xl mx-auto space-y-4">
+        <h2 class="text-xl font-bold text-white">💧 Daily Water Intake Reminder</h2>
+        <p class="text-xs text-slate-300">Tap each glass when you drink a glass of water (Target: 8 glasses = 2 Litres).</p>
+
+        <div class="text-4xl font-extrabold text-cyan-400 font-mono" id="waterScore">0 / 8 Glasses</div>
+        <p class="text-xs text-cyan-300" id="waterLitre">0.0 / 2.0 Litres</p>
+
+        <div class="grid grid-cols-4 gap-3 my-4" id="glassesGrid">
+          <!-- 8 clickable glass icons -->
+        </div>
+
+        <button onclick="resetWater()" class="px-4 py-2 rounded-xl bg-slate-800 text-xs text-slate-300 hover:text-white">
+          🔄 Reset Today's Tracker
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER BRANDING -->
+  <footer class="border-t border-lime-950 bg-[#070a04] py-4 text-center text-xs text-slate-500">
+    <p>FitDesi Health Radar 2026 • <strong>👑 Owner: Sallu</strong> • SoundWave Wellness</p>
+  </footer>
+
+  <script>
+    const foods = [
+      { name: "Roti (Whole Wheat Chapati)", portion: "1 Medium Roti", cal: 104, pro: 3.1, carb: 20, fat: 0.9 },
+      { name: "Dal Tadka (Toor / Moong)", portion: "1 Bowl (150g)", cal: 148, pro: 8.5, carb: 22, fat: 3.5 },
+      { name: "Paneer Bhurji / Sabzi", portion: "1 Bowl (150g)", cal: 265, pro: 16.5, carb: 6, fat: 19 },
+      { name: "White Cooked Rice (Chawal)", portion: "1 Medium Bowl (150g)", cal: 195, pro: 4.0, carb: 43, fat: 0.4 },
+      { name: "Dahi / Curd (Plain Yogurt)", portion: "1 Bowl (150g)", cal: 98, pro: 5.5, carb: 7, fat: 4.5 },
+      { name: "Boiled Eggs", portion: "2 Whole Eggs", cal: 155, pro: 13.0, carb: 1.1, fat: 10.6 },
+      { name: "Chicken Breast / Curry", portion: "100g Cooked", cal: 165, pro: 31.0, carb: 0, fat: 3.6 },
+      { name: "Chole / Chickpeas Masala", portion: "1 Bowl (150g)", cal: 220, pro: 11.5, carb: 35, fat: 4.2 },
+      { name: "Rajma (Kidney Beans)", portion: "1 Bowl (150g)", cal: 210, pro: 12.0, carb: 34, fat: 3.8 },
+      { name: "Idli (Steamed)", portion: "2 Pieces", cal: 130, pro: 4.0, carb: 28, fat: 0.4 },
+      { name: "Plain Dosa", portion: "1 Medium Dosa", cal: 168, pro: 3.8, carb: 29, fat: 3.7 },
+      { name: "Sprouts Salad (Moong)", portion: "1 Bowl (100g)", cal: 105, pro: 7.8, carb: 18, fat: 0.8 }
+    ];
+
+    let totalMealCal = 0;
+    let totalMealPro = 0;
+
+    function renderFoods(list) {
+      document.getElementById('foodGrid').innerHTML = list.map(f => `
+        <div class="glass-card rounded-2xl p-4 border border-lime-500/20 hover:border-lime-500/40 transition">
+          <div class="flex items-start justify-between gap-2 mb-1">
+            <h3 class="font-bold text-white text-sm">${f.name}</h3>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-lime-500/20 text-lime-300 font-bold font-mono">${f.cal} kcal</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mb-3">Portion: ${f.portion}</p>
+          <div class="grid grid-cols-3 gap-2 bg-[#0e1a0b] p-2.5 rounded-xl text-center text-xs mb-3">
+            <div><span class="text-[10px] text-slate-400 block">Protein</span><strong class="text-emerald-400">${f.pro}g</strong></div>
+            <div><span class="text-[10px] text-slate-400 block">Carbs</span><strong class="text-amber-400">${f.carb}g</strong></div>
+            <div><span class="text-[10px] text-slate-400 block">Fats</span><strong class="text-red-400">${f.fat}g</strong></div>
+          </div>
+          <button onclick="addToMeal(${f.cal}, ${f.pro})" class="w-full py-1.5 rounded-xl bg-lime-700/60 hover:bg-lime-600 text-white font-bold text-xs transition">
+            + Add to Today's Meal
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function addToMeal(cal, pro) {
+      totalMealCal += cal;
+      totalMealPro += pro;
+      document.getElementById('totalMealDisplay').innerText = `${totalMealCal} kcal • ${totalMealPro.toFixed(1)}g Protein`;
+    }
+
+    function searchFood() {
+      const q = document.getElementById('foodSearch').value.toLowerCase().trim();
+      renderFoods(foods.filter(f => f.name.toLowerCase().includes(q)));
+    }
+
+    function calcBMI() {
+      const hCm = parseFloat(document.getElementById('bmiHeight').value) || 172;
+      const wKg = parseFloat(document.getElementById('bmiWeight').value) || 68;
+      const hM = hCm / 100;
+      const bmi = (wKg / (hM * hM)).toFixed(1);
+
+      document.getElementById('resBmiVal').innerText = bmi;
+      let cat = 'NORMAL WEIGHT (स्वस्थ)';
+      let col = 'text-emerald-400';
+      if (bmi < 18.5) { cat = 'UNDERWEIGHT (कम वजन)'; col = 'text-sky-400'; }
+      else if (bmi >= 25 && bmi < 29.9) { cat = 'OVERWEIGHT (अधिक वजन)'; col = 'text-amber-400'; }
+      else if (bmi >= 30) { cat = 'OBESE (मोटापा)'; col = 'text-red-400'; }
+
+      document.getElementById('resBmiCat').innerText = cat;
+      document.getElementById('resBmiCat').className = `inline-block mt-1 px-3 py-1 bg-white/10 ${col} rounded-xl text-xs font-bold`;
+
+      const minW = Math.round(18.5 * hM * hM);
+      const maxW = Math.round(24.9 * hM * hM);
+      document.getElementById('resIdealWeight').innerText = `${minW} - ${maxW} kg`;
+      document.getElementById('resDailyCal').innerText = `~${Math.round(wKg * 30)} kcal`;
+    }
+
+    let waterGlasses = 0;
+    function renderGlasses() {
+      const grid = document.getElementById('glassesGrid');
+      grid.innerHTML = '';
+      for (let i = 1; i <= 8; i++) {
+        const btn = document.createElement('button');
+        const isFilled = i <= waterGlasses;
+        btn.className = `p-3 rounded-2xl border transition flex flex-col items-center justify-center gap-1 ${isFilled ? 'bg-cyan-600/40 border-cyan-400 text-cyan-200' : 'bg-[#0f1712] border-slate-700 text-slate-500'}`;
+        btn.innerHTML = `<span class="text-2xl">${isFilled ? '🥤' : '🥛'}</span><span class="text-[10px] font-bold">Glass ${i}</span>`;
+        btn.onclick = () => {
+          waterGlasses = i;
+          updateWaterDisplay();
+        };
+        grid.appendChild(btn);
+      }
+    }
+
+    function updateWaterDisplay() {
+      document.getElementById('waterScore').innerText = `${waterGlasses} / 8 Glasses`;
+      document.getElementById('waterLitre').innerText = `${(waterGlasses * 0.25).toFixed(1)} / 2.0 Litres`;
+      renderGlasses();
+    }
+
+    function resetWater() {
+      waterGlasses = 0;
+      updateWaterDisplay();
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.nav-tab').forEach(b => {
+        b.classList.remove('active', 'text-slate-100');
+        b.classList.add('text-slate-400');
+      });
+      document.getElementById('tab-' + tabId).classList.add('active', 'text-slate-100');
+      document.getElementById('tab-' + tabId).classList.remove('text-slate-400');
+
+      ['calorie', 'bmi', 'water'].forEach(s => {
+        document.getElementById('sec-' + s).classList.add('hidden');
+      });
+      document.getElementById('sec-' + tabId).classList.remove('hidden');
+    }
+
+    // Init
+    renderFoods(foods);
+    calcBMI();
+    renderGlasses();
+  </script>
+</body>
+</html>
