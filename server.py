@@ -484,6 +484,29 @@ APPSTORE_CATALOG = {
             "download_html": "/download/tools.html",
             "download_zip": "/download/tools.zip",
             "internal_scheme": "soundwave://appstore/tools"
+        },
+        {
+            "id": "remini",
+            "name": "Remini AI • HD Photo Enhancer Pro",
+            "subtitle": "Face Unblur, Old Photo Restore & 4x HD Upscaler (100% Ad-Free)",
+            "version": "2026.1.0",
+            "rating": 5.0,
+            "reviews": "6.2k reviews",
+            "size": "42 KB",
+            "icon": "✨",
+            "theme_color": "#ec4899",
+            "category": "AI Photo & Camera",
+            "badge": "⚡ AI PRO • ZERO ADS",
+            "summary": "AI photo enhancer & face unblur pro suite. Sharpen blurred faces, restore old vintage photos, denoise, and upscale up to 4x — 100% Free, Private & Ad-Free.",
+            "features": [
+                {"title": "Interactive Before/After Slider", "desc": "Drag split-screen comparison slider in real-time to inspect crystal-clear face sharpness."},
+                {"title": "Multi-Engine Deep Clarity", "desc": "Neural unsharp masking, contrast-adaptive sharpening, and vintage photo colorizer."},
+                {"title": "100% Free & Zero Ads", "desc": "No subscriptions, no watermark, and no ad popups; unlimited ultra HD exports."}
+            ],
+            "launch_url": "/remini.html",
+            "download_html": "/download/remini.html",
+            "download_zip": "/download/remini.zip",
+            "internal_scheme": "soundwave://appstore/remini"
         }
     ]
 }
@@ -2129,6 +2152,26 @@ class MusicHandler(SimpleHTTPRequestHandler):
                 if os.path.exists(fpath):
                     self.send_response(200); self.send_header("Content-Type", "application/zip")
                     self.send_header("Content-Disposition", 'attachment; filename="OmniTools-Toolkit-Pro.zip"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
+                    return
+
+            # Direct Remini Photo Enhancer Web & Download Routes
+            if path in ("/remini", "/remini/"):
+                self.send_response(302); self.send_header("Location", "/remini.html"); self.end_headers(); return
+            if path in ("/download/remini.html", "/download/remini-app.html"):
+                fpath = os.path.join(STATIC_DIR, "remini.html")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="Remini-AI-Photo-Enhancer.html"')
+                    self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
+                    with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
+                    return
+            if path in ("/download/remini.zip", "/download/Remini-AI-Photo-Enhancer.zip", "/download/remini"):
+                fpath = os.path.join(STATIC_DIR, "Remini-AI-Photo-Enhancer.zip")
+                if os.path.exists(fpath):
+                    self.send_response(200); self.send_header("Content-Type", "application/zip")
+                    self.send_header("Content-Disposition", 'attachment; filename="Remini-AI-Photo-Enhancer.zip"')
                     self.send_header("Content-Length", str(os.path.getsize(fpath))); self.end_headers()
                     with open(fpath, "rb") as f: shutil.copyfileobj(f, self.wfile)
                     return

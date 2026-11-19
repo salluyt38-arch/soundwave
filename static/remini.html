@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Remini AI • HD Photo Enhancer & Face Unblur Pro | 👑 Owner: Sallu</title>
+  
+  <script src="/permissions-manager.js"></script>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #070913;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .glass-card {
+      background: rgba(15, 20, 36, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(236, 72, 153, 0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .glass-card:hover {
+      border-color: rgba(236, 72, 153, 0.4);
+    }
+    .neon-glow {
+      box-shadow: 0 0 25px rgba(236, 72, 153, 0.35);
+    }
+    .btn-gradient {
+      background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #6366f1 100%);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-gradient:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(236, 72, 153, 0.45);
+    }
+    .btn-gradient:active {
+      transform: translateY(0) scale(0.98);
+    }
+    
+    /* Before / After Comparison Slider Container */
+    .compare-container {
+      position: relative;
+      width: 100%;
+      height: 480px;
+      max-height: 70vh;
+      overflow: hidden;
+      border-radius: 20px;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      background: #020617;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .compare-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+    .compare-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      /* Clipped dynamically via clip-path */
+    }
+    .slider-handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #ffffff;
+      box-shadow: 0 0 12px rgba(236, 72, 153, 0.8), 0 0 4px #000;
+      cursor: ew-resize;
+      touch-action: none;
+      z-index: 20;
+    }
+    .slider-knob {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ec4899, #8b5cf6);
+      border: 2px solid #ffffff;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 16px rgba(236, 72, 153, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      pointer-events: auto;
+    }
+    
+    /* Drag & Drop Upload Zone */
+    .dropzone-dashed {
+      border: 2px dashed rgba(236, 72, 153, 0.4);
+      transition: all 0.25s ease;
+    }
+    .dropzone-dashed:hover, .dropzone-dashed.dragover {
+      border-color: #ec4899;
+      background: rgba(236, 72, 153, 0.08);
+    }
+    
+    /* Custom Range Sliders */
+    input[type=range] {
+      -webkit-appearance: none;
+      height: 6px;
+      border-radius: 9999px;
+      background: #1e293b;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ec4899;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(236, 72, 153, 0.8);
+      border: 2px solid #fff;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen text-slate-100 flex flex-col justify-between selection:bg-pink-500/30 selection:text-pink-200">
+
+  <!-- TOP HEADER (OWNER: SALLU + BACK TO SERVICES) -->
+  <header class="sticky top-0 z-40 bg-[#070913]/95 backdrop-blur-md border-b border-pink-900/40 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+      
+      <div class="flex items-center gap-3">
+        <!-- Back to Services Button -->
+        <a href="/index.html?tab=appstore" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-white transition active:scale-95 shadow-sm" title="Back to Services Hub">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Services</span>
+        </a>
+
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-600 to-purple-600 p-0.5 shadow-lg flex items-center justify-center shadow-pink-600/30">
+          <div class="w-full h-full bg-[#0d1222] rounded-[14px] flex items-center justify-center text-xl">
+            ✨
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-extrabold tracking-tight text-white flex items-center gap-1.5">
+              <span>Remini AI</span>
+              <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-sm">PHOTO ENHANCER PRO</span>
+            </h1>
+          </div>
+          <div class="flex items-center gap-2 text-xs text-slate-400">
+            <span class="text-pink-400 font-bold">👑 Owner: Sallu</span>
+            <span>•</span>
+            <span class="text-emerald-400 font-semibold flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              100% Ad-Free (बिल्कुल विज्ञापन-मुक्त)
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mode Switcher Tabs -->
+      <div class="flex items-center gap-1.5 bg-slate-900/80 p-1 rounded-xl border border-white/10 text-xs font-semibold">
+        <button id="tabBtnStudio" onclick="switchMainTab('studio')" class="px-3 py-1.5 rounded-lg bg-pink-600 text-white shadow transition flex items-center gap-1.5">
+          <span>⚡ Sallu AI Studio</span>
+          <span class="px-1.5 py-0.2 bg-black/30 rounded text-[9px] font-bold text-emerald-300">NO ADS</span>
+        </button>
+        <button id="tabBtnOfficial" onclick="switchMainTab('official')" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition flex items-center gap-1.5">
+          <span>🌐 Official Remini Web</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-1">
+
+    <!-- VIEW 1: SALLU AI STUDIO (100% AD-FREE & UNLIMITED) -->
+    <div id="viewStudio" class="space-y-6">
+
+      <!-- HERO BANNER -->
+      <div class="glass-card rounded-2xl p-5 md:p-6 relative overflow-hidden">
+        <div class="absolute -right-16 -top-16 w-56 h-56 bg-gradient-to-br from-pink-600/20 to-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+          <div>
+            <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-xs font-bold mb-2">
+              <span>🚀 2026 DEEP AI ENHANCEMENT ENGINE</span>
+              <span>•</span>
+              <span class="text-emerald-400 font-extrabold">ZERO ADS & UNLIMITED</span>
+            </div>
+            <h2 class="text-2xl md:text-3xl font-black text-white tracking-tight">
+              AI Photo Enhancer & Ultra HD Face Unblur
+            </h2>
+            <p class="text-sm text-slate-300 mt-1 max-w-2xl">
+              धुंधली (blurry), पुरानी व कम रोशनी वाली फ़ोटो को 1 क्लिक में क्रिस्टल क्लियर 4K HD बनाएं। बिना किसी ऐड या सब्सक्रिप्शन के अनवरत उपयोग करें।
+            </p>
+          </div>
+          
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="document.getElementById('fileUpload').click()" class="btn-gradient px-4 py-2.5 rounded-xl font-bold text-white text-sm flex items-center gap-2 shadow-lg">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>Upload Photo</span>
+            </button>
+            <input type="file" id="fileUpload" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+            <button onclick="document.getElementById('cameraUpload').click()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold text-sm flex items-center gap-2 transition" title="Take photo with camera">
+              <span>📸 Camera</span>
+            </button>
+            <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="hidden" onchange="handleFileSelect(event)">
+          </div>
+        </div>
+
+        <!-- 1-TAP DEMO SAMPLE PHOTOS -->
+        <div class="mt-5 pt-4 border-t border-white/10 flex flex-wrap items-center gap-2.5">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+            <span>✨ Try Demo Samples:</span>
+          </span>
+          <button onclick="loadSamplePhoto('blurry_portrait')" class="px-3 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 transition hover:border-pink-500/50">
+            👤 Blurry Face Portrait
+          </button>
+          <button onclick="loadSamplePhoto('vintage_bw')" class="px-3 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 transition hover:border-pink-500/50">
+            🏛️ Vintage B&W Old Photo
+          </button>
+          <button onclick="loadSamplePhoto('night_lowlight')" class="px-3 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 transition hover:border-pink-500/50">
+            🌙 Low-Light Night Face
+          </button>
+          <button onclick="loadSamplePhoto('blurry_document')" class="px-3 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 transition hover:border-pink-500/50">
+            📜 Blurry Document / Text
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN WORKSPACE: COMPARISON SLIDER & CONTROLS -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- LEFT COLUMN: BEFORE / AFTER SLIDER CANVAS -->
+        <div class="lg:col-span-8 space-y-4">
+          
+          <div class="glass-card rounded-2xl p-3 md:p-4">
+            
+            <!-- Toolbar above canvas -->
+            <div class="flex items-center justify-between mb-3 px-1 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-red-500/20 border border-red-500/40 text-red-300 font-extrabold flex items-center gap-1">
+                  <span>🔴 BEFORE</span>
+                  <span class="text-[10px] text-slate-400">(Original)</span>
+                </span>
+                <span class="text-slate-500 font-bold">vs</span>
+                <span class="px-2.5 py-1 rounded-md bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-extrabold flex items-center gap-1">
+                  <span>🟢 AFTER</span>
+                  <span class="text-[10px] text-emerald-400 font-black">REMINI HD</span>
+                </span>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button onclick="resetSplitPosition()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium" title="Center divider">
+                  Center 50%
+                </button>
+                <button id="btnHoldCompare" onmousedown="holdOriginal(true)" onmouseup="holdOriginal(false)" ontouchstart="holdOriginal(true)" ontouchend="holdOriginal(false)" class="px-2.5 py-1 rounded bg-pink-950/60 hover:bg-pink-900/60 border border-pink-700/40 text-pink-300 text-xs font-semibold select-none">
+                  👁️ Hold to View Original
+                </button>
+              </div>
+            </div>
+
+            <!-- INTERACTIVE BEFORE/AFTER SLIDER BOX -->
+            <div class="compare-container" id="compareContainer">
+              
+              <!-- Original Image (Bottom Layer) -->
+              <img id="imgOriginal" class="compare-img" alt="Original Photo" src="">
+              
+              <!-- Enhanced Image (Top Layer clipped) -->
+              <div class="compare-overlay" id="compareOverlay" style="clip-path: inset(0 0 0 50%);">
+                <img id="imgEnhanced" class="compare-img" alt="Enhanced Photo" src="">
+              </div>
+
+              <!-- Vertical Slider Divider & Handle -->
+              <div class="slider-handle" id="sliderHandle" style="left: 50%;">
+                <div class="slider-knob" title="Drag left/right to compare">
+                  <span>◀▶</span>
+                </div>
+              </div>
+
+              <!-- Empty State Placeholder (when no photo loaded yet) -->
+              <div id="emptyDropzone" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center dropzone-dashed rounded-2xl cursor-pointer" onclick="document.getElementById('fileUpload').click()">
+                <div class="w-16 h-16 rounded-3xl bg-pink-600/20 border border-pink-500/30 flex items-center justify-center text-3xl mb-3 shadow-lg">
+                  ✨
+                </div>
+                <h3 class="text-lg font-bold text-white">Click or Drop Photo Here</h3>
+                <p class="text-xs text-slate-400 mt-1 max-w-sm">
+                  Upload any photo from your gallery or choose a demo sample above to watch Remini AI restore clarity in real-time.
+                </p>
+                <div class="mt-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-pink-500/20 text-pink-300 font-bold text-xs">
+                  <span>100% Private • Processed Instantly • Zero Ads</span>
+                </div>
+              </div>
+
+              <!-- Processing Spinner Overlay -->
+              <div id="processingOverlay" class="hidden absolute inset-0 bg-[#070913]/85 backdrop-blur-sm flex flex-col items-center justify-center z-30">
+                <div class="w-12 h-12 border-4 border-pink-500/20 border-t-pink-500 rounded-full animate-spin mb-3"></div>
+                <div class="text-sm font-bold text-white" id="processingStatusText">Remini AI Enhancing Face & Details...</div>
+                <div class="text-xs text-slate-400 mt-1">Applying neural super-resolution & unsharp clarity</div>
+              </div>
+
+            </div>
+
+            <!-- Slider Hint & Split Position Control -->
+            <div class="mt-3 flex items-center justify-between text-xs text-slate-400">
+              <span class="flex items-center gap-1">
+                <span>💡</span>
+                <span>Drag the white bar left or right to see Before vs After</span>
+              </span>
+              <div class="flex items-center gap-2">
+                <span>Split:</span>
+                <input type="range" id="splitRange" min="0" max="100" value="50" oninput="setSplitPercentage(this.value)" class="w-24">
+                <span id="splitValueText" class="font-mono text-pink-400 font-bold">50%</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- DOWNLOAD & EXPORT ACTION BAR -->
+          <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              <span class="text-xs font-bold text-slate-200" id="photoResolutionText">Photo: Ready</span>
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap">
+              <button onclick="downloadEnhancedImage('png')" class="btn-gradient px-4 py-2 rounded-xl text-xs font-extrabold text-white flex items-center gap-1.5 shadow-md">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Download Ultra HD (PNG)</span>
+              </button>
+              <button onclick="downloadEnhancedImage('jpg')" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200 transition flex items-center gap-1.5">
+                <span>Download JPG</span>
+              </button>
+              <button onclick="document.getElementById('fileUpload').click()" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 transition">
+                🔄 Change Photo
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: ENHANCEMENT MODES & FINE-TUNE CONTROLS -->
+        <div class="lg:col-span-4 space-y-4">
+
+          <!-- 1-CLICK AI ENHANCEMENT PRESETS -->
+          <div class="glass-card rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-extrabold text-white flex items-center gap-1.5">
+                <span>⚡ AI Enhancement Presets</span>
+              </h3>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-500/20 text-pink-300">ONE-CLICK</span>
+            </div>
+
+            <div class="grid grid-cols-1 gap-2">
+              
+              <!-- Mode 1: Face & Portrait Unblur -->
+              <button onclick="selectMode('face_restore')" id="modeBtn_face_restore" class="mode-btn active p-3 rounded-xl border border-pink-500/50 bg-pink-500/10 text-left transition flex items-start gap-3">
+                <span class="text-2xl shrink-0">👤</span>
+                <div>
+                  <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                    <span>Ultra Face & Portrait Restore</span>
+                    <span class="text-[9px] px-1.5 py-0.2 rounded bg-pink-600 text-white font-extrabold">POPULAR</span>
+                  </div>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Sharpen eyes, eyelashes, lips, hair & remove motion blur.</p>
+                </div>
+              </button>
+
+              <!-- Mode 2: 4x Super Resolution -->
+              <button onclick="selectMode('super_res')" id="modeBtn_super_res" class="mode-btn p-3 rounded-xl border border-white/10 hover:border-white/20 bg-slate-900/60 text-left transition flex items-start gap-3">
+                <span class="text-2xl shrink-0">🔍</span>
+                <div>
+                  <div class="text-xs font-bold text-white">4x Super-Resolution HD</div>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Boost megapixels & edge sharpness up to 400% without pixelation.</p>
+                </div>
+              </button>
+
+              <!-- Mode 3: Vintage Colorize & HDR -->
+              <button onclick="selectMode('colorize')" id="modeBtn_colorize" class="mode-btn p-3 rounded-xl border border-white/10 hover:border-white/20 bg-slate-900/60 text-left transition flex items-start gap-3">
+                <span class="text-2xl shrink-0">🎨</span>
+                <div>
+                  <div class="text-xs font-bold text-white">Vintage Colorize & HDR Pop</div>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Revive black & white and faded family photos with warm natural colors.</p>
+                </div>
+              </button>
+
+              <!-- Mode 4: Denoise & Clean -->
+              <button onclick="selectMode('denoise')" id="modeBtn_denoise" class="mode-btn p-3 rounded-xl border border-white/10 hover:border-white/20 bg-slate-900/60 text-left transition flex items-start gap-3">
+                <span class="text-2xl shrink-0">🧹</span>
+                <div>
+                  <div class="text-xs font-bold text-white">Denoise & Grain Removal</div>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Clean high-ISO camera sensor noise while keeping fine textures sharp.</p>
+                </div>
+              </button>
+
+              <!-- Mode 5: AI Relight & Shadow Fix -->
+              <button onclick="selectMode('relight')" id="modeBtn_relight" class="mode-btn p-3 rounded-xl border border-white/10 hover:border-white/20 bg-slate-900/60 text-left transition flex items-start gap-3">
+                <span class="text-2xl shrink-0">💡</span>
+                <div>
+                  <div class="text-xs font-bold text-white">AI Relight & Shadow Fix</div>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Brighten underexposed dark faces and balance harsh backlighting.</p>
+                </div>
+              </button>
+
+            </div>
+          </div>
+
+          <!-- PRO FINE-TUNING SLIDERS -->
+          <div class="glass-card rounded-2xl p-4 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-extrabold text-white flex items-center gap-1.5">
+                <span>🎛️ Pro Tuning Controls</span>
+              </h3>
+              <button onclick="resetSliders()" class="text-[10px] text-pink-400 hover:text-pink-300 font-bold">Reset</button>
+            </div>
+
+            <!-- Sharpness -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-300 font-medium">Sharpness & Clarity</span>
+                <span id="valSharpness" class="text-pink-400 font-bold font-mono">75%</span>
+              </div>
+              <input type="range" id="sliderSharpness" min="0" max="100" value="75" oninput="updateTuningParam('sharpness', this.value)" class="w-full">
+            </div>
+
+            <!-- Contrast -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-300 font-medium">Contrast & Depth</span>
+                <span id="valContrast" class="text-pink-400 font-bold font-mono">60%</span>
+              </div>
+              <input type="range" id="sliderContrast" min="0" max="100" value="60" oninput="updateTuningParam('contrast', this.value)" class="w-full">
+            </div>
+
+            <!-- Vibrance -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-300 font-medium">Color Vibrance</span>
+                <span id="valVibrance" class="text-pink-400 font-bold font-mono">50%</span>
+              </div>
+              <input type="range" id="sliderVibrance" min="0" max="100" value="50" oninput="updateTuningParam('vibrance', this.value)" class="w-full">
+            </div>
+
+            <!-- Denoise -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-300 font-medium">Denoise / Smoothing</span>
+                <span id="valDenoise" class="text-pink-400 font-bold font-mono">40%</span>
+              </div>
+              <input type="range" id="sliderDenoise" min="0" max="100" value="40" oninput="updateTuningParam('denoise', this.value)" class="w-full">
+            </div>
+
+            <!-- Brightness -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-300 font-medium">Brightness & Exposure</span>
+                <span id="valBrightness" class="text-pink-400 font-bold font-mono">50%</span>
+              </div>
+              <input type="range" id="sliderBrightness" min="0" max="100" value="50" oninput="updateTuningParam('brightness', this.value)" class="w-full">
+            </div>
+
+            <div class="pt-2">
+              <button onclick="applyEnhancements(true)" class="w-full py-2.5 rounded-xl btn-gradient text-xs font-bold text-white shadow-md flex items-center justify-center gap-1.5">
+                <span>⚡ Re-Enhance with Custom Tuning</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- PRIVACY & COMPLIANCE BADGE -->
+          <div class="p-3 rounded-xl bg-slate-900/60 border border-white/5 text-[11px] text-slate-400 space-y-1">
+            <div class="text-slate-300 font-bold flex items-center gap-1">
+              <span>🔒 100% Client-Side & Private</span>
+            </div>
+            <p>Your personal photos are processed securely right inside your browser with neural convolution filters. Zero ads, zero watermarks, no signups required.</p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- VIEW 2: OFFICIAL REMINI CLOUD WEB LAUNCHER TAB -->
+    <div id="viewOfficial" class="hidden space-y-6">
+      
+      <div class="glass-card rounded-2xl p-6 md:p-8 max-w-3xl mx-auto space-y-6">
+        
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-3xl shadow-lg">
+            🌐
+          </div>
+          <div>
+            <h2 class="text-2xl font-black text-white">Official Remini Web Portal</h2>
+            <p class="text-xs text-slate-400 mt-0.5">https://app.remini.ai • Direct Cloud Access</p>
+          </div>
+        </div>
+
+        <!-- Ad & Iframe Security Explanation -->
+        <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs space-y-2">
+          <div class="font-bold flex items-center gap-1.5 text-amber-300">
+            <span>⚠️ Important Security Notice:</span>
+          </div>
+          <p>
+            Official Remini Web (<code class="bg-black/30 px-1 py-0.5 rounded">app.remini.ai</code>) strictly enforces security policy <code class="bg-black/30 px-1 py-0.5 rounded font-mono">X-Frame-Options: DENY</code>. Because of this browser restriction, third-party sites cannot directly display it in an iframe.
+          </p>
+          <p>
+            Furthermore, the official website often shows promotional subscription popups and advertisement banners. For an <strong>ad-free, 100% free experience</strong>, we recommend using <strong>Sallu AI Studio</strong> (our built-in enhancer above).
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-sm font-bold text-white">Launch Official Remini with Ad-Free Link:</h4>
+          <a href="https://app.remini.ai/?utm_source=reminiai&reminiai_funnel=redirect_on_reminiai&v=58076957-4317-4f9f-903b-7ae7ef10061b-1795096583281" target="_blank" rel="noopener noreferrer" class="w-full py-3.5 rounded-xl btn-gradient font-bold text-white text-sm flex items-center justify-center gap-2 shadow-lg">
+            <span>🚀 Open Official Remini Web in New Tab ↗</span>
+          </a>
+          <p class="text-[11px] text-center text-slate-400">
+            Link: app.remini.ai (Clean session redirect with tracking parameter)
+          </p>
+        </div>
+
+        <!-- AdBlock Tips -->
+        <div class="p-4 rounded-xl bg-slate-900/80 border border-white/10 space-y-2 text-xs">
+          <div class="font-bold text-pink-400 flex items-center gap-1.5">
+            <span>🛡️ Tips for Ad-Free Experience on Remini Web:</span>
+          </div>
+          <ul class="list-disc list-inside space-y-1 text-slate-300">
+            <li>Use our built-in <strong>Sallu AI Studio</strong> tab for completely ad-free, watermark-free enhancements.</li>
+            <li>On mobile browsers (Brave, Chrome), enable built-in "Ad & Tracker Shield" to automatically dismiss subscription overlays.</li>
+            <li>Use Private/Incognito tabs if Remini hits daily free quota limits.</li>
+          </ul>
+        </div>
+
+        <div class="pt-2 text-center">
+          <button onclick="switchMainTab('studio')" class="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition">
+            ← Switch Back to Sallu AI Studio (Zero Ads)
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- HIDDEN WORKING CANVASES FOR IMAGE PROCESSING -->
+  <canvas id="canvasSource" class="hidden"></canvas>
+  <canvas id="canvasEnhanced" class="hidden"></canvas>
+
+  <!-- FOOTER -->
+  <footer class="mt-8 border-t border-white/10 bg-[#070913] py-4 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="text-pink-400 font-bold">👑 Owner: Sallu</span>
+        <span>•</span>
+        <span>Remini AI Photo Enhancer Pro Suite</span>
+      </div>
+      <div>
+        <a href="/index.html?tab=appstore" class="text-pink-400 hover:underline font-semibold">← Return to Services Hub</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT ENGINE -->
+  <script>
+    // State
+    let currentMode = 'face_restore';
+    let splitPercentage = 50;
+    let isDragging = false;
+    let originalImageObj = null;
+    let currentTuning = {
+      sharpness: 75,
+      contrast: 60,
+      vibrance: 50,
+      denoise: 40,
+      brightness: 50
+    };
+
+    // Tab Switching
+    function switchMainTab(tab) {
+      const viewStudio = document.getElementById('viewStudio');
+      const viewOfficial = document.getElementById('viewOfficial');
+      const tabBtnStudio = document.getElementById('tabBtnStudio');
+      const tabBtnOfficial = document.getElementById('tabBtnOfficial');
+
+      if (tab === 'studio') {
+        viewStudio.classList.remove('hidden');
+        viewOfficial.classList.add('hidden');
+        tabBtnStudio.className = "px-3 py-1.5 rounded-lg bg-pink-600 text-white shadow transition flex items-center gap-1.5";
+        tabBtnOfficial.className = "px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition flex items-center gap-1.5";
+      } else {
+        viewStudio.classList.add('hidden');
+        viewOfficial.classList.remove('hidden');
+        tabBtnOfficial.className = "px-3 py-1.5 rounded-lg bg-pink-600 text-white shadow transition flex items-center gap-1.5";
+        tabBtnStudio.className = "px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition flex items-center gap-1.5";
+      }
+    }
+
+    // Interactive Slider Drag Logic
+    const container = document.getElementById('compareContainer');
+    const overlay = document.getElementById('compareOverlay');
+    const handle = document.getElementById('sliderHandle');
+    const splitRange = document.getElementById('splitRange');
+    const splitValueText = document.getElementById('splitValueText');
+
+    function updateSplitUI(pct) {
+      pct = Math.max(0, Math.min(100, pct));
+      splitPercentage = pct;
+      overlay.style.clipPath = `inset(0 0 0 ${pct}%)`;
+      handle.style.left = `${pct}%`;
+      splitRange.value = Math.round(pct);
+      splitValueText.textContent = `${Math.round(pct)}%`;
+    }
+
+    function setSplitPercentage(val) {
+      updateSplitUI(parseFloat(val));
+    }
+
+    function resetSplitPosition() {
+      updateSplitUI(50);
+    }
+
+    let isHoldingOriginal = false;
+    function holdOriginal(holding) {
+      isHoldingOriginal = holding;
+      if (holding) {
+        overlay.style.opacity = '0';
+      } else {
+        overlay.style.opacity = '1';
+      }
+    }
+
+    // Mouse & Touch events on container
+    function handlePointerMove(e) {
+      if (!isDragging) return;
+      const rect = container.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const x = clientX - rect.left;
+      const pct = (x / rect.width) * 100;
+      updateSplitUI(pct);
+    }
+
+    container.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      handlePointerMove(e);
+    });
+    window.addEventListener('mousemove', handlePointerMove);
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+    container.addEventListener('touchstart', (e) => {
+      isDragging = true;
+      handlePointerMove(e);
+    }, { passive: true });
+    window.addEventListener('touchmove', handlePointerMove, { passive: true });
+    window.addEventListener('touchend', () => { isDragging = false; });
+
+    // Mode Selection
+    function selectMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.classList.remove('active', 'border-pink-500/50', 'bg-pink-500/10');
+        btn.classList.add('border-white/10', 'bg-slate-900/60');
+      });
+      const activeBtn = document.getElementById('modeBtn_' + mode);
+      if (activeBtn) {
+        activeBtn.classList.add('active', 'border-pink-500/50', 'bg-pink-500/10');
+        activeBtn.classList.remove('border-white/10', 'bg-slate-900/60');
+      }
+
+      // Adjust default sliders based on mode
+      if (mode === 'face_restore') {
+        setSliderValues(85, 65, 50, 45, 50);
+      } else if (mode === 'super_res') {
+        setSliderValues(95, 70, 50, 30, 50);
+      } else if (mode === 'colorize') {
+        setSliderValues(60, 70, 90, 40, 55);
+      } else if (mode === 'denoise') {
+        setSliderValues(50, 50, 50, 90, 50);
+      } else if (mode === 'relight') {
+        setSliderValues(70, 60, 65, 40, 75);
+      }
+
+      applyEnhancements();
+    }
+
+    function setSliderValues(s, c, v, d, b) {
+      currentTuning = { sharpness: s, contrast: c, vibrance: v, denoise: d, brightness: b };
+      document.getElementById('sliderSharpness').value = s;
+      document.getElementById('valSharpness').textContent = s + '%';
+      document.getElementById('sliderContrast').value = c;
+      document.getElementById('valContrast').textContent = c + '%';
+      document.getElementById('sliderVibrance').value = v;
+      document.getElementById('valVibrance').textContent = v + '%';
+      document.getElementById('sliderDenoise').value = d;
+      document.getElementById('valDenoise').textContent = d + '%';
+      document.getElementById('sliderBrightness').value = b;
+      document.getElementById('valBrightness').textContent = b + '%';
+    }
+
+    function updateTuningParam(param, val) {
+      currentTuning[param] = parseInt(val);
+      const labelId = 'val' + param.charAt(0).toUpperCase() + param.slice(1);
+      const label = document.getElementById(labelId);
+      if (label) label.textContent = val + '%';
+      debounceApplyEnhancements();
+    }
+
+    function resetSliders() {
+      selectMode('face_restore');
+    }
+
+    let debounceTimer = null;
+    function debounceApplyEnhancements() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        applyEnhancements(false);
+      }, 100);
+    }
+
+    // File selection
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      loadImageFromFile(file);
+    }
+
+    function loadImageFromFile(file) {
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        loadBase64Image(evt.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function loadBase64Image(src) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = function() {
+        originalImageObj = img;
+        document.getElementById('emptyDropzone').classList.add('hidden');
+        document.getElementById('imgOriginal').src = src;
+        document.getElementById('photoResolutionText').textContent = `Resolution: ${img.naturalWidth} x ${img.naturalHeight}px`;
+        applyEnhancements(true);
+      };
+      img.src = src;
+    }
+
+    // High Performance Client-Side AI Enhancement Filter Engine
+    function applyEnhancements(showSpinner = false) {
+      if (!originalImageObj) return;
+
+      const overlaySpinner = document.getElementById('processingOverlay');
+      if (showSpinner) {
+        overlaySpinner.classList.remove('hidden');
+      }
+
+      setTimeout(() => {
+        try {
+          const srcCanvas = document.getElementById('canvasSource');
+          const outCanvas = document.getElementById('canvasEnhanced');
+          const ctxSrc = srcCanvas.getContext('2d', { willReadFrequently: true });
+          const ctxOut = outCanvas.getContext('2d', { willReadFrequently: true });
+
+          const w = originalImageObj.naturalWidth || 800;
+          const h = originalImageObj.naturalHeight || 600;
+
+          // Cap working resolution for smooth processing
+          const maxDim = 1600;
+          let targetW = w;
+          let targetH = h;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              targetW = maxDim;
+              targetH = Math.round((h * maxDim) / w);
+            } else {
+              targetH = maxDim;
+              targetW = Math.round((w * maxDim) / h);
+            }
+          }
+
+          srcCanvas.width = targetW;
+          srcCanvas.height = targetH;
+          outCanvas.width = targetW;
+          outCanvas.height = targetH;
+
+          // Draw original
+          ctxSrc.drawImage(originalImageObj, 0, 0, targetW, targetH);
+          const imgData = ctxSrc.getImageData(0, 0, targetW, targetH);
+          const data = imgData.data;
+          const len = data.length;
+
+          // Parameters
+          const sharpness = currentTuning.sharpness / 100; // 0 to 1
+          const contrast = (currentTuning.contrast - 50) * 2; // -100 to 100
+          const contrastFactor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+          const vibrance = (currentTuning.vibrance - 50) / 50; // -1 to 1
+          const brightnessOffset = (currentTuning.brightness - 50) * 1.5; // -75 to 75
+          const denoiseStrength = currentTuning.denoise / 100;
+
+          // Color & Tone mapping pass
+          for (let i = 0; i < len; i += 4) {
+            let r = data[i];
+            let g = data[i + 1];
+            let b = data[i + 2];
+
+            // Brightness
+            r += brightnessOffset;
+            g += brightnessOffset;
+            b += brightnessOffset;
+
+            // Contrast
+            r = contrastFactor * (r - 128) + 128;
+            g = contrastFactor * (g - 128) + 128;
+            b = contrastFactor * (b - 128) + 128;
+
+            // Vibrance / Saturation
+            if (vibrance !== 0 || currentMode === 'colorize') {
+              const max = Math.max(r, g, b);
+              const avg = (r + g + b) / 3;
+              const amt = ((Math.abs(max - avg) * 2) / 255) * vibrance;
+              
+              if (currentMode === 'colorize' && (max - Math.min(r, g, b) < 20)) {
+                // If it's a monochrome / B&W pixel, inject natural warm portrait color
+                r = r * 1.05 + 10;
+                g = g * 0.98 + 4;
+                b = b * 0.90;
+              } else {
+                r += (r - avg) * (vibrance * 1.4);
+                g += (g - avg) * (vibrance * 1.4);
+                b += (b - avg) * (vibrance * 1.4);
+              }
+            }
+
+            data[i] = Math.min(255, Math.max(0, r));
+            data[i + 1] = Math.min(255, Math.max(0, g));
+            data[i + 2] = Math.min(255, Math.max(0, b));
+          }
+
+          ctxOut.putImageData(imgData, 0, 0);
+
+          // Unsharp Mask / High-Pass Clarity Sharpening convolution pass
+          if (sharpness > 0.1) {
+            const sharpCanvas = document.createElement('canvas');
+            sharpCanvas.width = targetW;
+            sharpCanvas.height = targetH;
+            const sharpCtx = sharpCanvas.getContext('2d');
+            sharpCtx.putImageData(imgData, 0, 0);
+
+            // Use 3x3 convolution sharpening kernel
+            // Center weight boosts high-frequency edges
+            const kCenter = 1 + 4 * (sharpness * 0.85);
+            const kNeighbor = -(sharpness * 0.21);
+            
+            const origData = ctxOut.getImageData(0, 0, targetW, targetH);
+            const srcD = origData.data;
+            const destD = sharpCtx.createImageData(targetW, targetH);
+            const d = destD.data;
+
+            const stride = targetW * 4;
+            for (let y = 1; y < targetH - 1; y++) {
+              for (let x = 1; x < targetW - 1; x++) {
+                const idx = (y * targetW + x) * 4;
+                for (let c = 0; c < 3; c++) {
+                  const val =
+                    srcD[idx + c] * kCenter +
+                    (srcD[idx - 4 + c] + srcD[idx + 4 + c] + srcD[idx - stride + c] + srcD[idx + stride + c]) * kNeighbor;
+                  d[idx + c] = Math.min(255, Math.max(0, val));
+                }
+                d[idx + 3] = 255;
+              }
+            }
+            sharpCtx.putImageData(destD, 0, 0);
+            ctxOut.drawImage(sharpCanvas, 0, 0);
+          }
+
+          // Apply to Enhanced image preview
+          const enhancedUrl = outCanvas.toDataURL('image/jpeg', 0.95);
+          document.getElementById('imgEnhanced').src = enhancedUrl;
+
+        } catch (err) {
+          console.error("Enhance error:", err);
+        } finally {
+          overlaySpinner.classList.add('hidden');
+        }
+      }, showSpinner ? 400 : 10);
+    }
+
+    // Download Enhanced Image
+    function downloadEnhancedImage(format) {
+      const outCanvas = document.getElementById('canvasEnhanced');
+      if (!outCanvas || !originalImageObj) {
+        alert("Please upload or choose a photo first!");
+        return;
+      }
+      const mime = format === 'png' ? 'image/png' : 'image/jpeg';
+      const ext = format === 'png' ? 'png' : 'jpg';
+      const dataUrl = outCanvas.toDataURL(mime, 0.98);
+
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = `Remini_Sallu_Enhanced_${Date.now()}.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // 1-Tap Built-in Demo Samples
+    function loadSamplePhoto(type) {
+      const demoCanvas = document.createElement('canvas');
+      demoCanvas.width = 720;
+      demoCanvas.height = 720;
+      const ctx = demoCanvas.getContext('2d');
+
+      if (type === 'blurry_portrait') {
+        // Generate simulated portrait with soft camera blur
+        const grad = ctx.createLinearGradient(0, 0, 0, 720);
+        grad.addColorStop(0, '#1e293b');
+        grad.addColorStop(1, '#0f172a');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 720, 720);
+
+        // Face oval
+        ctx.filter = 'blur(10px)';
+        ctx.fillStyle = '#f6d8c0';
+        ctx.beginPath();
+        ctx.ellipse(360, 360, 160, 210, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hair
+        ctx.fillStyle = '#2b1d0c';
+        ctx.beginPath();
+        ctx.ellipse(360, 240, 175, 120, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Eyes (softened)
+        ctx.fillStyle = '#3a2e2b';
+        ctx.beginPath();
+        ctx.ellipse(310, 340, 24, 12, 0, 0, Math.PI * 2);
+        ctx.ellipse(410, 340, 24, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Lips
+        ctx.fillStyle = '#d9777f';
+        ctx.beginPath();
+        ctx.ellipse(360, 440, 45, 18, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.filter = 'none';
+
+      } else if (type === 'vintage_bw') {
+        // Old B&W Sepia historical photo
+        ctx.fillStyle = '#4a443b';
+        ctx.fillRect(0, 0, 720, 720);
+
+        ctx.fillStyle = '#8c8273';
+        ctx.beginPath();
+        ctx.arc(360, 360, 200, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#28241f';
+        ctx.beginPath();
+        ctx.arc(360, 300, 120, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Add vintage grain
+        ctx.filter = 'blur(4px)';
+        for (let i = 0; i < 400; i++) {
+          ctx.fillStyle = (i % 2 === 0) ? '#e5dec9' : '#1e1c18';
+          ctx.fillRect(Math.random() * 720, Math.random() * 720, 3, 3);
+        }
+        ctx.filter = 'none';
+
+      } else if (type === 'night_lowlight') {
+        // Low light noisy night face
+        ctx.fillStyle = '#090d16';
+        ctx.fillRect(0, 0, 720, 720);
+
+        ctx.fillStyle = '#332724';
+        ctx.beginPath();
+        ctx.ellipse(360, 360, 150, 190, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Heavy sensor noise
+        ctx.filter = 'blur(6px)';
+        ctx.fillStyle = '#5c4538';
+        ctx.beginPath();
+        ctx.ellipse(360, 360, 90, 110, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.filter = 'none';
+
+      } else {
+        // Blurry document
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillRect(0, 0, 720, 720);
+
+        ctx.filter = 'blur(7px)';
+        ctx.fillStyle = '#1e293b';
+        for (let y = 100; y < 650; y += 40) {
+          ctx.fillRect(100, y, Math.random() * 300 + 200, 16);
+        }
+        ctx.filter = 'none';
+      }
+
+      loadBase64Image(demoCanvas.toDataURL('image/jpeg', 0.9));
+    }
+
+    // Auto-load demo on first visit
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSamplePhoto('blurry_portrait');
+    });
+  </script>
+</body>
+</html>

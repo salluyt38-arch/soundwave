@@ -6203,6 +6203,20 @@ document.addEventListener('DOMContentLoaded', () => {
             download_html: '/download/tools.html',
             download_zip: '/download/tools.zip',
             scheme: 'soundwave://play/tools'
+        },
+        remini: {
+            id: 'remini',
+            title: 'Remini AI • HD Photo Enhancer Pro',
+            shortTitle: 'Remini AI',
+            subtitle: 'Face Unblur, Old Photo Restore & 4x HD Upscaler (100% Ad-Free)',
+            version: '2026.1.0',
+            rating: '5.0 ★ (6.2k reviews)',
+            size: '42 KB',
+            icon: '✨',
+            url: '/remini.html',
+            download_html: '/download/remini.html',
+            download_zip: '/download/remini.zip',
+            scheme: 'soundwave://play/remini'
         }
     };
 

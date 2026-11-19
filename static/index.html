@@ -310,7 +310,7 @@
                                     <span style="font-size: 26px;">⚡</span>
                                     <div>
                                         <div style="font-weight: 800; font-size: 14px; color: #fff;">Services Hub</div>
-                                        <div style="font-size: 11px; color: #c084fc;">14 Micro-Apps</div>
+                                        <div style="font-size: 11px; color: #c084fc;">15 Micro-Apps</div>
                                     </div>
                                 </div>
                             </div>
@@ -320,7 +320,7 @@
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <h3 style="font-size: 17px; font-weight: 800; color: #fff; margin: 0; display: flex; align-items: center; gap: 6px;">
                                         <span>⚡</span>
-                                        <span>Services & Micro-Apps (14)</span>
+                                        <span>Services & Micro-Apps (15)</span>
                                     </h3>
                                     <span style="font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 99px; background: rgba(245,158,11,0.18); color: #fbbf24; border: 1px solid rgba(245,158,11,0.35);">👑 Owner: Sallu</span>
                                 </div>
@@ -415,6 +415,12 @@
                                     <div class="home-app-tile-icon pincode"><span>📮</span></div>
                                     <span class="home-app-tile-title">Pincode Radar</span>
                                     <span class="home-app-tile-cat">India Post</span>
+                                </div>
+
+                                <div class="home-app-tile" onclick="window.open('/remini.html', '_blank')">
+                                    <div class="home-app-tile-icon remini" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);"><span>✨</span></div>
+                                    <span class="home-app-tile-title">Remini AI</span>
+                                    <span class="home-app-tile-cat">Photo Enhancer</span>
                                 </div>
 
                             </div>
@@ -2133,7 +2139,8 @@
 
                             <!-- Futuristic Category Filter Chips -->
                             <div class="services-category-chips">
-                                <button class="services-chip active" type="button" onclick="window.filterServicesCategory('all', this)">All Services (14)</button>
+                                <button class="services-chip active" type="button" onclick="window.filterServicesCategory('all', this)">All Services (15)</button>
+                                <button class="services-chip" type="button" onclick="window.filterServicesCategory('photo', this)">Photo & AI (✨ 📸)</button>
                                 <button class="services-chip" type="button" onclick="window.filterServicesCategory('spiritual', this)">Spiritual & Faith (🕉️ 🌙)</button>
                                 <button class="services-chip" type="button" onclick="window.filterServicesCategory('health', this)">Health & Medical (🏥)</button>
                                 <button class="services-chip" type="button" onclick="window.filterServicesCategory('transit', this)">Travel & Rail (🚆)</button>
@@ -2184,7 +2191,7 @@
                             <div class="services-section">
                                 <div class="services-section-header">
                                     <div>
-                                        <h3 class="services-section-title">All Applications & Micro-Engines (14)</h3>
+                                        <h3 class="services-section-title">All Applications & Micro-Engines (15)</h3>
                                         <p class="services-section-desc">Click any application to launch directly in a full-screen new tab</p>
                                     </div>
                                 </div>
@@ -2539,6 +2546,39 @@
                                         <div class="service-card-actions">
                                             <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/pincode.html', '_blank')"><span>⚡ Open App ↗</span></button>
                                             </div>
+                                    </div>
+
+                                    <!-- APP 15: Remini AI Photo Enhancer Pro -->
+                                    <div class="service-card" data-category="tools ai photo remini camera" onclick="window.open('/remini.html', '_blank')">
+                                        <div class="service-card-top">
+                                            <div class="service-icon-box remini"><span>✨</span></div>
+                                            <div class="service-card-meta">
+                                                <div class="service-card-title-row">
+                                                    <h4 class="service-card-title">Remini AI • HD Photo Enhancer Pro</h4>
+                                                    <span class="service-card-owner">👑 Owner: Sallu</span>
+                                                </div>
+                                                <div class="service-card-category">Face Unblur • Old Photo Restore • 4x Super Resolution</div>
+                                            </div>
+                                        </div>
+                                        <p class="service-card-description">AI Photo Enhancer & Face Unblur pro studio. Restore old blurry photos, sharpen portraits, denoise, and boost resolution up to 4x — 100% Free, Private & Ad-Free.</p>
+                                        <div class="service-card-stats">
+                                            <span class="service-stat-item">★ 5.0 (6.2k)</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-item">42 KB</span>
+                                            <span class="service-stat-sep">•</span>
+                                            <span class="service-stat-badge purple">AI PRO • NO ADS</span>
+                                        </div>
+                                        <div class="service-card-actions">
+                                            <button class="btn-service-launch" type="button" onclick="event.stopPropagation(); window.open('/remini.html', '_blank')"><span>⚡ Open App ↗</span></button>
+                                            <div class="services-dl-row">
+                                                <a href="/download/remini.html" download="Remini-AI-Photo-Enhancer.html" class="btn-services-dl" onclick="event.stopPropagation()" title="Download HTML">
+                                                    <span>⬇ HTML</span>
+                                                </a>
+                                                <a href="/download/remini.zip" download="Remini-AI-Photo-Enhancer.zip" class="btn-services-dl" onclick="event.stopPropagation()" title="Download ZIP">
+                                                    <span>📦 ZIP</span>
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
 
                                 </div>

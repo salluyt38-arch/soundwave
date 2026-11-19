@@ -1285,4 +1285,71 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
         handler.send_json({"success": True, "message": "In-memory cache cleared."})
         return True
 
+    # --------------------------------------------------------------------------
+    # 15. REMINI AI PHOTO ENHANCER & SUPER-RESOLUTION ENGINE (OWNER: SALLU)
+    # --------------------------------------------------------------------------
+    if path == "/api/app/remini/enhance":
+        img_b64 = str(body.get("image", "")).strip()
+        mode = str(body.get("mode", "face_restore")).strip()
+        sharpness = float(body.get("sharpness", 1.8))
+        contrast = float(body.get("contrast", 1.2))
+        color = float(body.get("color", 1.2))
+        denoise = float(body.get("denoise", 1.0))
+        upscale = int(body.get("upscale", 1))
+
+        if not img_b64:
+            handler.send_json({"error": "No image data provided"}, status=400)
+            return True
+
+        try:
+            import io, base64
+            from PIL import Image, ImageFilter, ImageEnhance, ImageOps
+
+            if "," in img_b64:
+                img_b64 = img_b64.split(",", 1)[1]
+            raw_bytes = base64.b64decode(img_b64)
+            img = Image.open(io.BytesIO(raw_bytes)).convert("RGB")
+            orig_w, orig_h = img.size
+
+            if upscale > 1:
+                new_w = min(orig_w * upscale, 3840)
+                new_h = min(orig_h * upscale, 3840)
+                img = img.resize((new_w, new_h), Image.Resampling.LANCZOS)
+
+            if mode == "face_restore":
+                img = img.filter(ImageFilter.UnsharpMask(radius=2, percent=int(sharpness * 120), threshold=3))
+                img = ImageEnhance.Sharpness(img).enhance(sharpness)
+                img = ImageEnhance.Contrast(img).enhance(contrast)
+            elif mode == "super_res":
+                img = img.filter(ImageFilter.UnsharpMask(radius=1.5, percent=int(sharpness * 140), threshold=2))
+                img = ImageEnhance.Sharpness(img).enhance(sharpness * 1.2)
+                img = ImageEnhance.Contrast(img).enhance(contrast)
+            elif mode == "colorize":
+                img = ImageOps.autocontrast(img, cutoff=2)
+                img = ImageEnhance.Color(img).enhance(color * 1.5)
+                img = ImageEnhance.Contrast(img).enhance(contrast)
+            elif mode == "denoise":
+                img = img.filter(ImageFilter.MedianFilter(size=3))
+                img = img.filter(ImageFilter.UnsharpMask(radius=2, percent=100, threshold=4))
+            elif mode == "relight":
+                img = ImageOps.equalize(img)
+                img = ImageEnhance.Contrast(img).enhance(contrast * 0.9)
+                img = ImageEnhance.Color(img).enhance(color)
+
+            buf = io.BytesIO()
+            img.save(buf, format="JPEG", quality=95)
+            out_b64 = "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode("utf-8")
+            handler.send_json({
+                "success": True,
+                "image": out_b64,
+                "width": img.width,
+                "height": img.height,
+                "mode": mode,
+                "owner": "Sallu"
+            })
+            return True
+        except Exception as e:
+            handler.send_json({"error": f"Enhancement failed: {str(e)}"}, status=500)
+            return True
+
     return False
