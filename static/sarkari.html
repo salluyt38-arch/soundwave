@@ -253,7 +253,7 @@
           <h3 class="font-bold text-white text-sm mb-1">${j.title}</h3>
           <p class="text-xs text-purple-300 mb-2">Vacancies: <strong class="text-white">${j.vacancies}</strong></p>
           <div class="text-xs bg-[#110d20] p-2.5 rounded-xl space-y-1 mb-3 text-slate-300">
-            <div>Eligibility: <strong class="text-slate-200">${j.qualification}</strong></div>
+            <div>Eligibility: <strong class="text-slate-200">${j.qualification || j.eligibility || 'Graduate / 10+2'}</strong></div>
             <div>Last Date: <strong class="text-amber-400">${j.lastDate}</strong></div>
           </div>
           <button onclick="alert('Notification alert set! Bookmark this post for direct link.')" class="w-full py-2 bg-purple-700/60 hover:bg-purple-600 text-white font-bold rounded-xl text-xs transition">

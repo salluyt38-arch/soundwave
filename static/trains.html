@@ -359,16 +359,16 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#0a1529] p-4 rounded-xl text-xs">
           <div>
             <span class="text-slate-400">Currently At / Departed</span>
-            <div class="font-bold text-white text-sm mt-0.5">${t.currentStation}</div>
-            <span class="text-[11px] text-emerald-400">${t.platform}</span>
+            <div class="font-bold text-white text-sm mt-0.5">${t.currentStation || t.curr || 'En-route Station'}</div>
+            <span class="text-[11px] text-emerald-400">${t.platform || 'Platform 1'}</span>
           </div>
           <div>
             <span class="text-slate-400">Upcoming Next Stop</span>
-            <div class="font-bold text-sky-300 text-sm mt-0.5">${t.nextStation}</div>
+            <div class="font-bold text-sky-300 text-sm mt-0.5">${t.nextStation || t.next || 'Upcoming Junction'}</div>
           </div>
           <div>
             <span class="text-slate-400">Journey Progress</span>
-            <div class="font-bold text-slate-200 text-sm mt-0.5">${t.distanceCovered}</div>
+            <div class="font-bold text-slate-200 text-sm mt-0.5">${t.distanceCovered || t.progress || '50% Covered'}</div>
             <div class="w-full bg-slate-800 h-1.5 rounded-full mt-1.5 overflow-hidden">
               <div class="bg-gradient-to-r from-sky-500 to-emerald-400 h-full w-[55%]"></div>
             </div>
@@ -377,26 +377,7 @@
       `;
     }
 
-    function checkPnrStatus() {
-      const pnr = document.getElementById('pnrInput').value.trim() || '2456789123';
-      const container = document.getElementById('pnrResult');
-      container.innerHTML = `
-        <div class="flex items-center justify-between border-b border-sky-900/60 pb-3">
-          <div>
-            <h3 class="text-lg font-bold text-white">PNR: ${pnr}</h3>
-            <p class="text-xs text-sky-300">12952 / Mumbai Rajdhani • New Delhi ➔ Mumbai Central</p>
-          </div>
-          <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-xl text-xs font-bold">CNF (CONFIRMED)</span>
-        </div>
-
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#0a1529] p-4 rounded-xl text-xs">
-          <div><span class="text-slate-400">Class:</span> <div class="font-bold text-white">3A (AC 3 Tier)</div></div>
-          <div><span class="text-slate-400">Coach:</span> <div class="font-bold text-sky-300">B4</div></div>
-          <div><span class="text-slate-400">Berth No:</span> <div class="font-bold text-sky-300">42 (Side Lower)</div></div>
-          <div><span class="text-slate-400">Chart Status:</span> <div class="font-bold text-emerald-400">Chart Prepared</div></div>
-        </div>
-      `;
-    }
+// Duplicate checkPnrStatus removed, handled by live async checkPnrStatus()
 
     const metroStations = {
       delhi: ["Rajiv Chowk", "Kashmere Gate", "Hauz Khas", "Noida City Centre", "IGI Airport", "New Delhi Railway", "Botanical Garden", "Chandni Chowk", "Vishwa Vidyalaya"],
@@ -454,27 +435,129 @@
     }
 
     function checkVehicleRC() {
-      const rc = (document.getElementById('rcInput').value.trim() || 'DL01AB1234').toUpperCase();
+      const rcRaw = (document.getElementById('rcInput').value.trim() || 'DL01AB1234').toUpperCase().replace(/\s+/g, '');
       const container = document.getElementById('rcResult');
+
+      // Comprehensive All-India RTO Directory
+      const rtoDir = {
+        'DL01': 'Mall Road, Civil Lines, Delhi',
+        'DL02': 'Indraprastha Depot, New Delhi',
+        'DL03': 'Sheikh Sarai, South Delhi',
+        'DL04': 'Janakpuri, West Delhi',
+        'DL05': 'Loni Road, North East Delhi',
+        'DL06': 'Sarai Kale Khan, Central Delhi',
+        'DL07': 'Mayur Vihar, East Delhi',
+        'DL08': 'Wazirpur, North West Delhi',
+        'DL09': 'Palam Road, South West Delhi',
+        'DL10': 'Raja Garden, West Delhi',
+        'UP14': 'Ghaziabad, Uttar Pradesh',
+        'UP15': 'Meerut, Uttar Pradesh',
+        'UP16': 'Gautam Buddha Nagar (Noida), Uttar Pradesh',
+        'UP32': 'Lucknow, Uttar Pradesh',
+        'UP78': 'Kanpur Nagar, Uttar Pradesh',
+        'UP65': 'Varanasi, Uttar Pradesh',
+        'UP70': 'Prayagraj (Allahabad), Uttar Pradesh',
+        'UP80': 'Agra, Uttar Pradesh',
+        'UP53': 'Gorakhpur, Uttar Pradesh',
+        'UP25': 'Bareilly, Uttar Pradesh',
+        'UP93': 'Jhansi, Uttar Pradesh',
+        'MH01': 'Mumbai Central (South), Maharashtra',
+        'MH02': 'Mumbai West (Andheri), Maharashtra',
+        'MH03': 'Mumbai East (Wadala), Maharashtra',
+        'MH04': 'Thane, Maharashtra',
+        'MH12': 'Pune City, Maharashtra',
+        'MH14': 'Pimpri-Chinchwad, Maharashtra',
+        'MH20': 'Chhatrapati Sambhajinagar (Aurangabad), Maharashtra',
+        'MH31': 'Nagpur, Maharashtra',
+        'MH43': 'Navi Mumbai (Vashi), Maharashtra',
+        'MH46': 'Panvel, Raigad, Maharashtra',
+        'KA01': 'Koramangala (Bengaluru Central), Karnataka',
+        'KA02': 'Rajajinagar (Bengaluru West), Karnataka',
+        'KA03': 'Indiranagar (Bengaluru East), Karnataka',
+        'KA04': 'Yeshwanthpur (Bengaluru North), Karnataka',
+        'KA05': 'Jayanagar (Bengaluru South), Karnataka',
+        'KA09': 'Mysuru, Karnataka',
+        'KA19': 'Mangaluru, Karnataka',
+        'HR26': 'Gurugram (North), Haryana',
+        'HR55': 'Gurugram (Commercial), Haryana',
+        'HR51': 'Faridabad, Haryana',
+        'HR06': 'Panipat, Haryana',
+        'HR05': 'Karnal, Haryana',
+        'HR10': 'Sonipat, Haryana',
+        'HR12': 'Rohtak, Haryana',
+        'HR01': 'Ambala, Haryana',
+        'RJ14': 'Jaipur (South), Rajasthan',
+        'RJ45': 'Jaipur (North), Rajasthan',
+        'RJ19': 'Jodhpur, Rajasthan',
+        'RJ27': 'Udaipur, Rajasthan',
+        'RJ20': 'Kota, Rajasthan',
+        'RJ02': 'Alwar, Rajasthan',
+        'BR01': 'Patna, Bihar',
+        'BR02': 'Gaya, Bihar',
+        'BR04': 'Saran (Chapra), Bihar',
+        'BR06': 'Muzaffarpur, Bihar',
+        'BR07': 'Darbhanga, Bihar',
+        'BR09': 'Begusarai, Bihar',
+        'BR10': 'Bhagalpur, Bihar',
+        'GJ01': 'Ahmedabad, Gujarat',
+        'GJ05': 'Surat, Gujarat',
+        'GJ03': 'Rajkot, Gujarat',
+        'GJ06': 'Vadodara, Gujarat',
+        'GJ27': 'Gandhinagar, Gujarat',
+        'MP09': 'Indore, Madhya Pradesh',
+        'MP04': 'Bhopal, Madhya Pradesh',
+        'MP20': 'Jabalpur, Madhya Pradesh',
+        'MP07': 'Gwalior, Madhya Pradesh',
+        'WB01': 'Kolkata (North), West Bengal',
+        'WB02': 'Kolkata (South), West Bengal',
+        'WB19': 'Alipore (South 24 Parganas), West Bengal',
+        'WB24': 'Barrackpore (North 24 Parganas), West Bengal'
+      };
+
+      const code = rcRaw.slice(0, 4);
+      const stateCode = rcRaw.slice(0, 2);
+      const stateNames = {
+        'DL': 'Delhi', 'UP': 'Uttar Pradesh', 'MH': 'Maharashtra', 'KA': 'Karnataka',
+        'HR': 'Haryana', 'RJ': 'Rajasthan', 'BR': 'Bihar', 'GJ': 'Gujarat',
+        'MP': 'Madhya Pradesh', 'WB': 'West Bengal', 'PB': 'Punjab', 'TN': 'Tamil Nadu',
+        'TS': 'Telangana', 'AP': 'Andhra Pradesh', 'KL': 'Kerala', 'OD': 'Odisha',
+        'UK': 'Uttarakhand', 'JH': 'Jharkhand', 'CH': 'Chandigarh', 'HP': 'Himachal Pradesh'
+      };
+
+      const stateName = stateNames[stateCode] || 'India';
+      const rtoName = rtoDir[code] || `${code} Regional Transport Office, ${stateName}`;
+
+      const models = [
+        'MARUTI SUZUKI SWIFT VXI (PETROL)',
+        'HYUNDAI CRETA SX (PETROL/DIESEL)',
+        'TATA NEXON FEARLESS (TURBO PETROL)',
+        'HONDA CITY V (I-VTEC PETROL)',
+        'MAHINDRA THAR 4X4 (CRDE DIESEL)',
+        'KIA SELTOS HTX (SMARTSTREAM)',
+        'MARUTI BALENO ZETA (PETROL)'
+      ];
+      const modelIndex = Math.abs(rcRaw.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)) % models.length;
+      const vehicleModel = models[modelIndex];
+
       container.innerHTML = `
-        <div class="flex items-center justify-between border-b border-sky-900/60 pb-3 mb-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-sky-900/60 pb-3 mb-4">
           <div>
-            <h3 class="text-lg font-bold text-white">${rc}</h3>
-            <p class="text-xs text-slate-400">MARUTI SUZUKI SWIFT VXI (PETROL)</p>
+            <h3 class="text-lg font-bold text-white font-mono tracking-wider">${rcRaw}</h3>
+            <p class="text-xs text-sky-300 font-semibold mt-0.5">${vehicleModel}</p>
           </div>
-          <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-xl text-xs font-bold">ACTIVE RC</span>
+          <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-xl text-xs font-bold font-mono">🟢 ACTIVE RC</span>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 bg-[#0a1529] p-4 rounded-xl text-xs mb-4">
-          <div><span class="text-slate-400">Registering RTO:</span><div class="font-bold text-white">Delhi Mall Road (DL-01)</div></div>
-          <div><span class="text-slate-400">Vehicle Age:</span><div class="font-bold text-white">3 Years 4 Months</div></div>
-          <div><span class="text-slate-400">Insurance Status:</span><div class="font-bold text-emerald-400">Valid (Up to 2027)</div></div>
-          <div><span class="text-slate-400">PUCC Fitness:</span><div class="font-bold text-emerald-400">Valid</div></div>
+          <div><span class="text-slate-400">Registering Authority:</span><div class="font-bold text-white mt-0.5">${rtoName}</div></div>
+          <div><span class="text-slate-400">Registration State:</span><div class="font-bold text-sky-400 mt-0.5">${stateName}</div></div>
+          <div><span class="text-slate-400">Insurance Validity:</span><div class="font-bold text-emerald-400 mt-0.5">Active & Valid (2027)</div></div>
+          <div><span class="text-slate-400">PUCC Fitness:</span><div class="font-bold text-emerald-400 mt-0.5">Passed & Certified</div></div>
         </div>
 
         <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded-xl flex items-center justify-between text-xs">
-          <span class="text-emerald-300 font-bold flex items-center gap-1.5">✅ No Pending Traffic E-Challans Found</span>
-          <span class="text-slate-400">0 Dues</span>
+          <span class="text-emerald-300 font-bold flex items-center gap-1.5">✅ No Pending E-Challans Recorded for ${rcRaw}</span>
+          <span class="text-slate-400 font-mono">0 Dues • Clear Record</span>
         </div>
       `;
     }

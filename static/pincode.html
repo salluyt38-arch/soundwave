@@ -135,8 +135,8 @@
     };
 
     async function searchPincode() {
-      const pin = document.getElementById('pinInput').value.trim();
-      const container = document.getElementById('pinResult');
+      const pin = document.getElementById('pincodeInput').value.trim();
+      const container = document.getElementById('pincodeResults');
       container.innerHTML = `<div class="text-center py-6 text-slate-400"><div class="animate-spin inline-block text-2xl mb-2">🔄</div><p class="text-xs">Calling Official India Post API...</p></div>`;
 
       try {

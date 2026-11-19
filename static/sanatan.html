@@ -750,31 +750,155 @@
       renderGitaChapters(filtered);
     }
 
+
+    const chapterShlokas = {
+      1: {
+        shloka: "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः।<br>मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय॥",
+        textAudio: "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः। मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय॥",
+        hindi: "धृतराष्ट्र ने पूछा: हे संजय! धर्मभूमि कुरुक्षेत्र में युद्ध की इच्छा से एकत्र हुए मेरे और पाण्डु के पुत्रों ने क्या किया?",
+        english: "Dhritarashtra said: O Sanjaya, assembled on the sacred plain of Kurukshetra, what did my sons and the sons of Pandu do?"
+      },
+      2: {
+        shloka: "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।<br>मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥",
+        textAudio: "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन। मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥",
+        hindi: "तुम्हारा अधिकार केवल कर्तव्य कर्म करने में है, कभी भी कर्म के फलों में नहीं। इसलिए फल की आसक्ति छोड़कर अनासक्त होकर कर्म करो।",
+        english: "You have a right only to action, never to its fruits. Let not the fruits of action be your motive, nor let your attachment be to inaction."
+      },
+      3: {
+        shloka: "यद्यदाचरति श्रेष्ठस्तत्तदेवेतरो जनः।<br>स यत्प्रमाणं कुरुते लोकस्तदनुवर्तते॥",
+        textAudio: "यद्यदाचरति श्रेष्ठस्तत्तदेवेतरो जनः। स यत्प्रमाणं कुरुते लोकस्तदनुवर्तते॥",
+        hindi: "श्रेष्ठ पुरुष जैसा आचरण करते हैं, सामान्य मनुष्य भी वैसा ही आचरण करते हैं। वे जो प्रमाण स्थापित करते हैं, सारा संसार उसी का अनुसरण करता है।",
+        english: "Whatever actions great persons perform, common people follow. Whatever standards they set, the world follows."
+      },
+      4: {
+        shloka: "यदा यदा हि धर्मस्य ग्लानिर्भवति भारत।<br>अभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम्॥",
+        textAudio: "यदा यदा हि धर्मस्य ग्लानिर्भवति भारत। अभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम्॥",
+        hindi: "हे भारत! जब-जब धर्म की हानि और अधर्म की वृद्धि होती है, तब-तब मैं धर्म की रक्षा और सत्य की स्थापना के लिए साकार रूप में प्रकट होता हूँ।",
+        english: "Whenever righteousness declines and unrighteousness prevails, O Bharata, I manifest Myself."
+      },
+      5: {
+        shloka: "संन्यासः कर्मयोगश्च निःश्रेयसकरावुभौ।<br>तयोस्तु कर्मसंन्यासात्कर्मयोगो विशिष्यते॥",
+        textAudio: "संन्यासः कर्मयोगश्च निःश्रेयसकरावुभौ। तयोस्तु कर्मसंन्यासात्कर्मयोगो विशिष्यते॥",
+        hindi: "कर्म-संन्यास और कर्मयोग दोनों ही परम कल्याणकारी हैं, किंतु कर्म-संन्यास की अपेक्षा निष्काम कर्मयोग श्रेष्ठ और सुगम है।",
+        english: "Both the renunciation of action and karma yoga lead to supreme bliss. But of the two, karma yoga is superior."
+      },
+      6: {
+        shloka: "उद्धरेदात्मनाऽत्मानं नात्मानमवसादयेत्।<br>आत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः॥",
+        textAudio: "उद्धरेदात्मनाऽत्मानं नात्मानमवसादयेत्। आत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः॥",
+        hindi: "मनुष्य को अपने मन के द्वारा अपना उद्धार करना चाहिए, स्वयं को पतन में नहीं डालना चाहिए। क्योंकि मन ही मनुष्य का मित्र है और मन ही उसका शत्रु है।",
+        english: "Elevate yourself by your own mind, do not degrade yourself. For the mind is the greatest friend and the mind alone is the worst enemy."
+      },
+      7: {
+        shloka: "मय्यासक्तमनाः पार्थ योगं युञ्जन्मदाश्रयः।<br>असंशयं समग्रं मां यथा ज्ञास्यसि तच्छृणु॥",
+        textAudio: "मय्यासक्तमनाः पार्थ योगं युञ्जन्मदाश्रयः। असंशयं समग्रं मां यथा ज्ञास्यसि तच्छृणु॥",
+        hindi: "हे पार्थ! मुझमें अनन्य प्रेमपूर्वक मन लगाकर, मेरी शरण होकर योग का अभ्यास करते हुए तुम मुझे पूर्ण रूप से निसंदेह कैसे जानोगे, वह सुनो।",
+        english: "With your mind absorbed in Me, practicing yoga with Me as refuge, hear how you shall know Me fully and without doubt."
+      },
+      8: {
+        shloka: "अन्तकाले च मामेव स्मरन्मुक्त्वा कलेवरम्।<br>यः प्रयाति स मद्भावं याति नास्त्यत्र संशयः॥",
+        textAudio: "अन्तकाले च मामेव स्मरन्मुक्त्वा कलेवरम्। यः प्रयाति स मद्भावं याति नास्त्यत्र संशयः॥",
+        hindi: "जो मनुष्य अंतकाल में मेरा ही स्मरण करते हुए शरीर का त्याग करता है, वह मेरे परम भाव को प्राप्त होता है, इसमें कोई संशय नहीं है।",
+        english: "Whoever at the end of life leaves the body remembering Me alone, immediately attains My divine nature."
+      },
+      9: {
+        shloka: "अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते।<br>तेषां नित्याभियुक्तानां योगक्षेमं वहाम्यहम्॥",
+        textAudio: "अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते। तेषां नित्याभियुक्तानां योगक्षेमं वहाम्यहम्॥",
+        hindi: "जो अनन्य भक्त निरंतर मेरा चिंतन करते हुए मेरी उपासना करते हैं, उन नित्य-युक्त भक्तों का योगक्षेम (आवश्यकताओं की पूर्ति और रक्षा) मैं स्वयं वहन करता हूँ।",
+        english: "To those who always think of Me and worship Me with exclusive devotion, I personally provide what they lack and preserve what they have."
+      },
+      10: {
+        shloka: "अहमात्मा गुडाकेश सर्वभूताशयस्थितः।<br>अहमादिश्च मध्यं च भूतानामन्त एव च॥",
+        textAudio: "अहमात्मा गुडाकेश सर्वभूताशयस्थितः। अहमादिश्च मध्यं च भूतानामन्त एव च॥",
+        hindi: "हे गुड़ाकेश अर्जुन! मैं समस्त प्राणियों के हृदय में स्थित आत्मा हूँ। मैं ही समस्त चराचर जगत का आदि, मध्य और अंत हूँ।",
+        english: "O Gudakesha, I am the Self seated in the hearts of all living beings. I am the beginning, middle, and end of all beings."
+      },
+      11: {
+        shloka: "कालोऽस्मि लोकक्षयकृत्प्रवृद्धो<br>लोकान्समाहर्तुमिह प्रवृत्तः।",
+        textAudio: "कालोऽस्मि लोकक्षयकृत्प्रवृद्धो लोकान्समाहर्तुमिह प्रवृत्तः।",
+        hindi: "श्रीभगवान बोले: मैं लोकों का नाश करने वाला महाकाल हूँ, जो समस्त संसार का संहार करने के लिए इस समय प्रवृत्त हुआ हूँ।",
+        english: "The Supreme Lord said: I am mighty Time, the source of destruction that comes forth to annihilate all worlds."
+      },
+      12: {
+        shloka: "मय्यावेश्य मनो ये मां नित्ययुक्ता उपासते।<br>श्रद्धया परयोपेतास्ते मे युक्ततमा मताः॥",
+        textAudio: "मय्यावेश्य मनो ये मां नित्ययुक्ता उपासते। श्रद्धया परयोपेतास्ते मे युक्ततमा मताः॥",
+        hindi: "श्रीभगवान बोले: जो मुझमें मन को एकाग्र करके परम श्रद्धा के साथ मेरी उपासना करते हैं, वे मेरे द्वारा सर्वश्रेष्ठ योगी माने जाते हैं।",
+        english: "Those who fix their minds on Me and always worship Me with supreme faith are considered by Me to be the highest yogis."
+      },
+      13: {
+        shloka: "इदं शरीरं कौन्तेय क्षेत्रमित्यभिधीयते।<br>एतद्यो वेत्ति तं प्राहुः क्षेत्रज्ञ इति तद्विदः॥",
+        textAudio: "इदं शरीरं कौन्तेय क्षेत्रमित्यभिधीयते। एतद्यो वेत्ति तं प्राहुः क्षेत्रज्ञ इति तद्विदः॥",
+        hindi: "हे कौन्तेय! यह शरीर 'क्षेत्र' (कर्मभूमि) कहलाता है, और जो इस शरीर को आत्म-रूप से जानता है, तत्वज्ञानी उसे 'क्षेत्रज्ञ' कहते हैं।",
+        english: "This physical body, O son of Kunti, is called the field (Kshetra), and one who knows this body is called the knower of the field (Kshetrajna)."
+      },
+      14: {
+        shloka: "सत्त्वं रजस्तम इति गुणाः प्रकृतिसम्भवाः।<br>निबध्नन्ति महाबाहो देहे देहिनमव्ययम्॥",
+        textAudio: "सत्त्वं रजस्तम इति गुणाः प्रकृतिसम्भवाः। निबध्नन्ति महाबाहो देहे देहिनमव्ययम्॥",
+        hindi: "हे महाबाहो! प्रकृति से उत्पन्न सत्त्व, रज और तम—ये तीनों गुण अविनाशी जीवात्मा को इस शरीर में बांधते हैं।",
+        english: "Material nature consists of three modes—Sattva (goodness), Rajas (passion), and Tamas (ignorance)—which bind the eternal soul to the mortal body."
+      },
+      15: {
+        shloka: "ऊर्ध्वमूलमधःशाखमश्वत्थं प्राहुरव्ययम्।<br>छन्दांसि यस्य पर्णानि यस्तं वेद स वेदवित्॥",
+        textAudio: "ऊर्ध्वमूलमधःशाखमश्वत्थं प्राहुरव्ययम्। छन्दांसि यस्य पर्णानि यस्तं वेद स वेदवित्॥",
+        hindi: "आदि रूप परमात्मा मूल वाले और नीचे की ओर शाखाओं वाले संसार रूपी अश्वत्थ वृक्ष को अविनाशी कहा गया है; जो इसे जानता है, वही वेदों का ज्ञाता है।",
+        english: "There is an eternal banyan tree with its roots above and branches below, whose leaves are the Vedic hymns. One who knows this tree knows the Vedas."
+      },
+      16: {
+        shloka: "अभयं सत्त्वसंशुद्धिर्ज्ञानयोगव्यवस्थितिः।<br>दानं दमश्च यज्ञश्च स्वाध्यायस्तप आर्जवम्॥",
+        textAudio: "अभयं सत्त्वसंशुद्धिर्ज्ञानयोगव्यवस्थितिः। दानं दमश्च यज्ञश्च स्वाध्यायस्तप आर्जवम्॥",
+        hindi: "भय का पूर्ण अभाव, अंतःकरण की शुद्धि, ज्ञान-योग में निष्ठा, दान, इंद्रिय-संयम, यज्ञ, स्वाध्याय, तप और सरलता—ये दैवी संपदा के लक्षण हैं।",
+        english: "Fearlessness, purity of mind, steadfastness in spiritual knowledge, charity, self-control, performance of sacrifice, and simplicity are divine virtues."
+      },
+      17: {
+        shloka: "ॐ तत्सदिति निर्देशो ब्रह्मणस्त्रिविधः स्मृतः।<br>ब्राह्मणास्तेन वेदाश्च यज्ञाश्च विहिताः पुरा॥",
+        textAudio: "ॐ तत्सदिति निर्देशो ब्रह्मणस्त्रिविधः स्मृतः। ब्राह्मणास्तेन वेदाश्च यज्ञाश्च विहिताः पुरा॥",
+        hindi: "'ॐ तत् सत्'—यह सच्चिदानन्दघन परब्रह्म परमात्मा का त्रिविध नाम कहा गया है, जिससे सृष्टि के प्रारंभ में वेद और यज्ञ रचे गए।",
+        english: "Om Tat Sat has been declared as the threefold symbol of the Supreme Absolute Truth from which Vedic wisdom and sacrifices emerged."
+      },
+      18: {
+        shloka: "सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज।<br>अहं त्वां सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः॥",
+        textAudio: "सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज। अहं त्वां सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः॥",
+        hindi: "सभी प्रकार के धर्मों और कर्तव्यों का संकोच त्यागकर केवल मेरी शरण में आ जाओ; मैं तुम्हें समस्त पापों और बंधनों से मुक्त कर दूँगा, शोक मत करो।",
+        english: "Abandon all varieties of dharmas and simply surrender unto Me alone. I shall deliver you from all sinful reactions; do not grieve."
+      }
+    };
+
     let activeModalChapter = 2;
     function openChapterShloka(chNum) {
       activeModalChapter = chNum;
       const ch = gitaChaptersData.find(c => c.num === chNum) || gitaChaptersData[1];
+      const shlokaInfo = chapterShlokas[chNum] || chapterShlokas[2];
+
       document.getElementById('modalChapterBadge').textContent = `अध्याय ${ch.num} • ${ch.verses} श्लोक`;
       document.getElementById('modalChapterTitle').textContent = `${ch.name} (${ch.translation})`;
 
       document.getElementById('modalShlokaContent').innerHTML = `
         <div class="p-4 rounded-2xl bg-amber-950/30 border border-amber-700/40 text-center space-y-2">
-          <span class="text-xs text-amber-400 font-bold">मूल संस्कृत श्लोक</span>
+          <span class="text-xs text-amber-400 font-bold">मूल संस्कृत श्लोक (अध्याय ${ch.num})</span>
           <p class="text-lg font-bold text-white font-devanagari leading-relaxed">
-            कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।<br>
-            मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥
+            ${shlokaInfo.shloka}
           </p>
         </div>
         <div class="space-y-2 text-xs sm:text-sm text-slate-300">
-          <p><strong>पदच्छेद व अनुवाद:</strong> तुम्हारा अधिकार केवल अपने कर्तव्य कर्म करने में है, कभी भी कर्म के फलों में नहीं। इसलिए कर्म के फल की आसक्ति से मुक्त होकर अपना कर्तव्य करो।</p>
-          <p class="text-slate-400 italic"><strong>English:</strong> Perform your duties unattached to the fruit of action, established in yoga.</p>
+          <p><strong>पदच्छेद व हिंदी अनुवाद:</strong> ${shlokaInfo.hindi}</p>
+          <p class="text-slate-400 italic"><strong>English Wisdom:</strong> ${shlokaInfo.english}</p>
         </div>
         <div class="p-3 rounded-xl bg-black/40 border border-white/5 text-xs text-slate-400">
-          <strong>अध्याय सार:</strong> ${ch.summary}
+          <strong>अध्याय का सार:</strong> ${ch.summary}
         </div>
       `;
 
       document.getElementById('shlokaModal').classList.remove('hidden');
+    }
+
+    function playShlokaAudio() {
+      const shlokaInfo = chapterShlokas[activeModalChapter] || chapterShlokas[2];
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(shlokaInfo.textAudio);
+        utter.lang = 'hi-IN';
+        utter.rate = 0.82;
+        window.speechSynthesis.speak(utter);
+      }
     }
 
     function closeShlokaModal() {
@@ -788,16 +912,7 @@
       if (activeModalChapter < 18) openChapterShloka(activeModalChapter + 1);
     }
 
-    function playShlokaAudio() {
-      const text = "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन। मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥";
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(text);
-        utter.lang = 'hi-IN';
-        utter.rate = 0.85;
-        window.speechSynthesis.speak(utter);
-      }
-    }
+// Handled in dynamic playShlokaAudio
 
     function playActiveShloka() {
       playShlokaAudio();

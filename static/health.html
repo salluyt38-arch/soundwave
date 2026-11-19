@@ -273,6 +273,24 @@
 
     function renderMedicines(list) {
       const grid = document.getElementById('medGrid');
+      if (!list || list.length === 0) {
+        grid.innerHTML = `
+          <div class="glass-card rounded-2xl p-6 text-center text-slate-400 col-span-full space-y-3 border border-emerald-500/30">
+            <div class="text-3xl">💊</div>
+            <p class="text-sm text-white font-bold">Koi dawa match nahi hui</p>
+            <p class="text-xs text-slate-400">Neeche diye gaye lakshano (symptoms) par click karke turant sasta generic substitute dekhein:</p>
+            <div class="flex flex-wrap justify-center gap-2 pt-1 text-xs">
+              <button onclick="document.getElementById('medSearch').value='fever'; searchMedicines()" class="px-3 py-1.5 bg-emerald-500/20 text-emerald-300 rounded-lg hover:bg-emerald-500/30 font-bold">Bukhar (Fever)</button>
+              <button onclick="document.getElementById('medSearch').value='headache'; searchMedicines()" class="px-3 py-1.5 bg-emerald-500/20 text-emerald-300 rounded-lg hover:bg-emerald-500/30 font-bold">Sar Dard</button>
+              <button onclick="document.getElementById('medSearch').value='gas'; searchMedicines()" class="px-3 py-1.5 bg-emerald-500/20 text-emerald-300 rounded-lg hover:bg-emerald-500/30 font-bold">Gas / Acidity</button>
+              <button onclick="document.getElementById('medSearch').value='cough'; searchMedicines()" class="px-3 py-1.5 bg-emerald-500/20 text-emerald-300 rounded-lg hover:bg-emerald-500/30 font-bold">Khansi (Cough)</button>
+              <button onclick="document.getElementById('medSearch').value='combiflam'; searchMedicines()" class="px-3 py-1.5 bg-emerald-500/20 text-emerald-300 rounded-lg hover:bg-emerald-500/30 font-bold">Combiflam</button>
+              <button onclick="document.getElementById('medSearch').value='vomiting'; searchMedicines()" class="px-3 py-1.5 bg-emerald-500/20 text-emerald-300 rounded-lg hover:bg-emerald-500/30 font-bold">Ulti (Vomiting)</button>
+            </div>
+          </div>
+        `;
+        return;
+      }
       grid.innerHTML = list.map(m => `
         <div class="glass-card rounded-2xl p-4 border border-emerald-500/20 hover:border-emerald-500/50 transition">
           <div class="flex items-start justify-between gap-2 mb-2">

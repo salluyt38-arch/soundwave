@@ -268,9 +268,45 @@
       renderRecipes(filtered);
     }
 
+    let currentActiveList = recipesData;
+
+    function renderRecipes(list = recipesData) {
+      currentActiveList = list;
+      const grid = document.getElementById('recipesGrid');
+      if (!list || list.length === 0) {
+        grid.innerHTML = `
+          <div class="glass-card rounded-2xl p-6 text-center text-slate-400 col-span-full border border-orange-500/20">
+            <div class="text-3xl mb-2">🍲</div>
+            <p class="text-white font-bold">कोई रेसिपी नहीं मिली</p>
+            <p class="text-xs text-slate-400 mt-1">पनीर, बिरयानी, डोसा, खीर, समोसा, या दाल सर्च करके देखें।</p>
+          </div>
+        `;
+        return;
+      }
+      grid.innerHTML = list.map(r => `
+        <div onclick="openRecipeModal('${r.id}')" class="glass-card rounded-2xl p-5 border border-white/10 hover:border-orange-500/50 cursor-pointer transition space-y-3 group">
+          <div class="flex justify-between items-center text-xs">
+            <span class="px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 font-bold font-mono">${r.badge}</span>
+            <span class="text-slate-400">⏱️ ${r.time}</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">${r.icon || '🍲'}</span>
+            <h3 class="text-lg font-bold text-white group-hover:text-orange-300 transition">${r.title}</h3>
+          </div>
+          <div class="text-xs text-slate-400">
+            <strong>मुख्य सामग्री:</strong> ${r.ingredients.slice(0, 3).join(', ')}...
+          </div>
+          <div class="pt-2 flex justify-between items-center text-xs font-bold text-orange-400 border-t border-white/5">
+            <span>पूरी विधि देखें (View Recipe)</span>
+            <span>→</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
     async function filterRecipes(query) {
       const q = (query || '').toLowerCase().trim();
-      if (q.length > 2) {
+      if (q.length > 1) {
         try {
           const res = await fetch(`/api/app/recipes/search?q=${encodeURIComponent(q)}`);
           const json = await res.json();
@@ -285,13 +321,13 @@
               icon: '🍲',
               desc: `स्वादिष्ट ${r.name} बनाने की आसान विधि।`,
               ingredients: r.ingredients,
-              instructions: r.steps
+              steps: r.steps
             })));
             return;
           }
         } catch(e) {}
       }
-      const q = (query || '').toLowerCase().trim();
+      
       const filtered = recipesData.filter(r => 
         r.title.toLowerCase().includes(q) || 
         r.ingredients.some(ing => ing.toLowerCase().includes(q))
@@ -300,7 +336,7 @@
     }
 
     function openRecipeModal(id) {
-      const r = recipesData.find(x => x.id === id);
+      const r = currentActiveList.find(x => String(x.id) === String(id)) || recipesData[0];
       if (!r) return;
       document.getElementById('modalRecipeCategory').textContent = `${r.badge} • ⏱️ ${r.time} • ${r.difficulty}`;
       document.getElementById('modalRecipeTitle').textContent = `${r.icon} ${r.title}`;
