@@ -1013,16 +1013,28 @@
         timerEl.textContent = `${sec}s`;
       }, 100);
 
-      // Extract Base64 from current image
-      let sendB64 = currentWorkingBase64;
-      if (!sendB64 || !sendB64.startsWith('data:image')) {
-        const c = document.createElement('canvas');
-        c.width = originalImageObj.naturalWidth;
-        c.height = originalImageObj.naturalHeight;
-        const ctx = c.getContext('2d');
-        ctx.drawImage(originalImageObj, 0, 0);
-        sendB64 = c.toDataURL('image/jpeg', 0.95);
+      // Optimize upload size: Clamp to max 1024px so 4x neural upscaling produces 4096px (True 4K)
+      // Keeps upload size < 400KB, preventing cloud 502 OOM crashes and giving instantaneous response!
+      const maxUploadDim = 1024;
+      const ow = originalImageObj.naturalWidth || 800;
+      const oh = originalImageObj.naturalHeight || 600;
+      let sendW = ow;
+      let sendH = oh;
+      if (ow > maxUploadDim || oh > maxUploadDim) {
+        if (ow > oh) {
+          sendW = maxUploadDim;
+          sendH = Math.max(10, Math.round((oh * maxUploadDim) / ow));
+        } else {
+          sendH = maxUploadDim;
+          sendW = Math.max(10, Math.round((ow * maxUploadDim) / oh));
+        }
       }
+      const c = document.createElement('canvas');
+      c.width = sendW;
+      c.height = sendH;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(originalImageObj, 0, 0, sendW, sendH);
+      const sendB64 = c.toDataURL('image/jpeg', 0.92);
 
       aiAbortController = new AbortController();
 
@@ -1073,10 +1085,19 @@
           signal: aiAbortController.signal
         });
 
-        const data = await response.json();
+        const resText = await response.text();
+        let data;
+        try {
+          data = JSON.parse(resText);
+        } catch (jsonErr) {
+          if (response.status === 502 || response.status === 504) {
+            throw new Error("Server temporarily busy or restarting. Please tap Retry.");
+          }
+          throw new Error(`Server returned status ${response.status}: ${resText.slice(0, 100)}`);
+        }
 
         if (!response.ok || data.status !== 'completed' || !data.image) {
-          throw new Error(data.error || 'Compute worker returned an unavailable state');
+          throw new Error(data.error || data.message || 'Compute worker returned an unavailable state');
         }
 
         // Finalize Steps

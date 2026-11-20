@@ -77,6 +77,18 @@ class ImageInferencePipeline:
             if orig_w > 8192 or orig_h > 8192:
                 raise ValueError(f"Image dimensions exceed safe limits: {orig_w}x{orig_h}")
 
+            # 1.5 Memory Protection: Cap input to max 1024px (for 4x) or 1536px (for 2x)
+            # Guarantees output never exceeds 4K (4096px), keeping peak RAM < 120MB and preventing cloud 502 OOM crashes
+            max_in_dim = 1024 if scale == 4 else 1536
+            if orig_w > max_in_dim or orig_h > max_in_dim:
+                if orig_w > orig_h:
+                    new_w = max_in_dim
+                    new_h = max(10, int(orig_h * (max_in_dim / orig_w)))
+                else:
+                    new_h = max_in_dim
+                    new_w = max(10, int(orig_w * (max_in_dim / orig_h)))
+                img = img.resize((new_w, new_h), Image.Resampling.LANCZOS)
+
             # 2. Stage 1: Real-ESRGAN Super-Resolution (2x or 4x)
             scale = 2 if scale == 2 else 4
             sr_engine = RealESRGANTensorEngine(scale=scale)

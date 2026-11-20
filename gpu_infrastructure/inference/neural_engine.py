@@ -38,7 +38,7 @@ class QualityValidator:
         """Calculates Peak Signal-to-Noise Ratio (dB) on luminance channel."""
         if not NUMPY_AVAILABLE:
             return 36.85
-        mse = np.mean((orig_y.astype(np.float64) - proc_y.astype(np.float64)) ** 2)
+        mse = np.mean((orig_y.astype(np.float32) - proc_y.astype(np.float32)) ** 2)
         if mse == 0:
             return 100.0
         max_pixel = 255.0
@@ -52,8 +52,8 @@ class QualityValidator:
         c1 = (0.01 * 255) ** 2
         c2 = (0.03 * 255) ** 2
 
-        img1 = orig_y.astype(np.float64)
-        img2 = proc_y.astype(np.float64)
+        img1 = orig_y.astype(np.float32)
+        img2 = proc_y.astype(np.float32)
 
         mu1 = ndi.gaussian_filter(img1, sigma=1.5)
         mu2 = ndi.gaussian_filter(img2, sigma=1.5)
