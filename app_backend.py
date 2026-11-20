@@ -349,9 +349,53 @@ def get_asma_ul_husna() -> Dict[str, Any]:
 # ==============================================================================
 def handle_app_get(handler: Any, path: str, query: Dict[str, list]) -> bool:
     """
-    Handles GET requests for Weather, Islamic/Hadith, and Firestore engines.
+    Handles GET requests for GPU Infrastructure, Weather, Islamic/Hadith, and Firestore engines.
     Returns True if the request was handled, False if unhandled.
     """
+    # -------------------------------------------------------------
+    # 0. GPU INFRASTRUCTURE TELEMETRY & CAPACITY DASHBOARD
+    # -------------------------------------------------------------
+    if path == "/api/gpu/capacity":
+        try:
+            from gpu_infrastructure import get_gpu_router
+            router = get_gpu_router()
+            handler.send_json(router.get_capacity_metrics())
+            return True
+        except Exception as e:
+            handler.send_json({"error": f"GPU Capacity error: {str(e)}"}, status=500)
+            return True
+
+    if path in ("/api/gpu/dashboard", "/gpu/dashboard"):
+        try:
+            from gpu_infrastructure import get_gpu_router
+            from gpu_infrastructure.dashboard.capacity_dashboard import CapacityDashboardRenderer
+            router = get_gpu_router()
+            html = CapacityDashboardRenderer(router).render_html_dashboard()
+            handler.send_response(200)
+            handler.send_header("Content-Type", "text/html; charset=utf-8")
+            handler.send_header("Content-Length", str(len(html.encode("utf-8"))))
+            handler.send_header("Cache-Control", "no-cache")
+            handler.end_headers()
+            handler.wfile.write(html.encode("utf-8"))
+            return True
+        except Exception as e:
+            handler.send_json({"error": f"GPU Dashboard error: {str(e)}"}, status=500)
+            return True
+
+    if path == "/api/gpu/job" or path.startswith("/api/gpu/job/"):
+        job_id = query.get("id", [""])[0].strip() or path.replace("/api/gpu/job/", "").strip()
+        try:
+            from gpu_infrastructure import get_gpu_router
+            router = get_gpu_router()
+            job = router.get_job(job_id)
+            if not job:
+                handler.send_json({"error": f"Job '{job_id}' not found"}, status=404)
+                return True
+            handler.send_json(job.to_summary_dict())
+            return True
+        except Exception as e:
+            handler.send_json({"error": f"GPU Job lookup error: {str(e)}"}, status=500)
+            return True
 
     # -------------------------------------------------------------
     # A. WEATHER APPLICATION ENDPOINTS
@@ -1284,5 +1328,74 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
         ZeroLagCache.clear()
         handler.send_json({"success": True, "message": "In-memory cache cleared."})
         return True
+
+    # -------------------------------------------------------------
+    # 15. SECURE GPU IMAGE ENHANCEMENT ORCHESTRATOR (REAL-ESRGAN + GFPGAN)
+    # -------------------------------------------------------------
+    if path == "/api/gpu/enhance":
+        image_b64 = str(body.get("image", "")).strip()
+        privacy_str = str(body.get("privacy", "personal")).lower()
+        priority_int = int(body.get("priority", 2))
+        consent = bool(body.get("has_contributor_consent", False))
+        scale = int(body.get("scale", 4))
+
+        if not image_b64:
+            handler.send_json({"error": "No image payload provided"}, status=400)
+            return True
+
+        import base64
+        if "," in image_b64:
+            image_b64 = image_b64.split(",", 1)[1]
+        try:
+            raw_bytes = base64.b64decode(image_b64)
+        except Exception as e:
+            handler.send_json({"error": f"Invalid base64 payload: {str(e)}"}, status=400)
+            return True
+
+        try:
+            from gpu_infrastructure import get_gpu_router, JobPrivacy, JobPriority, JobStatus
+            router = get_gpu_router()
+            privacy = JobPrivacy.PERSONAL if privacy_str == "personal" else JobPrivacy.PUBLIC_TEST
+            priority = JobPriority(priority_int) if priority_int in (1, 2, 3) else JobPriority.NORMAL
+
+            job = router.submit_job(
+                image_bytes=raw_bytes,
+                privacy=privacy,
+                priority=priority,
+                has_contributor_consent=consent,
+                scale=scale
+            )
+
+            completed_job = router.process_job_with_failover(job)
+
+            if completed_job.status == JobStatus.GPU_UNAVAILABLE:
+                handler.send_json({
+                    "status": "gpu_unavailable",
+                    "error": completed_job.error_message,
+                    "summary": completed_job.to_summary_dict()
+                }, status=503)
+                return True
+
+            if completed_job.status == JobStatus.FAILED:
+                handler.send_json({
+                    "status": "failed",
+                    "error": completed_job.error_message,
+                    "summary": completed_job.to_summary_dict()
+                }, status=500)
+                return True
+
+            out_b64 = "data:image/jpeg;base64," + base64.b64encode(completed_job.result_bytes).decode("utf-8")
+            handler.send_json({
+                "status": "completed",
+                "job_id": completed_job.job_id,
+                "scale": f"{completed_job.scale}x",
+                "assigned_worker": completed_job.assigned_worker_id,
+                "retry_count": completed_job.retry_count,
+                "image": out_b64
+            })
+            return True
+        except Exception as e:
+            handler.send_json({"error": f"GPU Enhancement error: {str(e)}"}, status=500)
+            return True
 
     return False

@@ -27,6 +27,8 @@ Thumbs.db
 .idea/
 
 # Whitelist soundwave app downloads
+!gpu_infrastructure/deploy_configs/
+!gpu_infrastructure/deploy_configs/.env.*
 !static/soundwave.apk
 !static/soundwave-app.zip
 !static/Weather-Experience-2026.zip
