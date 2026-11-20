@@ -472,9 +472,10 @@
               </div>
               <div class="p-2 rounded-xl bg-black/40 border border-white/5 space-y-1">
                 <span class="text-[10px] font-bold text-slate-400 uppercase">Face Restorer</span>
-                <div class="text-emerald-400 font-bold text-xs flex items-center gap-1">
+                <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-emerald-400">
+                  <input type="checkbox" id="chkRunGfpgan" checked class="rounded border-slate-700 text-sky-500 focus:ring-0">
                   <span>GFPGAN v1.4</span>
-                </div>
+                </label>
               </div>
             </div>
 
@@ -990,13 +991,14 @@
       const progressPct = document.getElementById('aiProgressPct');
       const statusText = document.getElementById('aiProgressStatusText');
       const scaleVal = parseInt(document.getElementById('selAiScale').value) || 4;
+      const runGfpganVal = document.getElementById('chkRunGfpgan') ? document.getElementById('chkRunGfpgan').checked : true;
 
       modal.classList.remove('hidden');
       updateAIStep('stepSecurity', 'iconSecurity', 'active', '1. Privacy & Payload Security Validation');
-      updateAIStep('stepRoute', 'iconRoute', 'pending', '2. Route to Dedicated Worker (RTX 4090)');
-      updateAIStep('stepEsrgan', 'iconEsrgan', 'pending', '3. Real-ESRGAN Deep 4x Super-Resolution Pass');
-      updateAIStep('stepGfpgan', 'iconGfpgan', 'pending', '4. GFPGAN Facial Blind Reconstruction');
-      updateAIStep('stepFinalize', 'iconFinalize', 'pending', '5. Final 4K Output Streamed to Studio Canvas');
+      updateAIStep('stepRoute', 'iconRoute', 'pending', '2. Route to Dedicated Compute Worker');
+      updateAIStep('stepEsrgan', 'iconEsrgan', 'pending', `3. Real-ESRGAN Deep ${scaleVal}x Super-Resolution Pass`);
+      updateAIStep('stepGfpgan', 'iconGfpgan', 'pending', runGfpganVal ? '4. GFPGAN Facial Blind Reconstruction' : '4. Facial Restoration (Bypassed by User)');
+      updateAIStep('stepFinalize', 'iconFinalize', 'pending', '5. Final Ultra HD Output Streamed to Studio Canvas');
       
       progressBar.style.width = '15%';
       progressPct.textContent = '15%';
@@ -1028,27 +1030,32 @@
         // Step 1 done
         setTimeout(() => {
           updateAIStep('stepSecurity', 'iconSecurity', 'done', '✓ 1. Privacy & Payload Security Validated');
-          updateAIStep('stepRoute', 'iconRoute', 'active', '2. Routing to GPU Worker (primary-trusted-gpu-01)...');
+          updateAIStep('stepRoute', 'iconRoute', 'active', '2. Routing to Dedicated Compute Worker...');
           progressBar.style.width = '35%';
           progressPct.textContent = '35%';
-          statusText.textContent = 'Allocating GPU Tensor Core...';
+          statusText.textContent = 'Allocating Worker Core...';
         }, 300);
 
         // Step 2 & 3 in flight
         setTimeout(() => {
-          updateAIStep('stepRoute', 'iconRoute', 'done', '✓ 2. Worker primary-trusted-gpu-01 (RTX 4090) Locked');
-          updateAIStep('stepEsrgan', 'iconEsrgan', 'active', '3. Real-ESRGAN Deep 4x Tensor Pass running...');
+          updateAIStep('stepRoute', 'iconRoute', 'done', '✓ 2. Worker Locked');
+          updateAIStep('stepEsrgan', 'iconEsrgan', 'active', `3. Real-ESRGAN Deep ${scaleVal}x Tensor Pass running...`);
           progressBar.style.width = '60%';
           progressPct.textContent = '60%';
-          statusText.textContent = 'Real-ESRGAN Upscaling & De-Noising...';
+          statusText.textContent = 'Real-ESRGAN Tensor Upscaling & De-Noising...';
         }, 800);
 
         setTimeout(() => {
-          updateAIStep('stepEsrgan', 'iconEsrgan', 'done', '✓ 3. Real-ESRGAN 4x Super-Res Complete');
-          updateAIStep('stepGfpgan', 'iconGfpgan', 'active', '4. GFPGAN Face Blind Restoration running...');
+          updateAIStep('stepEsrgan', 'iconEsrgan', 'done', `✓ 3. Real-ESRGAN ${scaleVal}x Super-Res Complete`);
+          if (runGfpganVal) {
+            updateAIStep('stepGfpgan', 'iconGfpgan', 'active', '4. GFPGAN Face Blind Restoration running...');
+            statusText.textContent = 'GFPGAN Eye, Skin & Lip Restoration...';
+          } else {
+            updateAIStep('stepGfpgan', 'iconGfpgan', 'done', '✓ 4. Face Restoration Bypassed');
+            statusText.textContent = 'Finalizing Tensor Output...';
+          }
           progressBar.style.width = '82%';
           progressPct.textContent = '82%';
-          statusText.textContent = 'GFPGAN Eye, Skin & Lip Restoration...';
         }, 1400);
 
         // Fetch to live backend GPU endpoint
@@ -1060,7 +1067,8 @@
             privacy: 'personal',
             priority: 1, // High VIP
             has_contributor_consent: true,
-            scale: scaleVal
+            scale: scaleVal,
+            run_gfpgan: runGfpganVal
           }),
           signal: aiAbortController.signal
         });
@@ -1068,12 +1076,12 @@
         const data = await response.json();
 
         if (!response.ok || data.status !== 'completed' || !data.image) {
-          throw new Error(data.error || 'GPU worker returned an unavailable state');
+          throw new Error(data.error || 'Compute worker returned an unavailable state');
         }
 
         // Finalize Steps
-        updateAIStep('stepGfpgan', 'iconGfpgan', 'done', '✓ 4. GFPGAN Blind Restoration Complete');
-        updateAIStep('stepFinalize', 'iconFinalize', 'done', '✓ 5. 4K Ultra HD Finalized');
+        updateAIStep('stepGfpgan', 'iconGfpgan', 'done', runGfpganVal ? '✓ 4. GFPGAN Blind Restoration Complete' : '✓ 4. Face Restoration Bypassed');
+        updateAIStep('stepFinalize', 'iconFinalize', 'done', '✓ 5. Ultra HD Finalized');
         progressBar.style.width = '100%';
         progressPct.textContent = '100%';
         statusText.textContent = 'Enhancement Finalized!';
@@ -1091,9 +1099,10 @@
           // Update UI badges
           document.getElementById('aiActiveBadge').classList.remove('hidden');
           document.getElementById('aiOverlayBadge').classList.remove('hidden');
-          document.getElementById('afterTagText').textContent = 'AI 4K HD';
+          document.getElementById('afterTagText').textContent = 'AI HD';
           document.getElementById('resBadge').textContent = `${enhancedImg.naturalWidth} x ${enhancedImg.naturalHeight}px (${data.scale} Super-Res)`;
-          document.getElementById('aiOverlayText').textContent = `Real-ESRGAN + GFPGAN (${data.scale}) • ${data.assigned_worker || 'RTX 4090'} in ${elapsedSec}s`;
+          const psnrStr = data.quality_metrics && data.quality_metrics.psnr_db ? ` • PSNR: ${data.quality_metrics.psnr_db}dB` : '';
+          document.getElementById('aiOverlayText').textContent = `Real-ESRGAN${runGfpganVal ? ' + GFPGAN' : ''} (${data.scale}) • ${data.assigned_worker || 'Dedicated Worker'} in ${elapsedSec}s${psnrStr}`;
 
           // Apply current filters on top of AI result seamlessly
           applyProcessing();

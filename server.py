@@ -2642,8 +2642,21 @@ class MusicHandler(SimpleHTTPRequestHandler):
             parsed_url = urllib.parse.urlparse(self.path)
             path = parsed_url.path
             content_len = int(self.headers.get("Content-Length", 0))
-            post_body = self.rfile.read(content_len).decode("utf-8") if content_len > 0 else "{}"
-            data = json.loads(post_body) if post_body else {}
+            content_type = self.headers.get("Content-Type", "")
+
+            if "multipart/form-data" in content_type:
+                raw_bytes = self.rfile.read(content_len) if content_len > 0 else b""
+                try:
+                    from gpu_infrastructure.multipart import parse_multipart_form
+                    data = parse_multipart_form(content_type, raw_bytes)
+                except Exception:
+                    data = {}
+            else:
+                post_body = self.rfile.read(content_len).decode("utf-8") if content_len > 0 else "{}"
+                try:
+                    data = json.loads(post_body) if post_body else {}
+                except Exception:
+                    data = {}
 
             if app_backend.handle_app_post(self, path, data):
                 return

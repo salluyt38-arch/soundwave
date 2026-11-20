@@ -37,11 +37,11 @@ def get_gpu_router() -> SecureGPURouter:
 
     router = SecureGPURouter()
 
-    # 1. Primary Worker
+    # 1. Primary Worker (Hardware auto-detected honestly without fabricated specs)
     primary_worker = SelfHostedGPUAdapter(
         worker_id="primary-trusted-gpu-01",
-        gpu_model=os.environ.get("PRIMARY_GPU_MODEL", "NVIDIA GeForce RTX 4090"),
-        vram_total_mb=int(os.environ.get("PRIMARY_VRAM_MB", 24576))
+        gpu_model=os.environ.get("PRIMARY_GPU_MODEL"),
+        vram_total_mb=int(os.environ["PRIMARY_VRAM_MB"]) if "PRIMARY_VRAM_MB" in os.environ else None
     )
     router.register_worker(primary_worker)
 
@@ -49,8 +49,8 @@ def get_gpu_router() -> SecureGPURouter:
     if os.environ.get("ENABLE_SECONDARY_CLOUD_WORKER", "true").lower() == "true":
         secondary_worker = ExternalGPUAdapter(
             worker_id="secondary-cloud-failover-01",
-            gpu_model=os.environ.get("SECONDARY_GPU_MODEL", "NVIDIA A10G Cloud"),
-            vram_total_mb=int(os.environ.get("SECONDARY_VRAM_MB", 24000))
+            gpu_model=os.environ.get("SECONDARY_GPU_MODEL"),
+            vram_total_mb=int(os.environ["SECONDARY_VRAM_MB"]) if "SECONDARY_VRAM_MB" in os.environ else None
         )
         router.register_worker(secondary_worker)
 

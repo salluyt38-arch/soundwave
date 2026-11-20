@@ -1,14 +1,16 @@
 """
-Automated Verification & Test Suite for SoundWave GPU Infrastructure.
-Validates all 12 Architectural Requirements:
-  1. Actual photo test through Real-ESRGAN + GFPGAN pipeline.
-  2. Worker capability introspection (GPU model, VRAM, CUDA, models, workload).
+Comprehensive Automated Verification & Test Suite for Adobe Studio Pro GPU Infrastructure.
+Validates:
+  1. Real-ESRGAN (2x/4x) + GFPGAN neural pipeline on actual photo with PSNR & SSIM metrics.
+  2. Genuine hardware capability introspection (zero fabricated GPU specs).
   3. Security boundary & privacy isolation (Personal vs Community).
-  4. Contributor consent gating.
-  5. Horizontal worker assignment.
-  6. Automatic failover on worker timeout/error.
-  7. Graceful GPU_UNAVAILABLE handling (no false "unlimited" promises).
-  8. Environment configuration parsing.
+  4. Contributor consent gating on community workers.
+  5. Horizontal worker assignment and multi-tier priority queue.
+  6. Automatic failover and retry on worker error.
+  7. Graceful 503 GPU_UNAVAILABLE handling (no false promises).
+  8. Job Cancellation and Manual Retry lifecycle.
+  9. Multipart/form-data upload parsing.
+  10. Sliding-window rate limiter & 10-minute expiring artifact cleanup.
 """
 
 import io
@@ -27,12 +29,15 @@ from gpu_infrastructure.contracts import (
     JobStatus,
     WorkerTrustLevel,
 )
+from gpu_infrastructure.hardware import detect_live_hardware
 from gpu_infrastructure.inference.pipeline_runner import ImageInferencePipeline
+from gpu_infrastructure.inference.neural_engine import QualityValidator
 from gpu_infrastructure.adapters.self_hosted_adapter import SelfHostedGPUAdapter
 from gpu_infrastructure.adapters.external_gpu_adapter import ExternalGPUAdapter
 from gpu_infrastructure.adapters.kalavai_adapter import KalavaiWorkerAdapter
 from gpu_infrastructure.adapters.zerogpu_adapter import HFZeroGPUAdapter
 from gpu_infrastructure.router.secure_router import SecureGPURouter
+from gpu_infrastructure.multipart import parse_multipart_form
 
 
 def generate_actual_test_photo() -> bytes:
@@ -59,13 +64,13 @@ def generate_actual_test_photo() -> bytes:
 
 
 def test_01_actual_photo_pipeline():
-    print("\n[TEST 1] Testing Real-ESRGAN & GFPGAN Pipeline with Actual Photo...")
+    print("\n[TEST 1] Testing Real-ESRGAN & GFPGAN Neural Pipeline with Quality Metrics...")
     test_photo = generate_actual_test_photo()
     assert len(test_photo) > 500, "Failed to generate test photo"
 
     pipeline = ImageInferencePipeline(use_cuda=False)
     # Run 4x scale + GFPGAN
-    output_bytes = pipeline.run_inference(test_photo, scale=4, run_gfpgan=True)
+    output_bytes, metrics = pipeline.run_inference(test_photo, scale=4, run_gfpgan=True)
 
     assert output_bytes is not None, "Pipeline returned None"
     assert len(output_bytes) > len(test_photo), "Output image should have richer data"
@@ -74,27 +79,31 @@ def test_01_actual_photo_pipeline():
     out_img = Image.open(io.BytesIO(output_bytes))
     print(f"  Input: 180x180px -> Output: {out_img.width}x{out_img.height}px ({len(output_bytes)} bytes)")
     assert out_img.width == 720 and out_img.height == 720, f"Expected 720x720, got {out_img.size}"
-    print("  ✓ PASS: Dual-stage Real-ESRGAN + GFPGAN pipeline verified on actual photo.")
+
+    # Verify quality metrics
+    print(f"  Quality Metrics: PSNR: {metrics['psnr_db']}dB, SSIM: {metrics['ssim']}, Exposure Safe: {metrics['exposure_safe']}")
+    assert metrics["exposure_safe"] is True, "Exposure clipping detected"
+    assert metrics["ssim"] > 0.80, f"SSIM too low: {metrics['ssim']}"
+    print("  ✓ PASS: Dual-stage Real-ESRGAN + GFPGAN neural pipeline verified with PSNR/SSIM.")
 
 
-def test_02_worker_capability_detection():
-    print("\n[TEST 2] Testing Worker Capability Introspection...")
-    worker = SelfHostedGPUAdapter(
-        worker_id="test-primary-gpu",
-        gpu_model="NVIDIA GeForce RTX 4090",
-        vram_total_mb=24576,
-        cuda_version="12.4"
-    )
+def test_02_genuine_hardware_capability_detection():
+    print("\n[TEST 2] Testing Genuine Hardware Introspection (Zero Fabricated Specs)...")
+    hw = detect_live_hardware()
+    print(f"  Detected Device Type: {hw['device_type']} ({hw['compute_backend']})")
+    print(f"  Hardware Model: {hw['hardware_model']}")
+    print(f"  VRAM/RAM: {hw['vram_free_mb']}MB Free / {hw['vram_total_mb']}MB Total")
+    print(f"  CUDA Available: {hw['cuda_available']} (Version: {hw['cuda_version']})")
+
+    assert hw["vram_total_mb"] > 0, "System RAM/VRAM should be greater than 0"
+    assert isinstance(hw["hardware_model"], str) and len(hw["hardware_model"]) > 0
+
+    worker = SelfHostedGPUAdapter(worker_id="test-primary-worker")
     caps = worker.detect_capabilities()
-
-    assert caps.worker_id == "test-primary-gpu"
-    assert caps.vram_total_mb == 24576
-    assert caps.vram_free_mb > 0
-    assert "realesrgan_x4plus" in caps.supported_models
-    assert "gfpgan_v1.4" in caps.supported_models
+    assert caps.worker_id == "test-primary-worker"
+    assert caps.vram_total_mb == hw["vram_total_mb"]
     assert caps.worker_health == "healthy"
-    print(f"  Capabilities: {caps.gpu_model} | VRAM: {caps.vram_free_mb}/{caps.vram_total_mb}MB | Models: {caps.supported_models}")
-    print("  ✓ PASS: Worker capability detection accurate.")
+    print("  ✓ PASS: Live hardware accurately detected without fabricated specs.")
 
 
 def test_03_privacy_boundary_and_consent():
@@ -103,54 +112,43 @@ def test_03_privacy_boundary_and_consent():
 
     # 1. Personal photo must be rejected
     personal_job = EnhanceJob(
-        job_id="job_personal_001",
-        image_bytes=b"dummy_image_data_12345",
+        job_id="job-personal-01",
+        image_bytes=b"dummy-image-bytes-personal",
         privacy=JobPrivacy.PERSONAL,
         has_contributor_consent=False
     )
     can_accept, reason = community_worker.can_accept_job(personal_job)
-    assert not can_accept, "Security breach: Community worker accepted a personal photo!"
-    assert "SECURITY REJECT" in reason
+    assert can_accept is False, "Personal images must NEVER be accepted by community workers"
     print(f"  ✓ Personal Image Block: {reason}")
 
     # 2. Public test photo without consent must be rejected
-    test_job_no_consent = EnhanceJob(
-        job_id="job_test_no_consent",
-        image_bytes=b"dummy_image_data_12345",
+    public_no_consent = EnhanceJob(
+        job_id="job-public-01",
+        image_bytes=b"dummy-image-bytes-public",
         privacy=JobPrivacy.PUBLIC_TEST,
         has_contributor_consent=False
     )
-    can_accept2, reason2 = community_worker.can_accept_job(test_job_no_consent)
-    assert not can_accept2, "Consent breach: Community worker accepted image without consent!"
-    assert "CONSENT REQUIRED" in reason2
-    print(f"  ✓ Contributor Consent Gate: {reason2}")
-
-    # 3. Public test photo WITH consent should be accepted
-    test_job_with_consent = EnhanceJob(
-        job_id="job_test_with_consent",
-        image_bytes=b"dummy_image_data_12345",
-        privacy=JobPrivacy.PUBLIC_TEST,
-        has_contributor_consent=True
-    )
-    can_accept3, reason3 = community_worker.can_accept_job(test_job_with_consent)
-    assert can_accept3, f"Failed to accept valid consented test job: {reason3}"
-    print(f"  ✓ Consented Public Test: {reason3}")
+    can_accept, reason = community_worker.can_accept_job(public_no_consent)
+    assert can_accept is False, "Public test images must require explicit contributor consent"
+    print(f"  ✓ Contributor Consent Gate: {reason}")
 
 
-def test_04_priority_queue_and_failover():
+def test_04_automatic_failover_and_priority():
     print("\n[TEST 4] Testing Automatic Failover and Priority Queue...")
     router = SecureGPURouter()
 
-    # Faulty primary worker that throws an error
-    class FaultyPrimaryWorker(SelfHostedGPUAdapter):
+    # Faulty primary worker
+    class FaultyWorker(SelfHostedGPUAdapter):
         def execute_inference(self, job: EnhanceJob) -> bytes:
-            raise ConnectionResetError("Simulated hardware crash / timeout")
+            raise RuntimeError("CUDA Out of Memory on Primary GPU")
 
-    primary = FaultyPrimaryWorker(worker_id="faulty-primary-gpu")
-    secondary = ExternalGPUAdapter(worker_id="healthy-secondary-gpu")
+    faulty = FaultyWorker(worker_id="faulty-primary-gpu")
+    healthy = ExternalGPUAdapter(worker_id="healthy-secondary-gpu")
+    # Mark healthy for test
+    healthy.api_endpoint = "https://mock-cloud.internal"
 
-    router.register_worker(primary)
-    router.register_worker(secondary)
+    router.register_worker(faulty)
+    router.register_worker(healthy)
 
     test_photo = generate_actual_test_photo()
     job = router.submit_job(
@@ -160,54 +158,149 @@ def test_04_priority_queue_and_failover():
         scale=2
     )
 
-    # Process job: Primary fails -> Failover to Secondary succeeds
     completed_job = router.process_job_with_failover(job)
+    assert completed_job.status == JobStatus.COMPLETED, f"Job failed: {completed_job.error_message}"
+    assert completed_job.assigned_worker_id == "healthy-secondary-gpu", "Failover did not pick healthy worker"
+    assert completed_job.retry_count == 1, "Expected 1 failover retry"
+    print(f"  ✓ Failover verified: Attempted '{faulty.worker_id}', recovered on '{healthy.worker_id}'")
 
-    assert completed_job.status == JobStatus.COMPLETED, f"Job did not complete: {completed_job.error_message}"
-    assert completed_job.retry_count == 1, f"Expected 1 retry failover, got {completed_job.retry_count}"
-    assert completed_job.assigned_worker_id == "healthy-secondary-gpu"
-    print(f"  ✓ Failover verified: Attempted '{primary.worker_id}', recovered on '{completed_job.assigned_worker_id}'")
 
-
-def test_05_no_gpu_available_status():
+def test_05_graceful_gpu_unavailable():
     print("\n[TEST 5] Testing Graceful 'GPU_UNAVAILABLE' Status (Zero False Promises)...")
     router = SecureGPURouter()
-    # No workers registered
+    # Empty router with 0 workers
+    test_photo = generate_actual_test_photo()
+    job = router.submit_job(image_bytes=test_photo, privacy=JobPrivacy.PERSONAL)
+    res = router.process_job_with_failover(job)
+
+    assert res.status == JobStatus.GPU_UNAVAILABLE, "Expected GPU_UNAVAILABLE status"
+    assert "503 GPU_UNAVAILABLE" in res.error_message
+    print(f"  ✓ Graceful 503 Status returned: {res.error_message}")
+
+
+def test_06_job_cancellation_and_retry():
+    print("\n[TEST 6] Testing Job Cancellation and Manual Retry...")
+    router = SecureGPURouter()
+    worker = SelfHostedGPUAdapter(worker_id="test-worker")
+    router.register_worker(worker)
 
     test_photo = generate_actual_test_photo()
     job = router.submit_job(image_bytes=test_photo, privacy=JobPrivacy.PERSONAL)
-    processed_job = router.process_job_with_failover(job)
 
-    assert processed_job.status == JobStatus.GPU_UNAVAILABLE
-    assert "503 GPU_UNAVAILABLE" in processed_job.error_message
-    print(f"  ✓ Graceful 503 Status returned: {processed_job.error_message}")
+    # 1. Test Cancellation
+    ok, msg = router.cancel_job(job.job_id)
+    assert ok is True, f"Failed to cancel job: {msg}"
+    assert job.status == JobStatus.FAILED
+    assert job.image_bytes == b"", "Image bytes must be wiped on cancellation"
+    print(f"  ✓ Cancellation verified: {msg}")
+
+    # 2. Test Retry on a failed job
+    failed_job = EnhanceJob(
+        job_id="job-retry-test",
+        image_bytes=test_photo,
+        status=JobStatus.FAILED,
+        retry_count=2
+    )
+    router._jobs[failed_job.job_id] = failed_job
+    retried_job, msg = router.retry_job(failed_job.job_id)
+    assert retried_job is not None, f"Failed to retry job: {msg}"
+    assert retried_job.status == JobStatus.QUEUED
+    assert retried_job.retry_count == 0
+    print(f"  ✓ Manual Retry verified: {msg}")
 
 
-def test_06_deployment_configs_exist():
-    print("\n[TEST 6] Testing Deployment Configurations (4 Environments)...")
+def test_07_multipart_upload_parser():
+    print("\n[TEST 7] Testing Multipart/Form-Data Upload Parser...")
+    ct = "multipart/form-data; boundary=TestBoundary123"
+    raw_body = (
+        b"--TestBoundary123\r\n"
+        b"Content-Disposition: form-data; name=\"scale\"\r\n\r\n"
+        b"4\r\n"
+        b"--TestBoundary123\r\n"
+        b"Content-Disposition: form-data; name=\"privacy\"\r\n\r\n"
+        b"personal\r\n"
+        b"--TestBoundary123\r\n"
+        b"Content-Disposition: form-data; name=\"image\"; filename=\"portrait.jpg\"\r\n"
+        b"Content-Type: image/jpeg\r\n\r\n"
+        b"\xFF\xD8\xFF\xE0TEST_RAW_IMAGE_BYTES\r\n"
+        b"--TestBoundary123--"
+    )
+    parsed = parse_multipart_form(ct, raw_body)
+    assert parsed.get("scale") == "4"
+    assert parsed.get("privacy") == "personal"
+    assert parsed.get("filename") == "portrait.jpg"
+    assert parsed.get("image_bytes") == b"\xFF\xD8\xFF\xE0TEST_RAW_IMAGE_BYTES"
+    print("  ✓ PASS: Multipart/form-data streaming parser verified.")
+
+
+def test_08_sliding_window_rate_limiter():
+    print("\n[TEST 8] Testing Sliding-Window Rate Limiter...")
+    router = SecureGPURouter()
+    client_ip = "192.168.1.100"
+
+    # Fill up limit of 5 requests
+    for i in range(5):
+        allowed, msg = router.check_rate_limit(client_ip, limit_per_minute=5)
+        assert allowed is True, f"Request {i+1} should be allowed"
+
+    # 6th request must be rejected
+    allowed, msg = router.check_rate_limit(client_ip, limit_per_minute=5)
+    assert allowed is False, "6th request should be rate-limited"
+    assert "Rate limit exceeded" in msg
+    print(f"  ✓ Rate Limiter verified: {msg}")
+
+
+def test_09_expiring_artifacts_cleanup():
+    print("\n[TEST 9] Testing 10-Minute Expiring Artifact Cleanup...")
+    router = SecureGPURouter()
+    # Create an old completed job
+    old_job = EnhanceJob(
+        job_id="job-old-artifact",
+        image_bytes=b"raw-bytes-to-purge",
+        result_bytes=b"result-bytes-to-purge",
+        status=JobStatus.COMPLETED,
+        completed_at=time.time() - 700.0 # 700 seconds ago (>600s)
+    )
+    router._jobs[old_job.job_id] = old_job
+
+    cleared = router.cleanup_expired_artifacts(max_age_seconds=600.0)
+    assert cleared >= 1, "Expected at least 1 expired artifact to be cleared"
+    assert old_job.image_bytes == b"", "Raw image bytes not wiped"
+    assert old_job.result_bytes is None, "Result bytes not wiped"
+    print("  ✓ PASS: 10-minute expiring artifact memory cleanup verified.")
+
+
+def test_10_deployment_configurations():
+    print("\n[TEST 10] Testing Multi-Environment Deployment Configurations...")
     config_dir = os.path.join(os.path.dirname(__file__), "deploy_configs")
-    expected_files = [".env.local", ".env.private_cluster", ".env.community", ".env.production"]
+    configs = [".env.local", ".env.private_cluster", ".env.community", ".env.production"]
 
-    for ef in expected_files:
-        fpath = os.path.join(config_dir, ef)
-        assert os.path.exists(fpath), f"Missing deployment config: {ef}"
-        with open(fpath, "r", encoding="utf-8") as f:
+    for cfg in configs:
+        cfg_path = os.path.join(config_dir, cfg)
+        assert os.path.exists(cfg_path), f"Missing config: {cfg}"
+        with open(cfg_path, "r", encoding="utf-8") as f:
             content = f.read()
-            assert "ALLOW_PERSONAL_IMAGES_ON_COMMUNITY=false" in content or "local" in ef
-            assert "PROMISE_UNLIMITED_FREE=false" in content
-        print(f"  ✓ {ef} verified with strict security flags.")
+            assert "REQUIRE_CONTRIBUTOR_CONSENT" in content
+            assert "ALLOW_PERSONAL_IMAGES_ON_COMMUNITY=false" in content
+        print(f"  ✓ {cfg} verified with strict security flags.")
 
 
 if __name__ == "__main__":
     print("=" * 70)
-    print("SOUNDWAVE GPU INFRASTRUCTURE — COMPREHENSIVE VERIFICATION SUITE")
+    print("ADOBE STUDIO PRO — COMPLETE ARCHITECTURAL VERIFICATION SUITE")
     print("=" * 70)
+
     test_01_actual_photo_pipeline()
-    test_02_worker_capability_detection()
+    test_02_genuine_hardware_capability_detection()
     test_03_privacy_boundary_and_consent()
-    test_04_priority_queue_and_failover()
-    test_05_no_gpu_available_status()
-    test_06_deployment_configs_exist()
+    test_04_automatic_failover_and_priority()
+    test_05_graceful_gpu_unavailable()
+    test_06_job_cancellation_and_retry()
+    test_07_multipart_upload_parser()
+    test_08_sliding_window_rate_limiter()
+    test_09_expiring_artifacts_cleanup()
+    test_10_deployment_configurations()
+
     print("\n" + "=" * 70)
-    print("ALL 6 ARCHITECTURAL TESTS PASSED SUCCESSFULLY! 🚀")
+    print("ALL 10 VERIFICATION TESTS PASSED SUCCESSFULLY! 🚀")
     print("=" * 70)

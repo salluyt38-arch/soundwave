@@ -6,9 +6,11 @@ Enforces:
   3. Priority Queue (HIGH > NORMAL > BATCH).
   4. Automatic Failover & Retry on timeout or worker error.
   5. Multi-tiered Fallback: Primary -> Secondary -> Dev Fallback -> GPU_UNAVAILABLE.
-  6. Zero false promises of unlimited free availability.
+  6. Rate limiting, job cancellation, manual retry, and 10-minute expiring artifacts.
+  7. Zero false promises of unlimited free availability.
 """
 
+import gc
 import heapq
 import logging
 import threading
@@ -40,19 +42,37 @@ class SecureGPURouter:
         self._queue: List[Tuple[int, float, str]] = []
         self._lock = threading.RLock()
         self._audit_log: List[Dict[str, Any]] = []
+        self._rate_limits: Dict[str, List[float]] = {}
 
     def register_worker(self, worker: BaseGPUWorkerAdapter) -> None:
         """Registers a worker adapter into the router pool."""
         with self._lock:
             self._workers[worker.worker_id] = worker
-            logger.info(f"Registered GPU Worker: {worker.worker_id} ({worker.provider_name}, {worker.trust_level.value})")
+            logger.info(f"Registered Worker: {worker.worker_id} ({worker.provider_name}, {worker.trust_level.value})")
 
     def unregister_worker(self, worker_id: str) -> None:
         """Removes a worker from the router pool."""
         with self._lock:
             if worker_id in self._workers:
                 del self._workers[worker_id]
-                logger.info(f"Unregistered GPU Worker: {worker_id}")
+                logger.info(f"Unregistered Worker: {worker_id}")
+
+    def check_rate_limit(self, client_ip: str, limit_per_minute: int = 15) -> Tuple[bool, str]:
+        """
+        Token bucket sliding-window rate limiter per client IP.
+        Protects GPU compute from denial of service.
+        """
+        now = time.time()
+        with self._lock:
+            timestamps = self._rate_limits.setdefault(client_ip, [])
+            # Purge entries older than 60 seconds
+            self._rate_limits[client_ip] = [t for t in timestamps if (now - t) < 60.0]
+
+            if len(self._rate_limits[client_ip]) >= limit_per_minute:
+                return False, f"Rate limit exceeded: Max {limit_per_minute} enhancement jobs per minute."
+
+            self._rate_limits[client_ip].append(now)
+            return True, "OK"
 
     def submit_job(
         self,
@@ -61,7 +81,7 @@ class SecureGPURouter:
         priority: JobPriority = JobPriority.NORMAL,
         has_contributor_consent: bool = False,
         scale: int = 4,
-        timeout_seconds: float = 45.0
+        timeout_seconds: float = 45.0,
     ) -> EnhanceJob:
         """
         Accepts and registers a new image enhancement job.
@@ -74,6 +94,9 @@ class SecureGPURouter:
         if len(image_bytes) > 25 * 1024 * 1024:
             raise ValueError("Payload too large: Max image size is 25MB.")
 
+        # Purge expired artifacts on each submission
+        self.cleanup_expired_artifacts()
+
         job_id = f"gpu_job_{int(time.time() * 1000)}_{len(self._jobs) + 1}"
 
         job = EnhanceJob(
@@ -84,40 +107,106 @@ class SecureGPURouter:
             scale=scale,
             has_contributor_consent=has_contributor_consent,
             status=JobStatus.QUEUED,
+            progress_percent=5,
             timeout_seconds=timeout_seconds,
-            created_at=time.time()
+            created_at=time.time(),
         )
 
         with self._lock:
             self._jobs[job_id] = job
-            # Push to priority queue
             heapq.heappush(self._queue, (priority.value, job.created_at, job_id))
 
-        self._audit_log.append({
-            "event": "JOB_SUBMITTED",
-            "job_id": job_id,
-            "privacy": privacy.value,
-            "priority": priority.name,
-            "timestamp": time.time()
-        })
-
+        self._record_audit("JOB_SUBMITTED", job_id, f"Privacy: {privacy.value}, Scale: {scale}x")
         return job
 
     def get_job(self, job_id: str) -> Optional[EnhanceJob]:
         with self._lock:
             return self._jobs.get(job_id)
 
-    def select_best_worker(self, job: EnhanceJob, excluded_worker_ids: Optional[List[str]] = None) -> Tuple[Optional[BaseGPUWorkerAdapter], str]:
+    def cancel_job(self, job_id: str) -> Tuple[bool, str]:
         """
-        Selects the single most suitable GPU worker for this job following the strict fallback ladder:
-          Tier 1: Primary Trusted Self-Hosted GPU
-          Tier 2: Secondary Authorized External Cloud GPU
-          Tier 3: Development Hugging Face ZeroGPU (if privacy allows or dev mode)
+        Cancels an in-flight or queued job.
+        """
+        with self._lock:
+            job = self._jobs.get(job_id)
+            if not job:
+                return False, f"Job '{job_id}' not found."
+
+            if job.status in (JobStatus.COMPLETED, JobStatus.FAILED):
+                return False, f"Job '{job_id}' is already {job.status.value}."
+
+            job.status = JobStatus.FAILED
+            job.error_message = "Cancelled by user request."
+            job.completed_at = time.time()
+            job.progress_percent = 0
+
+            # Wipe image buffers immediately upon cancellation
+            job.image_bytes = b""
+            job.result_bytes = None
+            self._record_audit("JOB_CANCELLED", job_id, "User requested cancellation")
+            return True, f"Job '{job_id}' successfully cancelled."
+
+    def retry_job(self, job_id: str) -> Tuple[Optional[EnhanceJob], str]:
+        """
+        Retries a failed or stalled job.
+        """
+        with self._lock:
+            job = self._jobs.get(job_id)
+            if not job:
+                return None, f"Job '{job_id}' not found."
+
+            if not job.image_bytes:
+                return None, f"Job '{job_id}' payload has expired or was cleared."
+
+            # Reset retry counters
+            job.status = JobStatus.QUEUED
+            job.retry_count = 0
+            job.progress_percent = 10
+            job.error_message = None
+            job.completed_at = None
+            job.started_at = None
+            heapq.heappush(self._queue, (job.priority.value, time.time(), job_id))
+            self._record_audit("JOB_RETRIED", job_id, "User triggered job retry")
+            return job, "Job queued for retry."
+
+    def cleanup_expired_artifacts(self, max_age_seconds: float = 600.0) -> int:
+        """
+        Enforces 10-minute zero-persistence artifact expiration.
+        Wipes image memory buffers for jobs older than 600s.
+        """
+        now = time.time()
+        cleared_count = 0
+
+        with self._lock:
+            for job in list(self._jobs.values()):
+                # If completed or failed more than max_age_seconds ago
+                if job.completed_at and (now - job.completed_at) > max_age_seconds:
+                    job.image_bytes = b""
+                    job.result_bytes = None
+                    cleared_count += 1
+
+            # Cap total stored job metadata at 500
+            if len(self._jobs) > 500:
+                old_ids = sorted(self._jobs.keys(), key=lambda k: self._jobs[k].created_at)[:100]
+                for oid in old_ids:
+                    del self._jobs[oid]
+
+        if cleared_count > 0:
+            gc.collect()
+        return cleared_count
+
+    def select_best_worker(
+        self, job: EnhanceJob, excluded_worker_ids: Optional[List[str]] = None
+    ) -> Tuple[Optional[BaseGPUWorkerAdapter], str]:
+        """
+        Selects the single most suitable worker for this job following the strict fallback ladder:
+          Tier 1: Primary Trusted Self-Hosted Worker
+          Tier 2: Secondary Authorized External Cloud Worker
+          Tier 3: Development Hugging Face ZeroGPU
           Tier 4: Community Kalavai Worker (ONLY IF privacy == PUBLIC_TEST AND has_contributor_consent)
         """
         excluded = set(excluded_worker_ids or [])
 
-        # Ordered candidate tiers
         tier_primary: List[BaseGPUWorkerAdapter] = []
         tier_secondary: List[BaseGPUWorkerAdapter] = []
         tier_dev_fallback: List[BaseGPUWorkerAdapter] = []
@@ -137,13 +226,12 @@ class SecureGPURouter:
                 elif worker.trust_level == WorkerTrustLevel.COMMUNITY:
                     tier_community.append(worker)
 
-        # Evaluate candidate tiers in strict sequence
         reasons = []
         for tier_name, tier_workers in [
             ("Primary Self-Hosted", tier_primary),
             ("Secondary External", tier_secondary),
             ("Dev Fallback (ZeroGPU)", tier_dev_fallback),
-            ("Community Pool", tier_community)
+            ("Community Pool", tier_community),
         ]:
             for worker in tier_workers:
                 can_accept, reason = worker.can_accept_job(job)
@@ -152,7 +240,7 @@ class SecureGPURouter:
                 reasons.append(f"{worker.worker_id}: {reason}")
 
         diagnostic = "; ".join(reasons) if reasons else "No workers registered in pool."
-        return None, f"No capable GPU worker available ({diagnostic})"
+        return None, f"No capable worker available ({diagnostic})"
 
     def process_job_with_failover(self, job: EnhanceJob) -> EnhanceJob:
         """
@@ -164,14 +252,13 @@ class SecureGPURouter:
             worker, reason = self.select_best_worker(job, excluded_worker_ids=excluded_workers)
 
             if not worker:
-                # Requirement 8 & 9: If no GPU is available, return clear unavailable status.
-                # Never promise unlimited free processing or guaranteed availability.
                 job.status = JobStatus.GPU_UNAVAILABLE
                 job.error_message = (
-                    "503 GPU_UNAVAILABLE: All GPU compute workers are currently busy or offline. "
+                    "503 GPU_UNAVAILABLE: All compute workers are currently busy or offline. "
                     "Capacity is finite; please retry in a few moments."
                 )
                 job.completed_at = time.time()
+                job.progress_percent = 0
                 self._record_audit("JOB_GPU_UNAVAILABLE", job.job_id, reason)
                 return job
 
@@ -179,14 +266,15 @@ class SecureGPURouter:
             job.status = JobStatus.PROCESSING
             job.assigned_worker_id = worker.worker_id
             job.started_at = time.time()
+            job.progress_percent = 20
             self._record_audit("JOB_ASSIGNED", job.job_id, f"Worker: {worker.worker_id}")
 
             try:
-                # Execute inference on worker
                 result = worker.execute_inference(job)
                 job.result_bytes = result
                 job.status = JobStatus.COMPLETED
                 job.completed_at = time.time()
+                job.progress_percent = 100
                 job.log_attempt(worker.worker_id, "SUCCESS")
                 self._record_audit("JOB_COMPLETED", job.job_id, f"Worker: {worker.worker_id}")
                 return job
@@ -202,9 +290,9 @@ class SecureGPURouter:
                     job.status = JobStatus.FAILED
                     job.error_message = f"Job failed after {job.retry_count} attempts. Last error: {error_detail}"
                     job.completed_at = time.time()
+                    job.progress_percent = 0
                     return job
-                
-                # Small pause before retry failover
+
                 time.sleep(0.5)
 
         return job
@@ -214,7 +302,7 @@ class SecureGPURouter:
             "event": event,
             "job_id": job_id,
             "detail": detail,
-            "timestamp": time.time()
+            "timestamp": time.time(),
         })
         if len(self._audit_log) > 500:
             self._audit_log.pop(0)
@@ -240,5 +328,5 @@ class SecureGPURouter:
                 "queued_jobs": len(self._queue),
                 "total_jobs_tracked": len(self._jobs),
                 "workers": workers_list,
-                "audit_events_count": len(self._audit_log)
+                "audit_events_count": len(self._audit_log),
             }

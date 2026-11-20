@@ -115,6 +115,8 @@ class EnhanceJob:
     retry_count: int = 0
     max_retries: int = 2
     result_bytes: Optional[bytes] = None             # Enhanced image result in-memory
+    quality_metrics: Optional[Dict[str, Any]] = None # PSNR, SSIM, exposure metrics
+    progress_percent: int = 0                        # 0 to 100% progress
     error_message: Optional[str] = None
     attempts_log: List[Dict[str, Any]] = field(default_factory=list)
 
@@ -135,6 +137,7 @@ class EnhanceJob:
         return {
             "job_id": self.job_id,
             "status": self.status.value,
+            "progress_percent": self.progress_percent,
             "privacy": self.privacy.value,
             "priority": self.priority.name,
             "models": self.model_pipeline,
@@ -145,6 +148,7 @@ class EnhanceJob:
             "created_at": self.created_at,
             "duration_sec": duration,
             "has_result": self.result_bytes is not None,
+            "quality_metrics": self.quality_metrics,
             "error": self.error_message,
             "attempts": len(self.attempts_log)
         }

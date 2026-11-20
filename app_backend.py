@@ -365,6 +365,25 @@ def handle_app_get(handler: Any, path: str, query: Dict[str, list]) -> bool:
             handler.send_json({"error": f"GPU Capacity error: {str(e)}"}, status=500)
             return True
 
+    if path == "/api/gpu/health":
+        try:
+            from gpu_infrastructure import get_gpu_router
+            router = get_gpu_router()
+            metrics = router.get_capacity_metrics()
+            handler.send_json({
+                "status": "healthy" if metrics["healthy_workers"] > 0 else "degraded",
+                "service": "SoundWave GPU Infrastructure",
+                "healthy_workers": metrics["healthy_workers"],
+                "total_workers": metrics["total_workers"],
+                "total_vram_mb": metrics["total_vram_mb"],
+                "queued_jobs": metrics["queued_jobs"],
+                "server_timestamp": metrics["server_timestamp"]
+            })
+            return True
+        except Exception as e:
+            handler.send_json({"status": "error", "error": str(e)}, status=500)
+            return True
+
     if path in ("/api/gpu/dashboard", "/gpu/dashboard"):
         try:
             from gpu_infrastructure import get_gpu_router
@@ -382,8 +401,34 @@ def handle_app_get(handler: Any, path: str, query: Dict[str, list]) -> bool:
             handler.send_json({"error": f"GPU Dashboard error: {str(e)}"}, status=500)
             return True
 
-    if path == "/api/gpu/job" or path.startswith("/api/gpu/job/"):
-        job_id = query.get("id", [""])[0].strip() or path.replace("/api/gpu/job/", "").strip()
+    # Dedicated Result Delivery Endpoint (Binary Image Stream)
+    if path.startswith("/api/gpu/job/") and path.endswith("/result") or path.startswith("/api/gpu/jobs/") and path.endswith("/result"):
+        clean_path = path.replace("/result", "")
+        job_id = clean_path.replace("/api/gpu/jobs/", "").replace("/api/gpu/job/", "").strip()
+        try:
+            from gpu_infrastructure import get_gpu_router
+            router = get_gpu_router()
+            job = router.get_job(job_id)
+            if not job:
+                handler.send_json({"error": f"Job '{job_id}' not found"}, status=404)
+                return True
+            if not job.result_bytes:
+                handler.send_json({"error": f"Job '{job_id}' result is not yet available or has expired", "status": job.status.value}, status=409)
+                return True
+            handler.send_response(200)
+            handler.send_header("Content-Type", "image/jpeg")
+            handler.send_header("Content-Length", str(len(job.result_bytes)))
+            handler.send_header("Cache-Control", "private, no-store, max-age=0")
+            handler.send_header("Content-Disposition", f"inline; filename=enhanced_{job_id}.jpg")
+            handler.end_headers()
+            handler.wfile.write(job.result_bytes)
+            return True
+        except Exception as e:
+            handler.send_json({"error": f"Result delivery error: {str(e)}"}, status=500)
+            return True
+
+    if path == "/api/gpu/job" or path.startswith("/api/gpu/job/") or path.startswith("/api/gpu/jobs/"):
+        job_id = query.get("id", [""])[0].strip() or path.replace("/api/gpu/jobs/", "").replace("/api/gpu/job/", "").strip()
         try:
             from gpu_infrastructure import get_gpu_router
             router = get_gpu_router()
@@ -1332,31 +1377,82 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
     # -------------------------------------------------------------
     # 15. SECURE GPU IMAGE ENHANCEMENT ORCHESTRATOR (REAL-ESRGAN + GFPGAN)
     # -------------------------------------------------------------
-    if path == "/api/gpu/enhance":
-        image_b64 = str(body.get("image", "")).strip()
-        privacy_str = str(body.get("privacy", "personal")).lower()
-        priority_int = int(body.get("priority", 2))
-        consent = bool(body.get("has_contributor_consent", False))
-        scale = int(body.get("scale", 4))
-
-        if not image_b64:
-            handler.send_json({"error": "No image payload provided"}, status=400)
-            return True
-
-        import base64
-        if "," in image_b64:
-            image_b64 = image_b64.split(",", 1)[1]
+    # Job Cancellation
+    if path.startswith("/api/gpu/job/") and path.endswith("/cancel") or path.startswith("/api/gpu/jobs/") and path.endswith("/cancel"):
+        clean_path = path.replace("/cancel", "")
+        job_id = clean_path.replace("/api/gpu/jobs/", "").replace("/api/gpu/job/", "").strip()
         try:
-            raw_bytes = base64.b64decode(image_b64)
+            from gpu_infrastructure import get_gpu_router
+            router = get_gpu_router()
+            ok, msg = router.cancel_job(job_id)
+            handler.send_json({"success": ok, "message": msg, "job_id": job_id}, status=200 if ok else 400)
+            return True
         except Exception as e:
-            handler.send_json({"error": f"Invalid base64 payload: {str(e)}"}, status=400)
+            handler.send_json({"error": f"Job cancellation error: {str(e)}"}, status=500)
             return True
 
+    # Job Retry
+    if path.startswith("/api/gpu/job/") and path.endswith("/retry") or path.startswith("/api/gpu/jobs/") and path.endswith("/retry"):
+        clean_path = path.replace("/retry", "")
+        job_id = clean_path.replace("/api/gpu/jobs/", "").replace("/api/gpu/job/", "").strip()
+        try:
+            from gpu_infrastructure import get_gpu_router
+            router = get_gpu_router()
+            job, msg = router.retry_job(job_id)
+            if not job:
+                handler.send_json({"error": msg, "job_id": job_id}, status=400)
+                return True
+            import threading
+            threading.Thread(target=router.process_job_with_failover, args=(job,), daemon=True).start()
+            handler.send_json({"status": "queued", "message": msg, "job": job.to_summary_dict()})
+            return True
+        except Exception as e:
+            handler.send_json({"error": f"Job retry error: {str(e)}"}, status=500)
+            return True
+
+    # Main GPU Enhance Endpoint (Supports Base64, Multipart Uploads, Rate Limiting & Async Processing)
+    if path == "/api/gpu/enhance":
+        client_ip = getattr(handler, "client_address", ("127.0.0.1", 0))[0] or "127.0.0.1"
         try:
             from gpu_infrastructure import get_gpu_router, JobPrivacy, JobPriority, JobStatus
             router = get_gpu_router()
+
+            # 1. Rate Limiting Check (20 requests / min per IP)
+            allowed, rate_msg = router.check_rate_limit(client_ip, limit_per_minute=20)
+            if not allowed:
+                handler.send_json({"error": rate_msg, "status": "rate_limited"}, status=429)
+                return True
+
+            # 2. Extract Raw Image Bytes (Multipart binary or Base64)
+            raw_bytes = None
+            if "image_bytes" in body and isinstance(body["image_bytes"], bytes):
+                raw_bytes = body["image_bytes"]
+            else:
+                image_b64 = str(body.get("image", "")).strip()
+                if image_b64:
+                    import base64
+                    if "," in image_b64:
+                        image_b64 = image_b64.split(",", 1)[1]
+                    try:
+                        raw_bytes = base64.b64decode(image_b64)
+                    except Exception as e:
+                        handler.send_json({"error": f"Invalid base64 payload: {str(e)}"}, status=400)
+                        return True
+
+            if not raw_bytes:
+                handler.send_json({"error": "No image payload provided (must provide 'image' base64 or multipart 'image' file)"}, status=400)
+                return True
+
+            privacy_str = str(body.get("privacy", "personal")).lower()
+            priority_int = int(body.get("priority", 2))
+            consent = bool(body.get("has_contributor_consent", False))
+            scale = int(body.get("scale", 4))
+            run_gfpgan = str(body.get("run_gfpgan", "true")).lower() == "true"
+            is_async = str(body.get("async", "false")).lower() == "true"
+
             privacy = JobPrivacy.PERSONAL if privacy_str == "personal" else JobPrivacy.PUBLIC_TEST
             priority = JobPriority(priority_int) if priority_int in (1, 2, 3) else JobPriority.NORMAL
+            model_pipeline = ["realesrgan"] + (["gfpgan"] if run_gfpgan else [])
 
             job = router.submit_job(
                 image_bytes=raw_bytes,
@@ -1365,7 +1461,22 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
                 has_contributor_consent=consent,
                 scale=scale
             )
+            job.model_pipeline = model_pipeline
 
+            # 3. Asynchronous Execution Mode
+            if is_async:
+                import threading
+                threading.Thread(target=router.process_job_with_failover, args=(job,), daemon=True).start()
+                handler.send_json({
+                    "status": "queued",
+                    "job_id": job.job_id,
+                    "poll_url": f"/api/gpu/jobs/{job.job_id}",
+                    "result_url": f"/api/gpu/jobs/{job.job_id}/result",
+                    "progress_percent": job.progress_percent
+                }, status=202)
+                return True
+
+            # 4. Synchronous Execution Mode (Default)
             completed_job = router.process_job_with_failover(job)
 
             if completed_job.status == JobStatus.GPU_UNAVAILABLE:
@@ -1384,6 +1495,7 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
                 }, status=500)
                 return True
 
+            import base64
             out_b64 = "data:image/jpeg;base64," + base64.b64encode(completed_job.result_bytes).decode("utf-8")
             handler.send_json({
                 "status": "completed",
@@ -1391,6 +1503,8 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
                 "scale": f"{completed_job.scale}x",
                 "assigned_worker": completed_job.assigned_worker_id,
                 "retry_count": completed_job.retry_count,
+                "quality_metrics": completed_job.quality_metrics,
+                "result_url": f"/api/gpu/jobs/{completed_job.job_id}/result",
                 "image": out_b64
             })
             return True
