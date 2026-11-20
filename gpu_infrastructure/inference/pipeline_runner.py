@@ -12,7 +12,13 @@ import logging
 import os
 import time
 from typing import Optional, Tuple
-from PIL import Image, ImageFilter, ImageEnhance, ImageOps
+try:
+    from PIL import Image, ImageFilter, ImageEnhance, ImageOps
+except ImportError:
+    Image = None
+    ImageFilter = None
+    ImageEnhance = None
+    ImageOps = None
 
 logger = logging.getLogger("gpu_infrastructure.inference")
 
@@ -64,6 +70,8 @@ class ImageInferencePipeline:
 
         try:
             # 1. Input Validation at Trust Boundary
+            if Image is None:
+                raise RuntimeError("Pillow library is required for image inference.")
             img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
             orig_w, orig_h = img.size
 
