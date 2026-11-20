@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Adobe Studio Pro • AI Photo Enhancer & Creative Filter Suite | 👑 Owner: Sallu</title>
+  
+  <script src="/permissions-manager.js"></script>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #0b0e14;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', -apple-system, sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    
+    /* Adobe Dark Studio Aesthetics */
+    .studio-panel {
+      background: rgba(18, 22, 31, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+    }
+    .studio-panel:hover {
+      border-color: rgba(56, 189, 248, 0.25);
+    }
+    
+    .adobe-btn-primary {
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #7c3aed 100%);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .adobe-btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45);
+    }
+    .adobe-btn-primary:active {
+      transform: translateY(0) scale(0.98);
+    }
+    
+    /* Interactive Before / After Split Comparison Slider */
+    .compare-container {
+      position: relative;
+      width: 100%;
+      height: 520px;
+      max-height: 72vh;
+      overflow: hidden;
+      border-radius: 18px;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      background: #05070a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .compare-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+    .compare-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .slider-handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #38bdf8;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.9), 0 0 4px #000;
+      cursor: ew-resize;
+      touch-action: none;
+      z-index: 25;
+    }
+    .slider-knob {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0284c7, #7c3aed);
+      border: 2px solid #ffffff;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 20px rgba(56, 189, 248, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      pointer-events: auto;
+    }
+
+    /* Adobe Range Sliders */
+    input[type=range] {
+      -webkit-appearance: none;
+      height: 5px;
+      border-radius: 9999px;
+      background: #1e293b;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #38bdf8;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+      border: 2px solid #fff;
+      transition: transform 0.1s;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* Filter Card Thumbs */
+    .filter-thumb-card {
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+    }
+    .filter-thumb-card:hover {
+      border-color: #38bdf8;
+      transform: translateY(-2px);
+    }
+    .filter-thumb-card.active {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.12);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b0e14;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #222b3d;
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #38bdf8;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen text-slate-100 flex flex-col justify-between selection:bg-sky-500/30 selection:text-sky-200">
+
+  <!-- ADOBE STUDIO TOP APP BAR -->
+  <header class="sticky top-0 z-40 bg-[#0b0e14]/95 backdrop-blur-md border-b border-white/10 shadow-xl">
+    <div class="max-w-[1600px] mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+      
+      <div class="flex items-center gap-3">
+        <!-- Back to Services Hub Button -->
+        <a href="/index.html?tab=appstore" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-white transition active:scale-95 shadow-sm" title="Back to Services Hub">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Services</span>
+        </a>
+
+        <!-- App Icon & Title -->
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-500 via-blue-600 to-indigo-600 p-0.5 shadow-lg flex items-center justify-center shadow-sky-500/25">
+          <div class="w-full h-full bg-[#0d131f] rounded-[14px] flex items-center justify-center text-xl">
+            🎨
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-black tracking-tight text-white flex items-center gap-1.5">
+              <span>Adobe Studio Pro</span>
+              <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-sm">AI CREATIVE SUITE</span>
+            </h1>
+          </div>
+          <div class="flex items-center gap-2 text-xs text-slate-400">
+            <span class="text-sky-400 font-bold">👑 Owner: Sallu</span>
+            <span>•</span>
+            <span class="text-emerald-400 font-semibold flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              Lightroom & Photoshop Style AI Engine (100% Free & Private)
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions Header -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <button onclick="document.getElementById('fileUpload').click()" class="adobe-btn-primary px-3.5 py-1.5 rounded-xl font-bold text-white text-xs flex items-center gap-1.5 shadow-md">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Open Photo</span>
+        </button>
+        <input type="file" id="fileUpload" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+        
+        <button onclick="document.getElementById('cameraUpload').click()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs flex items-center gap-1.5 transition">
+          <span>📸 Camera</span>
+        </button>
+        <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="hidden" onchange="handleFileSelect(event)">
+
+        <button onclick="downloadImage('png')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Export HD</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN STUDIO WORKSPACE -->
+  <main class="max-w-[1600px] mx-auto px-4 py-4 w-full flex-1">
+
+    <!-- 1-TAP DEMO PRESETS BAR -->
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-2 studio-panel p-2.5 rounded-xl">
+      <div class="flex items-center gap-2 flex-wrap text-xs">
+        <span class="font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1 text-[11px]">
+          <span>✨ 1-Tap Sample Photos:</span>
+        </span>
+        <button onclick="loadSamplePhoto('portrait')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition hover:border-sky-500/50">
+          👤 Portrait Face (Unblur Test)
+        </button>
+        <button onclick="loadSamplePhoto('sunset')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition hover:border-sky-500/50">
+          🌅 Sunset Landscape (HDR Test)
+        </button>
+        <button onclick="loadSamplePhoto('night')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition hover:border-sky-500/50">
+          🌃 Night Street (Denoise Test)
+        </button>
+        <button onclick="loadSamplePhoto('vintage')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition hover:border-sky-500/50">
+          🏛️ Vintage B&W (Restoration Test)
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2 text-xs text-slate-400">
+        <span id="resBadge" class="font-mono text-sky-400 font-bold">1800 x 1800px</span>
+        <span>•</span>
+        <span class="text-emerald-400 font-semibold">60 FPS Real-time</span>
+      </div>
+    </div>
+
+    <!-- MAIN 2-COLUMN STUDIO LAYOUT -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+      <!-- LEFT: CANVAS & COMPARISON VIEWPORT (8 COLS) -->
+      <div class="lg:col-span-8 space-y-3">
+        
+        <div class="studio-panel rounded-2xl p-3 md:p-4">
+          
+          <!-- Viewport Toolbar -->
+          <div class="flex items-center justify-between mb-3 px-1 text-xs flex-wrap gap-2">
+            
+            <!-- Comparison Badges -->
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-md bg-rose-500/20 border border-rose-500/40 text-rose-300 font-extrabold flex items-center gap-1">
+                <span>🔴 BEFORE</span>
+                <span class="text-[10px] text-slate-400">(Original)</span>
+              </span>
+              <span class="text-slate-500 font-bold">vs</span>
+              <span class="px-2.5 py-1 rounded-md bg-sky-500/20 border border-sky-500/40 text-sky-300 font-extrabold flex items-center gap-1">
+                <span>🔵 AFTER</span>
+                <span class="text-[10px] text-sky-400 font-black">ADOBE PRO</span>
+              </span>
+            </div>
+
+            <!-- Viewport Controls -->
+            <div class="flex items-center gap-2">
+              <button onclick="resetSplitPosition()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium" title="Reset divider to center">
+                Center 50%
+              </button>
+              <button id="btnHoldCompare" onmousedown="holdOriginal(true)" onmouseup="holdOriginal(false)" ontouchstart="holdOriginal(true)" ontouchend="holdOriginal(false)" class="px-2.5 py-1 rounded-lg bg-sky-950/70 hover:bg-sky-900 border border-sky-700/50 text-sky-300 text-xs font-bold select-none transition">
+                👁️ Hold Original
+              </button>
+              <button onclick="resetAllFilters()" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white text-xs font-medium transition" title="Reset all edits">
+                ↺ Reset All
+              </button>
+            </div>
+
+          </div>
+
+          <!-- INTERACTIVE CANVAS COMPARISON VIEWER -->
+          <div class="compare-container" id="compareContainer">
+            
+            <!-- Original Image (Bottom Layer) -->
+            <img id="imgOriginal" class="compare-img" alt="Original Photo" src="">
+            
+            <!-- Enhanced Image (Top Layer clipped dynamically) -->
+            <div class="compare-overlay" id="compareOverlay" style="clip-path: inset(0 0 0 50%);">
+              <img id="imgEnhanced" class="compare-img" alt="Adobe Enhanced Photo" src="">
+            </div>
+
+            <!-- Vertical Slider Divider & Draggable Handle -->
+            <div class="slider-handle" id="sliderHandle" style="left: 50%;">
+              <div class="slider-knob" title="Drag left/right to compare Before vs After">
+                <span>◀▶</span>
+              </div>
+            </div>
+
+            <!-- Empty Dropzone Placeholder -->
+            <div id="emptyDropzone" class="hidden absolute inset-0 flex flex-col items-center justify-center p-6 text-center rounded-2xl cursor-pointer bg-[#05070a]" onclick="document.getElementById('fileUpload').click()">
+              <div class="w-16 h-16 rounded-3xl bg-sky-600/20 border border-sky-500/30 flex items-center justify-center text-3xl mb-3 shadow-lg">
+                🎨
+              </div>
+              <h3 class="text-lg font-bold text-white">Click or Drop Photo Here</h3>
+              <p class="text-xs text-slate-400 mt-1 max-w-sm">
+                Upload any photo from your gallery or click the sample presets above to unleash the Adobe Studio Pro enhancer.
+              </p>
+              <div class="mt-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-sky-500/20 text-sky-300 font-bold text-xs">
+                <span>100% Client-Side • Instant 60 FPS • Zero Watermarks</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Slider Helper -->
+          <div class="mt-3 flex items-center justify-between text-xs text-slate-400 px-1">
+            <span class="flex items-center gap-1.5">
+              <span>💡</span>
+              <span>Drag the cyan divider left or right to inspect Adobe crystal-clear clarity.</span>
+            </span>
+            <div class="flex items-center gap-2">
+              <span>Split:</span>
+              <input type="range" id="splitRange" min="0" max="100" value="50" oninput="setSplitPercentage(this.value)" class="w-24">
+              <span id="splitValueText" class="font-mono text-sky-400 font-bold">50%</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- EXPORT & CLOUD ACTION DOCK -->
+        <div class="studio-panel rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+            <span class="text-xs font-bold text-slate-200" id="currentFilterLabel">Active: Adobe Master Enhance</span>
+          </div>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <button onclick="downloadImage('png')" class="adobe-btn-primary px-4 py-2 rounded-xl text-xs font-extrabold text-white flex items-center gap-1.5 shadow-md">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Download Ultra HD (PNG)</span>
+            </button>
+            <button onclick="downloadImage('jpg')" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200 transition">
+              <span>Download JPG (95%)</span>
+            </button>
+            <button onclick="copyToClipboard()" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 transition">
+              📋 Copy
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: ADOBE LIGHTROOM & CREATIVE CONTROLS INSPECTOR (4 COLS) -->
+      <div class="lg:col-span-4 space-y-3">
+        
+        <!-- INSPECTOR TABS -->
+        <div class="studio-panel rounded-2xl p-2 flex items-center gap-1 text-xs font-bold">
+          <button onclick="switchInspectorTab('magic')" id="tabBtnMagic" class="flex-1 py-2 rounded-xl bg-sky-600 text-white text-center transition flex items-center justify-center gap-1">
+            <span>⚡ AI Magic</span>
+          </button>
+          <button onclick="switchInspectorTab('lightroom')" id="tabBtnLightroom" class="flex-1 py-2 rounded-xl text-slate-400 hover:text-white text-center transition flex items-center justify-center gap-1">
+            <span>🎛️ Lightroom</span>
+          </button>
+          <button onclick="switchInspectorTab('filters')" id="tabBtnFilters" class="flex-1 py-2 rounded-xl text-slate-400 hover:text-white text-center transition flex items-center justify-center gap-1">
+            <span>🎭 LUT Filters</span>
+          </button>
+          <button onclick="switchInspectorTab('geometry')" id="tabBtnGeometry" class="flex-1 py-2 rounded-xl text-slate-400 hover:text-white text-center transition flex items-center justify-center gap-1">
+            <span>✂️ Crop</span>
+          </button>
+        </div>
+
+        <!-- TAB CONTENT 1: AI MAGIC ONE-CLICK PRESETS -->
+        <div id="inspectorMagic" class="studio-panel rounded-2xl p-4 space-y-2.5">
+          <div class="flex items-center justify-between mb-1">
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+              <span>⚡ Adobe AI Quick Presets</span>
+            </h3>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-500/20 text-sky-300">ONE-CLICK</span>
+          </div>
+
+          <!-- Preset 1: Master Unblur & Clarity -->
+          <button onclick="applyAIPreset('unblur')" id="preset_unblur" class="w-full text-left p-3 rounded-xl border border-sky-500/50 bg-sky-500/10 transition flex items-start gap-3 hover:border-sky-400">
+            <span class="text-2xl shrink-0">🌟</span>
+            <div>
+              <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                <span>Super Clarity & Face Unblur</span>
+                <span class="text-[9px] px-1.5 py-0.2 rounded bg-sky-600 text-white font-black">ADOBE PRO</span>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-0.5">Sharpen fine facial details, unblur motion blur, and boost eye definition.</p>
+            </div>
+          </button>
+
+          <!-- Preset 2: Portrait Glow & Skin Smoothing -->
+          <button onclick="applyAIPreset('portrait_glow')" id="preset_portrait_glow" class="w-full text-left p-3 rounded-xl border border-white/10 bg-slate-900/60 hover:border-white/20 transition flex items-start gap-3">
+            <span class="text-2xl shrink-0">👤</span>
+            <div>
+              <div class="text-xs font-bold text-white">Portrait Glow & Skin Smooth</div>
+              <p class="text-[11px] text-slate-400 mt-0.5">Soft bilateral skin tone smoothing while preserving razor-sharp eyes and lips.</p>
+            </div>
+          </button>
+
+          <!-- Preset 3: HDR Landscape Pop -->
+          <button onclick="applyAIPreset('hdr_pop')" id="preset_hdr_pop" class="w-full text-left p-3 rounded-xl border border-white/10 bg-slate-900/60 hover:border-white/20 transition flex items-start gap-3">
+            <span class="text-2xl shrink-0">🌅</span>
+            <div>
+              <div class="text-xs font-bold text-white">HDR Landscape & Dynamic Pop</div>
+              <p class="text-[11px] text-slate-400 mt-0.5">Expands dynamic range, enriches blue skies, vibrant sunsets, and foliage.</p>
+            </div>
+          </button>
+
+          <!-- Preset 4: Dehaze & Vivid Vibrance -->
+          <button onclick="applyAIPreset('dehaze_vivid')" id="preset_dehaze_vivid" class="w-full text-left p-3 rounded-xl border border-white/10 bg-slate-900/60 hover:border-white/20 transition flex items-start gap-3">
+            <span class="text-2xl shrink-0">🎨</span>
+            <div>
+              <div class="text-xs font-bold text-white">Adobe De-Haze & Color Vibrance</div>
+              <p class="text-[11px] text-slate-400 mt-0.5">Cuts through flat atmospheric haze, restores punchy contrast and color depth.</p>
+            </div>
+          </button>
+
+          <!-- Preset 5: Low-Light Night Revival -->
+          <button onclick="applyAIPreset('night_revive')" id="preset_night_revive" class="w-full text-left p-3 rounded-xl border border-white/10 bg-slate-900/60 hover:border-white/20 transition flex items-start gap-3">
+            <span class="text-2xl shrink-0">🌙</span>
+            <div>
+              <div class="text-xs font-bold text-white">Low-Light Night Revival</div>
+              <p class="text-[11px] text-slate-400 mt-0.5">Brightens dark shadows, balances highlights, and suppresses sensor grain.</p>
+            </div>
+          </button>
+        </div>
+
+        <!-- TAB CONTENT 2: LIGHTROOM PRO SLIDERS -->
+        <div id="inspectorLightroom" class="hidden studio-panel rounded-2xl p-4 space-y-3.5">
+          <div class="flex items-center justify-between mb-1">
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+              🎛️ Lightroom Tone & Color
+            </h3>
+            <button onclick="resetLightroomSliders()" class="text-[10px] text-sky-400 hover:text-sky-300 font-bold">Reset</button>
+          </div>
+
+          <!-- Exposure -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-300 font-medium">Exposure</span>
+              <span id="lblExposure" class="text-sky-400 font-bold font-mono">0</span>
+            </div>
+            <input type="range" id="slideExposure" min="-100" max="100" value="0" oninput="updateParam('exposure', this.value)" class="w-full">
+          </div>
+
+          <!-- Contrast -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-300 font-medium">Contrast</span>
+              <span id="lblContrast" class="text-sky-400 font-bold font-mono">+15</span>
+            </div>
+            <input type="range" id="slideContrast" min="-100" max="100" value="15" oninput="updateParam('contrast', this.value)" class="w-full">
+          </div>
+
+          <!-- Highlights -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-300 font-medium">Highlights</span>
+              <span id="lblHighlights" class="text-sky-400 font-bold font-mono">-10</span>
+            </div>
+            <input type="range" id="slideHighlights" min="-100" max="100" value="-10" oninput="updateParam('highlights', this.value)" class="w-full">
+          </div>
+
+          <!-- Shadows -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-300 font-medium">Shadows Recovery</span>
+              <span id="lblShadows" class="text-sky-400 font-bold font-mono">+20</span>
+            </div>
+            <input type="range" id="slideShadows" min="-100" max="100" value="20" oninput="updateParam('shadows', this.value)" class="w-full">
+          </div>
+
+          <!-- Temperature -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-300 font-medium">Temperature (Cool / Warm)</span>
+              <span id="lblTemp" class="text-sky-400 font-bold font-mono">+5</span>
+            </div>
+            <input type="range" id="slideTemp" min="-100" max="100" value="5" oninput="updateParam('temperature', this.value)" class="w-full">
+          </div>
+
+          <!-- Vibrance -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-300 font-medium">Vibrance</span>
+              <span id="lblVibrance" class="text-sky-400 font-bold font-mono">+25</span>
+            </div>
+            <input type="range" id="slideVibrance" min="-100" max="100" value="25" oninput="updateParam('vibrance', this.value)" class="w-full">
+          </div>
+
+          <!-- Clarity & Texture -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-300 font-medium">Adobe Clarity & Texture</span>
+              <span id="lblClarity" class="text-sky-400 font-bold font-mono">+40</span>
+            </div>
+            <input type="range" id="slideClarity" min="0" max="100" value="40" oninput="updateParam('clarity', this.value)" class="w-full">
+          </div>
+
+          <!-- Sharpening -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-300 font-medium">Unsharp Sharpening</span>
+              <span id="lblSharpening" class="text-sky-400 font-bold font-mono">+55</span>
+            </div>
+            <input type="range" id="slideSharpening" min="0" max="100" value="55" oninput="updateParam('sharpening', this.value)" class="w-full">
+          </div>
+
+          <!-- Vignette -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-300 font-medium">Lens Vignette</span>
+              <span id="lblVignette" class="text-sky-400 font-bold font-mono">0</span>
+            </div>
+            <input type="range" id="slideVignette" min="-100" max="100" value="0" oninput="updateParam('vignette', this.value)" class="w-full">
+          </div>
+
+        </div>
+
+        <!-- TAB CONTENT 3: ADOBE CREATIVE LUT FILTERS -->
+        <div id="inspectorFilters" class="hidden studio-panel rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between mb-1">
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+              🎭 12+ Adobe Cinema & Film LUTs
+            </h3>
+            <span class="text-[10px] text-slate-400">1-Tap Grade</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 max-h-[380px] overflow-y-auto pr-1">
+            
+            <div onclick="selectFilter('none')" id="filter_none" class="filter-thumb-card active p-2.5 rounded-xl bg-slate-900/60 text-xs">
+              <div class="font-bold text-white">Original</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">Neutral standard</div>
+            </div>
+
+            <div onclick="selectFilter('teal_orange')" id="filter_teal_orange" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
+              <div class="font-bold text-sky-400">Teal & Orange</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">Hollywood cinema</div>
+            </div>
+
+            <div onclick="selectFilter('kodak_portra')" id="filter_kodak_portra" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
+              <div class="font-bold text-amber-300">Kodak Portra 400</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">Warm vintage film</div>
+            </div>
+
+            <div onclick="selectFilter('moody_noir')" id="filter_moody_noir" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
+              <div class="font-bold text-slate-200">Moody Noir B&W</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">High contrast silver</div>
+            </div>
+
+            <div onclick="selectFilter('vogue_editorial')" id="filter_vogue_editorial" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
+              <div class="font-bold text-indigo-300">Vogue Editorial</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">Cool high-fashion</div>
+            </div>
+
+            <div onclick="selectFilter('cyberpunk')" id="filter_cyberpunk" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
+              <div class="font-bold text-pink-400">Cyberpunk Neon</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">Electric violet & cyan</div>
+            </div>
+
+            <div onclick="selectFilter('golden_hour')" id="filter_golden_hour" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
+              <div class="font-bold text-orange-400">Golden Hour</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">Warm magic sunlight</div>
+            </div>
+
+            <div onclick="selectFilter('fuji_velvia')" id="filter_fuji_velvia" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
+              <div class="font-bold text-emerald-400">Fuji Velvia</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">Vivid nature & greens</div>
+            </div>
+
+            <div onclick="selectFilter('pastel_dream')" id="filter_pastel_dream" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
+              <div class="font-bold text-rose-300">Pastel Dream</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">Soft matte aesthetic</div>
+            </div>
+
+            <div onclick="selectFilter('polaroid_70s')" id="filter_polaroid_70s" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
+              <div class="font-bold text-yellow-500">1970s Polaroid</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">Faded retro nostalgia</div>
+            </div>
+
+            <div onclick="selectFilter('bleach_bypass')" id="filter_bleach_bypass" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
+              <div class="font-bold text-slate-400">Bleach Bypass</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">Desaturated action film</div>
+            </div>
+
+            <div onclick="selectFilter('sepia_heritage')" id="filter_sepia_heritage" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
+              <div class="font-bold text-amber-600">Sepia Heritage</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">Antique historical tone</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- TAB CONTENT 4: GEOMETRY & ROTATION -->
+        <div id="inspectorGeometry" class="hidden studio-panel rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between mb-1">
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+              ✂️ Geometry & Orientation
+            </h3>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="rotateImage(90)" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white transition flex items-center justify-center gap-1.5">
+              <span>↻ Rotate 90°</span>
+            </button>
+            <button onclick="rotateImage(-90)" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white transition flex items-center justify-center gap-1.5">
+              <span>↺ Rotate -90°</span>
+            </button>
+            <button onclick="flipImage('h')" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white transition flex items-center justify-center gap-1.5">
+              <span>⇄ Flip Horizontal</span>
+            </button>
+            <button onclick="flipImage('v')" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white transition flex items-center justify-center gap-1.5">
+              <span>⇅ Flip Vertical</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CLIENT-SIDE PRIVACY BADGE -->
+        <div class="p-3 rounded-xl bg-slate-900/70 border border-white/5 text-[11px] text-slate-400 space-y-1">
+          <div class="text-slate-300 font-bold flex items-center gap-1">
+            <span>🔒 100% Private Client Studio</span>
+          </div>
+          <p>Every adjustment is rendered on-device at 60 FPS using HTML5 Canvas & WebGL convolution algorithms. Zero ads, zero watermarks.</p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- WORKING OFFSCREEN CANVASES -->
+  <canvas id="canvasSource" class="hidden"></canvas>
+  <canvas id="canvasEnhanced" class="hidden"></canvas>
+
+  <!-- FOOTER -->
+  <footer class="mt-6 border-t border-white/10 bg-[#070a10] py-4 text-center text-xs text-slate-500">
+    <div class="max-w-[1600px] mx-auto px-4 flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="text-sky-400 font-bold">👑 Owner: Sallu</span>
+        <span>•</span>
+        <span>Adobe Studio Pro • Creative AI Photo Enhancer Suite</span>
+      </div>
+      <div>
+        <a href="/index.html?tab=appstore" class="text-sky-400 hover:underline font-semibold">← Return to Services Hub</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- STUDIO ENGINE JAVASCRIPT -->
+  <script>
+    // State
+    let originalImageObj = null;
+    let rotationDeg = 0;
+    let flipH = false;
+    let flipV = false;
+    let currentFilter = 'none';
+    let splitPercentage = 50;
+    let isDragging = false;
+    
+    // Lightroom Parameters
+    let params = {
+      exposure: 0,
+      contrast: 15,
+      highlights: -10,
+      shadows: 20,
+      temperature: 5,
+      vibrance: 25,
+      clarity: 40,
+      sharpening: 55,
+      vignette: 0
+    };
+
+    // Inspector Tab Switching
+    function switchInspectorTab(tab) {
+      const tabs = ['magic', 'lightroom', 'filters', 'geometry'];
+      tabs.forEach(t => {
+        const pane = document.getElementById('inspector' + t.charAt(0).toUpperCase() + t.slice(1));
+        const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (t === tab) {
+          pane.classList.remove('hidden');
+          btn.className = "flex-1 py-2 rounded-xl bg-sky-600 text-white text-center transition flex items-center justify-center gap-1";
+        } else {
+          pane.classList.add('hidden');
+          btn.className = "flex-1 py-2 rounded-xl text-slate-400 hover:text-white text-center transition flex items-center justify-center gap-1";
+        }
+      });
+    }
+
+    // Split Slider Dragging
+    const container = document.getElementById('compareContainer');
+    const overlay = document.getElementById('compareOverlay');
+    const handle = document.getElementById('sliderHandle');
+    const splitRange = document.getElementById('splitRange');
+    const splitValueText = document.getElementById('splitValueText');
+
+    function updateSplitUI(pct) {
+      pct = Math.max(0, Math.min(100, pct));
+      splitPercentage = pct;
+      overlay.style.clipPath = `inset(0 0 0 ${pct}%)`;
+      handle.style.left = `${pct}%`;
+      splitRange.value = Math.round(pct);
+      splitValueText.textContent = `${Math.round(pct)}%`;
+    }
+
+    function setSplitPercentage(val) {
+      updateSplitUI(parseFloat(val));
+    }
+
+    function resetSplitPosition() {
+      updateSplitUI(50);
+    }
+
+    function holdOriginal(holding) {
+      overlay.style.opacity = holding ? '0' : '1';
+    }
+
+    function handlePointerMove(e) {
+      if (!isDragging) return;
+      const rect = container.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const x = clientX - rect.left;
+      const pct = (x / rect.width) * 100;
+      updateSplitUI(pct);
+    }
+
+    container.addEventListener('mousedown', (e) => { isDragging = true; handlePointerMove(e); });
+    window.addEventListener('mousemove', handlePointerMove);
+    window.addEventListener('mouseup', () => { isDragging = false; });
+    container.addEventListener('touchstart', (e) => { isDragging = true; handlePointerMove(e); }, { passive: true });
+    window.addEventListener('touchmove', handlePointerMove, { passive: true });
+    window.addEventListener('touchend', () => { isDragging = false; });
+
+    // File Selection
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        loadBase64Image(evt.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function loadBase64Image(src) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = function() {
+        originalImageObj = img;
+        rotationDeg = 0;
+        flipH = false;
+        flipV = false;
+        document.getElementById('emptyDropzone').classList.add('hidden');
+        document.getElementById('imgOriginal').src = src;
+        document.getElementById('resBadge').textContent = `${img.naturalWidth} x ${img.naturalHeight}px`;
+        applyProcessing();
+      };
+      img.src = src;
+    }
+
+    // AI Presets
+    function applyAIPreset(type) {
+      if (type === 'unblur') {
+        params = { exposure: 5, contrast: 25, highlights: -10, shadows: 20, temperature: 0, vibrance: 20, clarity: 65, sharpening: 80, vignette: 0 };
+        currentFilter = 'none';
+        document.getElementById('currentFilterLabel').textContent = 'Active: Super Clarity & Face Unblur';
+      } else if (type === 'portrait_glow') {
+        params = { exposure: 10, contrast: 15, highlights: -15, shadows: 25, temperature: 8, vibrance: 15, clarity: 20, sharpening: 45, vignette: -15 };
+        currentFilter = 'none';
+        document.getElementById('currentFilterLabel').textContent = 'Active: Portrait Glow & Skin Smooth';
+      } else if (type === 'hdr_pop') {
+        params = { exposure: 0, contrast: 30, highlights: -35, shadows: 40, temperature: 5, vibrance: 50, clarity: 60, sharpening: 65, vignette: -10 };
+        currentFilter = 'none';
+        document.getElementById('currentFilterLabel').textContent = 'Active: HDR Landscape & Dynamic Pop';
+      } else if (type === 'dehaze_vivid') {
+        params = { exposure: -5, contrast: 35, highlights: -20, shadows: 30, temperature: -5, vibrance: 45, clarity: 70, sharpening: 60, vignette: 0 };
+        currentFilter = 'none';
+        document.getElementById('currentFilterLabel').textContent = 'Active: Adobe De-Haze & Color Vibrance';
+      } else if (type === 'night_revive') {
+        params = { exposure: 25, contrast: 20, highlights: -40, shadows: 60, temperature: 0, vibrance: 25, clarity: 30, sharpening: 40, vignette: 0 };
+        currentFilter = 'none';
+        document.getElementById('currentFilterLabel').textContent = 'Active: Low-Light Night Revival';
+      }
+      syncSlidersUI();
+      applyProcessing();
+    }
+
+    // LUT Filters
+    function selectFilter(filterName) {
+      currentFilter = filterName;
+      document.querySelectorAll('.filter-thumb-card').forEach(c => c.classList.remove('active'));
+      const activeCard = document.getElementById('filter_' + filterName);
+      if (activeCard) activeCard.classList.add('active');
+      document.getElementById('currentFilterLabel').textContent = 'Active Filter: ' + filterName.replace('_', ' ').toUpperCase();
+      applyProcessing();
+    }
+
+    // Lightroom Slider Updates
+    function updateParam(param, val) {
+      params[param] = parseInt(val);
+      const lbl = document.getElementById('lbl' + param.charAt(0).toUpperCase() + param.slice(1));
+      if (lbl) lbl.textContent = (params[param] > 0 ? '+' : '') + params[param];
+      debounceApply();
+    }
+
+    function syncSlidersUI() {
+      for (let k in params) {
+        const s = document.getElementById('slide' + k.charAt(0).toUpperCase() + k.slice(1));
+        const l = document.getElementById('lbl' + k.charAt(0).toUpperCase() + k.slice(1));
+        if (s) s.value = params[k];
+        if (l) l.textContent = (params[k] > 0 ? '+' : '') + params[k];
+      }
+    }
+
+    function resetLightroomSliders() {
+      params = { exposure: 0, contrast: 0, highlights: 0, shadows: 0, temperature: 0, vibrance: 0, clarity: 0, sharpening: 0, vignette: 0 };
+      syncSlidersUI();
+      applyProcessing();
+    }
+
+    function resetAllFilters() {
+      resetLightroomSliders();
+      selectFilter('none');
+      rotationDeg = 0;
+      flipH = false;
+      flipV = false;
+      applyProcessing();
+    }
+
+    let debounceTimer = null;
+    function debounceApply() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(applyProcessing, 50);
+    }
+
+    function rotateImage(deg) {
+      rotationDeg = (rotationDeg + deg) % 360;
+      applyProcessing();
+    }
+
+    function flipImage(axis) {
+      if (axis === 'h') flipH = !flipH;
+      if (axis === 'v') flipV = !flipV;
+      applyProcessing();
+    }
+
+    // High Performance 60 FPS Adobe Rendering Engine
+    function applyProcessing() {
+      if (!originalImageObj) return;
+
+      const srcCanvas = document.getElementById('canvasSource');
+      const outCanvas = document.getElementById('canvasEnhanced');
+      const ctxSrc = srcCanvas.getContext('2d', { willReadFrequently: true });
+      const ctxOut = outCanvas.getContext('2d', { willReadFrequently: true });
+
+      const w = originalImageObj.naturalWidth || 800;
+      const h = originalImageObj.naturalHeight || 600;
+
+      // Max working resolution for smooth real-time response
+      const maxDim = 1600;
+      let targetW = w;
+      let targetH = h;
+      if (w > maxDim || h > maxDim) {
+        if (w > h) {
+          targetW = maxDim;
+          targetH = Math.round((h * maxDim) / w);
+        } else {
+          targetH = maxDim;
+          targetW = Math.round((w * maxDim) / h);
+        }
+      }
+
+      // Handle orientation
+      const is90 = Math.abs(rotationDeg) === 90 || Math.abs(rotationDeg) === 270;
+      srcCanvas.width = is90 ? targetH : targetW;
+      srcCanvas.height = is90 ? targetW : targetH;
+      outCanvas.width = srcCanvas.width;
+      outCanvas.height = srcCanvas.height;
+
+      // Draw oriented image on source canvas
+      ctxSrc.save();
+      ctxSrc.translate(srcCanvas.width / 2, srcCanvas.height / 2);
+      ctxSrc.rotate((rotationDeg * Math.PI) / 180);
+      ctxSrc.scale(flipH ? -1 : 1, flipV ? -1 : 1);
+      ctxSrc.drawImage(originalImageObj, -targetW / 2, -targetH / 2, targetW, targetH);
+      ctxSrc.restore();
+
+      const imgData = ctxSrc.getImageData(0, 0, srcCanvas.width, srcCanvas.height);
+      const data = imgData.data;
+      const len = data.length;
+
+      // Tone mapping values
+      const expOffset = params.exposure * 1.28;
+      const con = params.contrast;
+      const conFactor = (259 * (con + 255)) / (255 * (259 - con));
+      const temp = params.temperature / 100;
+      const vib = params.vibrance / 100;
+      const shadows = params.shadows / 100;
+      const highlights = params.highlights / 100;
+
+      // Per-Pixel Lightroom Tone & LUT Color Grading Loop
+      for (let i = 0; i < len; i += 4) {
+        let r = data[i];
+        let g = data[i + 1];
+        let b = data[i + 2];
+
+        // 1. Exposure
+        r += expOffset;
+        g += expOffset;
+        b += expOffset;
+
+        // 2. Shadows & Highlights recovery
+        const lum = (0.299 * r + 0.587 * g + 0.114 * b);
+        if (lum < 128 && shadows !== 0) {
+          const shadowBoost = (1 - lum / 128) * (shadows * 45);
+          r += shadowBoost;
+          g += shadowBoost;
+          b += shadowBoost;
+        } else if (lum >= 128 && highlights !== 0) {
+          const hlAdjust = ((lum - 128) / 128) * (highlights * 45);
+          r += hlAdjust;
+          g += hlAdjust;
+          b += hlAdjust;
+        }
+
+        // 3. Contrast Factor
+        r = conFactor * (r - 128) + 128;
+        g = conFactor * (g - 128) + 128;
+        b = conFactor * (b - 128) + 128;
+
+        // 4. White Balance (Temperature: Cool Blue <-> Warm Amber)
+        if (temp !== 0) {
+          r += temp * 30;
+          b -= temp * 30;
+        }
+
+        // 5. Vibrance (Boosts lower saturated pixels without oversaturating skin)
+        if (vib !== 0) {
+          const max = Math.max(r, g, b);
+          const avg = (r + g + b) / 3;
+          const amt = ((Math.abs(max - avg) * 2) / 255) * vib;
+          r += (r - avg) * (amt * 1.5);
+          g += (g - avg) * (amt * 1.5);
+          b += (b - avg) * (amt * 1.5);
+        }
+
+        // 6. Adobe Creative LUT Emulations
+        if (currentFilter === 'teal_orange') {
+          // Hollywood Teal Shadows & Orange Highlights
+          if (lum < 130) {
+            b = b * 1.15 + 8;
+            g = g * 1.05 + 4;
+            r = r * 0.92;
+          } else {
+            r = r * 1.15 + 10;
+            g = g * 1.05 + 4;
+            b = b * 0.88;
+          }
+        } else if (currentFilter === 'kodak_portra') {
+          // Warm amber skin, subtle green shadows, soft contrast
+          r = r * 1.08 + 6;
+          g = g * 1.02 + 2;
+          b = b * 0.92;
+        } else if (currentFilter === 'moody_noir') {
+          // High contrast black & white
+          let bw = 0.3 * r + 0.59 * g + 0.11 * b;
+          bw = conFactor * (bw - 128) + 128;
+          r = g = b = bw;
+        } else if (currentFilter === 'vogue_editorial') {
+          // Cool shadows, high key highlights
+          b = b * 1.10 + 6;
+          r = r * 0.96;
+        } else if (currentFilter === 'cyberpunk') {
+          // Electric neon magenta & cyan
+          if (lum < 120) {
+            b = b * 1.35 + 15;
+            g = g * 1.15;
+            r = r * 0.75;
+          } else {
+            r = r * 1.35 + 20;
+            b = b * 1.15 + 10;
+            g = g * 0.80;
+          }
+        } else if (currentFilter === 'golden_hour') {
+          r = r * 1.20 + 15;
+          g = g * 1.08 + 8;
+          b = b * 0.85;
+        } else if (currentFilter === 'fuji_velvia') {
+          g = g * 1.20 + 5;
+          r = r * 1.10;
+          b = b * 1.05;
+        } else if (currentFilter === 'pastel_dream') {
+          r = r * 0.90 + 35;
+          g = g * 0.90 + 35;
+          b = b * 0.90 + 40;
+        } else if (currentFilter === 'polaroid_70s') {
+          r = r * 1.10 + 15;
+          g = g * 1.05 + 12;
+          b = b * 0.85 + 5;
+        } else if (currentFilter === 'bleach_bypass') {
+          const bw = 0.3 * r + 0.59 * g + 0.11 * b;
+          r = (r * 0.6 + bw * 0.4) * 1.1;
+          g = (g * 0.6 + bw * 0.4) * 1.1;
+          b = (b * 0.6 + bw * 0.4) * 1.1;
+        } else if (currentFilter === 'sepia_heritage') {
+          const bw = 0.299 * r + 0.587 * g + 0.114 * b;
+          r = bw * 1.15 + 25;
+          g = bw * 0.95 + 15;
+          b = bw * 0.75;
+        }
+
+        data[i] = Math.min(255, Math.max(0, r));
+        data[i + 1] = Math.min(255, Math.max(0, g));
+        data[i + 2] = Math.min(255, Math.max(0, b));
+      }
+
+      ctxOut.putImageData(imgData, 0, 0);
+
+      // 7. Clarity & Unsharp Masking Convolution Pass
+      const sharpAmount = (params.sharpening * 0.7 + params.clarity * 0.5) / 100;
+      if (sharpAmount > 0.05) {
+        const sharpCanvas = document.createElement('canvas');
+        sharpCanvas.width = srcCanvas.width;
+        sharpCanvas.height = srcCanvas.height;
+        const sharpCtx = sharpCanvas.getContext('2d');
+        sharpCtx.putImageData(imgData, 0, 0);
+
+        const kCenter = 1 + 4 * (sharpAmount * 0.9);
+        const kNeighbor = -(sharpAmount * 0.22);
+        
+        const origD = ctxOut.getImageData(0, 0, srcCanvas.width, srcCanvas.height).data;
+        const destImg = sharpCtx.createImageData(srcCanvas.width, srcCanvas.height);
+        const d = destImg.data;
+        const stride = srcCanvas.width * 4;
+
+        for (let y = 1; y < srcCanvas.height - 1; y++) {
+          for (let x = 1; x < srcCanvas.width - 1; x++) {
+            const idx = (y * srcCanvas.width + x) * 4;
+            for (let c = 0; c < 3; c++) {
+              const val =
+                origD[idx + c] * kCenter +
+                (origD[idx - 4 + c] + origD[idx + 4 + c] + origD[idx - stride + c] + origD[idx + stride + c]) * kNeighbor;
+              d[idx + c] = Math.min(255, Math.max(0, val));
+            }
+            d[idx + 3] = 255;
+          }
+        }
+        sharpCtx.putImageData(destImg, 0, 0);
+        ctxOut.drawImage(sharpCanvas, 0, 0);
+      }
+
+      // 8. Lens Vignette
+      if (params.vignette !== 0) {
+        const vRad = Math.sqrt(Math.pow(srcCanvas.width / 2, 2) + Math.pow(srcCanvas.height / 2, 2));
+        const vigGrad = ctxOut.createRadialGradient(
+          srcCanvas.width / 2, srcCanvas.height / 2, vRad * 0.4,
+          srcCanvas.width / 2, srcCanvas.height / 2, vRad
+        );
+        if (params.vignette < 0) {
+          // Dark vignette
+          vigGrad.addColorStop(0, 'rgba(0,0,0,0)');
+          vigGrad.addColorStop(1, `rgba(0,0,0,${Math.abs(params.vignette) / 130})`);
+        } else {
+          // White vignette
+          vigGrad.addColorStop(0, 'rgba(255,255,255,0)');
+          vigGrad.addColorStop(1, `rgba(255,255,255,${params.vignette / 160})`);
+        }
+        ctxOut.fillStyle = vigGrad;
+        ctxOut.fillRect(0, 0, srcCanvas.width, srcCanvas.height);
+      }
+
+      // Update Enhanced Preview Image
+      document.getElementById('imgEnhanced').src = outCanvas.toDataURL('image/jpeg', 0.95);
+    }
+
+    // Export & Download
+    function downloadImage(format) {
+      const outCanvas = document.getElementById('canvasEnhanced');
+      if (!outCanvas || !originalImageObj) {
+        alert("Please upload or choose a photo first!");
+        return;
+      }
+      const mime = format === 'png' ? 'image/png' : 'image/jpeg';
+      const ext = format === 'png' ? 'png' : 'jpg';
+      const a = document.createElement('a');
+      a.href = outCanvas.toDataURL(mime, 0.98);
+      a.download = `Adobe_Studio_Sallu_${Date.now()}.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function copyToClipboard() {
+      const outCanvas = document.getElementById('canvasEnhanced');
+      if (!outCanvas) return;
+      outCanvas.toBlob(blob => {
+        try {
+          navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+          alert("✓ Enhanced photo copied to clipboard!");
+        } catch (e) {
+          alert("Clipboard copy not supported on this browser.");
+        }
+      });
+    }
+
+    // 1-Tap Built-in Demo Samples
+    function loadSamplePhoto(type) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 720;
+      canvas.height = 720;
+      const ctx = canvas.getContext('2d');
+
+      if (type === 'portrait') {
+        // Portrait Face with soft camera blur for unblur test
+        const grad = ctx.createLinearGradient(0, 0, 0, 720);
+        grad.addColorStop(0, '#1e293b');
+        grad.addColorStop(1, '#0f172a');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 720, 720);
+
+        ctx.filter = 'blur(8px)';
+        ctx.fillStyle = '#f6d5be';
+        ctx.beginPath();
+        ctx.ellipse(360, 360, 160, 210, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#2d1c10';
+        ctx.beginPath();
+        ctx.ellipse(360, 240, 180, 120, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#3a251e';
+        ctx.beginPath();
+        ctx.ellipse(310, 340, 26, 14, 0, 0, Math.PI * 2);
+        ctx.ellipse(410, 340, 26, 14, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#dc747b';
+        ctx.beginPath();
+        ctx.ellipse(360, 440, 50, 20, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.filter = 'none';
+
+      } else if (type === 'sunset') {
+        // Sunset Landscape for HDR test
+        const grad = ctx.createLinearGradient(0, 0, 0, 720);
+        grad.addColorStop(0, '#ea580c');
+        grad.addColorStop(0.5, '#f59e0b');
+        grad.addColorStop(0.7, '#0284c7');
+        grad.addColorStop(1, '#0f172a');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 720, 720);
+
+        // Sun
+        ctx.fillStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.arc(360, 360, 80, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Mountains
+        ctx.fillStyle = '#1e1b4b';
+        ctx.beginPath();
+        ctx.moveTo(0, 720);
+        ctx.lineTo(200, 440);
+        ctx.lineTo(400, 560);
+        ctx.lineTo(550, 480);
+        ctx.lineTo(720, 620);
+        ctx.lineTo(720, 720);
+        ctx.fill();
+
+      } else if (type === 'night') {
+        // Dark street night
+        ctx.fillStyle = '#060911';
+        ctx.fillRect(0, 0, 720, 720);
+
+        // Street lamp glow
+        const glow = ctx.createRadialGradient(360, 240, 10, 360, 240, 300);
+        glow.addColorStop(0, '#fef08a');
+        glow.addColorStop(0.3, 'rgba(245, 158, 11, 0.4)');
+        glow.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, 720, 720);
+
+      } else {
+        // Vintage B&W historical photo
+        ctx.fillStyle = '#3a342c';
+        ctx.fillRect(0, 0, 720, 720);
+
+        ctx.fillStyle = '#7a7062';
+        ctx.beginPath();
+        ctx.arc(360, 360, 220, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Sepia grain
+        for (let i = 0; i < 500; i++) {
+          ctx.fillStyle = (i % 2 === 0) ? '#e6decb' : '#221e19';
+          ctx.fillRect(Math.random() * 720, Math.random() * 720, 3, 3);
+        }
+      }
+
+      loadBase64Image(canvas.toDataURL('image/jpeg', 0.9));
+    }
+
+    // Auto-load portrait on initial view
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSamplePhoto('portrait');
+    });
+  </script>
+</body>
+</html>

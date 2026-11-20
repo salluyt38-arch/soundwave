@@ -2116,6 +2116,8 @@ class MusicHandler(SimpleHTTPRequestHandler):
             # Direct Tools App Routes
             if path in ("/tools", "/tools/"):
                 self.send_response(302); self.send_header("Location", "/tools.html"); self.end_headers(); return
+            if path in ("/photostudio", "/photostudio/", "/studio", "/studio/"):
+                self.send_response(302); self.send_header("Location", "/photostudio.html"); self.end_headers(); return
             if path in ("/download/tools.html", "/download/tools-app.html"):
                 fpath = os.path.join(STATIC_DIR, "tools.html")
                 if os.path.exists(fpath):
