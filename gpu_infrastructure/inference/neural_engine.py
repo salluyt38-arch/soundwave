@@ -211,7 +211,7 @@ class RealESRGANTensorEngine:
         Limits peak RAM to <60MB even for large images, preventing container OOM kills.
         """
         orig_w, orig_h = img.size
-        tile_size = 384
+        tile_size = 256
 
         if orig_w > tile_size or orig_h > tile_size:
             target_w = orig_w * self.scale

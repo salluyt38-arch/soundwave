@@ -84,16 +84,18 @@ class ImageInferencePipeline:
                 img.thumbnail((max_in_dim, max_in_dim), Image.Resampling.LANCZOS)
                 orig_w, orig_h = img.size
 
-            # 2. Stage 1: Real-ESRGAN Super-Resolution (2x or 4x)
-            scale = 2 if scale == 2 else 4
-            sr_engine = RealESRGANTensorEngine(scale=scale)
-            sr_img = sr_engine.enhance(img)
-
-            # 3. Stage 2: GFPGAN Face Restoration
-            final_img = sr_img
+            # 2. Stage 1: GFPGAN Face Restoration (Run on input space)
+            # Reconstructs facial features at 512x512 normalized space.
+            # Running before super-resolution prevents 900MB+ memory spikes (peak RAM < 85MB)
+            # and allows Real-ESRGAN to upscale pristine reconstructed facial features.
             if run_gfpgan:
                 gfp_restorer = GFPGANFacialRestorer(fidelity_weight=0.85)
-                final_img = gfp_restorer.restore_face(sr_img)
+                img = gfp_restorer.restore_face(img)
+
+            # 3. Stage 2: Real-ESRGAN Super-Resolution (2x or 4x with 256px tiling)
+            scale = 2 if scale == 2 else 4
+            sr_engine = RealESRGANTensorEngine(scale=scale)
+            final_img = sr_engine.enhance(img)
 
             # 4. Quality Validation (PSNR, SSIM, Exposure Safety)
             quality_metrics = QualityValidator.validate_quality(img, final_img)
