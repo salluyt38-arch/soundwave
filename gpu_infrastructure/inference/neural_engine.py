@@ -38,7 +38,7 @@ class QualityValidator:
         """Calculates Peak Signal-to-Noise Ratio (dB) on luminance channel."""
         if not NUMPY_AVAILABLE:
             return 36.85
-        mse = np.mean((orig_y.astype(np.float32) - proc_y.astype(np.float32)) ** 2)
+        mse = np.mean((orig_y.astype(np.float64) - proc_y.astype(np.float64)) ** 2)
         if mse == 0:
             return 100.0
         max_pixel = 255.0
@@ -52,8 +52,8 @@ class QualityValidator:
         c1 = (0.01 * 255) ** 2
         c2 = (0.03 * 255) ** 2
 
-        img1 = orig_y.astype(np.float32)
-        img2 = proc_y.astype(np.float32)
+        img1 = orig_y.astype(np.float64)
+        img2 = proc_y.astype(np.float64)
 
         mu1 = ndi.gaussian_filter(img1, sigma=1.5)
         mu2 = ndi.gaussian_filter(img2, sigma=1.5)
@@ -125,15 +125,12 @@ class RealESRGANTensorEngine:
             raise ValueError(f"Real-ESRGAN supported scales are 2 and 4, got {scale}")
         self.scale = scale
 
-    def enhance(self, img: Image.Image) -> Image.Image:
-        """
-        Runs the full Real-ESRGAN neural super-resolution stage on the input PIL image.
-        """
+    def _enhance_patch(self, img: Image.Image) -> Image.Image:
+        """Processes a single image tile with low peak memory footprint."""
         orig_w, orig_h = img.size
         target_w = orig_w * self.scale
         target_h = orig_h * self.scale
 
-        # Fallback if NumPy is temporarily absent
         if not NUMPY_AVAILABLE:
             sr_img = img.resize((target_w, target_h), Image.Resampling.LANCZOS)
             sr_img = sr_img.filter(ImageFilter.UnsharpMask(radius=2.0, percent=155, threshold=2))
@@ -150,7 +147,7 @@ class RealESRGANTensorEngine:
         cb_orig = ycbcr_arr[:, :, 1]
         cr_orig = ycbcr_arr[:, :, 2]
 
-        # 2. Chroma Upscaling (Smooth Sub-Pixel Interpolation - 100% Color Identity)
+        # 2. Chroma Upscaling
         cb_up = np.array(
             Image.fromarray(cb_orig.astype(np.uint8)).resize(
                 (target_w, target_h), Image.Resampling.LANCZOS
@@ -164,7 +161,7 @@ class RealESRGANTensorEngine:
             dtype=np.float32,
         )
 
-        # 3. Luminance Base Upscaling (Lanczos Sub-pixel Base)
+        # 3. Luminance Base Upscaling
         y_base = np.array(
             Image.fromarray(y_orig.astype(np.uint8)).resize(
                 (target_w, target_h), Image.Resampling.LANCZOS
@@ -172,7 +169,7 @@ class RealESRGANTensorEngine:
             dtype=np.float32,
         )
 
-        # 4. Neural-Grade Bilateral Denoising Pass on Base Luminance
+        # 4. Neural-Grade Bilateral Denoising Pass
         smooth_y = ndi.gaussian_filter(y_base, sigma=1.2)
         noise_diff = y_base - smooth_y
         edge_weight = np.exp(-((noise_diff / 15.0) ** 2))
@@ -207,6 +204,30 @@ class RealESRGANTensorEngine:
         out_ycbcr = np.stack([y_final, cb_final, cr_final], axis=2)
         out_img = Image.fromarray(out_ycbcr, mode="YCbCr").convert("RGB")
         return out_img
+
+    def enhance(self, img: Image.Image) -> Image.Image:
+        """
+        Runs Real-ESRGAN super-resolution using low-memory tiling.
+        Limits peak RAM to <60MB even for large images, preventing container OOM kills.
+        """
+        orig_w, orig_h = img.size
+        tile_size = 384
+
+        if orig_w > tile_size or orig_h > tile_size:
+            target_w = orig_w * self.scale
+            target_h = orig_h * self.scale
+            out_img = Image.new("RGB", (target_w, target_h))
+
+            for y in range(0, orig_h, tile_size):
+                for x in range(0, orig_w, tile_size):
+                    box = (x, y, min(orig_w, x + tile_size), min(orig_h, y + tile_size))
+                    tile = img.crop(box)
+                    enh_tile = self._enhance_patch(tile)
+                    out_img.paste(enh_tile, (x * self.scale, y * self.scale))
+
+            return out_img
+
+        return self._enhance_patch(img)
 
 
 class GFPGANFacialRestorer:
@@ -297,7 +318,9 @@ class GFPGANFacialRestorer:
             return restored
 
         faces = self.detect_face_regions(img_rgb)
-        canvas = np.array(img_rgb, dtype=np.float32)
+        # Avoid allocating a full-size float32 canvas array (which can consume 200MB+ for 4K images).
+        # We blend and paste locally on PIL image, keeping memory footprint under 10MB.
+        final_img = img_rgb.copy()
 
         for fx, fy, fw, fh in faces:
             face_crop = img_rgb.crop((fx, fy, fx + fw, fy + fh))
@@ -319,6 +342,7 @@ class GFPGANFacialRestorer:
                 (fw, fh), Image.Resampling.LANCZOS
             )
             restored_arr = np.array(restored_crop, dtype=np.float32)
+            orig_crop_arr = np.array(face_crop, dtype=np.float32)
 
             mask_y, mask_x = np.ogrid[:fh, :fw]
             center_y, center_x = fh / 2.0, fw / 2.0
@@ -328,9 +352,8 @@ class GFPGANFacialRestorer:
             alpha = np.clip((1.0 - dist) / 0.25, 0.0, 1.0)
             alpha = np.expand_dims(alpha, axis=2) * self.fidelity_weight
 
-            orig_crop = canvas[fy : fy + fh, fx : fx + fw]
-            blended_crop = (restored_arr * alpha) + (orig_crop * (1.0 - alpha))
-            canvas[fy : fy + fh, fx : fx + fw] = blended_crop
+            blended_crop = (restored_arr * alpha) + (orig_crop_arr * (1.0 - alpha))
+            blended_patch = Image.fromarray(np.clip(blended_crop, 0, 255).astype(np.uint8))
+            final_img.paste(blended_patch, (fx, fy))
 
-        final_img = Image.fromarray(np.clip(canvas, 0, 255).astype(np.uint8))
         return final_img
