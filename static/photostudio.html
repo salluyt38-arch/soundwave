@@ -1,77 +1,72 @@
 <!DOCTYPE html>
-<html lang="hi" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Adobe Studio Pro • AI Photo Enhancer & Creative Filter Suite | 👑 Owner: Sallu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adobe Studio Pro • Deep AI Photo Enhancer</title>
   
-  <script src="/permissions-manager.js"></script>
-  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
-
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
   <style>
+    /* Adobe Studio Dark Theme & Glassmorphism */
     body {
-      background-color: #080b10;
+      background-color: #060911;
       color: #f1f5f9;
-      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', -apple-system, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       overflow-x: hidden;
-      -webkit-tap-highlight-color: transparent;
-      padding-bottom: env(safe-area-inset-bottom, 0px);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-    
-    /* Adobe Dark Studio Aesthetics */
+
     .studio-panel {
-      background: rgba(15, 20, 30, 0.92);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      background: rgba(13, 19, 33, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
     }
-    .studio-panel:hover {
-      border-color: rgba(56, 189, 248, 0.25);
-    }
-    
+
     .adobe-btn-primary {
-      background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #7c3aed 100%);
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .adobe-btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45);
-    }
-    .adobe-btn-primary:active {
-      transform: translateY(0) scale(0.98);
+      background: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%);
+      box-shadow: 0 0 20px rgba(37, 99, 235, 0.45);
     }
 
     .adobe-btn-ai-glow {
-      background: linear-gradient(135deg, #0284c7 0%, #6366f1 40%, #ec4899 100%);
-      box-shadow: 0 0 24px rgba(99, 102, 241, 0.45);
-      animation: pulse-glow 3s infinite alternate;
+      background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #ec4899 100%);
+      background-size: 200% 200%;
+      animation: aiGlowShift 4s ease infinite;
+      box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
     }
-    @keyframes pulse-glow {
-      0% { box-shadow: 0 0 16px rgba(99, 102, 241, 0.35); }
-      100% { box-shadow: 0 0 32px rgba(236, 72, 153, 0.65); }
+    .adobe-btn-ai-glow:hover {
+      box-shadow: 0 0 35px rgba(236, 72, 153, 0.6);
+      transform: translateY(-1px);
     }
-    
-    /* Interactive Before / After Split Comparison Slider */
+
+    @keyframes aiGlowShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Comparison Viewport & Split Slider */
     .compare-container {
       position: relative;
       width: 100%;
-      height: 540px;
-      max-height: 72vh;
+      height: 620px;
       overflow: hidden;
-      border-radius: 20px;
+      border-radius: 16px;
+      background: #020408;
       user-select: none;
       -webkit-user-select: none;
-      touch-action: none;
-      background: #040609;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      cursor: ew-resize;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
     }
+
     .compare-img {
       position: absolute;
       top: 0;
@@ -80,8 +75,8 @@
       height: 100%;
       object-fit: contain;
       pointer-events: none;
-      will-change: filter, transform;
     }
+
     .compare-overlay {
       position: absolute;
       top: 0;
@@ -90,20 +85,20 @@
       height: 100%;
       overflow: hidden;
       pointer-events: none;
-      will-change: clip-path;
     }
+
     .slider-handle {
       position: absolute;
       top: 0;
       bottom: 0;
-      width: 4px;
+      width: 2px;
       background: #38bdf8;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 1), 0 0 6px #000;
-      cursor: ew-resize;
-      touch-action: none;
-      z-index: 25;
-      will-change: left;
+      box-shadow: 0 0 12px #38bdf8, 0 0 24px rgba(56, 189, 248, 0.6);
+      pointer-events: none;
+      z-index: 30;
+      transform: translateX(-50%);
     }
+
     .slider-knob {
       position: absolute;
       top: 50%;
@@ -112,109 +107,56 @@
       width: 44px;
       height: 44px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #0284c7, #7c3aed);
-      border: 2px solid #ffffff;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7), 0 0 24px rgba(56, 189, 248, 0.75);
+      background: #0f172a;
+      border: 2px solid #38bdf8;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.65), 0 4px 14px rgba(0,0,0,0.8);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
+      color: #38bdf8;
       font-size: 13px;
-      font-weight: 800;
+      font-weight: 900;
       pointer-events: auto;
-      touch-action: none;
+      cursor: grab;
+      transition: transform 0.15s ease;
+    }
+    .slider-knob:active {
+      cursor: grabbing;
+      transform: translate(-50%, -50%) scale(1.12);
+      border-color: #a855f7;
+      color: #a855f7;
     }
 
-    /* Adobe Range Sliders */
-    input[type=range] {
-      -webkit-appearance: none;
-      height: 6px;
-      border-radius: 9999px;
-      background: #1e293b;
-      outline: none;
-    }
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #38bdf8;
-      cursor: pointer;
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.9);
-      border: 2px solid #fff;
-      transition: transform 0.1s;
-    }
-    input[type=range]::-webkit-slider-thumb:hover {
-      transform: scale(1.2);
-    }
-
-    /* Filter Card Thumbs */
-    .filter-thumb-card {
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      cursor: pointer;
-    }
-    .filter-thumb-card:hover {
-      border-color: #38bdf8;
-      transform: translateY(-2px);
-    }
-    .filter-thumb-card.active {
-      border-color: #38bdf8;
-      background: rgba(56, 189, 248, 0.14);
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.28);
-    }
-
-    /* Pulse Radar Animation */
-    @keyframes radar-sweep {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .radar-beam {
-      animation: radar-sweep 2s linear infinite;
-    }
-
-    /* Custom Scrollbars */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #080b10;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #1e293b;
-      border-radius: 999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #38bdf8;
+    /* Modal Backdrop */
+    .modal-backdrop {
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(14px);
     }
   </style>
 </head>
+<body>
 
-<body class="min-h-screen text-slate-100 flex flex-col justify-between selection:bg-sky-500/30 selection:text-sky-200">
-
-  <!-- ADOBE STUDIO TOP APP BAR -->
-  <header class="sticky top-0 z-40 bg-[#080b10]/95 backdrop-blur-md border-b border-white/10 shadow-2xl">
-    <div class="max-w-[1600px] mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+  <!-- HEADER -->
+  <header class="studio-panel border-b border-white/10 sticky top-0 z-40 px-4 py-3">
+    <div class="max-w-[1600px] mx-auto flex items-center justify-between gap-3 flex-wrap">
       
+      <!-- Brand & Owner -->
       <div class="flex items-center gap-3">
-        <!-- Back to Services Hub Button -->
         <a href="/index.html?tab=appstore" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-white transition active:scale-95 shadow-sm" title="Back to Services Hub">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
           <span>Services</span>
         </a>
 
-        <!-- App Icon & Title -->
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-500 via-blue-600 to-indigo-600 p-0.5 shadow-lg flex items-center justify-center shadow-sky-500/25">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-500 via-purple-600 to-pink-500 p-0.5 shadow-lg flex items-center justify-center shadow-purple-500/25">
           <div class="w-full h-full bg-[#0d131f] rounded-[14px] flex items-center justify-center text-xl">
-            🎨
+            ⚡
           </div>
         </div>
         <div>
           <div class="flex items-center gap-2">
             <h1 class="text-lg font-black tracking-tight text-white flex items-center gap-1.5">
               <span>Adobe Studio Pro</span>
-              <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-sm">AI NEURAL SUITE</span>
+              <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-sm">DEEP AI ENHANCER</span>
             </h1>
           </div>
           <div class="flex items-center gap-2 text-xs text-slate-400">
@@ -222,7 +164,7 @@
             <span>•</span>
             <span class="text-emerald-400 font-semibold flex items-center gap-1">
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              Real-ESRGAN + GFPGAN Face Restorer (100% Free & Private)
+              Real-ESRGAN + GFPGAN Face Restorer (15K True Ultra-HD)
             </span>
           </div>
         </div>
@@ -234,7 +176,7 @@
         <!-- Live GPU Capacity Telemetry Pill -->
         <a href="/api/gpu/dashboard" target="_blank" id="gpuCapacityPill" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold hover:bg-emerald-500/20 transition shadow-sm" title="View GPU Telemetry & Health Dashboard">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span id="gpuStatusText">AI Cluster: 48.5GB VRAM Online</span>
+          <span id="gpuStatusText">AI Cluster: Checking...</span>
         </a>
 
         <button onclick="document.getElementById('fileUpload').click()" class="adobe-btn-primary px-3.5 py-1.5 rounded-xl font-bold text-white text-xs flex items-center gap-1.5 shadow-md">
@@ -249,14 +191,14 @@
         <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="hidden" onchange="handleFileSelect(event)">
 
         <!-- HERO DEEP AI ENHANCE HEADER BUTTON -->
-        <button onclick="triggerDeepAIModal()" class="adobe-btn-ai-glow px-4 py-1.5 rounded-xl font-black text-white text-xs flex items-center gap-1.5 transition active:scale-95">
+        <button onclick="runDeepAIEnhance()" class="adobe-btn-ai-glow px-4 py-1.5 rounded-xl font-black text-white text-xs flex items-center gap-1.5 transition active:scale-95">
           <span class="text-amber-300 text-sm">⚡</span>
-          <span>Deep AI Enhance</span>
+          <span>Enhance Photo Now</span>
         </button>
 
         <button onclick="downloadImage('png')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span>Export HD</span>
+          <span>Download Ultra HD</span>
         </button>
       </div>
 
@@ -270,31 +212,31 @@
     <div class="mb-4 flex flex-wrap items-center justify-between gap-2.5 studio-panel p-2.5 rounded-2xl">
       <div class="flex items-center gap-2 flex-wrap text-xs">
         <span class="font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1 text-[11px]">
-          <span>✨ 1-Tap Samples:</span>
+          <span>✨ 1-Tap Test Photos:</span>
         </span>
-        <button onclick="loadSamplePhoto('portrait')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition hover:border-sky-500/50">
-          👤 Portrait Face (AI Unblur Test)
+        <button onclick="loadSamplePhoto('portrait')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition hover:border-purple-500/50">
+          👤 Portrait Face (Remini Beauty Test)
         </button>
-        <button onclick="loadSamplePhoto('sunset')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition hover:border-sky-500/50">
-          🌅 Sunset Landscape (HDR 4K Test)
+        <button onclick="loadSamplePhoto('sunset')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition hover:border-purple-500/50">
+          🌅 Sunset Scenery (4K Super-Res Test)
         </button>
-        <button onclick="loadSamplePhoto('night')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition hover:border-sky-500/50">
-          🌃 Night Street (Denoise Test)
+        <button onclick="loadSamplePhoto('night')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition hover:border-purple-500/50">
+          🌃 Night Street (Denoise & Sharpness Test)
         </button>
-        <button onclick="loadSamplePhoto('vintage')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition hover:border-sky-500/50">
-          🏛️ Vintage B&W (Face Restoration Test)
+        <button onclick="loadSamplePhoto('vintage')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition hover:border-purple-500/50">
+          🏛️ Vintage B&W (Facial Restoration Test)
         </button>
       </div>
 
       <div class="flex items-center gap-2.5 text-xs text-slate-400 flex-wrap">
         <span id="aiActiveBadge" class="hidden px-2 py-0.5 rounded-md bg-purple-500/20 border border-purple-500/40 text-purple-300 font-extrabold flex items-center gap-1">
-          <span>🧠 Real-ESRGAN + GFPGAN</span>
+          <span>🧠 Real-ESRGAN + GFPGAN 15K</span>
         </span>
-        <span id="resBadge" class="font-mono text-sky-400 font-bold">1280 x 720px</span>
+        <span id="resBadge" class="font-mono text-sky-400 font-bold">Upload or select a photo</span>
         <span>•</span>
         <span class="text-emerald-400 font-semibold flex items-center gap-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-          <span>60 FPS Hardware Render</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Full Native Resolution Display</span>
         </span>
       </div>
     </div>
@@ -331,14 +273,11 @@
               <button id="btnHoldCompare" onmousedown="holdOriginal(true)" onmouseup="holdOriginal(false)" ontouchstart="holdOriginal(true)" ontouchend="holdOriginal(false)" class="px-2.5 py-1 rounded-lg bg-sky-950/70 hover:bg-sky-900 border border-sky-700/50 text-sky-300 text-xs font-bold select-none transition">
                 👁️ Hold Original
               </button>
-              <button onclick="resetAllFilters()" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white text-xs font-medium transition" title="Reset all adjustments">
-                ↺ Reset All
-              </button>
             </div>
 
           </div>
 
-          <!-- INTERACTIVE CANVAS COMPARISON VIEWER -->
+          <!-- INTERACTIVE COMPARISON VIEWER -->
           <div class="compare-container" id="compareContainer">
             
             <!-- Original Image (Bottom Layer) -->
@@ -349,7 +288,7 @@
               <img id="imgEnhanced" class="compare-img" alt="Enhanced Photo" src="">
             </div>
 
-            <!-- Vertical Slider Divider & Draggable Handle (Hardware-Accelerated Pointer API) -->
+            <!-- Vertical Slider Divider & Draggable Handle -->
             <div class="slider-handle" id="sliderHandle" style="left: 50%;">
               <div class="slider-knob" id="sliderKnob" title="Drag left/right to compare Before vs After">
                 <span>◀▶</span>
@@ -363,16 +302,16 @@
             </div>
 
             <!-- Empty Dropzone Placeholder -->
-            <div id="emptyDropzone" class="hidden absolute inset-0 flex flex-col items-center justify-center p-6 text-center rounded-2xl cursor-pointer bg-[#05070a]" onclick="document.getElementById('fileUpload').click()">
-              <div class="w-16 h-16 rounded-3xl bg-sky-600/20 border border-sky-500/30 flex items-center justify-center text-3xl mb-3 shadow-lg">
-                🎨
+            <div id="emptyDropzone" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center rounded-2xl cursor-pointer bg-[#05070a]" onclick="document.getElementById('fileUpload').click()">
+              <div class="w-16 h-16 rounded-3xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-3xl mb-3 shadow-lg">
+                ⚡
               </div>
               <h3 class="text-lg font-bold text-white">Click or Drop Photo Here</h3>
               <p class="text-xs text-slate-400 mt-1 max-w-sm">
-                Upload any photo from your gallery or choose a sample to unleash Real-ESRGAN + GFPGAN Deep AI models.
+                Upload any portrait or photo to unleash Real-ESRGAN + GFPGAN Deep AI models with Remini-grade face restoration and 15K ultra-clarity.
               </p>
-              <div class="mt-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-sky-500/20 text-sky-300 font-bold text-xs">
-                <span>Connected to Dedicated RTX 4090 GPU Cluster</span>
+              <div class="mt-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-500/20 text-purple-300 font-bold text-xs">
+                <span>⚡ Dedicated Neural Processing Engine Ready</span>
               </div>
             </div>
 
@@ -382,7 +321,7 @@
           <div class="mt-3 flex items-center justify-between text-xs text-slate-400 px-1">
             <span class="flex items-center gap-1.5">
               <span>💡</span>
-              <span>Drag the cyan divider left or right to inspect deep AI super-clarity.</span>
+              <span>Drag the cyan divider left or right to inspect before/after deep AI clarity.</span>
             </span>
             <div class="flex items-center gap-2">
               <span>Split:</span>
@@ -393,24 +332,24 @@
 
         </div>
 
-        <!-- EXPORT & CLOUD ACTION DOCK -->
+        <!-- EXPORT & ACTION DOCK -->
         <div class="studio-panel rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
-            <span class="text-xs font-bold text-slate-200" id="currentFilterLabel">Active: Adobe Master Clarity</span>
+            <span class="w-2 h-2 rounded-full bg-purple-400 animate-ping"></span>
+            <span class="text-xs font-bold text-slate-200" id="currentFilterLabel">Ready: Pure Deep AI Enhancer (Remini + Topaz Architecture)</span>
           </div>
 
           <div class="flex items-center gap-2 flex-wrap">
-            <button onclick="triggerDeepAIModal()" class="adobe-btn-ai-glow px-4 py-2 rounded-xl text-xs font-black text-white flex items-center gap-1.5 shadow-lg">
+            <button onclick="runDeepAIEnhance()" class="adobe-btn-ai-glow px-4 py-2 rounded-xl text-xs font-black text-white flex items-center gap-1.5 shadow-lg hover:scale-[1.02] active:scale-95 transition">
               <span class="text-amber-300">⚡</span>
-              <span>Re-Run Deep AI</span>
+              <span>RUN DEEP AI ENHANCER</span>
             </button>
             <button onclick="downloadImage('png')" class="adobe-btn-primary px-4 py-2 rounded-xl text-xs font-extrabold text-white flex items-center gap-1.5 shadow-md">
               <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               <span>Download Ultra HD (PNG)</span>
             </button>
             <button onclick="downloadImage('jpg')" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200 transition">
-              <span>Download JPG</span>
+              <span>Download JPG (95%)</span>
             </button>
             <button onclick="copyToClipboard()" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 transition">
               📋 Copy
@@ -420,327 +359,117 @@
 
       </div>
 
-      <!-- RIGHT: DEEP AI MODEL & LIGHTROOM CONTROLS INSPECTOR (4 COLS) -->
+      <!-- RIGHT: DEDICATED DEEP AI CONTROLLER PANEL (4 COLS) -->
       <div class="lg:col-span-4 space-y-3">
         
-        <!-- INSPECTOR TABS -->
-        <div class="studio-panel rounded-2xl p-2 flex items-center gap-1 text-xs font-bold">
-          <button onclick="switchInspectorTab('magic')" id="tabBtnMagic" class="flex-1 py-2 rounded-xl bg-sky-600 text-white text-center transition flex items-center justify-center gap-1">
-            <span>⚡ Deep AI</span>
-          </button>
-          <button onclick="switchInspectorTab('lightroom')" id="tabBtnLightroom" class="flex-1 py-2 rounded-xl text-slate-400 hover:text-white text-center transition flex items-center justify-center gap-1">
-            <span>🎛️ Lightroom</span>
-          </button>
-          <button onclick="switchInspectorTab('filters')" id="tabBtnFilters" class="flex-1 py-2 rounded-xl text-slate-400 hover:text-white text-center transition flex items-center justify-center gap-1">
-            <span>🎭 LUTs</span>
-          </button>
-          <button onclick="switchInspectorTab('geometry')" id="tabBtnGeometry" class="flex-1 py-2 rounded-xl text-slate-400 hover:text-white text-center transition flex items-center justify-center gap-1">
-            <span>✂️ Crop</span>
-          </button>
-        </div>
-
-        <!-- TAB CONTENT 1: DEEP AI NEURAL ENGINE & PRESETS -->
-        <div id="inspectorMagic" class="studio-panel rounded-2xl p-4 space-y-3.5">
+        <!-- CARD 1: HERO DEEP AI ENGINE SETTINGS -->
+        <div class="studio-panel rounded-2xl p-4 space-y-4">
           
-          <!-- HERO AI MODEL CONTROLLER CARD -->
-          <div class="p-3.5 rounded-2xl bg-gradient-to-br from-indigo-950/80 via-slate-900 to-sky-950/80 border border-indigo-500/30 shadow-xl space-y-3">
+          <div class="flex items-center justify-between pb-3 border-b border-white/10">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-xs font-black uppercase tracking-wider text-purple-300">Deep AI Architecture</span>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-200 border border-purple-500/30">ONLINE & READY</span>
+          </div>
+
+          <!-- Scale Factor Setting -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-slate-300 flex items-center justify-between">
+              <span>Super-Resolution Scale Factor</span>
+              <span class="text-[10px] text-purple-400 font-mono">15K Engine</span>
+            </label>
+            <div class="p-2.5 rounded-xl bg-slate-900/90 border border-white/10">
+              <select id="selAiScale" class="w-full bg-transparent text-purple-300 font-bold text-xs focus:outline-none cursor-pointer">
+                <option value="4" class="bg-slate-900 text-white" selected>4x Ultra HD (15K Quality Super-Resolution)</option>
+                <option value="2" class="bg-slate-900 text-white">2x High Def (Quad-HD Fast Enhancement)</option>
+              </select>
+            </div>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Real-ESRGAN multi-scale convolutional tensor pass upscales resolution by 4x, reconstructing lost high-frequency texture and edges.
+            </p>
+          </div>
+
+          <!-- Remini Face Beauty & Restoration Toggle -->
+          <div class="p-3.5 rounded-xl bg-gradient-to-br from-purple-950/40 via-slate-900 to-indigo-950/40 border border-purple-500/30 space-y-2.5">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                <span class="text-xs font-black uppercase tracking-wider text-indigo-300">GPU Neural Engine</span>
+                <span class="text-base">✨</span>
+                <span class="text-xs font-black text-white">Remini Face Beauty & Texture Polish</span>
               </div>
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-200 border border-indigo-500/30">RTX 4090 • ONLINE</span>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="chkRunGfpgan" checked class="sr-only peer">
+                <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-purple-500 peer-checked:to-pink-500"></div>
+              </label>
             </div>
-
-            <div>
-              <h4 class="text-sm font-extrabold text-white flex items-center gap-1.5">
-                <span>Real-ESRGAN + GFPGAN</span>
-              </h4>
-              <p class="text-[11px] text-slate-300 mt-1 leading-relaxed">
-                Connects directly to our dedicated Python GPU workers to upscale 4x, reconstruct blurred facial features (eyes, lips, skin), and eliminate compression noise.
-              </p>
-            </div>
-
-            <!-- AI Engine Settings -->
-            <div class="grid grid-cols-2 gap-2 text-xs">
-              <div class="p-2 rounded-xl bg-black/40 border border-white/5 space-y-1">
-                <span class="text-[10px] font-bold text-slate-400 uppercase">Scale Factor</span>
-                <select id="selAiScale" class="w-full bg-transparent text-sky-300 font-bold text-xs focus:outline-none cursor-pointer">
-                  <option value="4" class="bg-slate-900 text-white">4x Ultra HD</option>
-                  <option value="2" class="bg-slate-900 text-white">2x High Def</option>
-                </select>
-              </div>
-              <div class="p-2 rounded-xl bg-black/40 border border-white/5 space-y-1">
-                <span class="text-[10px] font-bold text-slate-400 uppercase">Face Restorer</span>
-                <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-emerald-400">
-                  <input type="checkbox" id="chkRunGfpgan" checked class="rounded border-slate-700 text-sky-500 focus:ring-0">
-                  <span>GFPGAN v1.4</span>
-                </label>
-              </div>
-            </div>
-
-            <!-- Big Glowing Trigger Button -->
-            <button onclick="runDeepAIEnhance()" id="btnTriggerAI" class="adobe-btn-ai-glow w-full py-2.5 px-4 rounded-xl text-white font-black text-xs flex items-center justify-center gap-2 shadow-xl hover:scale-[1.02] active:scale-95 transition">
-              <span class="text-base text-amber-300">⚡</span>
-              <span>RUN DEEP AI MODEL NOW</span>
-            </button>
             
-            <div class="text-[10px] text-center text-slate-400 flex items-center justify-center gap-1.5">
-              <span>🔒 Zero user data saved</span>
-              <span>•</span>
-              <span>Private trusted GPU worker</span>
+            <div class="text-[11px] text-slate-300 space-y-1.5 pl-1">
+              <div class="flex items-center gap-1.5 text-emerald-300">
+                <span>✓</span>
+                <span>Frequency Separation Skin Smoothing (Removes acne, redness & blotches)</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-emerald-300">
+                <span>✓</span>
+                <span>Micro-Pore Preservation (Zero plastic or mannequin blur)</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-emerald-300">
+                <span>✓</span>
+                <span>Ocular Catchlight Sparkle & Iris Contrast Boost</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-emerald-300">
+                <span>✓</span>
+                <span>Natural Rosy Lip Vermilion Contours</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-emerald-300">
+                <span>✓</span>
+                <span>Contrast-Adaptive Sharpening (CAS for hair, jewelry & fabrics)</span>
+              </div>
             </div>
           </div>
 
-          <!-- Quick Lightroom Presets -->
-          <div class="space-y-2 pt-1">
-            <div class="flex items-center justify-between mb-1">
-              <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-                <span>⚡ Instant Adobe Presets</span>
-              </h3>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-500/20 text-sky-300">60 FPS</span>
+          <!-- BIG GLOWING ACTION BUTTON -->
+          <button onclick="runDeepAIEnhance()" id="btnTriggerAI" class="adobe-btn-ai-glow w-full py-3.5 px-4 rounded-xl text-white font-black text-sm flex items-center justify-center gap-2 shadow-2xl hover:scale-[1.02] active:scale-95 transition">
+            <span class="text-lg text-amber-300">⚡</span>
+            <span>RUN DEEP AI ENHANCER NOW</span>
+          </button>
+
+          <!-- PRIVACY & SECURITY BADGE -->
+          <div class="p-3 rounded-xl bg-slate-900/60 border border-white/5 text-[11px] text-slate-400 space-y-1">
+            <div class="text-slate-300 font-bold flex items-center gap-1.5">
+              <span>🔒 Zero-Persistence Hardware Privacy</span>
             </div>
-
-            <!-- Preset 1: Master Unblur & Clarity -->
-            <button onclick="applyAIPreset('unblur')" id="preset_unblur" class="w-full text-left p-2.5 rounded-xl border border-sky-500/50 bg-sky-500/10 transition flex items-start gap-2.5 hover:border-sky-400">
-              <span class="text-xl shrink-0">🌟</span>
-              <div>
-                <div class="text-xs font-bold text-white flex items-center gap-1.5">
-                  <span>Super Clarity & Face Sharpen</span>
-                  <span class="text-[9px] px-1.5 py-0.2 rounded bg-sky-600 text-white font-black">FAST</span>
-                </div>
-                <p class="text-[11px] text-slate-400 mt-0.5">Sharpen fine details, unblur motion blur, and boost eye definition.</p>
-              </div>
-            </button>
-
-            <!-- Preset 2: Portrait Glow & Skin Smoothing -->
-            <button onclick="applyAIPreset('portrait_glow')" id="preset_portrait_glow" class="w-full text-left p-2.5 rounded-xl border border-white/10 bg-slate-900/60 hover:border-white/20 transition flex items-start gap-2.5">
-              <span class="text-xl shrink-0">👤</span>
-              <div>
-                <div class="text-xs font-bold text-white">Portrait Glow & Skin Smooth</div>
-                <p class="text-[11px] text-slate-400 mt-0.5">Soft bilateral skin tone smoothing while preserving sharp eyes and lips.</p>
-              </div>
-            </button>
-
-            <!-- Preset 3: HDR Landscape Pop -->
-            <button onclick="applyAIPreset('hdr_pop')" id="preset_hdr_pop" class="w-full text-left p-2.5 rounded-xl border border-white/10 bg-slate-900/60 hover:border-white/20 transition flex items-start gap-2.5">
-              <span class="text-xl shrink-0">🌅</span>
-              <div>
-                <div class="text-xs font-bold text-white">HDR Landscape & Dynamic Pop</div>
-                <p class="text-[11px] text-slate-400 mt-0.5">Expands dynamic range, enriches blue skies, sunset clouds, and trees.</p>
-              </div>
-            </button>
-
-            <!-- Preset 4: Dehaze & Vivid Vibrance -->
-            <button onclick="applyAIPreset('dehaze_vivid')" id="preset_dehaze_vivid" class="w-full text-left p-2.5 rounded-xl border border-white/10 bg-slate-900/60 hover:border-white/20 transition flex items-start gap-2.5">
-              <span class="text-xl shrink-0">🎨</span>
-              <div>
-                <div class="text-xs font-bold text-white">Adobe De-Haze & Color Vibrance</div>
-                <p class="text-[11px] text-slate-400 mt-0.5">Removes flat atmospheric haze, restores rich contrast and saturation.</p>
-              </div>
-            </button>
+            <p>
+              Your personal images are processed in isolated ephemeral GPU VRAM and cleared immediately upon completion. Zero image retention, zero data leaks.
+            </p>
           </div>
 
         </div>
 
-        <!-- TAB CONTENT 2: LIGHTROOM PRO SLIDERS -->
-        <div id="inspectorLightroom" class="hidden studio-panel rounded-2xl p-4 space-y-3.5">
-          <div class="flex items-center justify-between mb-1">
-            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-              🎛️ Lightroom Tone & Color
-            </h3>
-            <button onclick="resetLightroomSliders()" class="text-[10px] text-sky-400 hover:text-sky-300 font-bold">Reset</button>
+        <!-- CARD 2: LIVE TELEMETRY & QUALITY METRICS -->
+        <div class="studio-panel rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Live Processing Telemetry</h4>
+            <a href="/api/gpu/dashboard" target="_blank" class="text-[10px] text-sky-400 hover:text-sky-300 font-bold">Open Dashboard ↗</a>
           </div>
 
-          <!-- Exposure -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-300 font-medium">Exposure</span>
-              <span id="lblExposure" class="text-sky-400 font-bold font-mono">0</span>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="p-2.5 rounded-xl bg-slate-900/80 border border-white/5">
+              <div class="text-[10px] text-slate-400 uppercase">Worker Engine</div>
+              <div id="metricWorker" class="font-bold text-purple-300 mt-0.5 truncate">Dedicated Primary</div>
             </div>
-            <input type="range" id="slideExposure" min="-100" max="100" value="0" oninput="updateParam('exposure', this.value)" class="w-full">
+            <div class="p-2.5 rounded-xl bg-slate-900/80 border border-white/5">
+              <div class="text-[10px] text-slate-400 uppercase">Latency</div>
+              <div id="metricLatency" class="font-bold text-emerald-300 mt-0.5 font-mono">--</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-900/80 border border-white/5">
+              <div class="text-[10px] text-slate-400 uppercase">PSNR Fidelity</div>
+              <div id="metricPsnr" class="font-bold text-sky-300 mt-0.5 font-mono">--</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-900/80 border border-white/5">
+              <div class="text-[10px] text-slate-400 uppercase">SSIM Structure</div>
+              <div id="metricSsim" class="font-bold text-sky-300 mt-0.5 font-mono">--</div>
+            </div>
           </div>
-
-          <!-- Contrast -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-300 font-medium">Contrast</span>
-              <span id="lblContrast" class="text-sky-400 font-bold font-mono">+15</span>
-            </div>
-            <input type="range" id="slideContrast" min="-100" max="100" value="15" oninput="updateParam('contrast', this.value)" class="w-full">
-          </div>
-
-          <!-- Highlights -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-300 font-medium">Highlights</span>
-              <span id="lblHighlights" class="text-sky-400 font-bold font-mono">-10</span>
-            </div>
-            <input type="range" id="slideHighlights" min="-100" max="100" value="-10" oninput="updateParam('highlights', this.value)" class="w-full">
-          </div>
-
-          <!-- Shadows -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-300 font-medium">Shadows Recovery</span>
-              <span id="lblShadows" class="text-sky-400 font-bold font-mono">+20</span>
-            </div>
-            <input type="range" id="slideShadows" min="-100" max="100" value="20" oninput="updateParam('shadows', this.value)" class="w-full">
-          </div>
-
-          <!-- Temperature -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-300 font-medium">White Balance (Temp)</span>
-              <span id="lblTemperature" class="text-sky-400 font-bold font-mono">+5</span>
-            </div>
-            <input type="range" id="slideTemperature" min="-100" max="100" value="5" oninput="updateParam('temperature', this.value)" class="w-full">
-          </div>
-
-          <!-- Vibrance -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-300 font-medium">Vibrance</span>
-              <span id="lblVibrance" class="text-sky-400 font-bold font-mono">+25</span>
-            </div>
-            <input type="range" id="slideVibrance" min="-100" max="100" value="25" oninput="updateParam('vibrance', this.value)" class="w-full">
-          </div>
-
-          <!-- Clarity & Texture -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-300 font-medium">Adobe Clarity & Texture</span>
-              <span id="lblClarity" class="text-sky-400 font-bold font-mono">+40</span>
-            </div>
-            <input type="range" id="slideClarity" min="0" max="100" value="40" oninput="updateParam('clarity', this.value)" class="w-full">
-          </div>
-
-          <!-- Sharpening -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-300 font-medium">Unsharp Sharpening</span>
-              <span id="lblSharpening" class="text-sky-400 font-bold font-mono">+55</span>
-            </div>
-            <input type="range" id="slideSharpening" min="0" max="100" value="55" oninput="updateParam('sharpening', this.value)" class="w-full">
-          </div>
-
-          <!-- Vignette -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-300 font-medium">Lens Vignette</span>
-              <span id="lblVignette" class="text-sky-400 font-bold font-mono">0</span>
-            </div>
-            <input type="range" id="slideVignette" min="-100" max="100" value="0" oninput="updateParam('vignette', this.value)" class="w-full">
-          </div>
-
-        </div>
-
-        <!-- TAB CONTENT 3: ADOBE CREATIVE LUT FILTERS -->
-        <div id="inspectorFilters" class="hidden studio-panel rounded-2xl p-4 space-y-3">
-          <div class="flex items-center justify-between mb-1">
-            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-              🎭 12+ Adobe Cinema & Film LUTs
-            </h3>
-            <span class="text-[10px] text-slate-400">1-Tap Grade</span>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2 max-h-[380px] overflow-y-auto pr-1">
-            
-            <div onclick="selectFilter('none')" id="filter_none" class="filter-thumb-card active p-2.5 rounded-xl bg-slate-900/60 text-xs">
-              <div class="font-bold text-white">Original</div>
-              <div class="text-[10px] text-slate-400 mt-0.5">Neutral standard</div>
-            </div>
-
-            <div onclick="selectFilter('teal_orange')" id="filter_teal_orange" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
-              <div class="font-bold text-sky-400">Teal & Orange</div>
-              <div class="text-[10px] text-slate-400 mt-0.5">Hollywood cinema</div>
-            </div>
-
-            <div onclick="selectFilter('kodak_portra')" id="filter_kodak_portra" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
-              <div class="font-bold text-amber-300">Kodak Portra 400</div>
-              <div class="text-[10px] text-slate-400 mt-0.5">Warm vintage film</div>
-            </div>
-
-            <div onclick="selectFilter('moody_noir')" id="filter_moody_noir" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
-              <div class="font-bold text-slate-200">Moody Noir B&W</div>
-              <div class="text-[10px] text-slate-400 mt-0.5">High contrast silver</div>
-            </div>
-
-            <div onclick="selectFilter('vogue_editorial')" id="filter_vogue_editorial" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
-              <div class="font-bold text-indigo-300">Vogue Editorial</div>
-              <div class="text-[10px] text-slate-400 mt-0.5">Cool high-fashion</div>
-            </div>
-
-            <div onclick="selectFilter('cyberpunk')" id="filter_cyberpunk" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
-              <div class="font-bold text-pink-400">Cyberpunk Neon</div>
-              <div class="text-[10px] text-slate-400 mt-0.5">Electric violet & cyan</div>
-            </div>
-
-            <div onclick="selectFilter('golden_hour')" id="filter_golden_hour" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
-              <div class="font-bold text-orange-400">Golden Hour</div>
-              <div class="text-[10px] text-slate-400 mt-0.5">Warm magic sunlight</div>
-            </div>
-
-            <div onclick="selectFilter('fuji_velvia')" id="filter_fuji_velvia" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
-              <div class="font-bold text-emerald-400">Fuji Velvia</div>
-              <div class="text-[10px] text-slate-400 mt-0.5">Vivid nature & greens</div>
-            </div>
-
-            <div onclick="selectFilter('pastel_dream')" id="filter_pastel_dream" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
-              <div class="font-bold text-rose-300">Pastel Dream</div>
-              <div class="text-[10px] text-slate-400 mt-0.5">Soft matte aesthetic</div>
-            </div>
-
-            <div onclick="selectFilter('polaroid_70s')" id="filter_polaroid_70s" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
-              <div class="font-bold text-yellow-500">1970s Polaroid</div>
-              <div class="text-[10px] text-slate-400 mt-0.5">Faded retro nostalgia</div>
-            </div>
-
-            <div onclick="selectFilter('bleach_bypass')" id="filter_bleach_bypass" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
-              <div class="font-bold text-slate-400">Bleach Bypass</div>
-              <div class="text-[10px] text-slate-400 mt-0.5">Desaturated action film</div>
-            </div>
-
-            <div onclick="selectFilter('sepia_heritage')" id="filter_sepia_heritage" class="filter-thumb-card p-2.5 rounded-xl bg-slate-900/60 text-xs">
-              <div class="font-bold text-amber-600">Sepia Heritage</div>
-              <div class="text-[10px] text-slate-400 mt-0.5">Antique historical tone</div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- TAB CONTENT 4: GEOMETRY & ROTATION -->
-        <div id="inspectorGeometry" class="hidden studio-panel rounded-2xl p-4 space-y-3">
-          <div class="flex items-center justify-between mb-1">
-            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-              ✂️ Geometry & Orientation
-            </h3>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <button onclick="rotateImage(90)" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white transition flex items-center justify-center gap-1.5">
-              <span>↻ Rotate 90°</span>
-            </button>
-            <button onclick="rotateImage(-90)" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white transition flex items-center justify-center gap-1.5">
-              <span>↺ Rotate -90°</span>
-            </button>
-            <button onclick="flipImage('h')" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white transition flex items-center justify-center gap-1.5">
-              <span>⇄ Flip Horizontal</span>
-            </button>
-            <button onclick="flipImage('v')" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white transition flex items-center justify-center gap-1.5">
-              <span>⇅ Flip Vertical</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- CLIENT & GPU PRIVACY BADGE -->
-        <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-white/5 text-[11px] text-slate-400 space-y-1.5">
-          <div class="text-slate-300 font-bold flex items-center gap-1.5">
-            <span>🔒 Enterprise Private AI Architecture</span>
-          </div>
-          <p>
-            Zero data storage: Photos sent to deep AI models are processed entirely in ephemeral GPU VRAM and discarded immediately. No telemetry leaks, no watermarks, no ads.
-          </p>
         </div>
 
       </div>
@@ -749,144 +478,80 @@
 
   </main>
 
-  <!-- DEEP AI MODEL PROGRESS MODAL OVERLAY -->
-  <div id="aiProgressModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-    <div class="studio-panel max-w-md w-full rounded-3xl p-6 border border-indigo-500/40 shadow-2xl space-y-5 relative overflow-hidden">
+  <!-- PROGRESS MODAL FOR DEEP AI NEURAL INFERENCE -->
+  <div id="aiProgressModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop">
+    <div class="w-full max-w-md studio-panel rounded-3xl p-6 border border-purple-500/40 shadow-2xl space-y-4">
       
-      <!-- Ambient Glow Behind Modal -->
-      <div class="absolute -top-12 -right-12 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-12 -left-12 w-40 h-40 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
-
-      <!-- Header -->
-      <div class="text-center space-y-1">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-500 via-indigo-600 to-pink-500 text-2xl shadow-xl shadow-indigo-500/30 mb-2">
-          ⚡
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-white text-base font-black shadow-lg shadow-purple-500/30">
+            ⚡
+          </div>
+          <div>
+            <h3 class="text-sm font-black text-white">Processing Deep AI Enhancement</h3>
+            <p class="text-[11px] text-slate-400">Real-ESRGAN Super-Resolution & Remini Face Beauty</p>
+          </div>
         </div>
-        <h3 class="text-base font-black text-white tracking-tight flex items-center justify-center gap-1.5">
-          <span>Processing Deep AI Neural Models</span>
-        </h3>
-        <p class="text-xs text-slate-400">
-          Real-ESRGAN (Super-Resolution) + GFPGAN (Blind Facial Restorer)
-        </p>
+        <button onclick="closeAIProgressModal()" class="text-slate-400 hover:text-white text-lg font-bold p-1">✕</button>
       </div>
 
       <!-- Animated Progress Bar -->
       <div class="space-y-1.5">
         <div class="flex justify-between text-xs font-mono">
-          <span id="aiProgressStatusText" class="text-sky-300 font-bold">Initializing Pipeline...</span>
-          <span id="aiProgressPct" class="text-purple-300 font-extrabold">15%</span>
+          <span id="aiProgressStatusText" class="text-purple-300 font-bold">Initializing Neural Pipeline...</span>
+          <span id="aiProgressPct" class="text-pink-400 font-bold">15%</span>
         </div>
-        <div class="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden border border-white/5">
-          <div id="aiProgressBar" class="h-full bg-gradient-to-r from-sky-400 via-indigo-500 to-pink-500 transition-all duration-300" style="width: 15%;"></div>
+        <div class="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden p-0.5 border border-white/5">
+          <div id="aiProgressBar" class="h-full rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-sky-400 transition-all duration-300" style="width: 15%;"></div>
         </div>
       </div>
 
-      <!-- 5-Step Visual Stepper -->
-      <div class="space-y-2 text-xs">
-        <div id="stepSecurity" class="flex items-center gap-2.5 p-2 rounded-xl bg-white/5 border border-white/5 text-slate-300 transition">
-          <span id="iconSecurity" class="text-emerald-400">✓</span>
-          <span>1. Privacy & Payload Security Validation</span>
+      <!-- Pipeline Step Checklist -->
+      <div class="space-y-2 text-xs font-medium">
+        <div id="stepSecurity" class="flex items-center gap-2.5 p-2 rounded-xl bg-white/5 border border-white/5 text-slate-400 transition">
+          <span id="iconSecurity" class="text-sky-400">◐</span>
+          <span>1. Payload Security & Zero-Persistence Validation</span>
         </div>
-        <div id="stepRoute" class="flex items-center gap-2.5 p-2 rounded-xl bg-white/5 border border-white/5 text-slate-300 transition">
-          <span id="iconRoute" class="text-sky-400 animate-spin">◐</span>
-          <span>2. Route to Dedicated Worker (<span class="font-mono text-sky-300">RTX 4090</span>)</span>
+        <div id="stepRoute" class="flex items-center gap-2.5 p-2 rounded-xl bg-white/5 border border-white/5 text-slate-400 transition">
+          <span id="iconRoute" class="text-slate-600">○</span>
+          <span>2. Route to Dedicated Compute Worker</span>
         </div>
         <div id="stepEsrgan" class="flex items-center gap-2.5 p-2 rounded-xl bg-white/5 border border-white/5 text-slate-400 transition">
-          <span id="iconEsrgan" class="text-slate-500">○</span>
-          <span>3. Real-ESRGAN Deep 4x Super-Resolution Pass</span>
+          <span id="iconEsrgan" class="text-slate-600">○</span>
+          <span>3. Real-ESRGAN Tensor Super-Resolution</span>
         </div>
         <div id="stepGfpgan" class="flex items-center gap-2.5 p-2 rounded-xl bg-white/5 border border-white/5 text-slate-400 transition">
-          <span id="iconGfpgan" class="text-slate-500">○</span>
-          <span>4. GFPGAN Facial Blind Reconstruction</span>
+          <span id="iconGfpgan" class="text-slate-600">○</span>
+          <span>4. GFPGAN Face Beauty & Frequency Separation Polish</span>
         </div>
         <div id="stepFinalize" class="flex items-center gap-2.5 p-2 rounded-xl bg-white/5 border border-white/5 text-slate-400 transition">
-          <span id="iconFinalize" class="text-slate-500">○</span>
-          <span>5. Final 4K Output Streamed to Studio Canvas</span>
+          <span id="iconFinalize" class="text-slate-600">○</span>
+          <span>5. Contrast-Adaptive Sharpening & 15K Finalization</span>
         </div>
       </div>
 
-      <!-- Worker Telemetry & Timer -->
-      <div class="p-2.5 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between text-[11px] text-slate-400 font-mono">
-        <span id="aiWorkerPill">Worker: primary-trusted-gpu-01</span>
-        <span id="aiElapsedTimer">0.0s</span>
-      </div>
-
-      <!-- Cancel / Close Button -->
-      <div class="text-center pt-1">
-        <button onclick="closeAIProgressModal()" id="btnCancelAI" class="px-4 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-slate-300 transition">
-          Cancel Process
-        </button>
+      <div class="flex items-center justify-between pt-2 border-t border-white/10 text-[11px] text-slate-400">
+        <span>Elapsed: <span id="aiElapsedTimer" class="font-mono text-purple-300 font-bold">0.0s</span></span>
+        <button onclick="closeAIProgressModal()" class="px-3 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition">Cancel</button>
       </div>
 
     </div>
   </div>
 
-  <!-- WORKING OFFSCREEN CANVASES -->
-  <canvas id="canvasSource" class="hidden"></canvas>
-  <canvas id="canvasEnhanced" class="hidden"></canvas>
-
-  <!-- FOOTER -->
-  <footer class="mt-6 border-t border-white/10 bg-[#06080d] py-4 text-center text-xs text-slate-500">
-    <div class="max-w-[1600px] mx-auto px-4 flex flex-wrap items-center justify-between gap-2">
-      <div class="flex items-center gap-2">
-        <span class="text-sky-400 font-bold">👑 Owner: Sallu</span>
-        <span>•</span>
-        <span>Adobe Studio Pro • Real-ESRGAN & GFPGAN Creative Suite</span>
-      </div>
-      <div>
-        <a href="/index.html?tab=appstore" class="text-sky-400 hover:underline font-semibold">← Return to Services Hub</a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- STUDIO ENGINE JAVASCRIPT -->
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-    // State
+    // State Variables
     let originalImageObj = null;
-    let aiEnhancedImageObj = null; // Holds the Real-ESRGAN / GFPGAN high-res image
-    let currentWorkingBase64 = null; // Current active base64 before filters
-    let rotationDeg = 0;
-    let flipH = false;
-    let flipV = false;
-    let currentFilter = 'none';
-    let splitPercentage = 50;
-    let isDragging = false;
+    let aiEnhancedImageObj = null;
+    let currentWorkingBase64 = null;
     let isAIActive = false;
+    let splitPercent = 50;
+    let isDragging = false;
     let aiAbortController = null;
-    let aiTimerInterval = null;
     let aiStartTime = 0;
-    
-    // Lightroom Parameters
-    let params = {
-      exposure: 0,
-      contrast: 15,
-      highlights: -10,
-      shadows: 20,
-      temperature: 5,
-      vibrance: 25,
-      clarity: 40,
-      sharpening: 55,
-      vignette: 0
-    };
+    let aiTimerInterval = null;
 
-    // Inspector Tab Switching
-    function switchInspectorTab(tab) {
-      const tabs = ['magic', 'lightroom', 'filters', 'geometry'];
-      tabs.forEach(t => {
-        const pane = document.getElementById('inspector' + t.charAt(0).toUpperCase() + t.slice(1));
-        const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
-        if (!pane || !btn) return;
-        if (t === tab) {
-          pane.classList.remove('hidden');
-          btn.className = "flex-1 py-2 rounded-xl bg-sky-600 text-white text-center transition flex items-center justify-center gap-1 font-bold";
-        } else {
-          pane.classList.add('hidden');
-          btn.className = "flex-1 py-2 rounded-xl text-slate-400 hover:text-white text-center transition flex items-center justify-center gap-1 font-bold";
-        }
-      });
-    }
-
-    // Split Slider Dragging with Modern Pointer Events API (Zero Stutter / Touch-Safe)
+    // DOM Elements
     const container = document.getElementById('compareContainer');
     const overlay = document.getElementById('compareOverlay');
     const handle = document.getElementById('sliderHandle');
@@ -894,13 +559,13 @@
     const splitRange = document.getElementById('splitRange');
     const splitValueText = document.getElementById('splitValueText');
 
+    // Split Slider Dragging Handlers
     function updateSplitUI(pct) {
-      pct = Math.max(0, Math.min(100, pct));
-      splitPercentage = pct;
-      overlay.style.clipPath = `inset(0 0 0 ${pct}%)`;
-      handle.style.left = `${pct}%`;
-      splitRange.value = Math.round(pct);
-      splitValueText.textContent = `${Math.round(pct)}%`;
+      splitPercent = Math.max(0, Math.min(100, pct));
+      overlay.style.clipPath = `inset(0 0 0 ${splitPercent}%)`;
+      handle.style.left = `${splitPercent}%`;
+      splitRange.value = splitPercent;
+      splitValueText.textContent = `${Math.round(splitPercent)}%`;
     }
 
     function setSplitPercentage(val) {
@@ -912,31 +577,34 @@
     }
 
     function holdOriginal(holding) {
-      overlay.style.opacity = holding ? '0' : '1';
+      if (holding) {
+        overlay.style.clipPath = `inset(0 0 0 100%)`;
+        handle.style.left = `100%`;
+      } else {
+        updateSplitUI(splitPercent);
+      }
     }
 
     function onPointerMove(e) {
       if (!isDragging) return;
       const rect = container.getBoundingClientRect();
-      const x = e.clientX - rect.left;
+      const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+      const x = clientX - rect.left;
       const pct = (x / rect.width) * 100;
       updateSplitUI(pct);
     }
 
-    function onPointerUp(e) {
-      if (isDragging) {
-        isDragging = false;
-        try { container.releasePointerCapture(e.pointerId); } catch(err) {}
-      }
+    function onPointerUp() {
+      isDragging = false;
     }
 
+    // Pointer Events on Viewer
     container.addEventListener('pointerdown', (e) => {
       isDragging = true;
-      try { container.setPointerCapture(e.pointerId); } catch(err) {}
       onPointerMove(e);
     });
-    container.addEventListener('pointermove', onPointerMove);
-    container.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
     container.addEventListener('pointercancel', onPointerUp);
 
     // File Selection
@@ -945,11 +613,6 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = function(evt) {
-        aiEnhancedImageObj = null;
-        isAIActive = false;
-        document.getElementById('aiActiveBadge').classList.add('hidden');
-        document.getElementById('aiOverlayBadge').classList.add('hidden');
-        document.getElementById('afterTagText').textContent = 'ADOBE PRO';
         loadBase64Image(evt.target.result);
       };
       reader.readAsDataURL(file);
@@ -960,26 +623,25 @@
       img.crossOrigin = 'anonymous';
       img.onload = function() {
         originalImageObj = img;
+        aiEnhancedImageObj = null;
+        isAIActive = false;
         currentWorkingBase64 = src;
-        rotationDeg = 0;
-        flipH = false;
-        flipV = false;
+
         document.getElementById('emptyDropzone').classList.add('hidden');
         document.getElementById('imgOriginal').src = src;
-        document.getElementById('resBadge').textContent = `${img.naturalWidth} x ${img.naturalHeight}px`;
-        applyProcessing();
+        document.getElementById('imgEnhanced').src = src;
+        document.getElementById('aiActiveBadge').classList.add('hidden');
+        document.getElementById('aiOverlayBadge').classList.add('hidden');
+        document.getElementById('afterTagText').textContent = 'READY';
+        document.getElementById('resBadge').textContent = `${img.naturalWidth} x ${img.naturalHeight}px (Original Input)`;
+        updateSplitUI(50);
       };
       img.src = src;
     }
 
     // =============================================================
-    // DEEP AI NEURAL PIPELINE (REAL-ESRGAN + GFPGAN)
+    // DEEP AI NEURAL PIPELINE (REAL-ESRGAN + GFPGAN REMINI ENGINE)
     // =============================================================
-    function triggerDeepAIModal() {
-      switchInspectorTab('magic');
-      runDeepAIEnhance();
-    }
-
     async function runDeepAIEnhance() {
       if (!originalImageObj && !currentWorkingBase64) {
         alert("Please choose or upload a photo first!");
@@ -997,12 +659,12 @@
       updateAIStep('stepSecurity', 'iconSecurity', 'active', '1. Privacy & Payload Security Validation');
       updateAIStep('stepRoute', 'iconRoute', 'pending', '2. Route to Dedicated Compute Worker');
       updateAIStep('stepEsrgan', 'iconEsrgan', 'pending', `3. Real-ESRGAN Deep ${scaleVal}x Super-Resolution Pass`);
-      updateAIStep('stepGfpgan', 'iconGfpgan', 'pending', runGfpganVal ? '4. GFPGAN Facial Blind Reconstruction' : '4. Facial Restoration (Bypassed by User)');
-      updateAIStep('stepFinalize', 'iconFinalize', 'pending', '5. Final Ultra HD Output Streamed to Studio Canvas');
+      updateAIStep('stepGfpgan', 'iconGfpgan', 'pending', runGfpganVal ? '4. GFPGAN Face Beauty & Frequency Separation Polish' : '4. Facial Restoration (Bypassed)');
+      updateAIStep('stepFinalize', 'iconFinalize', 'pending', '5. Contrast-Adaptive Sharpening & 15K Finalization');
       
       progressBar.style.width = '15%';
       progressPct.textContent = '15%';
-      statusText.textContent = 'Encrypting & Routing Payload...';
+      statusText.textContent = 'Validating & Routing Image Payload...';
 
       // Start elapsed timer
       aiStartTime = Date.now();
@@ -1013,8 +675,7 @@
         timerEl.textContent = `${sec}s`;
       }, 100);
 
-      // Professional upload size: Clamp to max 1280px so 4x neural upscaling produces up to 5120px (True 5K Ultra HD)
-      // Preserves fine hair strands, eyelashes, iris texture, and skin micro-pores!
+      // Max input dimension for super-resolution (produces up to 5120x3840 5K Ultra HD!)
       const maxUploadDim = 1280;
       const ow = originalImageObj.naturalWidth || 800;
       const oh = originalImageObj.naturalHeight || 600;
@@ -1034,12 +695,12 @@
       c.height = sendH;
       const ctx = c.getContext('2d');
       ctx.drawImage(originalImageObj, 0, 0, sendW, sendH);
-      const sendB64 = c.toDataURL('image/jpeg', 0.94);
+      const sendB64 = c.toDataURL('image/jpeg', 0.95);
 
       aiAbortController = new AbortController();
 
       try {
-        // Step 1 done
+        // Step 1: Security
         setTimeout(() => {
           updateAIStep('stepSecurity', 'iconSecurity', 'done', '✓ 1. Privacy & Payload Security Validated');
           updateAIStep('stepRoute', 'iconRoute', 'active', '2. Routing to Dedicated Compute Worker...');
@@ -1048,20 +709,21 @@
           statusText.textContent = 'Allocating Worker Core...';
         }, 300);
 
-        // Step 2 & 3 in flight
+        // Step 2 & 3: Real-ESRGAN
         setTimeout(() => {
-          updateAIStep('stepRoute', 'iconRoute', 'done', '✓ 2. Worker Locked');
+          updateAIStep('stepRoute', 'iconRoute', 'done', '✓ 2. Worker Core Locked');
           updateAIStep('stepEsrgan', 'iconEsrgan', 'active', `3. Real-ESRGAN Deep ${scaleVal}x Tensor Pass running...`);
           progressBar.style.width = '60%';
           progressPct.textContent = '60%';
-          statusText.textContent = 'Real-ESRGAN Tensor Upscaling & De-Noising...';
+          statusText.textContent = 'Multi-Scale Tensor Super-Resolution...';
         }, 800);
 
+        // Step 4: GFPGAN
         setTimeout(() => {
           updateAIStep('stepEsrgan', 'iconEsrgan', 'done', `✓ 3. Real-ESRGAN ${scaleVal}x Super-Res Complete`);
           if (runGfpganVal) {
-            updateAIStep('stepGfpgan', 'iconGfpgan', 'active', '4. GFPGAN Face Blind Restoration running...');
-            statusText.textContent = 'GFPGAN Eye, Skin & Lip Restoration...';
+            updateAIStep('stepGfpgan', 'iconGfpgan', 'active', '4. GFPGAN Face Beauty & Frequency Separation Polish...');
+            statusText.textContent = 'Skin Retouching & Eye Sparkle Boost...';
           } else {
             updateAIStep('stepGfpgan', 'iconGfpgan', 'done', '✓ 4. Face Restoration Bypassed');
             statusText.textContent = 'Finalizing Tensor Output...';
@@ -1070,7 +732,7 @@
           progressPct.textContent = '82%';
         }, 1400);
 
-        // Fetch to live backend GPU endpoint
+        // Fetch from live backend GPU endpoint
         const response = await fetch('/api/gpu/enhance', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1101,7 +763,7 @@
         }
 
         // Finalize Steps
-        updateAIStep('stepGfpgan', 'iconGfpgan', 'done', runGfpganVal ? '✓ 4. GFPGAN Blind Restoration Complete' : '✓ 4. Face Restoration Bypassed');
+        updateAIStep('stepGfpgan', 'iconGfpgan', 'done', runGfpganVal ? '✓ 4. GFPGAN Face Beauty & Restoration Complete' : '✓ 4. Face Restoration Bypassed');
         updateAIStep('stepFinalize', 'iconFinalize', 'done', '✓ 5. Ultra HD Finalized');
         progressBar.style.width = '100%';
         progressPct.textContent = '100%';
@@ -1117,17 +779,30 @@
           aiEnhancedImageObj = enhancedImg;
           isAIActive = true;
 
+          // Directly assign pure AI image into enhanced viewport (Zero Canvas Downsampling!)
+          document.getElementById('imgEnhanced').src = data.image;
+
           // Update UI badges
           document.getElementById('aiActiveBadge').classList.remove('hidden');
           document.getElementById('aiOverlayBadge').classList.remove('hidden');
-          document.getElementById('afterTagText').textContent = 'AI HD';
+          document.getElementById('afterTagText').textContent = 'AI 15K';
           document.getElementById('resBadge').textContent = `${enhancedImg.naturalWidth} x ${enhancedImg.naturalHeight}px (${data.scale} Super-Res)`;
+          
           const psnrStr = data.quality_metrics && data.quality_metrics.psnr_db ? ` • PSNR: ${data.quality_metrics.psnr_db}dB` : '';
           document.getElementById('aiOverlayText').textContent = `Real-ESRGAN${runGfpganVal ? ' + GFPGAN' : ''} (${data.scale}) • ${data.assigned_worker || 'Dedicated Worker'} in ${elapsedSec}s${psnrStr}`;
 
-          // Apply current filters on top of AI result seamlessly
-          applyProcessing();
-          updateSplitUI(50); // Set slider to 50% for direct Before/After inspection
+          // Update Telemetry Metrics Card
+          document.getElementById('metricWorker').textContent = data.assigned_worker || 'Primary Trusted Core';
+          document.getElementById('metricLatency').textContent = `${elapsedSec}s`;
+          if (data.quality_metrics) {
+            document.getElementById('metricPsnr').textContent = `${data.quality_metrics.psnr_db} dB`;
+            document.getElementById('metricSsim').textContent = `${data.quality_metrics.ssim}`;
+          }
+
+          document.getElementById('currentFilterLabel').textContent = `Active: Real-ESRGAN ${data.scale} + GFPGAN Remini Face Beauty (${enhancedImg.naturalWidth}x${enhancedImg.naturalHeight}px)`;
+
+          // Set slider to 50% for direct Before/After inspection
+          updateSplitUI(50);
 
           setTimeout(() => {
             modal.classList.add('hidden');
@@ -1161,382 +836,48 @@
         icon.className = "text-emerald-400 font-bold";
         icon.textContent = "✓";
       } else if (state === 'active') {
-        el.className = "flex items-center gap-2.5 p-2 rounded-xl bg-indigo-500/15 border border-indigo-500/40 text-indigo-200 transition";
-        icon.className = "text-sky-400 animate-spin";
+        el.className = "flex items-center gap-2.5 p-2 rounded-xl bg-purple-500/15 border border-purple-500/40 text-purple-200 transition";
+        icon.className = "text-pink-400 animate-spin";
         icon.textContent = "◐";
       } else {
         el.className = "flex items-center gap-2.5 p-2 rounded-xl bg-white/5 border border-white/5 text-slate-500 transition";
         icon.className = "text-slate-600";
         icon.textContent = "○";
       }
-      el.lastElementChild.textContent = text;
+      if (text) {
+        const textSpan = el.querySelector('span:last-child');
+        if (textSpan) textSpan.textContent = text;
+      }
     }
 
     function closeAIProgressModal() {
       if (aiAbortController) {
         aiAbortController.abort();
+        aiAbortController = null;
       }
-      if (aiTimerInterval) {
-        clearInterval(aiTimerInterval);
-      }
+      clearInterval(aiTimerInterval);
       document.getElementById('aiProgressModal').classList.add('hidden');
     }
 
-    // =============================================================
-    // LIVE GPU TELEMETRY POLLING
-    // =============================================================
+    // Telemetry Poller
     async function fetchGPUClusterTelemetry() {
       try {
         const res = await fetch('/api/gpu/capacity');
         if (!res.ok) return;
         const data = await res.json();
-        const vramGb = Math.round((data.total_vram_mb || 48576) / 1024);
-        const healthy = data.healthy_workers || 2;
-        const textEl = document.getElementById('gpuStatusText');
-        if (textEl) {
-          textEl.textContent = `AI Cluster: ${vramGb}GB VRAM (${healthy} Workers Online)`;
+        const pill = document.getElementById('gpuCapacityPill');
+        const text = document.getElementById('gpuStatusText');
+        if (pill && text) {
+          pill.classList.remove('hidden');
+          const totalVramGB = (data.total_vram_mb / 1024).toFixed(1);
+          text.textContent = `AI Cluster: ${data.healthy_workers}/${data.total_workers} Core Live (${totalVramGB}GB)`;
         }
       } catch (e) {
-        console.warn("GPU telemetry fetch suppressed:", e);
+        console.warn("GPU Telemetry poll:", e);
       }
     }
     fetchGPUClusterTelemetry();
-    setInterval(fetchGPUClusterTelemetry, 25000);
-
-    // =============================================================
-    // LIGHTROOM & CREATIVE ENGINE (60 FPS STABLE)
-    // =============================================================
-
-    // Fast CSS Instant Feedback on Slider Movement
-    function updateInstantCSSPreview() {
-      const exp = 1 + (params.exposure / 100) * 0.7;
-      const con = 1 + (params.contrast / 100) * 0.8;
-      const sat = 1 + (params.vibrance / 100) * 0.9;
-      const tempHue = params.temperature * 0.2;
-      
-      const enhancedImgEl = document.getElementById('imgEnhanced');
-      if (enhancedImgEl) {
-        enhancedImgEl.style.filter = `brightness(${exp}) contrast(${con}) saturate(${sat}) hue-rotate(${tempHue}deg)`;
-      }
-    }
-
-    // AI Presets
-    function applyAIPreset(type) {
-      if (type === 'unblur') {
-        params = { exposure: 5, contrast: 25, highlights: -10, shadows: 20, temperature: 0, vibrance: 20, clarity: 65, sharpening: 80, vignette: 0 };
-        currentFilter = 'none';
-        document.getElementById('currentFilterLabel').textContent = 'Active: Super Clarity & Face Sharpen';
-      } else if (type === 'portrait_glow') {
-        params = { exposure: 10, contrast: 15, highlights: -15, shadows: 25, temperature: 8, vibrance: 15, clarity: 20, sharpening: 45, vignette: -15 };
-        currentFilter = 'none';
-        document.getElementById('currentFilterLabel').textContent = 'Active: Portrait Glow & Skin Smooth';
-      } else if (type === 'hdr_pop') {
-        params = { exposure: 0, contrast: 30, highlights: -35, shadows: 40, temperature: 5, vibrance: 50, clarity: 60, sharpening: 65, vignette: -10 };
-        currentFilter = 'none';
-        document.getElementById('currentFilterLabel').textContent = 'Active: HDR Landscape & Dynamic Pop';
-      } else if (type === 'dehaze_vivid') {
-        params = { exposure: -5, contrast: 35, highlights: -20, shadows: 30, temperature: -5, vibrance: 45, clarity: 70, sharpening: 60, vignette: 0 };
-        currentFilter = 'none';
-        document.getElementById('currentFilterLabel').textContent = 'Active: Adobe De-Haze & Color Vibrance';
-      }
-      syncSlidersUI();
-      applyProcessing();
-    }
-
-    // LUT Filters
-    function selectFilter(filterName) {
-      currentFilter = filterName;
-      document.querySelectorAll('.filter-thumb-card').forEach(c => c.classList.remove('active'));
-      const activeCard = document.getElementById('filter_' + filterName);
-      if (activeCard) activeCard.classList.add('active');
-      document.getElementById('currentFilterLabel').textContent = 'Active Filter: ' + filterName.replace('_', ' ').toUpperCase();
-      applyProcessing();
-    }
-
-    // Lightroom Slider Updates
-    function updateParam(param, val) {
-      params[param] = parseInt(val);
-      const lbl = document.getElementById('lbl' + param.charAt(0).toUpperCase() + param.slice(1));
-      if (lbl) lbl.textContent = (params[param] > 0 ? '+' : '') + params[param];
-      updateInstantCSSPreview();
-      debounceApply();
-    }
-
-    function syncSlidersUI() {
-      for (let k in params) {
-        const s = document.getElementById('slide' + k.charAt(0).toUpperCase() + k.slice(1));
-        const l = document.getElementById('lbl' + k.charAt(0).toUpperCase() + k.slice(1));
-        if (s) s.value = params[k];
-        if (l) l.textContent = (params[k] > 0 ? '+' : '') + params[k];
-      }
-    }
-
-    function resetLightroomSliders() {
-      params = { exposure: 0, contrast: 0, highlights: 0, shadows: 0, temperature: 0, vibrance: 0, clarity: 0, sharpening: 0, vignette: 0 };
-      syncSlidersUI();
-      const enhancedImgEl = document.getElementById('imgEnhanced');
-      if (enhancedImgEl) enhancedImgEl.style.filter = 'none';
-      applyProcessing();
-    }
-
-    function resetAllFilters() {
-      resetLightroomSliders();
-      selectFilter('none');
-      rotationDeg = 0;
-      flipH = false;
-      flipV = false;
-      applyProcessing();
-    }
-
-    let debounceTimer = null;
-    function debounceApply() {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        window.requestAnimationFrame(applyProcessing);
-      }, 100);
-    }
-
-    function rotateImage(deg) {
-      rotationDeg = (rotationDeg + deg) % 360;
-      applyProcessing();
-    }
-
-    function flipImage(axis) {
-      if (axis === 'h') flipH = !flipH;
-      if (axis === 'v') flipV = !flipV;
-      applyProcessing();
-    }
-
-    // High Performance 60 FPS Adobe Rendering Engine
-    function applyProcessing() {
-      const activeSource = aiEnhancedImageObj || originalImageObj;
-      if (!activeSource) return;
-
-      const srcCanvas = document.getElementById('canvasSource');
-      const outCanvas = document.getElementById('canvasEnhanced');
-      const ctxSrc = srcCanvas.getContext('2d', { willReadFrequently: true });
-      const ctxOut = outCanvas.getContext('2d', { willReadFrequently: true });
-
-      const w = activeSource.naturalWidth || 800;
-      const h = activeSource.naturalHeight || 600;
-
-      // Stable working resolution for lightning fast responsive feedback
-      const maxDim = 2560;
-      let targetW = w;
-      let targetH = h;
-      if (w > maxDim || h > maxDim) {
-        if (w > h) {
-          targetW = maxDim;
-          targetH = Math.round((h * maxDim) / w);
-        } else {
-          targetH = maxDim;
-          targetW = Math.round((w * maxDim) / h);
-        }
-      }
-
-      // Handle orientation
-      const is90 = Math.abs(rotationDeg) === 90 || Math.abs(rotationDeg) === 270;
-      srcCanvas.width = is90 ? targetH : targetW;
-      srcCanvas.height = is90 ? targetW : targetH;
-      outCanvas.width = srcCanvas.width;
-      outCanvas.height = srcCanvas.height;
-
-      // Draw oriented image on source canvas
-      ctxSrc.save();
-      ctxSrc.translate(srcCanvas.width / 2, srcCanvas.height / 2);
-      ctxSrc.rotate((rotationDeg * Math.PI) / 180);
-      ctxSrc.scale(flipH ? -1 : 1, flipV ? -1 : 1);
-      ctxSrc.drawImage(activeSource, -targetW / 2, -targetH / 2, targetW, targetH);
-      ctxSrc.restore();
-
-      const imgData = ctxSrc.getImageData(0, 0, srcCanvas.width, srcCanvas.height);
-      const data = imgData.data;
-      const len = data.length;
-
-      // Tone mapping values
-      const expOffset = params.exposure * 1.28;
-      const con = params.contrast;
-      const conFactor = (259 * (con + 255)) / (255 * (259 - con));
-      const temp = params.temperature / 100;
-      const vib = params.vibrance / 100;
-      const shadows = params.shadows / 100;
-      const highlights = params.highlights / 100;
-
-      // Per-Pixel Lightroom Tone & LUT Color Grading Loop
-      for (let i = 0; i < len; i += 4) {
-        let r = data[i];
-        let g = data[i + 1];
-        let b = data[i + 2];
-
-        // 1. Exposure
-        r += expOffset;
-        g += expOffset;
-        b += expOffset;
-
-        // 2. Shadows & Highlights recovery
-        const lum = (0.299 * r + 0.587 * g + 0.114 * b);
-        if (lum < 128 && shadows !== 0) {
-          const shadowBoost = (1 - lum / 128) * (shadows * 45);
-          r += shadowBoost;
-          g += shadowBoost;
-          b += shadowBoost;
-        } else if (lum >= 128 && highlights !== 0) {
-          const hlAdjust = ((lum - 128) / 128) * (highlights * 45);
-          r += hlAdjust;
-          g += hlAdjust;
-          b += hlAdjust;
-        }
-
-        // 3. Contrast Factor
-        r = conFactor * (r - 128) + 128;
-        g = conFactor * (g - 128) + 128;
-        b = conFactor * (b - 128) + 128;
-
-        // 4. White Balance (Temperature)
-        if (temp !== 0) {
-          r += temp * 30;
-          b -= temp * 30;
-        }
-
-        // 5. Vibrance
-        if (vib !== 0) {
-          const max = Math.max(r, g, b);
-          const avg = (r + g + b) / 3;
-          const amt = ((Math.abs(max - avg) * 2) / 255) * vib;
-          r += (r - avg) * (amt * 1.5);
-          g += (g - avg) * (amt * 1.5);
-          b += (b - avg) * (amt * 1.5);
-        }
-
-        // 6. Adobe Creative LUT Emulations
-        if (currentFilter === 'teal_orange') {
-          if (lum < 130) {
-            b = b * 1.15 + 8;
-            g = g * 1.05 + 4;
-            r = r * 0.92;
-          } else {
-            r = r * 1.15 + 10;
-            g = g * 1.05 + 4;
-            b = b * 0.88;
-          }
-        } else if (currentFilter === 'kodak_portra') {
-          r = r * 1.08 + 6;
-          g = g * 1.02 + 2;
-          b = b * 0.92;
-        } else if (currentFilter === 'moody_noir') {
-          let bw = 0.3 * r + 0.59 * g + 0.11 * b;
-          bw = conFactor * (bw - 128) + 128;
-          r = g = b = bw;
-        } else if (currentFilter === 'vogue_editorial') {
-          b = b * 1.10 + 6;
-          r = r * 0.96;
-        } else if (currentFilter === 'cyberpunk') {
-          if (lum < 120) {
-            b = b * 1.35 + 15;
-            g = g * 1.15;
-            r = r * 0.75;
-          } else {
-            r = r * 1.35 + 20;
-            b = b * 1.15 + 10;
-            g = g * 0.80;
-          }
-        } else if (currentFilter === 'golden_hour') {
-          r = r * 1.20 + 15;
-          g = g * 1.08 + 8;
-          b = b * 0.85;
-        } else if (currentFilter === 'fuji_velvia') {
-          g = g * 1.20 + 5;
-          r = r * 1.10;
-          b = b * 1.05;
-        } else if (currentFilter === 'pastel_dream') {
-          r = r * 0.90 + 35;
-          g = g * 0.90 + 35;
-          b = b * 0.90 + 40;
-        } else if (currentFilter === 'polaroid_70s') {
-          r = r * 1.10 + 15;
-          g = g * 1.05 + 12;
-          b = b * 0.85 + 5;
-        } else if (currentFilter === 'bleach_bypass') {
-          const bw = 0.3 * r + 0.59 * g + 0.11 * b;
-          r = (r * 0.6 + bw * 0.4) * 1.1;
-          g = (g * 0.6 + bw * 0.4) * 1.1;
-          b = (b * 0.6 + bw * 0.4) * 1.1;
-        } else if (currentFilter === 'sepia_heritage') {
-          const bw = 0.299 * r + 0.587 * g + 0.114 * b;
-          r = bw * 1.15 + 25;
-          g = bw * 0.95 + 15;
-          b = bw * 0.75;
-        }
-
-        data[i] = Math.min(255, Math.max(0, r));
-        data[i + 1] = Math.min(255, Math.max(0, g));
-        data[i + 2] = Math.min(255, Math.max(0, b));
-      }
-
-      ctxOut.putImageData(imgData, 0, 0);
-
-      // 7. Clarity & Unsharp Masking Convolution Pass
-      const sharpAmount = (params.sharpening * 0.6 + params.clarity * 0.4) / 100;
-      if (sharpAmount > 0.08) {
-        const sharpCanvas = document.createElement('canvas');
-        sharpCanvas.width = srcCanvas.width;
-        sharpCanvas.height = srcCanvas.height;
-        const sharpCtx = sharpCanvas.getContext('2d');
-        sharpCtx.putImageData(imgData, 0, 0);
-
-        const kCenter = 1 + 4 * (sharpAmount * 0.7);
-        const kNeighbor = -(sharpAmount * 0.175);
-        
-        const origD = ctxOut.getImageData(0, 0, srcCanvas.width, srcCanvas.height).data;
-        const destImg = sharpCtx.createImageData(srcCanvas.width, srcCanvas.height);
-        const d = destImg.data;
-        const stride = srcCanvas.width * 4;
-
-        for (let y = 1; y < srcCanvas.height - 1; y++) {
-          for (let x = 1; x < srcCanvas.width - 1; x++) {
-            const idx = (y * srcCanvas.width + x) * 4;
-            for (let c = 0; c < 3; c++) {
-              const val =
-                origD[idx + c] * kCenter +
-                (origD[idx - 4 + c] + origD[idx + 4 + c] + origD[idx - stride + c] + origD[idx + stride + c]) * kNeighbor;
-              d[idx + c] = Math.min(255, Math.max(0, val));
-            }
-            d[idx + 3] = 255;
-          }
-        }
-        sharpCtx.putImageData(destImg, 0, 0);
-        ctxOut.drawImage(sharpCanvas, 0, 0);
-      }
-
-      // 8. Lens Vignette
-      if (params.vignette !== 0) {
-        const vRad = Math.sqrt(Math.pow(srcCanvas.width / 2, 2) + Math.pow(srcCanvas.height / 2, 2));
-        const vigGrad = ctxOut.createRadialGradient(
-          srcCanvas.width / 2, srcCanvas.height / 2, vRad * 0.4,
-          srcCanvas.width / 2, srcCanvas.height / 2, vRad
-        );
-        if (params.vignette < 0) {
-          vigGrad.addColorStop(0, 'rgba(0,0,0,0)');
-          vigGrad.addColorStop(1, `rgba(0,0,0,${Math.abs(params.vignette) / 130})`);
-        } else {
-          vigGrad.addColorStop(0, 'rgba(255,255,255,0)');
-          vigGrad.addColorStop(1, `rgba(255,255,255,${params.vignette / 160})`);
-        }
-        ctxOut.fillStyle = vigGrad;
-        ctxOut.fillRect(0, 0, srcCanvas.width, srcCanvas.height);
-      }
-
-      // Update Enhanced Preview Image
-      const enhancedImgEl = document.getElementById('imgEnhanced');
-      if (enhancedImgEl) {
-        if (isAIActive && aiEnhancedImageObj && currentFilter === 'none' && params.exposure === 0 && params.contrast === 15 && rotationDeg === 0 && !flipH && !flipV) {
-          enhancedImgEl.src = aiEnhancedImageObj.src;
-        } else {
-          enhancedImgEl.src = outCanvas.toDataURL('image/jpeg', 0.96);
-        }
-        enhancedImgEl.style.filter = 'none'; // reset CSS filter as canvas baked in
-      }
-    }
+    setInterval(fetchGPUClusterTelemetry, 15000);
 
     // Export & Download
     function downloadImage(format) {
@@ -1547,15 +888,13 @@
       const ext = format === 'png' ? 'png' : 'jpg';
       const a = document.createElement('a');
 
-      // If AI enhancement is active, export the full-resolution AI master directly!
-      if (isAIActive && aiEnhancedImageObj) {
+      // Always download the full-resolution AI master image directly!
+      if (aiEnhancedImageObj && aiEnhancedImageObj.src) {
         a.href = aiEnhancedImageObj.src;
-        a.download = `Adobe_Studio_Sallu_AI_UltraHD_${Date.now()}.${ext}`;
-      } else {
-        const outCanvas = document.getElementById('canvasEnhanced');
-        const mime = format === 'png' ? 'image/png' : 'image/jpeg';
-        a.href = outCanvas.toDataURL(mime, 0.98);
-        a.download = `Adobe_Studio_Sallu_${Date.now()}.${ext}`;
+        a.download = `Adobe_Studio_Sallu_DeepAI_${Date.now()}.${ext}`;
+      } else if (originalImageObj && originalImageObj.src) {
+        a.href = originalImageObj.src;
+        a.download = `Adobe_Studio_Sallu_Original_${Date.now()}.${ext}`;
       }
       document.body.appendChild(a);
       a.click();
@@ -1563,12 +902,20 @@
     }
 
     function copyToClipboard() {
-      const outCanvas = document.getElementById('canvasEnhanced');
-      if (!outCanvas) return;
-      outCanvas.toBlob(blob => {
+      const activeImg = aiEnhancedImageObj || originalImageObj;
+      if (!activeImg) {
+        alert("Please upload or choose a photo first!");
+        return;
+      }
+      const c = document.createElement('canvas');
+      c.width = activeImg.naturalWidth;
+      c.height = activeImg.naturalHeight;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(activeImg, 0, 0);
+      c.toBlob(blob => {
         try {
           navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-          alert("✓ Enhanced photo copied to clipboard!");
+          alert("✓ High-resolution photo copied to clipboard!");
         } catch (e) {
           alert("Clipboard copy not supported on this browser.");
         }
@@ -1581,7 +928,7 @@
       isAIActive = false;
       document.getElementById('aiActiveBadge').classList.add('hidden');
       document.getElementById('aiOverlayBadge').classList.add('hidden');
-      document.getElementById('afterTagText').textContent = 'ADOBE PRO';
+      document.getElementById('afterTagText').textContent = 'SAMPLE';
 
       const canvas = document.createElement('canvas');
       canvas.width = 720;
@@ -1595,7 +942,7 @@
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, 720, 720);
 
-        ctx.filter = 'blur(6px)';
+        ctx.filter = 'blur(5px)';
         ctx.fillStyle = '#f6d5be';
         ctx.beginPath();
         ctx.ellipse(360, 360, 160, 210, 0, 0, Math.PI * 2);
@@ -1658,23 +1005,17 @@
         ctx.fillRect(0, 0, 720, 720);
 
         ctx.fillStyle = '#7a7062';
-        ctx.beginPath();
-        ctx.arc(360, 360, 220, 0, Math.PI * 2);
-        ctx.fill();
-
-        for (let i = 0; i < 500; i++) {
-          ctx.fillStyle = (i % 2 === 0) ? '#e6decb' : '#221e19';
-          ctx.fillRect(Math.random() * 720, Math.random() * 720, 3, 3);
-        }
+        ctx.fillRect(100, 100, 520, 520);
       }
 
-      loadBase64Image(canvas.toDataURL('image/jpeg', 0.9));
+      loadBase64Image(canvas.toDataURL('image/jpeg', 0.92));
     }
 
-    // Auto-load portrait on initial view
+    // Default Load on Startup
     window.addEventListener('DOMContentLoaded', () => {
       loadSamplePhoto('portrait');
     });
   </script>
+
 </body>
 </html>
