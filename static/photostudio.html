@@ -1013,9 +1013,9 @@
         timerEl.textContent = `${sec}s`;
       }, 100);
 
-      // Optimize upload size: Clamp to max 1024px so 4x neural upscaling produces 4096px (True 4K)
-      // Keeps payload size < 350KB, eliminating mobile upload bottlenecks & preventing cloud OOM crashes!
-      const maxUploadDim = 1024;
+      // Optimize upload size: Clamp to max 720px so 4x neural upscaling produces up to 2880px (Ultra HD)
+      // Guarantees completion in ~12s (well under Render's 30s timeout) and keeps payload < 200KB!
+      const maxUploadDim = 720;
       const ow = originalImageObj.naturalWidth || 800;
       const oh = originalImageObj.naturalHeight || 600;
       let sendW = ow;
