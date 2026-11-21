@@ -183,18 +183,21 @@ class RealESRGANTensorEngine:
         laplace_fine = clean_y - ndi.gaussian_filter(clean_y, sigma=0.8)
         laplace_mid = clean_y - ndi.gaussian_filter(clean_y, sigma=1.8)
 
-        # 6. Non-Linear Neural Gating & Texture Reconstruction
-        grad_gate = 1.0 / (1.0 + np.exp(-((gradient_mag - 18.0) / 8.0)))
-        detail_residual = (laplace_fine * 0.75 + laplace_mid * 0.35) * grad_gate
-
-        scale_gain = 1.45 if self.scale == 4 else 1.25
-        y_enhanced = clean_y + (detail_residual * scale_gain)
+        # 6. Contrast-Adaptive Sharpening (CAS) & Multi-Band Detail Reconstruction
+        grad_gate = np.clip(gradient_mag / 10.0, 0.35, 1.0)
+        scale_gain = 1.65 if self.scale == 4 else 1.35
+        detail_residual = (laplace_fine * 1.40 + laplace_mid * 0.60) * grad_gate * scale_gain
 
         # 7. Adaptive Exposure Protection & Dynamic Range Clamping
-        highlight_mask = np.clip((clean_y - 200.0) / 45.0, 0.0, 1.0)
-        shadow_mask = np.clip((45.0 - clean_y) / 45.0, 0.0, 1.0)
-        protection_factor = 1.0 - (highlight_mask * 0.4 + shadow_mask * 0.4)
-        y_final = clean_y + ((y_enhanced - clean_y) * protection_factor)
+        highlight_mask = np.clip((clean_y - 215.0) / 35.0, 0.0, 1.0)
+        shadow_mask = np.clip((35.0 - clean_y) / 35.0, 0.0, 1.0)
+        protection_factor = 1.0 - (highlight_mask * 0.3 + shadow_mask * 0.3)
+        y_enhanced = clean_y + (detail_residual * protection_factor)
+
+        # Contrast-Adaptive Sharpening 3x3 local min/max clamp (eliminates halos while giving razor sharpness)
+        min_y = ndi.minimum_filter(clean_y, size=3)
+        max_y = ndi.maximum_filter(clean_y, size=3)
+        y_final = np.clip(y_enhanced, min_y - 3.5, max_y + 3.5)
 
         y_final = np.clip(y_final, 0.0, 255.0).astype(np.uint8)
         cb_final = np.clip(cb_up, 0.0, 255.0).astype(np.uint8)
@@ -325,22 +328,62 @@ class GFPGANFacialRestorer:
         for fx, fy, fw, fh in faces:
             face_crop = img_rgb.crop((fx, fy, fx + fw, fy + fh))
             face_512 = face_crop.resize((512, 512), Image.Resampling.LANCZOS)
-            face_arr = np.array(face_512, dtype=np.float32)
 
-            smooth_skin = ndi.gaussian_filter(face_arr, sigma=1.1)
-            edge_diff = face_arr - smooth_skin
+            # High-end Remini / GFPGAN Beauty & Facial Feature Restoration
+            ycbcr_f = np.array(face_512.convert("YCbCr"), dtype=np.float32)
+            yf = ycbcr_f[:, :, 0]
+            cbf = ycbcr_f[:, :, 1]
+            crf = ycbcr_f[:, :, 2]
 
-            grad_x = ndi.sobel(face_arr, axis=0)
-            grad_y = ndi.sobel(face_arr, axis=1)
-            face_edges = np.sqrt(grad_x ** 2 + grad_y ** 2)
-            edge_mask = np.clip(face_edges / 35.0, 0.0, 1.0)
+            # 1. Skin Chrominance Segmentation
+            skin_raw = (crf >= 132.0) & (crf <= 178.0) & (cbf >= 78.0) & (cbf <= 132.0)
+            skin_float = ndi.gaussian_filter(skin_raw.astype(np.float32), sigma=2.5)
+            skin_mask = np.clip(skin_float * 1.3, 0.0, 1.0)
 
-            restored_512 = (smooth_skin * 0.6 + face_arr * 0.4) + (edge_diff * 1.6 * edge_mask)
-            restored_512 = np.clip(restored_512, 0.0, 255.0)
+            # 2. Frequency Separation: Smooth skin tone while preserving authentic micro-pores
+            low_y = ndi.gaussian_filter(yf, sigma=3.5)
+            high_y = yf - low_y
+            smooth_skin_y = (low_y * 0.70) + (ndi.gaussian_filter(low_y, sigma=6.0) * 0.30)
+            retouched_y = smooth_skin_y + (high_y * 1.15)
+            y_blended = (retouched_y * skin_mask) + (yf * (1.0 - skin_mask))
 
-            restored_crop = Image.fromarray(restored_512.astype(np.uint8)).resize(
-                (fw, fh), Image.Resampling.LANCZOS
-            )
+            # Even out skin color blotches and redness
+            smooth_cb = ndi.gaussian_filter(cbf, sigma=2.5)
+            smooth_cr = ndi.gaussian_filter(crf, sigma=2.5)
+            cb_blended = (smooth_cb * skin_mask * 0.6) + (cbf * (1.0 - skin_mask * 0.6))
+            cr_blended = (smooth_cr * skin_mask * 0.6) + (crf * (1.0 - skin_mask * 0.6))
+
+            # 3. Ocular & Feature Sharpening (Eyes, Brows, Eyelashes, Lips)
+            non_skin = 1.0 - (skin_mask * 0.65)
+            sobel_h = ndi.sobel(y_blended, axis=0)
+            sobel_v = ndi.sobel(y_blended, axis=1)
+            grad_mag = np.sqrt(sobel_h**2 + sobel_v**2)
+
+            laplace_fine = y_blended - ndi.gaussian_filter(y_blended, sigma=0.85)
+            laplace_mid = y_blended - ndi.gaussian_filter(y_blended, sigma=1.8)
+            edge_gate = np.clip(grad_mag / 12.0, 0.3, 1.0) * non_skin
+            detail_boost = (laplace_fine * 1.5 + laplace_mid * 0.6) * edge_gate
+            y_crisp = y_blended + detail_boost
+
+            # Specular Eye Catchlight Sparkle Boost
+            eye_highlights = np.clip((y_crisp - 215.0) / 40.0, 0.0, 1.0) * non_skin
+            y_crisp = y_crisp + (eye_highlights * 15.0)
+
+            # Contrast-Adaptive Sharpening Min/Max Clamp (No halos)
+            min_y = ndi.minimum_filter(y_blended, size=3)
+            max_y = ndi.maximum_filter(y_blended, size=3)
+            y_final = np.clip(y_crisp, min_y - 2.5, max_y + 2.5)
+
+            y_final = np.clip(y_final, 0.0, 255.0).astype(np.uint8)
+            cb_final = np.clip(cb_blended, 0.0, 255.0).astype(np.uint8)
+            cr_final = np.clip(cr_blended, 0.0, 255.0).astype(np.uint8)
+
+            restored_512_img = Image.fromarray(np.stack([y_final, cb_final, cr_final], axis=2), mode="YCbCr").convert("RGB")
+            restored_512_img = ImageEnhance.Color(restored_512_img).enhance(1.10)
+            restored_512_img = ImageEnhance.Contrast(restored_512_img).enhance(1.05)
+            restored_512_img = restored_512_img.filter(ImageFilter.UnsharpMask(radius=1.2, percent=140, threshold=2))
+
+            restored_crop = restored_512_img.resize((fw, fh), Image.Resampling.LANCZOS)
             restored_arr = np.array(restored_crop, dtype=np.float32)
             orig_crop_arr = np.array(face_crop, dtype=np.float32)
 

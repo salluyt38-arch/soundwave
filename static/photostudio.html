@@ -1013,9 +1013,9 @@
         timerEl.textContent = `${sec}s`;
       }, 100);
 
-      // Optimize upload size: Clamp to max 720px so 4x neural upscaling produces up to 2880px (Ultra HD)
-      // Guarantees completion in ~12s (well under Render's 30s timeout) and keeps payload < 200KB!
-      const maxUploadDim = 720;
+      // Professional upload size: Clamp to max 1280px so 4x neural upscaling produces up to 5120px (True 5K Ultra HD)
+      // Preserves fine hair strands, eyelashes, iris texture, and skin micro-pores!
+      const maxUploadDim = 1280;
       const ow = originalImageObj.naturalWidth || 800;
       const oh = originalImageObj.naturalHeight || 600;
       let sendW = ow;
@@ -1034,7 +1034,7 @@
       c.height = sendH;
       const ctx = c.getContext('2d');
       ctx.drawImage(originalImageObj, 0, 0, sendW, sendH);
-      const sendB64 = c.toDataURL('image/jpeg', 0.90);
+      const sendB64 = c.toDataURL('image/jpeg', 0.94);
 
       aiAbortController = new AbortController();
 
@@ -1321,7 +1321,7 @@
       const h = activeSource.naturalHeight || 600;
 
       // Stable working resolution for lightning fast responsive feedback
-      const maxDim = 1200;
+      const maxDim = 2560;
       let targetW = w;
       let targetH = h;
       if (w > maxDim || h > maxDim) {
@@ -1529,23 +1529,34 @@
       // Update Enhanced Preview Image
       const enhancedImgEl = document.getElementById('imgEnhanced');
       if (enhancedImgEl) {
-        enhancedImgEl.src = outCanvas.toDataURL('image/jpeg', 0.95);
+        if (isAIActive && aiEnhancedImageObj && currentFilter === 'none' && params.exposure === 0 && params.contrast === 15 && rotationDeg === 0 && !flipH && !flipV) {
+          enhancedImgEl.src = aiEnhancedImageObj.src;
+        } else {
+          enhancedImgEl.src = outCanvas.toDataURL('image/jpeg', 0.96);
+        }
         enhancedImgEl.style.filter = 'none'; // reset CSS filter as canvas baked in
       }
     }
 
     // Export & Download
     function downloadImage(format) {
-      const outCanvas = document.getElementById('canvasEnhanced');
-      if (!outCanvas || (!originalImageObj && !aiEnhancedImageObj)) {
+      if (!originalImageObj && !aiEnhancedImageObj) {
         alert("Please upload or choose a photo first!");
         return;
       }
-      const mime = format === 'png' ? 'image/png' : 'image/jpeg';
       const ext = format === 'png' ? 'png' : 'jpg';
       const a = document.createElement('a');
-      a.href = outCanvas.toDataURL(mime, 0.98);
-      a.download = `Adobe_Studio_Sallu_${isAIActive ? 'AI_4K_' : ''}${Date.now()}.${ext}`;
+
+      // If AI enhancement is active, export the full-resolution AI master directly!
+      if (isAIActive && aiEnhancedImageObj) {
+        a.href = aiEnhancedImageObj.src;
+        a.download = `Adobe_Studio_Sallu_AI_UltraHD_${Date.now()}.${ext}`;
+      } else {
+        const outCanvas = document.getElementById('canvasEnhanced');
+        const mime = format === 'png' ? 'image/png' : 'image/jpeg';
+        a.href = outCanvas.toDataURL(mime, 0.98);
+        a.download = `Adobe_Studio_Sallu_${Date.now()}.${ext}`;
+      }
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

@@ -77,9 +77,9 @@ class ImageInferencePipeline:
             if orig_w > 8192 or orig_h > 8192:
                 raise ValueError(f"Image dimensions exceed safe limits: {orig_w}x{orig_h}")
 
-            # Safe working limit for production memory & cloud timeout resilience
-            # Guarantees inference finishes within Render's 30s ceiling while producing up to 3K/4K resolution
-            max_in_dim = 720 if scale == 4 else 1080
+            # Professional high-resolution limit: Preserves full camera details & hair strands
+            # 4x upscales up to 5120px (True 5K Ultra-HD), 2x upscales up to 3200px (3.2K Quad-HD)
+            max_in_dim = 1280 if scale == 4 else 1600
             if orig_w > max_in_dim or orig_h > max_in_dim:
                 img.thumbnail((max_in_dim, max_in_dim), Image.Resampling.LANCZOS)
                 orig_w, orig_h = img.size
