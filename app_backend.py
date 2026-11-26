@@ -1512,6 +1512,7 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
             priority_int = int(body.get("priority", 2))
             consent = bool(body.get("has_contributor_consent", False))
             scale = int(body.get("scale", 4))
+            bokeh_blur = int(body.get("bokeh_blur", 0))
             run_gfpgan = str(body.get("run_gfpgan", "true")).lower() == "true"
             is_async = str(body.get("async", "false")).lower() == "true"
 
@@ -1524,7 +1525,8 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
                 privacy=privacy,
                 priority=priority,
                 has_contributor_consent=consent,
-                scale=scale
+                scale=scale,
+                bokeh_blur=bokeh_blur,
             )
             job.model_pipeline = model_pipeline
 

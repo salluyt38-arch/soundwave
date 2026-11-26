@@ -140,7 +140,9 @@ class RealESRGANTensorEngine:
     """
 
     def __init__(self, scale: int = 4):
-        if scale not in (2, 4, 8):
+        if scale in (8, 500) or scale >= 8:
+            scale = 8
+        elif scale not in (2, 4):
             scale = 4
         self.scale = scale
 

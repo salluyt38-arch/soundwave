@@ -82,6 +82,7 @@ class SecureGPURouter:
         has_contributor_consent: bool = False,
         scale: int = 4,
         timeout_seconds: float = 45.0,
+        bokeh_blur: int = 0,
     ) -> EnhanceJob:
         """
         Accepts and registers a new image enhancement job.
@@ -105,6 +106,7 @@ class SecureGPURouter:
             privacy=privacy,
             priority=priority,
             scale=scale,
+            bokeh_blur=bokeh_blur,
             has_contributor_consent=has_contributor_consent,
             status=JobStatus.QUEUED,
             progress_percent=5,

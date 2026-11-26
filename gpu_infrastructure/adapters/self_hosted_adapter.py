@@ -75,8 +75,12 @@ class SelfHostedGPUAdapter(BaseGPUWorkerAdapter):
         try:
             run_gfp = "gfpgan" in [m.lower() for m in job.model_pipeline]
             job.progress_percent = 50
+            bokeh = getattr(job, "bokeh_blur", 0) or 0
             result_bytes, quality_metrics = self.pipeline.run_inference(
-                image_bytes=job.image_bytes, scale=job.scale, run_gfpgan=run_gfp
+                image_bytes=job.image_bytes,
+                scale=job.scale,
+                run_gfpgan=run_gfp,
+                bokeh_blur=bokeh,
             )
             job.quality_metrics = quality_metrics
             job.progress_percent = 100

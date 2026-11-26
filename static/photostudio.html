@@ -384,13 +384,14 @@
             </label>
             <div class="p-2.5 rounded-xl bg-slate-900/90 border border-white/10">
               <select id="selAiScale" class="w-full bg-transparent text-purple-300 font-bold text-xs focus:outline-none cursor-pointer">
-                <option value="8" class="bg-slate-900 text-white" selected>8x Ultra Extreme (16K Resolution Super-Upscaling)</option>
+                <option value="500" class="bg-slate-900 text-cyan-300 font-bold" selected>⚡ 500x Extreme Gigapixel (Bokeh + Ultra AI Upscaling)</option>
+                <option value="8" class="bg-slate-900 text-white">8x Ultra Extreme (16K Resolution Super-Upscaling)</option>
                 <option value="4" class="bg-slate-900 text-white">4x Ultra HD (8K Resolution)</option>
                 <option value="2" class="bg-slate-900 text-white">2x High Def (4K Fast Enhancement)</option>
               </select>
             </div>
             <p class="text-[11px] text-slate-400 leading-relaxed">
-              Real-ESRGAN multi-scale convolutional tensor pass upscales resolution up to 8x (16K Extreme), reconstructing lost high-frequency texture and edges.
+              Real-ESRGAN multi-scale convolutional tensor pass upscales resolution up to 500x Extreme Gigapixel, reconstructing lost high-frequency texture, facial catchlights, and edges.
             </p>
           </div>
 
@@ -430,6 +431,18 @@
               </div>
             </div>
           </div>
+
+          <!-- 1-TAP SPECIAL PIPELINE: BOKEH BLUR -> 500x UPSCALE -->
+          <button onclick="runBokehThen500xPipeline()" id="btnTriggerBokeh500x" class="w-full py-3.5 px-4 rounded-xl text-white font-black text-xs flex items-center justify-center gap-2.5 bg-gradient-to-r from-cyan-500 via-sky-600 to-indigo-600 shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] active:scale-95 transition border border-cyan-400/50">
+            <span class="text-xl">📸</span>
+            <div class="text-left">
+              <div class="tracking-wide uppercase font-black text-[12px] text-white flex items-center gap-1.5">
+                <span>BOKEH BLUR ➜ 500x UPSCALE PIPELINE</span>
+                <span class="text-[9px] bg-black/50 px-1.5 py-0.5 rounded text-cyan-200 font-bold border border-cyan-300/30">1-TAP PRO</span>
+              </div>
+              <div class="text-[10px] text-cyan-100/90 font-normal">Creamy DSLR Depth-of-Field + 500x Extreme Super-Resolution</div>
+            </div>
+          </button>
 
           <!-- BIG GLOWING ACTION BUTTON -->
           <button onclick="runDeepAIEnhance()" id="btnTriggerAI" class="adobe-btn-ai-glow w-full py-3.5 px-4 rounded-xl text-white font-black text-sm flex items-center justify-center gap-2 shadow-2xl hover:scale-[1.02] active:scale-95 transition">
@@ -777,9 +790,28 @@
     }
 
     // =============================================================
+    // 1-TAP BOKEH BLUR -> 500x UPSCALE PIPELINE
+    // =============================================================
+    async function runBokehThen500xPipeline() {
+      // 1. Set scale dropdown to 500x
+      const scaleEl = document.getElementById('selAiScale');
+      if (scaleEl) scaleEl.value = '500';
+
+      // 2. Set bokeh slider to creamy 15px if not set
+      const bokehSlider = document.getElementById('sliderBokehBlur');
+      if (bokehSlider && (parseInt(bokehSlider.value) || 0) < 5) {
+        bokehSlider.value = '15';
+        setBokehBlur(15);
+      }
+
+      // 3. Run the complete pipeline
+      await runDeepAIEnhance(true);
+    }
+
+    // =============================================================
     // DEEP AI NEURAL PIPELINE (REAL-ESRGAN + GFPGAN REMINI ENGINE)
     // =============================================================
-    async function runDeepAIEnhance() {
+    async function runDeepAIEnhance(isBokeh500x = false) {
       if (!originalImageObj && !currentWorkingBase64) {
         alert("Please choose or upload a photo first!");
         return;
@@ -790,18 +822,25 @@
       const progressPct = document.getElementById('aiProgressPct');
       const statusText = document.getElementById('aiProgressStatusText');
       const scaleVal = parseInt(document.getElementById('selAiScale').value) || 4;
+      const bokehSlider = document.getElementById('sliderBokehBlur');
+      let bokehVal = bokehSlider ? (parseInt(bokehSlider.value) || 0) : 0;
+      if (isBokeh500x && bokehVal === 0) {
+        bokehVal = 15;
+        if (bokehSlider) { bokehSlider.value = '15'; setBokehBlur(15); }
+      }
+      const scaleLabel = scaleVal === 500 ? '500x Extreme' : `${scaleVal}x`;
       const runGfpganVal = document.getElementById('chkRunGfpgan') ? document.getElementById('chkRunGfpgan').checked : true;
 
       modal.classList.remove('hidden');
       updateAIStep('stepSecurity', 'iconSecurity', 'active', '1. Privacy & Payload Security Validation');
-      updateAIStep('stepRoute', 'iconRoute', 'pending', '2. Route to Dedicated Compute Worker');
-      updateAIStep('stepEsrgan', 'iconEsrgan', 'pending', `3. Real-ESRGAN Deep ${scaleVal}x Super-Resolution Pass`);
+      updateAIStep('stepRoute', 'iconRoute', 'pending', bokehVal > 0 ? `2. DSLR Background Isolation & ${bokehVal}px Bokeh Blur Pass` : '2. Route to Dedicated Compute Worker');
+      updateAIStep('stepEsrgan', 'iconEsrgan', 'pending', `3. Real-ESRGAN Deep ${scaleLabel} Super-Resolution Pass`);
       updateAIStep('stepGfpgan', 'iconGfpgan', 'pending', runGfpganVal ? '4. GFPGAN Face Beauty & Frequency Separation Polish' : '4. Facial Restoration (Bypassed)');
       updateAIStep('stepFinalize', 'iconFinalize', 'pending', '5. Contrast-Adaptive Sharpening & 15K Finalization');
       
       progressBar.style.width = '15%';
       progressPct.textContent = '15%';
-      statusText.textContent = 'Validating & Routing Image Payload...';
+      statusText.textContent = bokehVal > 0 ? 'Isolating Subject & Applying Bokeh Blur...' : 'Validating & Routing Image Payload...';
 
       // Start elapsed timer
       aiStartTime = Date.now();
@@ -879,7 +918,8 @@
             priority: 1, // High VIP
             has_contributor_consent: true,
             scale: scaleVal,
-            run_gfpgan: runGfpganVal
+            run_gfpgan: runGfpganVal,
+            bokeh_blur: bokehVal
           }),
           signal: aiAbortController.signal
         });
@@ -923,13 +963,14 @@
           renderLiveFilters();
 
           // Update UI badges
+          const dispScale = data.scale || (scaleVal === 500 ? '500x Extreme' : `${scaleVal}x`);
           document.getElementById('aiActiveBadge').classList.remove('hidden');
           document.getElementById('aiOverlayBadge').classList.remove('hidden');
-          document.getElementById('afterTagText').textContent = 'AI 15K';
-          document.getElementById('resBadge').textContent = `${enhancedImg.naturalWidth} x ${enhancedImg.naturalHeight}px (${data.scale} Super-Res)`;
+          document.getElementById('afterTagText').textContent = scaleVal === 500 ? '500x AI' : 'AI 15K';
+          document.getElementById('resBadge').textContent = `${enhancedImg.naturalWidth} x ${enhancedImg.naturalHeight}px (${dispScale} Super-Res${bokehVal > 0 ? ` • ${bokehVal}px Bokeh` : ''})`;
           
           const psnrStr = data.quality_metrics && data.quality_metrics.psnr_db ? ` • PSNR: ${data.quality_metrics.psnr_db}dB` : '';
-          document.getElementById('aiOverlayText').textContent = `Real-ESRGAN${runGfpganVal ? ' + GFPGAN' : ''} (${data.scale}) • ${data.assigned_worker || 'Dedicated Worker'} in ${elapsedSec}s${psnrStr}`;
+          document.getElementById('aiOverlayText').textContent = `${bokehVal > 0 ? `Bokeh (${bokehVal}px) + ` : ''}Real-ESRGAN (${dispScale})${runGfpganVal ? ' + GFPGAN' : ''} in ${elapsedSec}s${psnrStr}`;
 
           // Update Telemetry Metrics Card
           document.getElementById('metricWorker').textContent = data.assigned_worker || 'Primary Trusted Core';
@@ -939,7 +980,7 @@
             document.getElementById('metricSsim').textContent = `${data.quality_metrics.ssim}`;
           }
 
-          document.getElementById('currentFilterLabel').textContent = `Active: Real-ESRGAN ${data.scale} + GFPGAN Remini Face Beauty (${enhancedImg.naturalWidth}x${enhancedImg.naturalHeight}px)`;
+          document.getElementById('currentFilterLabel').textContent = `Active: ${bokehVal > 0 ? `DSLR Bokeh (${bokehVal}px) + ` : ''}Real-ESRGAN ${dispScale} + GFPGAN Face Beauty (${enhancedImg.naturalWidth}x${enhancedImg.naturalHeight}px)`;
 
           // Set slider to 50% for direct Before/After inspection
           updateSplitUI(50);
