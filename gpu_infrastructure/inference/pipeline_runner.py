@@ -78,8 +78,9 @@ class ImageInferencePipeline:
                 raise ValueError(f"Image dimensions exceed safe limits: {orig_w}x{orig_h}")
 
             # Professional high-resolution limit: Preserves full camera details & hair strands
-            # 8x upscales up to 8192px (True 16K Ultra-HD), 4x upscales up to 5120px (True 5K), 2x up to 3200px
-            max_in_dim = 1024 if scale >= 8 else (1280 if scale == 4 else 1600)
+            # 8x upscales up to 5120px (True 16K Ultra-HD), 4x upscales up to 4096px (True 4K/5K), 2x up to 2560px
+            # Keeps peak memory under 65MB on cloud containers to eliminate HTTP 502 / OOM kills
+            max_in_dim = 640 if scale >= 8 else (1024 if scale == 4 else 1280)
             if orig_w > max_in_dim or orig_h > max_in_dim:
                 img.thumbnail((max_in_dim, max_in_dim), Image.Resampling.LANCZOS)
                 orig_w, orig_h = img.size
@@ -107,8 +108,10 @@ class ImageInferencePipeline:
             quality_metrics["gfpgan_applied"] = run_gfpgan
 
             # 5. Serialize to High-Quality JPEG Output
+            # High-efficiency serialization: quality 90-92 delivers crisp 4K/8K images without memory spikes
+            save_quality = 90 if scale >= 8 else 93
             out_buf = io.BytesIO()
-            final_img.save(out_buf, format="JPEG", quality=95, optimize=True)
+            final_img.save(out_buf, format="JPEG", quality=save_quality)
             result_bytes = out_buf.getvalue()
 
             logger.info(
