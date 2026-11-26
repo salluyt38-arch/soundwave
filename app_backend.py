@@ -443,6 +443,71 @@ def handle_app_get(handler: Any, path: str, query: Dict[str, list]) -> bool:
             return True
 
     # -------------------------------------------------------------
+    # 0.1 APEX AI PHOTO ENHANCER PRO GET ENDPOINTS
+    # -------------------------------------------------------------
+    if path == "/api/models":
+        try:
+            from backend.app.ai_engine.model_registry.registry import AIModelRegistry
+            models = [m.model_dump() for m in AIModelRegistry.get_all_models()]
+            handler.send_json(models)
+            return True
+        except Exception as e:
+            handler.send_json({"error": f"Model registry error: {str(e)}"}, status=500)
+            return True
+
+    if path == "/api/history":
+        try:
+            from backend.app.services.job_service import JobService
+            jobs = [j.model_dump() for j in JobService.list_recent_jobs()]
+            handler.send_json(jobs)
+            return True
+        except Exception as e:
+            handler.send_json({"error": f"History retrieval error: {str(e)}"}, status=500)
+            return True
+
+    if path.startswith("/api/jobs/"):
+        job_id = path.replace("/api/jobs/", "").split("/")[0].strip()
+        try:
+            from backend.app.services.job_service import JobService
+            job = JobService.get_job(job_id)
+            if not job:
+                handler.send_json({"error": f"Job '{job_id}' not found."}, status=404)
+                return True
+            handler.send_json(job.model_dump())
+            return True
+        except Exception as e:
+            handler.send_json({"error": f"Job lookup error: {str(e)}"}, status=500)
+            return True
+
+    if path.startswith("/api/download/"):
+        clean_p = path.replace("/api/download/", "").strip()
+        try:
+            from backend.app.services.storage_service import StorageService
+            if clean_p.startswith("preview/"):
+                file_id = clean_p.replace("preview/", "").strip()
+                f_path = StorageService.get_upload_path(file_id)
+            else:
+                job_id = clean_p.split("/")[0].strip()
+                f_path = StorageService.get_output_path(job_id)
+
+            if not f_path or not f_path.exists():
+                handler.send_json({"error": "Artifact expired or not found."}, status=404)
+                return True
+
+            with open(f_path, "rb") as f:
+                content = f.read()
+            mime = "image/png" if f_path.suffix.lower() == ".png" else "image/jpeg"
+            handler.send_response(200)
+            handler.send_header("Content-Type", mime)
+            handler.send_header("Content-Length", str(len(content)))
+            handler.end_headers()
+            handler.wfile.write(content)
+            return True
+        except Exception as e:
+            handler.send_json({"error": f"Download error: {str(e)}"}, status=500)
+            return True
+
+    # -------------------------------------------------------------
     # A. WEATHER APPLICATION ENDPOINTS
     # -------------------------------------------------------------
     if path == "/api/app/weather/full":
@@ -1510,6 +1575,112 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
             return True
         except Exception as e:
             handler.send_json({"error": f"GPU Enhancement error: {str(e)}"}, status=500)
+            return True
+
+    # -------------------------------------------------------------
+    # APEX AI PHOTO ENHANCER PRO POST ENDPOINTS
+    # -------------------------------------------------------------
+    if path in (
+        "/api/enhance",
+        "/api/face-restore",
+        "/api/upscale",
+        "/api/old-photo-restore",
+        "/api/colorize",
+        "/api/denoise",
+        "/api/inpaint",
+        "/api/upload",
+    ):
+        try:
+            from backend.app.services.enhancement_service import EnhancementService
+            from backend.app.services.storage_service import StorageService
+            from backend.app.schemas.models import (
+                BaseEnhanceRequest,
+                FaceRestoreRequest,
+                UpscaleRequest,
+                OldPhotoRestoreRequest,
+                ColorizeRequest,
+                DenoiseRequest,
+                InpaintRequest,
+            )
+
+            enhancer = EnhancementService()
+
+            if path == "/api/enhance":
+                req = BaseEnhanceRequest(**body)
+                job = enhancer.run_auto_enhance(req)
+                handler.send_json(job.model_dump())
+                return True
+
+            elif path == "/api/face-restore":
+                req = FaceRestoreRequest(**body)
+                job = enhancer.run_face_restore(req)
+                handler.send_json(job.model_dump())
+                return True
+
+            elif path == "/api/upscale":
+                req = UpscaleRequest(**body)
+                job = enhancer.run_upscale(req)
+                handler.send_json(job.model_dump())
+                return True
+
+            elif path == "/api/old-photo-restore":
+                req = OldPhotoRestoreRequest(**body)
+                job = enhancer.run_old_photo_restore(req)
+                handler.send_json(job.model_dump())
+                return True
+
+            elif path == "/api/colorize":
+                req = ColorizeRequest(**body)
+                job = enhancer.run_colorize(req)
+                handler.send_json(job.model_dump())
+                return True
+
+            elif path == "/api/denoise":
+                req = DenoiseRequest(**body)
+                job = enhancer.run_denoise(req)
+                handler.send_json(job.model_dump())
+                return True
+
+            elif path == "/api/inpaint":
+                req = InpaintRequest(**body)
+                job = enhancer.run_inpaint(req)
+                handler.send_json(job.model_dump())
+                return True
+
+            elif path == "/api/upload":
+                # Handle base64 upload or multipart
+                image_bytes = None
+                filename = "upload.jpg"
+                if "image_bytes" in body and isinstance(body["image_bytes"], bytes):
+                    image_bytes = body["image_bytes"]
+                    filename = body.get("filename", "upload.jpg")
+                elif "image" in body:
+                    import base64
+                    b64 = str(body["image"]).split(",", 1)[-1]
+                    image_bytes = base64.b64decode(b64)
+
+                if not image_bytes:
+                    handler.send_json({"error": "No image payload provided for upload."}, status=400)
+                    return True
+
+                file_id, file_path = StorageService.save_upload(image_bytes, filename)
+                from PIL import Image
+                with Image.open(file_path) as im:
+                    w, h = im.size
+
+                handler.send_json({
+                    "file_id": file_id,
+                    "filename": filename,
+                    "width": w,
+                    "height": h,
+                    "file_size_bytes": len(image_bytes),
+                    "mime_type": "image/jpeg",
+                    "preview_url": f"/api/download/preview/{file_id}",
+                })
+                return True
+
+        except Exception as e:
+            handler.send_json({"error": f"APEX AI Processing error: {str(e)}"}, status=500)
             return True
 
     return False

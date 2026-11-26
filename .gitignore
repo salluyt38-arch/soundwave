@@ -26,6 +26,12 @@ Thumbs.db
 .vscode/
 .idea/
 
+# APEX Processing Directories
+outputs/*
+!outputs/.gitkeep
+uploads/*
+!uploads/.gitkeep
+
 # Whitelist soundwave app downloads
 !gpu_infrastructure/deploy_configs/
 !gpu_infrastructure/deploy_configs/.env.*
