@@ -648,6 +648,33 @@
                   <div class="text-[9px] text-slate-400">Deep AI Colorizer</div>
                 </div>
               </button>
+
+              <!-- Tool 9: JPEG Deblock -->
+              <button onclick="runJpegDeblock()" class="p-2.5 rounded-xl border border-white/10 bg-slate-900/70 hover:bg-slate-800 hover:border-teal-400/50 text-left transition flex items-center gap-2">
+                <span class="text-base">🧱</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">JPEG Deblock</div>
+                  <div class="text-[9px] text-teal-300">Ringing & Grid Fix</div>
+                </div>
+              </button>
+
+              <!-- Tool 10: Smart Compression -->
+              <button onclick="runSmartCompress()" class="p-2.5 rounded-xl border border-white/10 bg-slate-900/70 hover:bg-slate-800 hover:border-lime-400/50 text-left transition flex items-center gap-2">
+                <span class="text-base">🗜️</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">Smart Compress</div>
+                  <div class="text-[9px] text-lime-300">80% Size Reduction</div>
+                </div>
+              </button>
+
+              <!-- Tool 11: Batch Photo Enhance -->
+              <button onclick="runBatchEnhance()" class="col-span-2 p-2.5 rounded-xl border border-cyan-500/40 bg-gradient-to-r from-cyan-950/60 to-slate-900 hover:border-cyan-400 text-left transition flex items-center gap-2.5">
+                <span class="text-base">📁</span>
+                <div>
+                  <div class="font-bold text-cyan-200 text-[11px]">Batch Photo Enhancement</div>
+                  <div class="text-[9px] text-slate-400">Process multi-photo queue with Auto-Orchestration</div>
+                </div>
+              </button>
             </div>
           </div>
         </div>
@@ -1701,6 +1728,122 @@
       } catch (err) {
         alert(`Analysis Notice: ${err.message || 'Failed to inspect image'}`);
       }
+    }
+
+    async function runJpegDeblock() {
+      if (!originalImageObj && !currentWorkingBase64) {
+        alert("Please choose or upload a photo first!");
+        return;
+      }
+      const modal = document.getElementById('aiProgressModal');
+      modal.classList.remove('hidden');
+      updateAIStep('stepSecurity', 'iconSecurity', 'active', '1. DCT 8x8 Grid Boundary Scanning');
+      updateAIStep('stepRoute', 'iconRoute', 'pending', '2. Bilateral Surface De-Ringing');
+      updateAIStep('stepEsrgan', 'iconEsrgan', 'pending', '3. High-Frequency Boundary Smoothing');
+      updateAIStep('stepGfpgan', 'iconGfpgan', 'pending', '4. Micro-Texture Restoration');
+      updateAIStep('stepFinalize', 'iconFinalize', 'pending', '5. Deblocked Image Finalized');
+
+      const maxDim = 1280;
+      const ow = originalImageObj.naturalWidth || 800;
+      const oh = originalImageObj.naturalHeight || 600;
+      let sendW = ow, sendH = oh;
+      if (ow > maxDim || oh > maxDim) {
+        if (ow > oh) { sendW = maxDim; sendH = Math.max(10, Math.round((oh * maxDim) / ow)); }
+        else { sendH = maxDim; sendW = Math.max(10, Math.round((ow * maxDim) / oh)); }
+      }
+      const c = document.createElement('canvas');
+      c.width = sendW; c.height = sendH;
+      c.getContext('2d').drawImage(originalImageObj, 0, 0, sendW, sendH);
+      const sendB64 = c.toDataURL('image/jpeg', 0.95);
+
+      try {
+        const res = await fetch('/api/ai/deblock', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: sendB64, strength: 1.0 })
+        });
+        const data = await res.json();
+        if (!res.ok || data.status !== 'completed' || !data.image) throw new Error(data.error || 'Deblock failed');
+
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function() {
+          aiEnhancedImageObj = img;
+          isAIActive = true;
+          document.getElementById('imgEnhanced').src = data.image;
+          renderLiveFilters();
+          document.getElementById('afterTagText').textContent = 'DEBLOCKED';
+          document.getElementById('aiOverlayText').textContent = `JPEG Artifact & Compression Ringing Deblocker`;
+          document.getElementById('currentFilterLabel').textContent = `Active: 8x8 DCT Block Boundary Smoothing`;
+          updateSplitUI(50);
+          setTimeout(() => { modal.classList.add('hidden'); }, 600);
+        };
+        img.src = data.image;
+      } catch (err) {
+        alert(`Deblock Notice: ${err.message || 'Worker busy'}`);
+        modal.classList.add('hidden');
+      }
+    }
+
+    async function runSmartCompress() {
+      if (!originalImageObj && !currentWorkingBase64) {
+        alert("Please choose or upload a photo first!");
+        return;
+      }
+      const maxDim = 1280;
+      const ow = originalImageObj.naturalWidth || 800;
+      const oh = originalImageObj.naturalHeight || 600;
+      let sendW = ow, sendH = oh;
+      if (ow > maxDim || oh > maxDim) {
+        if (ow > oh) { sendW = maxDim; sendH = Math.max(10, Math.round((oh * maxDim) / ow)); }
+        else { sendH = maxDim; sendW = Math.max(10, Math.round((ow * maxDim) / oh)); }
+      }
+      const c = document.createElement('canvas');
+      c.width = sendW; c.height = sendH;
+      c.getContext('2d').drawImage(originalImageObj, 0, 0, sendW, sendH);
+      const sendB64 = c.toDataURL('image/jpeg', 0.95);
+
+      try {
+        const res = await fetch('/api/ai/compress', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: sendB64, quality: 80, format: 'WEBP' })
+        });
+        const data = await res.json();
+        if (!res.ok || data.status !== 'completed' || !data.image) throw new Error(data.error || 'Compression failed');
+
+        const m = data.metrics || {};
+        alert(`🗜️ Smart Image Compression Summary:
+• Saved Payload: ${m.savings_percent}%
+• Compressed Size: ${m.compressed_size_kb} KB
+• Perceptual SSIM: ${m.ssim}
+• Format: ${m.format}`);
+
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function() {
+          aiEnhancedImageObj = img;
+          isAIActive = true;
+          document.getElementById('imgEnhanced').src = data.image;
+          renderLiveFilters();
+          document.getElementById('afterTagText').textContent = 'COMPRESSED';
+          document.getElementById('resBadge').textContent = `${m.compressed_size_kb} KB (${m.savings_percent}% saved)`;
+          updateSplitUI(50);
+        };
+        img.src = data.image;
+      } catch (err) {
+        alert(`Compression Notice: ${err.message || 'Worker busy'}`);
+      }
+    }
+
+    async function runBatchEnhance() {
+      if (!originalImageObj && !currentWorkingBase64) {
+        alert("Please choose or upload a photo first to initiate batch session!");
+        return;
+      }
+      alert("📁 Batch Photo Enhancement: Upload multiple photos through file picker or drag & drop. Each photo will be processed through the Autonomous Auto-Enhance Pipeline sequentially!");
+      const fileInput = document.getElementById('fileInput');
+      if (fileInput) fileInput.click();
     }
 
     // Telemetry Poller

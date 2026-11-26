@@ -9,3 +9,6 @@ from .lowlight import LowLightAdapter
 from .bg_remover import BackgroundRemoverAdapter
 from .old_photo import OldPhotoRestorationAdapter
 from .colorizer import PhotoColorizerAdapter
+from .jpeg_deblock import JpegDeblockAdapter
+from .smart_compressor import SmartCompressorAdapter
+

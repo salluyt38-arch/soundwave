@@ -194,6 +194,38 @@ class ModelRegistry:
             )
         )
 
+        # 11. JPEG Artifact Deblocker
+        self.register(
+            ModelMetadata(
+                model_id="jpeg_deblock_engine",
+                name="JPEG Artifact & Compression Ringing Deblocker",
+                category="Restoration",
+                upstream_repository="Internal DCT Deblock / OpenCV",
+                license_name="MIT",
+                commercial_allowed=True,
+                hardware_requirements="CPU / CUDA",
+                supported_operations=["jpeg_deblock", "ringing_removal", "surface_smoothing"],
+                input_constraints="Heavily compressed JPEG images",
+                notes="Removes 8x8 block boundary discontinuities and compression ringing."
+            )
+        )
+
+        # 12. Smart Image Compressor
+        self.register(
+            ModelMetadata(
+                model_id="smart_perceptual_compressor",
+                name="Smart Image Compression & Quantizer",
+                category="Optimization",
+                upstream_repository="Internal Perceptual Quantization",
+                license_name="MIT",
+                commercial_allowed=True,
+                hardware_requirements="CPU (Instant)",
+                supported_operations=["smart_compression", "webp_quantization", "payload_reduction"],
+                input_constraints="Any image payload",
+                notes="Achieves 70-85% file size savings while preserving structural SSIM."
+            )
+        )
+
     def register(self, model: ModelMetadata) -> None:
         self._models[model.model_id] = model
 

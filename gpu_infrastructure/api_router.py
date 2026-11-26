@@ -24,6 +24,8 @@ from .model_adapters import (
     PhotoColorizerAdapter,
     QualityAnalyzerAdapter,
     SuperResolutionAdapter,
+    JpegDeblockAdapter,
+    SmartCompressorAdapter,
 )
 from .orchestrator.pipeline_orchestrator import orchestrator
 
@@ -295,6 +297,82 @@ def handle_ai_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
             "image": b64,
             "quality_metrics": bench,
             "duration_sec": r_metrics["duration_sec"],
+        })
+        return True
+
+    # 12. JPEG Artifact Deblock
+    if path == "/api/ai/deblock":
+        img, err = _extract_image_payload(body)
+        if err:
+            handler.send_json({"error": err, "status": "invalid_payload"}, status=400)
+            return True
+        strength = float(body.get("strength", 1.0))
+        deblocker = JpegDeblockAdapter()
+        d_img, d_metrics = deblocker.execute(img, strength=strength)
+        b64 = _image_to_base64_data_url(d_img)
+        bench = BenchmarkMetrics.benchmark_run(img, d_img, d_metrics["duration_sec"])
+        handler.send_json({
+            "status": "completed",
+            "image": b64,
+            "quality_metrics": bench,
+            "duration_sec": d_metrics["duration_sec"],
+        })
+        return True
+
+    # 13. Smart Image Compression
+    if path == "/api/ai/compress":
+        img, err = _extract_image_payload(body)
+        if err:
+            handler.send_json({"error": err, "status": "invalid_payload"}, status=400)
+            return True
+        quality = int(body.get("quality", 82))
+        fmt = str(body.get("format", "WEBP")).upper()
+        compressor = SmartCompressorAdapter()
+        c_img, c_metrics = compressor.execute(img, target_quality=quality, format=fmt)
+        b64 = _image_to_base64_data_url(c_img, format=fmt)
+        handler.send_json({
+            "status": "completed",
+            "image": b64,
+            "metrics": c_metrics,
+            "duration_sec": c_metrics["duration_sec"],
+        })
+        return True
+
+    # 14. Batch Photo Enhancement
+    if path == "/api/ai/batch-enhance":
+        images_list = body.get("images", [])
+        if not images_list or not isinstance(images_list, list):
+            handler.send_json({"error": "Pass 'images' as a list of base64 strings.", "status": "invalid_payload"}, status=400)
+            return True
+
+        # Limit batch to 8 items to protect server memory
+        max_batch = 8
+        batch_slice = images_list[:max_batch]
+        scale = int(body.get("scale", 2))
+        results = []
+
+        for idx, item in enumerate(batch_slice):
+            sub_body = {"image": item}
+            sub_img, sub_err = _extract_image_payload(sub_body)
+            if sub_err or not sub_img:
+                results.append({"index": idx, "status": "failed", "error": sub_err or "Invalid image"})
+                continue
+            enhanced, steps, telem = orchestrator.run_auto_enhance(sub_img, target_scale=scale, allow_face_restore=True)
+            b64_out = _image_to_base64_data_url(enhanced)
+            results.append({
+                "index": idx,
+                "status": "completed",
+                "image": b64_out,
+                "pipeline_steps": steps,
+                "psnr_db": telem["benchmarks"]["psnr_db"],
+            })
+
+        handler.send_json({
+            "status": "completed",
+            "total_submitted": len(images_list),
+            "processed_count": len(results),
+            "results": results,
+            "duration_sec": round(time.time() - start_time, 2),
         })
         return True
 
