@@ -353,6 +353,18 @@ def handle_app_get(handler: Any, path: str, query: Dict[str, list]) -> bool:
     Returns True if the request was handled, False if unhandled.
     """
     # -------------------------------------------------------------
+    # 0. STANDARDIZED /api/ai/* MODEL REGISTRY & TELEMETRY ENDPOINTS
+    # -------------------------------------------------------------
+    if path.startswith("/api/ai/"):
+        try:
+            from gpu_infrastructure.api_router import handle_ai_get
+            if handle_ai_get(handler, path, query):
+                return True
+        except Exception as e:
+            handler.send_json({"error": f"AI API error: {str(e)}"}, status=500)
+            return True
+
+    # -------------------------------------------------------------
     # 0. GPU INFRASTRUCTURE TELEMETRY & CAPACITY DASHBOARD
     # -------------------------------------------------------------
     if path == "/api/gpu/capacity":
@@ -1404,6 +1416,18 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
     Handles POST requests for Firestore database updates & configurations.
     Returns True if handled, False otherwise.
     """
+    # -------------------------------------------------------------
+    # 0. STANDARDIZED /api/ai/* INFERENCE ENDPOINTS
+    # -------------------------------------------------------------
+    if path.startswith("/api/ai/"):
+        try:
+            from gpu_infrastructure.api_router import handle_ai_post
+            if handle_ai_post(handler, path, body):
+                return True
+        except Exception as e:
+            handler.send_json({"error": f"AI API error: {str(e)}"}, status=500)
+            return True
+
     if path == "/api/firestore/config":
         project_id = str(body.get("projectId") or body.get("project_id", "")).strip()
         api_key = str(body.get("apiKey") or body.get("api_key", "")).strip()

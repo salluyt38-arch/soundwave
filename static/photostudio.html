@@ -570,10 +570,68 @@
             </div>
           </div>
 
-          <!-- ADVANCED AI NEURAL TOOLS (MERGED DIRECTLY INTO ADOBE STUDIO) -->
+          <!-- ADVANCED AI NEURAL TOOLS (EXPANDED MODULAR SUITE) -->
           <div class="pt-2.5 border-t border-white/10 space-y-1.5">
-            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Advanced AI Neural Tools</label>
+            <div class="flex items-center justify-between">
+              <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Advanced AI Neural Tools</label>
+              <span class="text-[9px] text-cyan-300 font-mono">10 MODULAR CORES</span>
+            </div>
             <div class="grid grid-cols-2 gap-2 text-xs">
+              <!-- Tool 1: Intelligent Auto-Enhance -->
+              <button onclick="runAutoEnhance()" class="p-2.5 rounded-xl border border-white/10 bg-slate-900/70 hover:bg-slate-800 hover:border-cyan-400/50 text-left transition flex items-center gap-2">
+                <span class="text-base">⚡</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">AI Auto-Enhance</div>
+                  <div class="text-[9px] text-cyan-300">Intelligent Pipeline</div>
+                </div>
+              </button>
+
+              <!-- Tool 2: Background Removal -->
+              <button onclick="runBackgroundRemove()" class="p-2.5 rounded-xl border border-white/10 bg-slate-900/70 hover:bg-slate-800 hover:border-indigo-400/50 text-left transition flex items-center gap-2">
+                <span class="text-base">✂️</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">Remove Background</div>
+                  <div class="text-[9px] text-indigo-300">Transparent Cutout</div>
+                </div>
+              </button>
+
+              <!-- Tool 3: Motion Deblur -->
+              <button onclick="runMotionDeblur()" class="p-2.5 rounded-xl border border-white/10 bg-slate-900/70 hover:bg-slate-800 hover:border-sky-400/50 text-left transition flex items-center gap-2">
+                <span class="text-base">🎯</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">Motion Deblur</div>
+                  <div class="text-[9px] text-sky-300">NAFNet Recovery</div>
+                </div>
+              </button>
+
+              <!-- Tool 4: Low-Light Recovery -->
+              <button onclick="runLowLight()" class="p-2.5 rounded-xl border border-white/10 bg-slate-900/70 hover:bg-slate-800 hover:border-amber-400/50 text-left transition flex items-center gap-2">
+                <span class="text-base">🌙</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">Low-Light Recovery</div>
+                  <div class="text-[9px] text-amber-300">Retinex Shadow Lift</div>
+                </div>
+              </button>
+
+              <!-- Tool 5: Sensor Denoise -->
+              <button onclick="runDenoise()" class="p-2.5 rounded-xl border border-white/10 bg-slate-900/70 hover:bg-slate-800 hover:border-emerald-400/50 text-left transition flex items-center gap-2">
+                <span class="text-base">🧹</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">AI Noise Removal</div>
+                  <div class="text-[9px] text-emerald-300">Wavelet Denoise</div>
+                </div>
+              </button>
+
+              <!-- Tool 6: Quality Diagnostics -->
+              <button onclick="runQualityAnalyze()" class="p-2.5 rounded-xl border border-white/10 bg-slate-900/70 hover:bg-slate-800 hover:border-purple-400/50 text-left transition flex items-center gap-2">
+                <span class="text-base">🔍</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">Quality Analyzer</div>
+                  <div class="text-[9px] text-purple-300">Defect Diagnostics</div>
+                </div>
+              </button>
+
+              <!-- Tool 7: Old Photo Restore -->
               <button onclick="runOldPhotoRestore()" class="p-2.5 rounded-xl border border-white/10 bg-slate-900/70 hover:bg-slate-800 hover:border-amber-400/50 text-left transition flex items-center gap-2">
                 <span class="text-base">🏛️</span>
                 <div>
@@ -581,6 +639,8 @@
                   <div class="text-[9px] text-slate-400">Scratches & Tears</div>
                 </div>
               </button>
+
+              <!-- Tool 8: Colorize -->
               <button onclick="runColorize()" class="p-2.5 rounded-xl border border-white/10 bg-slate-900/70 hover:bg-slate-800 hover:border-pink-400/50 text-left transition flex items-center gap-2">
                 <span class="text-base">🎨</span>
                 <div>
@@ -1251,6 +1311,395 @@
         console.error("Colorize error:", err);
         alert(`Colorization Notice: ${err.message || 'Worker busy. Please retry.'}`);
         modal.classList.add('hidden');
+      }
+    }
+
+    // =============================================================
+    // AUTONOMOUS AI SUITE (AUTO-ENHANCE, CUTOUT, DEBLUR, LOW-LIGHT, DENOISE, ANALYZE)
+    // =============================================================
+
+    async function runAutoEnhance() {
+      if (!originalImageObj && !currentWorkingBase64) {
+        alert("Please choose or upload a photo first!");
+        return;
+      }
+      const modal = document.getElementById('aiProgressModal');
+      const progressBar = document.getElementById('aiProgressBar');
+      const progressPct = document.getElementById('aiProgressPct');
+      const statusText = document.getElementById('aiProgressStatusText');
+
+      modal.classList.remove('hidden');
+      updateAIStep('stepSecurity', 'iconSecurity', 'active', '1. Quality Assessment & Defect Classification');
+      updateAIStep('stepRoute', 'iconRoute', 'pending', '2. Intelligent Model Routing');
+      updateAIStep('stepEsrgan', 'iconEsrgan', 'pending', '3. Multi-Scale Super-Resolution');
+      updateAIStep('stepGfpgan', 'iconGfpgan', 'pending', '4. Facial Detail Polish');
+      updateAIStep('stepFinalize', 'iconFinalize', 'pending', '5. Master Telemetry Validation');
+
+      progressBar.style.width = '25%';
+      progressPct.textContent = '25%';
+      statusText.textContent = 'Autonomous orchestrator classifying defects...';
+
+      aiStartTime = Date.now();
+      const timerEl = document.getElementById('aiElapsedTimer');
+      if (aiTimerInterval) clearInterval(aiTimerInterval);
+      aiTimerInterval = setInterval(() => {
+        const sec = ((Date.now() - aiStartTime) / 1000).toFixed(1);
+        timerEl.textContent = `${sec}s`;
+      }, 100);
+
+      const maxDim = 1280;
+      const ow = originalImageObj.naturalWidth || 800;
+      const oh = originalImageObj.naturalHeight || 600;
+      let sendW = ow, sendH = oh;
+      if (ow > maxDim || oh > maxDim) {
+        if (ow > oh) { sendW = maxDim; sendH = Math.max(10, Math.round((oh * maxDim) / ow)); }
+        else { sendH = maxDim; sendW = Math.max(10, Math.round((ow * maxDim) / oh)); }
+      }
+      const c = document.createElement('canvas');
+      c.width = sendW; c.height = sendH;
+      c.getContext('2d').drawImage(originalImageObj, 0, 0, sendW, sendH);
+      const sendB64 = c.toDataURL('image/jpeg', 0.95);
+
+      try {
+        setTimeout(() => {
+          updateAIStep('stepSecurity', 'iconSecurity', 'done', '✓ 1. Defects Classified');
+          updateAIStep('stepRoute', 'iconRoute', 'active', '2. Dynamic Pipeline Routing...');
+          progressBar.style.width = '55%';
+          progressPct.textContent = '55%';
+          statusText.textContent = 'Executing staged neural restoration...';
+        }, 600);
+
+        const response = await fetch('/api/ai/auto-enhance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            image: sendB64,
+            scale: parseInt(document.getElementById('selAiScale').value) || 4,
+            face_restore: true,
+            bokeh_blur: parseInt(document.getElementById('sliderBokehBlur').value) || 0
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok || data.status !== 'completed' || !data.image) {
+          throw new Error(data.error || 'Auto-enhance pipeline failed');
+        }
+
+        updateAIStep('stepRoute', 'iconRoute', 'done', '✓ 2. Optimal Pipeline Executed');
+        updateAIStep('stepEsrgan', 'iconEsrgan', 'done', '✓ 3. Super-Resolution Finalized');
+        updateAIStep('stepGfpgan', 'iconGfpgan', 'done', '✓ 4. Facial Fidelity Preserved');
+        updateAIStep('stepFinalize', 'iconFinalize', 'done', '✓ 5. Quality Control Passed');
+        progressBar.style.width = '100%';
+        progressPct.textContent = '100%';
+        statusText.textContent = 'Auto-Enhancement Complete!';
+        clearInterval(aiTimerInterval);
+
+        const elapsedSec = ((Date.now() - aiStartTime) / 1000).toFixed(1);
+
+        const enhancedImg = new Image();
+        enhancedImg.crossOrigin = 'anonymous';
+        enhancedImg.onload = function() {
+          aiEnhancedImageObj = enhancedImg;
+          isAIActive = true;
+          document.getElementById('imgEnhanced').src = data.image;
+          const bLayer = document.getElementById('bokehBackgroundLayer');
+          if (bLayer) bLayer.src = data.image;
+          renderLiveFilters();
+
+          document.getElementById('aiActiveBadge').classList.remove('hidden');
+          document.getElementById('aiOverlayBadge').classList.remove('hidden');
+          document.getElementById('afterTagText').textContent = 'AUTO-AI';
+          document.getElementById('resBadge').textContent = `${enhancedImg.naturalWidth} x ${enhancedImg.naturalHeight}px (Auto-Orchestrated)`;
+          
+          const psnrStr = data.quality_metrics && data.quality_metrics.psnr_db ? ` • PSNR: ${data.quality_metrics.psnr_db}dB` : '';
+          document.getElementById('aiOverlayText').textContent = `Auto-Enhance (${(data.pipeline_steps || []).length} Cores) in ${elapsedSec}s${psnrStr}`;
+
+          // Update metrics
+          if (data.quality_metrics) {
+            document.getElementById('metricPsnr').textContent = `${data.quality_metrics.psnr_db} dB`;
+            document.getElementById('metricSsim').textContent = `${data.quality_metrics.ssim}`;
+          }
+          document.getElementById('metricLatency').textContent = `${elapsedSec}s`;
+          document.getElementById('currentFilterLabel').textContent = `Active: ${(data.pipeline_steps || []).join(' ➜ ')}`;
+
+          updateSplitUI(50);
+          setTimeout(() => { modal.classList.add('hidden'); }, 600);
+        };
+        enhancedImg.src = data.image;
+
+      } catch (err) {
+        clearInterval(aiTimerInterval);
+        console.error("Auto-enhance error:", err);
+        alert(`Auto-Enhance Notice: ${err.message || 'Worker busy. Please retry.'}`);
+        modal.classList.add('hidden');
+      }
+    }
+
+    async function runBackgroundRemove() {
+      if (!originalImageObj && !currentWorkingBase64) {
+        alert("Please choose or upload a photo first!");
+        return;
+      }
+      const modal = document.getElementById('aiProgressModal');
+      modal.classList.remove('hidden');
+      updateAIStep('stepSecurity', 'iconSecurity', 'active', '1. Salient Foreground Identification');
+      updateAIStep('stepRoute', 'iconRoute', 'pending', '2. Alpha Matting Boundary Refinement');
+      updateAIStep('stepEsrgan', 'iconEsrgan', 'pending', '3. Hair-Strand Detail Preservation');
+      updateAIStep('stepGfpgan', 'iconGfpgan', 'pending', '4. Background Deletion Pass');
+      updateAIStep('stepFinalize', 'iconFinalize', 'pending', '5. Transparent PNG Matte Output');
+
+      const maxDim = 1280;
+      const ow = originalImageObj.naturalWidth || 800;
+      const oh = originalImageObj.naturalHeight || 600;
+      let sendW = ow, sendH = oh;
+      if (ow > maxDim || oh > maxDim) {
+        if (ow > oh) { sendW = maxDim; sendH = Math.max(10, Math.round((oh * maxDim) / ow)); }
+        else { sendH = maxDim; sendW = Math.max(10, Math.round((ow * maxDim) / oh)); }
+      }
+      const c = document.createElement('canvas');
+      c.width = sendW; c.height = sendH;
+      c.getContext('2d').drawImage(originalImageObj, 0, 0, sendW, sendH);
+      const sendB64 = c.toDataURL('image/jpeg', 0.95);
+
+      try {
+        const res = await fetch('/api/ai/background-remove', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: sendB64 })
+        });
+        const data = await res.json();
+        if (!res.ok || data.status !== 'completed' || !data.image) {
+          throw new Error(data.error || 'Background removal failed');
+        }
+
+        const cutoutImg = new Image();
+        cutoutImg.crossOrigin = 'anonymous';
+        cutoutImg.onload = function() {
+          aiEnhancedImageObj = cutoutImg;
+          isAIActive = true;
+          document.getElementById('imgEnhanced').src = data.image;
+          renderLiveFilters();
+
+          document.getElementById('aiActiveBadge').classList.remove('hidden');
+          document.getElementById('aiOverlayBadge').classList.remove('hidden');
+          document.getElementById('afterTagText').textContent = 'CUTOUT';
+          document.getElementById('resBadge').textContent = `${cutoutImg.naturalWidth} x ${cutoutImg.naturalHeight}px (Transparent PNG)`;
+          document.getElementById('aiOverlayText').textContent = `BiRefNet High-Resolution Alpha Matte Cutout`;
+          document.getElementById('currentFilterLabel').textContent = `Active: Subject Isolation & Background Removal`;
+          updateSplitUI(50);
+          setTimeout(() => { modal.classList.add('hidden'); }, 600);
+        };
+        cutoutImg.src = data.image;
+      } catch (err) {
+        alert(`Background Removal Notice: ${err.message || 'Worker busy'}`);
+        modal.classList.add('hidden');
+      }
+    }
+
+    async function runMotionDeblur() {
+      if (!originalImageObj && !currentWorkingBase64) {
+        alert("Please choose or upload a photo first!");
+        return;
+      }
+      const modal = document.getElementById('aiProgressModal');
+      modal.classList.remove('hidden');
+      updateAIStep('stepSecurity', 'iconSecurity', 'active', '1. Motion Vector Estimation');
+      updateAIStep('stepRoute', 'iconRoute', 'pending', '2. NAFNet Blind Deconvolution');
+      updateAIStep('stepEsrgan', 'iconEsrgan', 'pending', '3. High-Frequency Edge Recovery');
+      updateAIStep('stepGfpgan', 'iconGfpgan', 'pending', '4. Defocus Reversal Pass');
+      updateAIStep('stepFinalize', 'iconFinalize', 'pending', '5. Deblurred Output Finalization');
+
+      const maxDim = 1280;
+      const ow = originalImageObj.naturalWidth || 800;
+      const oh = originalImageObj.naturalHeight || 600;
+      let sendW = ow, sendH = oh;
+      if (ow > maxDim || oh > maxDim) {
+        if (ow > oh) { sendW = maxDim; sendH = Math.max(10, Math.round((oh * maxDim) / ow)); }
+        else { sendH = maxDim; sendW = Math.max(10, Math.round((ow * maxDim) / oh)); }
+      }
+      const c = document.createElement('canvas');
+      c.width = sendW; c.height = sendH;
+      c.getContext('2d').drawImage(originalImageObj, 0, 0, sendW, sendH);
+      const sendB64 = c.toDataURL('image/jpeg', 0.95);
+
+      try {
+        const res = await fetch('/api/ai/deblur', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: sendB64, strength: 1.1 })
+        });
+        const data = await res.json();
+        if (!res.ok || data.status !== 'completed' || !data.image) throw new Error(data.error || 'Deblur failed');
+
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function() {
+          aiEnhancedImageObj = img;
+          isAIActive = true;
+          document.getElementById('imgEnhanced').src = data.image;
+          renderLiveFilters();
+          document.getElementById('afterTagText').textContent = 'DEBLURRED';
+          document.getElementById('aiOverlayText').textContent = `NAFNet Motion & Defocus Deblurrer`;
+          document.getElementById('currentFilterLabel').textContent = `Active: Camera Motion & Defocus Deblurring`;
+          updateSplitUI(50);
+          setTimeout(() => { modal.classList.add('hidden'); }, 600);
+        };
+        img.src = data.image;
+      } catch (err) {
+        alert(`Deblur Notice: ${err.message || 'Worker busy'}`);
+        modal.classList.add('hidden');
+      }
+    }
+
+    async function runLowLight() {
+      if (!originalImageObj && !currentWorkingBase64) {
+        alert("Please choose or upload a photo first!");
+        return;
+      }
+      const modal = document.getElementById('aiProgressModal');
+      modal.classList.remove('hidden');
+      updateAIStep('stepSecurity', 'iconSecurity', 'active', '1. Deep Shadow Illuminance Scanning');
+      updateAIStep('stepRoute', 'iconRoute', 'pending', '2. Retinex Non-Linear Tone Curve');
+      updateAIStep('stepEsrgan', 'iconEsrgan', 'pending', '3. Dynamic Range Expansion');
+      updateAIStep('stepGfpgan', 'iconGfpgan', 'pending', '4. Highlight Overexposure Shield');
+      updateAIStep('stepFinalize', 'iconFinalize', 'pending', '5. Balanced Illumination Output');
+
+      const maxDim = 1280;
+      const ow = originalImageObj.naturalWidth || 800;
+      const oh = originalImageObj.naturalHeight || 600;
+      let sendW = ow, sendH = oh;
+      if (ow > maxDim || oh > maxDim) {
+        if (ow > oh) { sendW = maxDim; sendH = Math.max(10, Math.round((oh * maxDim) / ow)); }
+        else { sendH = maxDim; sendW = Math.max(10, Math.round((ow * maxDim) / oh)); }
+      }
+      const c = document.createElement('canvas');
+      c.width = sendW; c.height = sendH;
+      c.getContext('2d').drawImage(originalImageObj, 0, 0, sendW, sendH);
+      const sendB64 = c.toDataURL('image/jpeg', 0.95);
+
+      try {
+        const res = await fetch('/api/ai/lowlight', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: sendB64, gamma: 1.35 })
+        });
+        const data = await res.json();
+        if (!res.ok || data.status !== 'completed' || !data.image) throw new Error(data.error || 'Low light failed');
+
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function() {
+          aiEnhancedImageObj = img;
+          isAIActive = true;
+          document.getElementById('imgEnhanced').src = data.image;
+          renderLiveFilters();
+          document.getElementById('afterTagText').textContent = 'ILLUMINATED';
+          document.getElementById('aiOverlayText').textContent = `Retinex Neural Low-Light Shadow Lift`;
+          document.getElementById('currentFilterLabel').textContent = `Active: Low-Light Dynamic Range Expansion`;
+          updateSplitUI(50);
+          setTimeout(() => { modal.classList.add('hidden'); }, 600);
+        };
+        img.src = data.image;
+      } catch (err) {
+        alert(`Low-Light Notice: ${err.message || 'Worker busy'}`);
+        modal.classList.add('hidden');
+      }
+    }
+
+    async function runDenoise() {
+      if (!originalImageObj && !currentWorkingBase64) {
+        alert("Please choose or upload a photo first!");
+        return;
+      }
+      const modal = document.getElementById('aiProgressModal');
+      modal.classList.remove('hidden');
+      updateAIStep('stepSecurity', 'iconSecurity', 'active', '1. High-ISO Grain Analysis');
+      updateAIStep('stepRoute', 'iconRoute', 'pending', '2. Multi-Scale Wavelet Filter');
+      updateAIStep('stepEsrgan', 'iconEsrgan', 'pending', '3. Chroma Color Cleaning');
+      updateAIStep('stepGfpgan', 'iconGfpgan', 'pending', '4. Edge Detail Preservation');
+      updateAIStep('stepFinalize', 'iconFinalize', 'pending', '5. Clean Grain-Free Output');
+
+      const maxDim = 1280;
+      const ow = originalImageObj.naturalWidth || 800;
+      const oh = originalImageObj.naturalHeight || 600;
+      let sendW = ow, sendH = oh;
+      if (ow > maxDim || oh > maxDim) {
+        if (ow > oh) { sendW = maxDim; sendH = Math.max(10, Math.round((oh * maxDim) / ow)); }
+        else { sendH = maxDim; sendW = Math.max(10, Math.round((ow * maxDim) / oh)); }
+      }
+      const c = document.createElement('canvas');
+      c.width = sendW; c.height = sendH;
+      c.getContext('2d').drawImage(originalImageObj, 0, 0, sendW, sendH);
+      const sendB64 = c.toDataURL('image/jpeg', 0.95);
+
+      try {
+        const res = await fetch('/api/ai/denoise', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: sendB64, h_luminance: 7.5 })
+        });
+        const data = await res.json();
+        if (!res.ok || data.status !== 'completed' || !data.image) throw new Error(data.error || 'Denoise failed');
+
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function() {
+          aiEnhancedImageObj = img;
+          isAIActive = true;
+          document.getElementById('imgEnhanced').src = data.image;
+          renderLiveFilters();
+          document.getElementById('afterTagText').textContent = 'DENOISED';
+          document.getElementById('aiOverlayText').textContent = `Multi-Scale Wavelet & NLM Denoiser`;
+          document.getElementById('currentFilterLabel').textContent = `Active: High-ISO Sensor Denoising`;
+          updateSplitUI(50);
+          setTimeout(() => { modal.classList.add('hidden'); }, 600);
+        };
+        img.src = data.image;
+      } catch (err) {
+        alert(`Denoise Notice: ${err.message || 'Worker busy'}`);
+        modal.classList.add('hidden');
+      }
+    }
+
+    async function runQualityAnalyze() {
+      if (!originalImageObj && !currentWorkingBase64) {
+        alert("Please choose or upload a photo first!");
+        return;
+      }
+      const maxDim = 800;
+      const ow = originalImageObj.naturalWidth || 800;
+      const oh = originalImageObj.naturalHeight || 600;
+      let sendW = ow, sendH = oh;
+      if (ow > maxDim || oh > maxDim) {
+        if (ow > oh) { sendW = maxDim; sendH = Math.max(10, Math.round((oh * maxDim) / ow)); }
+        else { sendH = maxDim; sendW = Math.max(10, Math.round((ow * maxDim) / oh)); }
+      }
+      const c = document.createElement('canvas');
+      c.width = sendW; c.height = sendH;
+      c.getContext('2d').drawImage(originalImageObj, 0, 0, sendW, sendH);
+      const sendB64 = c.toDataURL('image/jpeg', 0.90);
+
+      try {
+        const res = await fetch('/api/ai/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: sendB64 })
+        });
+        const data = await res.json();
+        if (!res.ok || data.status !== 'completed') throw new Error(data.error || 'Analysis failed');
+
+        const a = data.analysis;
+        const problems = (a.detected_problems && a.detected_problems.length > 0) ? a.detected_problems.join(', ') : 'None (High Quality Input)';
+        alert(`📊 AI Image Quality Diagnostics:
+• Resolution: ${a.resolution}
+• Blur Score: ${a.blur_score} (${a.is_blurry ? 'Blurry' : 'Sharp'})
+• Mean Brightness: ${a.mean_brightness} (${a.is_low_light ? 'Low-Light Shadowed' : 'Balanced Exposure'})
+• Sensor Noise: ${a.noise_score} (${a.is_noisy ? 'High Grain Detected' : 'Clean Sensor'})
+• Monochrome: ${a.is_monochrome ? 'Yes (Black & White)' : 'No (Full Color)'}
+• Faces Detected: ${a.face_count}
+• Detected Defect Flags: ${problems}`);
+      } catch (err) {
+        alert(`Analysis Notice: ${err.message || 'Failed to inspect image'}`);
       }
     }
 
