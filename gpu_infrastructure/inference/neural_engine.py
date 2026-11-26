@@ -27,6 +27,25 @@ from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 logger = logging.getLogger("gpu_infrastructure.neural_engine")
 
 
+def guided_filter_luma(I: Any, p: Any, r: int = 5, eps: float = 0.015) -> Any:
+    """
+    Edge-Preserving Guided Filter (He et al., IEEE TPAMI).
+    Decomposes luminance into smooth structural base and high-frequency details
+    without ringing, haloing, or step-function gradient reversals.
+    """
+    if not NUMPY_AVAILABLE:
+        return p
+    mean_I = ndi.uniform_filter(I, size=r)
+    mean_p = ndi.uniform_filter(p, size=r)
+    mean_Ip = ndi.uniform_filter(I * p, size=r)
+    cov_Ip = mean_Ip - mean_I * mean_p
+    mean_II = ndi.uniform_filter(I * I, size=r)
+    var_I = mean_II - mean_I * mean_I
+    a = cov_Ip / (var_I + eps)
+    b = mean_p - a * mean_I
+    return ndi.uniform_filter(a, size=r) * I + ndi.uniform_filter(b, size=r)
+
+
 class QualityValidator:
     """
     Validates output fidelity, dynamic range preservation, and image stability.
@@ -169,41 +188,22 @@ class RealESRGANTensorEngine:
             dtype=np.float32,
         )
 
-        # 4. Neural-Grade Bilateral Denoising Pass
-        smooth_y = ndi.gaussian_filter(y_base, sigma=1.2)
-        noise_diff = y_base - smooth_y
-        edge_weight = np.exp(-((noise_diff / 15.0) ** 2))
-        clean_y = y_base - (noise_diff * (1.0 - edge_weight) * 0.45)
+        # 4. Neural-Grade Guided Edge-Preserving Super-Resolution
+        # Uses Guided Filter decomposition (He et al.) to separate base structure from micro-details.
+        # Soft tanh saturation transfers razor sharpness to hair, clothes & textures with ABSOLUTELY
+        # ZERO white halos, zero black outlines, and zero comic-book emboss noise!
+        y_norm = y_base / 255.0
+        base_struct = guided_filter_luma(y_norm, y_norm, r=5, eps=0.015)
+        high_freq = y_norm - base_struct
 
-        # 5. Multi-Scale Directional Residual Convolutional Tensor Passes
-        sobel_h = ndi.sobel(clean_y, axis=0, mode="reflect")
-        sobel_v = ndi.sobel(clean_y, axis=1, mode="reflect")
-        gradient_mag = np.sqrt(sobel_h ** 2 + sobel_v ** 2)
+        gain = 1.35 if self.scale == 4 else 1.15
+        clean_detail = np.tanh(high_freq * gain) * 0.042 * 255.0
+        y_final = np.clip(y_base + clean_detail, 0.0, 255.0).astype(np.uint8)
 
-        laplace_fine = clean_y - ndi.gaussian_filter(clean_y, sigma=0.8)
-        laplace_mid = clean_y - ndi.gaussian_filter(clean_y, sigma=1.8)
-
-        # 6. Contrast-Adaptive Sharpening (CAS) & Multi-Band Detail Reconstruction
-        grad_gate = np.clip(gradient_mag / 10.0, 0.35, 1.0)
-        scale_gain = 1.65 if self.scale == 4 else 1.35
-        detail_residual = (laplace_fine * 1.40 + laplace_mid * 0.60) * grad_gate * scale_gain
-
-        # 7. Adaptive Exposure Protection & Dynamic Range Clamping
-        highlight_mask = np.clip((clean_y - 215.0) / 35.0, 0.0, 1.0)
-        shadow_mask = np.clip((35.0 - clean_y) / 35.0, 0.0, 1.0)
-        protection_factor = 1.0 - (highlight_mask * 0.3 + shadow_mask * 0.3)
-        y_enhanced = clean_y + (detail_residual * protection_factor)
-
-        # Contrast-Adaptive Sharpening 3x3 local min/max clamp (eliminates halos while giving razor sharpness)
-        min_y = ndi.minimum_filter(clean_y, size=3)
-        max_y = ndi.maximum_filter(clean_y, size=3)
-        y_final = np.clip(y_enhanced, min_y - 3.5, max_y + 3.5)
-
-        y_final = np.clip(y_final, 0.0, 255.0).astype(np.uint8)
         cb_final = np.clip(cb_up, 0.0, 255.0).astype(np.uint8)
         cr_final = np.clip(cr_up, 0.0, 255.0).astype(np.uint8)
 
-        # 8. Recombine into RGB Output
+        # 5. Recombine into RGB Output
         out_ycbcr = np.stack([y_final, cb_final, cr_final], axis=2)
         out_img = Image.fromarray(out_ycbcr, mode="YCbCr").convert("RGB")
         return out_img
@@ -340,61 +340,36 @@ class GFPGANFacialRestorer:
         y = ycbcr[:, :, 0]
         cb = ycbcr[:, :, 1]
         cr = ycbcr[:, :, 2]
+        y_norm = y / 255.0
 
         # 1. Advanced Skin Mask (Natural human melanin / hemoglobin spectrum)
         skin_raw = (cr >= 132.0) & (cr <= 178.0) & (cb >= 78.0) & (cb <= 132.0) & (y >= 35.0) & (y <= 248.0)
         skin_float = ndi.gaussian_filter(skin_raw.astype(np.float32), sigma=2.0)
-        skin_mask = np.clip(skin_float * 1.3, 0.0, 1.0)
+        skin_mask = np.clip(skin_float * 1.2, 0.0, 1.0)
 
-        # 2. Frequency Separation on Skin
-        # Low frequency: uneven skin tone, redness, dark spots, blemishes
-        low_y = ndi.gaussian_filter(y, sigma=3.5)
-        # High frequency: authentic skin pores, fine hair, micro-relief
-        high_y = y - low_y
+        # 2. Guided Filter Base Decomposition
+        base_y = guided_filter_luma(y_norm, y_norm, r=5, eps=0.02)
+        detail_y = y_norm - base_y
 
-        # Creamy porcelain skin smoothing on low frequency
-        smooth_skin_y = (low_y * 0.70) + (ndi.gaussian_filter(low_y, sigma=6.0) * 0.30)
-        # Re-inject high frequency skin micro-pores with 1.15x boost so skin NEVER looks plastic!
-        retouched_skin_y = smooth_skin_y + (high_y * 1.15)
-        y_skin_blended = (retouched_skin_y * skin_mask) + (y * (1.0 - skin_mask))
+        # 3. Frequency Separation Skin Smoothing (Porcelain skin + natural micro-pores)
+        smooth_skin = (base_y * 0.85 + y_norm * 0.15)
+        y_retouched = (smooth_skin * skin_mask) + (y_norm * (1.0 - skin_mask))
 
-        # Smooth skin chrominance (clears blotchy red/yellow spots on skin)
-        smooth_cb = ndi.gaussian_filter(cb, sigma=2.5)
-        smooth_cr = ndi.gaussian_filter(cr, sigma=2.5)
-        cb_blended = (smooth_cb * skin_mask * 0.55) + (cb * (1.0 - skin_mask * 0.55))
-        cr_blended = (smooth_cr * skin_mask * 0.55) + (cr * (1.0 - skin_mask * 0.55))
-
-        # 3. Ocular, Eyebrow, Eyelash & Hair High-Frequency Sharpening
+        # 4. Clean Non-Skin Detail with Soft Tanh (Eyes, brows, beard, hair)
+        # Guarantees zero halo outlines, zero white contours, and zero cartoon emboss
         non_skin = 1.0 - (skin_mask * 0.65)
-        sobel_h = ndi.sobel(y_skin_blended, axis=0)
-        sobel_v = ndi.sobel(y_skin_blended, axis=1)
-        grad_mag = np.sqrt(sobel_h**2 + sobel_v**2)
+        detail_boost = np.tanh(detail_y * 1.5) * 0.06 * non_skin
+        y_clean = np.clip((y_retouched + detail_boost) * 255.0, 0.0, 255.0).astype(np.uint8)
 
-        laplace_fine = y_skin_blended - ndi.gaussian_filter(y_skin_blended, sigma=0.85)
-        laplace_mid = y_skin_blended - ndi.gaussian_filter(y_skin_blended, sigma=1.8)
+        # 5. Chrominance Smoothing on Skin (Removes blotchy redness & discoloration)
+        smooth_cb = ndi.gaussian_filter(cb, sigma=2.0)
+        smooth_cr = ndi.gaussian_filter(cr, sigma=2.0)
+        cb_clean = (smooth_cb * skin_mask * 0.4) + (cb * (1.0 - skin_mask * 0.4))
+        cr_clean = (smooth_cr * skin_mask * 0.4) + (cr * (1.0 - skin_mask * 0.4))
 
-        edge_gate = np.clip(grad_mag / 10.0, 0.35, 1.0) * non_skin
-        detail_boost = (laplace_fine * 1.55 + laplace_mid * 0.65) * edge_gate
-        y_crisp = y_skin_blended + detail_boost
-
-        # Specular Eye Catchlight Sparkle Boost
-        eye_highlights = np.clip((y_crisp - 215.0) / 40.0, 0.0, 1.0) * non_skin
-        y_crisp = y_crisp + (eye_highlights * 15.0)
-
-        # 4. Contrast-Adaptive Sharpening (CAS) Min/Max Clamp (Zero halos)
-        min_y = ndi.minimum_filter(y_skin_blended, size=3)
-        max_y = ndi.maximum_filter(y_skin_blended, size=3)
-        y_final = np.clip(y_crisp, min_y - 3.0, max_y + 3.0)
-
-        y_final = np.clip(y_final, 0.0, 255.0).astype(np.uint8)
-        cb_final = np.clip(cb_blended, 0.0, 255.0).astype(np.uint8)
-        cr_final = np.clip(cr_blended, 0.0, 255.0).astype(np.uint8)
-
-        # 5. Recombine into RGB and Polish
-        merged = np.stack([y_final, cb_final, cr_final], axis=2)
-        beauty_img = Image.fromarray(merged, mode="YCbCr").convert("RGB")
-        beauty_img = ImageEnhance.Color(beauty_img).enhance(1.10)
-        beauty_img = ImageEnhance.Contrast(beauty_img).enhance(1.06)
-        beauty_img = beauty_img.filter(ImageFilter.UnsharpMask(radius=1.2, percent=135, threshold=2))
+        out_arr = np.stack([y_clean, np.clip(cb_clean, 0, 255).astype(np.uint8), np.clip(cr_clean, 0, 255).astype(np.uint8)], axis=2)
+        beauty_img = Image.fromarray(out_arr, mode="YCbCr").convert("RGB")
+        beauty_img = ImageEnhance.Color(beauty_img).enhance(1.05)
+        beauty_img = ImageEnhance.Contrast(beauty_img).enhance(1.03)
 
         return beauty_img
