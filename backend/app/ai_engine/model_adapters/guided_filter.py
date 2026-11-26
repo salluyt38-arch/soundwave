@@ -34,7 +34,7 @@ def guided_filter_luma(I: np.ndarray, p: np.ndarray, r: int = 5, eps: float = 0.
     return q
 
 
-def soft_tanh_detail_boost(high_freq: np.ndarray, gain: float = 1.35, ceiling: float = 0.045) -> np.ndarray:
+def soft_tanh_detail_boost(high_freq: np.ndarray, gain: float = 1.85, ceiling: float = 0.12) -> np.ndarray:
     """
     Soft saturating hyperbolic tangent detail transfer.
     Smoothly sharpens high frequencies while mathematically clamping overshoots,

@@ -291,6 +291,7 @@
             
             <!-- Enhanced Image (Top Layer clipped dynamically) -->
             <div class="compare-overlay" id="compareOverlay" style="clip-path: inset(0 0 0 50%);">
+              <img id="bokehBackgroundLayer" class="compare-img hidden absolute inset-0 pointer-events-none" alt="Bokeh Background" src="">
               <img id="imgEnhanced" class="compare-img" alt="Enhanced Photo" src="">
             </div>
 
@@ -449,6 +450,115 @@
             </p>
           </div>
 
+        </div>
+
+        <!-- CARD: STUDIO PRESETS & BACKGROUND BOKEH CONTROLLER -->
+        <div class="studio-panel rounded-2xl p-4 space-y-3.5">
+          <div class="flex items-center justify-between pb-2.5 border-b border-white/10">
+            <div class="flex items-center gap-2">
+              <span class="text-base">🎨</span>
+              <h3 class="text-xs font-black uppercase tracking-wider text-amber-300">Background & Studio Presets</h3>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">60 FPS LIVE</span>
+          </div>
+
+          <!-- DSLR Background Bokeh Blur Slider -->
+          <div class="p-3 rounded-xl bg-slate-900/80 border border-white/10 space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                <span>📸 DSLR Background Bokeh Blur</span>
+              </label>
+              <span id="bokehValText" class="text-xs font-mono font-bold text-sky-400">0px</span>
+            </div>
+            <input type="range" id="sliderBokehBlur" min="0" max="25" value="0" step="1" oninput="setBokehBlur(this.value)" class="w-full accent-sky-400 cursor-pointer">
+            <div class="flex justify-between text-[10px] text-slate-400">
+              <span>Sharp Background (0px)</span>
+              <span>Creamy Portrait Blur (25px)</span>
+            </div>
+          </div>
+
+          <!-- 1-Tap Style Presets Grid -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Select Style Preset</label>
+              <span class="text-[10px] text-purple-300 font-mono" id="activePresetBadge">Remini Ultra HD</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              
+              <!-- Preset 1: Remini Ultra HD -->
+              <button onclick="applyPreset('remini_hd')" id="preset_remini_hd" class="preset-card p-2.5 rounded-xl border border-purple-500/80 bg-purple-500/20 text-left transition hover:border-purple-400 flex items-center gap-2">
+                <span class="text-lg">🌟</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">Remini Ultra HD</div>
+                  <div class="text-[9px] text-purple-300">Max Sharpness & Pop</div>
+                </div>
+              </button>
+
+              <!-- Preset 2: DSLR Portrait Bokeh -->
+              <button onclick="applyPreset('portrait_bokeh')" id="preset_portrait_bokeh" class="preset-card p-2.5 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-sky-400 flex items-center gap-2">
+                <span class="text-lg">📸</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">DSLR Portrait</div>
+                  <div class="text-[9px] text-sky-300">Creamy Depth Blur</div>
+                </div>
+              </button>
+
+              <!-- Preset 3: Cinematic Teal & Orange -->
+              <button onclick="applyPreset('teal_orange')" id="preset_teal_orange" class="preset-card p-2.5 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-amber-400 flex items-center gap-2">
+                <span class="text-lg">🎬</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">Teal & Orange</div>
+                  <div class="text-[9px] text-amber-300">Hollywood Blockbuster</div>
+                </div>
+              </button>
+
+              <!-- Preset 4: Golden Hour Sunset -->
+              <button onclick="applyPreset('golden_hour')" id="preset_golden_hour" class="preset-card p-2.5 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-amber-400 flex items-center gap-2">
+                <span class="text-lg">🌅</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">Golden Hour</div>
+                  <div class="text-[9px] text-amber-300">Warm Sunlit Glow</div>
+                </div>
+              </button>
+
+              <!-- Preset 5: Moody Royal Dark -->
+              <button onclick="applyPreset('moody_dark')" id="preset_moody_dark" class="preset-card p-2.5 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-indigo-400 flex items-center gap-2">
+                <span class="text-lg">🖤</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">Moody Royal</div>
+                  <div class="text-[9px] text-indigo-300">Dramatic Deep Shadows</div>
+                </div>
+              </button>
+
+              <!-- Preset 6: Adobe Dehaze & Vivid -->
+              <button onclick="applyPreset('dehaze_vivid')" id="preset_dehaze_vivid" class="preset-card p-2.5 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-emerald-400 flex items-center gap-2">
+                <span class="text-lg">🎨</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">Dehaze & Vivid</div>
+                  <div class="text-[9px] text-emerald-300">Punchy Dynamic Range</div>
+                </div>
+              </button>
+
+              <!-- Preset 7: B&W Fine Art Film -->
+              <button onclick="applyPreset('bw_film')" id="preset_bw_film" class="preset-card p-2.5 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-slate-400 flex items-center gap-2">
+                <span class="text-lg">🏛️</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">B&W Master</div>
+                  <div class="text-[9px] text-slate-300">Silver Gelatin Contrast</div>
+                </div>
+              </button>
+
+              <!-- Preset 8: Reset to Pure AI -->
+              <button onclick="applyPreset('pure_ai')" id="preset_pure_ai" class="preset-card p-2.5 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-slate-400 flex items-center gap-2">
+                <span class="text-lg">🔄</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">Pure Natural</div>
+                  <div class="text-[9px] text-slate-400">Zero Added Grade</div>
+                </div>
+              </button>
+
+            </div>
+          </div>
         </div>
 
         <!-- CARD 2: LIVE TELEMETRY & QUALITY METRICS -->
@@ -636,11 +746,14 @@
         document.getElementById('emptyDropzone').classList.add('hidden');
         document.getElementById('imgOriginal').src = src;
         document.getElementById('imgEnhanced').src = src;
+        const bLayer = document.getElementById('bokehBackgroundLayer');
+        if (bLayer) bLayer.src = src;
         document.getElementById('aiActiveBadge').classList.add('hidden');
         document.getElementById('aiOverlayBadge').classList.add('hidden');
         document.getElementById('afterTagText').textContent = 'READY';
         document.getElementById('resBadge').textContent = `${img.naturalWidth} x ${img.naturalHeight}px (Original Input)`;
         updateSplitUI(50);
+        renderLiveFilters();
       };
       img.src = src;
     }
@@ -787,6 +900,9 @@
 
           // Directly assign pure AI image into enhanced viewport (Zero Canvas Downsampling!)
           document.getElementById('imgEnhanced').src = data.image;
+          const bLayer = document.getElementById('bokehBackgroundLayer');
+          if (bLayer) bLayer.src = data.image;
+          renderLiveFilters();
 
           // Update UI badges
           document.getElementById('aiActiveBadge').classList.remove('hidden');
@@ -885,23 +1001,187 @@
     fetchGPUClusterTelemetry();
     setInterval(fetchGPUClusterTelemetry, 15000);
 
+    // =============================================================
+    // STUDIO PRESETS & BACKGROUND BOKEH PIPELINE
+    // =============================================================
+    let currentPreset = 'remini_hd';
+    let liveFilterParams = {
+      bokehBlur: 0,
+      filterCss: 'contrast(1.08) saturate(1.12)'
+    };
+
+    function setBokehBlur(val) {
+      liveFilterParams.bokehBlur = parseInt(val) || 0;
+      const text = document.getElementById('bokehValText');
+      if (text) text.textContent = `${liveFilterParams.bokehBlur}px`;
+      renderLiveFilters();
+    }
+
+    function applyPreset(name) {
+      currentPreset = name;
+      document.querySelectorAll('.preset-card').forEach(el => {
+        el.classList.remove('border-purple-400', 'bg-purple-500/20', 'border-sky-400', 'bg-sky-500/20');
+        el.classList.add('border-white/10', 'bg-slate-900/60');
+      });
+
+      const card = document.getElementById(`preset_${name}`);
+      const badge = document.getElementById('activePresetBadge');
+
+      if (name === 'remini_hd') {
+        liveFilterParams = {
+          bokehBlur: 0,
+          filterCss: 'contrast(1.08) saturate(1.12)'
+        };
+        if (card) { card.classList.remove('border-white/10', 'bg-slate-900/60'); card.classList.add('border-purple-400', 'bg-purple-500/20'); }
+        if (badge) badge.textContent = 'Remini Ultra HD';
+      } else if (name === 'portrait_bokeh') {
+        liveFilterParams = {
+          bokehBlur: 10,
+          filterCss: 'contrast(1.06) saturate(1.10)'
+        };
+        if (card) { card.classList.remove('border-white/10', 'bg-slate-900/60'); card.classList.add('border-sky-400', 'bg-sky-500/20'); }
+        if (badge) badge.textContent = 'DSLR Portrait Bokeh';
+      } else if (name === 'teal_orange') {
+        liveFilterParams = {
+          bokehBlur: 0,
+          filterCss: 'contrast(1.14) saturate(1.22) hue-rotate(-6deg) brightness(0.98)'
+        };
+        if (card) { card.classList.remove('border-white/10', 'bg-slate-900/60'); card.classList.add('border-purple-400', 'bg-purple-500/20'); }
+        if (badge) badge.textContent = 'Teal & Orange';
+      } else if (name === 'golden_hour') {
+        liveFilterParams = {
+          bokehBlur: 0,
+          filterCss: 'contrast(1.10) saturate(1.25) sepia(0.18)'
+        };
+        if (card) { card.classList.remove('border-white/10', 'bg-slate-900/60'); card.classList.add('border-purple-400', 'bg-purple-500/20'); }
+        if (badge) badge.textContent = 'Golden Hour';
+      } else if (name === 'moody_dark') {
+        liveFilterParams = {
+          bokehBlur: 0,
+          filterCss: 'contrast(1.22) brightness(0.94) saturate(1.06)'
+        };
+        if (card) { card.classList.remove('border-white/10', 'bg-slate-900/60'); card.classList.add('border-purple-400', 'bg-purple-500/20'); }
+        if (badge) badge.textContent = 'Moody Royal';
+      } else if (name === 'dehaze_vivid') {
+        liveFilterParams = {
+          bokehBlur: 0,
+          filterCss: 'contrast(1.16) saturate(1.30)'
+        };
+        if (card) { card.classList.remove('border-white/10', 'bg-slate-900/60'); card.classList.add('border-purple-400', 'bg-purple-500/20'); }
+        if (badge) badge.textContent = 'Dehaze & Vivid';
+      } else if (name === 'bw_film') {
+        liveFilterParams = {
+          bokehBlur: 0,
+          filterCss: 'grayscale(1) contrast(1.32) brightness(1.02)'
+        };
+        if (card) { card.classList.remove('border-white/10', 'bg-slate-900/60'); card.classList.add('border-purple-400', 'bg-purple-500/20'); }
+        if (badge) badge.textContent = 'B&W Master';
+      } else {
+        liveFilterParams = {
+          bokehBlur: 0,
+          filterCss: 'none'
+        };
+        if (card) { card.classList.remove('border-white/10', 'bg-slate-900/60'); card.classList.add('border-purple-400', 'bg-purple-500/20'); }
+        if (badge) badge.textContent = 'Pure Natural AI';
+      }
+
+      // Update slider
+      const slider = document.getElementById('sliderBokehBlur');
+      if (slider) slider.value = liveFilterParams.bokehBlur;
+      const text = document.getElementById('bokehValText');
+      if (text) text.textContent = `${liveFilterParams.bokehBlur}px`;
+
+      renderLiveFilters();
+    }
+
+    function renderLiveFilters() {
+      const enhancedImg = document.getElementById('imgEnhanced');
+      const bokehLayer = document.getElementById('bokehBackgroundLayer');
+      if (!enhancedImg) return;
+
+      const cssFilter = liveFilterParams.filterCss && liveFilterParams.filterCss !== 'none' ? liveFilterParams.filterCss : '';
+      enhancedImg.style.filter = cssFilter;
+
+      const bokeh = liveFilterParams.bokehBlur || 0;
+      if (bokehLayer) {
+        if (bokeh > 0) {
+          bokehLayer.classList.remove('hidden');
+          bokehLayer.style.display = 'block';
+          bokehLayer.style.filter = `blur(${bokeh}px) ${cssFilter}`;
+          // Smooth portrait radial mask: center is 100% opaque, fades to transparent at edges
+          enhancedImg.style.maskImage = 'radial-gradient(ellipse 52% 62% at 50% 48%, black 65%, transparent 100%)';
+          enhancedImg.style.webkitMaskImage = 'radial-gradient(ellipse 52% 62% at 50% 48%, black 65%, transparent 100%)';
+        } else {
+          bokehLayer.classList.add('hidden');
+          bokehLayer.style.display = 'none';
+          enhancedImg.style.maskImage = 'none';
+          enhancedImg.style.webkitMaskImage = 'none';
+        }
+      }
+    }
+
     // Export & Download
     function downloadImage(format) {
-      if (!originalImageObj && !aiEnhancedImageObj) {
+      const activeImg = aiEnhancedImageObj || originalImageObj;
+      if (!activeImg || !activeImg.src) {
         alert("Please upload or choose a photo first!");
         return;
       }
       const ext = format === 'png' ? 'png' : 'jpg';
       const a = document.createElement('a');
 
-      // Always download the full-resolution AI master image directly!
-      if (aiEnhancedImageObj && aiEnhancedImageObj.src) {
+      const bokeh = liveFilterParams.bokehBlur || 0;
+      const hasFilter = liveFilterParams.filterCss && liveFilterParams.filterCss !== 'none';
+
+      // If no custom filters or bokeh blur are active, download directly
+      if (bokeh === 0 && !hasFilter && aiEnhancedImageObj && aiEnhancedImageObj.src) {
         a.href = aiEnhancedImageObj.src;
         a.download = `Adobe_Studio_Sallu_DeepAI_${Date.now()}.${ext}`;
-      } else if (originalImageObj && originalImageObj.src) {
-        a.href = originalImageObj.src;
-        a.download = `Adobe_Studio_Sallu_Original_${Date.now()}.${ext}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        return;
       }
+
+      // Bake filters and bokeh blur onto high-resolution canvas
+      const w = activeImg.naturalWidth;
+      const h = activeImg.naturalHeight;
+      const c = document.createElement('canvas');
+      c.width = w;
+      c.height = h;
+      const ctx = c.getContext('2d');
+
+      if (bokeh > 0) {
+        // 1. Draw blurred background layer
+        ctx.save();
+        ctx.filter = `blur(${bokeh * 2}px) ${hasFilter ? liveFilterParams.filterCss : ''}`;
+        ctx.drawImage(activeImg, 0, 0, w, h);
+        ctx.restore();
+
+        // 2. Draw sharp foreground with radial gradient mask
+        const fgCanvas = document.createElement('canvas');
+        fgCanvas.width = w;
+        fgCanvas.height = h;
+        const fgCtx = fgCanvas.getContext('2d');
+        if (hasFilter) fgCtx.filter = liveFilterParams.filterCss;
+        fgCtx.drawImage(activeImg, 0, 0, w, h);
+
+        fgCtx.globalCompositeOperation = 'destination-in';
+        const grad = fgCtx.createRadialGradient(w * 0.50, h * 0.48, Math.min(w, h) * 0.25, w * 0.50, h * 0.48, Math.min(w, h) * 0.60);
+        grad.addColorStop(0, 'rgba(0,0,0,1)');
+        grad.addColorStop(0.70, 'rgba(0,0,0,1)');
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        fgCtx.fillStyle = grad;
+        fgCtx.fillRect(0, 0, w, h);
+
+        ctx.drawImage(fgCanvas, 0, 0);
+      } else {
+        if (hasFilter) ctx.filter = liveFilterParams.filterCss;
+        ctx.drawImage(activeImg, 0, 0, w, h);
+      }
+
+      a.href = c.toDataURL(format === 'png' ? 'image/png' : 'image/jpeg', 0.96);
+      a.download = `Adobe_Studio_Sallu_Enhanced_${Date.now()}.${ext}`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

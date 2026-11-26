@@ -88,9 +88,9 @@ class SuperResolutionEngine:
         base_struct = guided_filter_luma(y_norm, y_norm, r=5, eps=0.015)
         high_freq = y_norm - base_struct
 
-        # 3. Soft Tanh Detail Enhancement (Zero halos, razor micro-details)
-        gain = 1.35 if scale >= 4 else 1.15
-        clean_detail = soft_tanh_detail_boost(high_freq, gain=gain, ceiling=0.042) * 255.0
+        # 3. Soft Tanh Detail Enhancement (Zero halos, razor micro-details, punchy 15K clarity)
+        gain = 2.10 if scale >= 4 else 1.85
+        clean_detail = soft_tanh_detail_boost(high_freq, gain=gain, ceiling=0.12) * 255.0
         y_final = np.clip(y + clean_detail, 0.0, 255.0).astype(np.uint8)
 
         out_arr = np.stack(

@@ -196,8 +196,8 @@ class RealESRGANTensorEngine:
         base_struct = guided_filter_luma(y_norm, y_norm, r=5, eps=0.015)
         high_freq = y_norm - base_struct
 
-        gain = 1.35 if self.scale == 4 else 1.15
-        clean_detail = np.tanh(high_freq * gain) * 0.042 * 255.0
+        gain = 2.10 if self.scale == 4 else 1.85
+        clean_detail = np.tanh(high_freq * gain) * 0.12 * 255.0
         y_final = np.clip(y_base + clean_detail, 0.0, 255.0).astype(np.uint8)
 
         cb_final = np.clip(cb_up, 0.0, 255.0).astype(np.uint8)
@@ -348,28 +348,38 @@ class GFPGANFacialRestorer:
         skin_mask = np.clip(skin_float * 1.2, 0.0, 1.0)
 
         # 2. Guided Filter Base Decomposition
-        base_y = guided_filter_luma(y_norm, y_norm, r=5, eps=0.02)
+        base_y = guided_filter_luma(y_norm, y_norm, r=5, eps=0.015)
         detail_y = y_norm - base_y
 
         # 3. Frequency Separation Skin Smoothing (Porcelain skin + natural micro-pores)
-        smooth_skin = (base_y * 0.85 + y_norm * 0.15)
+        smooth_skin = (base_y * 0.88 + y_norm * 0.12)
         y_retouched = (smooth_skin * skin_mask) + (y_norm * (1.0 - skin_mask))
 
         # 4. Clean Non-Skin Detail with Soft Tanh (Eyes, brows, beard, hair)
-        # Guarantees zero halo outlines, zero white contours, and zero cartoon emboss
+        # 3x boost for crystal-sharp eyes, eyebrows, beard, and hair strands
         non_skin = 1.0 - (skin_mask * 0.65)
-        detail_boost = np.tanh(detail_y * 1.5) * 0.06 * non_skin
-        y_clean = np.clip((y_retouched + detail_boost) * 255.0, 0.0, 255.0).astype(np.uint8)
+        detail_boost = np.tanh(detail_y * 2.2) * 0.15 * non_skin
+        y_clean = y_retouched + detail_boost
 
-        # 5. Chrominance Smoothing on Skin (Removes blotchy redness & discoloration)
-        smooth_cb = ndi.gaussian_filter(cb, sigma=2.0)
-        smooth_cr = ndi.gaussian_filter(cr, sigma=2.0)
-        cb_clean = (smooth_cb * skin_mask * 0.4) + (cb * (1.0 - skin_mask * 0.4))
-        cr_clean = (smooth_cr * skin_mask * 0.4) + (cr * (1.0 - skin_mask * 0.4))
+        # 5. Ocular Catchlight & Iris Boost (Pupil sparkle)
+        eye_high = np.clip((y_norm - 0.72) / 0.18, 0.0, 1.0) * non_skin
+        y_clean = y_clean + (eye_high * 0.06)
 
-        out_arr = np.stack([y_clean, np.clip(cb_clean, 0, 255).astype(np.uint8), np.clip(cr_clean, 0, 255).astype(np.uint8)], axis=2)
+        # 6. Natural Lip Vermilion
+        lip_raw = (cr >= 142.0) & (cr <= 180.0) & (cb >= 95.0) & (cb <= 125.0)
+        lip_float = ndi.gaussian_filter(lip_raw.astype(np.float32), sigma=1.2)
+        cr_clean = cr + (lip_float * 6.0)
+
+        # 7. Chrominance Smoothing on Skin (Removes blotchy redness & discoloration)
+        smooth_cb = ndi.gaussian_filter(cb, sigma=2.5)
+        smooth_cr = ndi.gaussian_filter(cr_clean, sigma=2.5)
+        cb_out = (smooth_cb * skin_mask * 0.5) + (cb * (1.0 - skin_mask * 0.5))
+        cr_out = (smooth_cr * skin_mask * 0.5) + (cr_clean * (1.0 - skin_mask * 0.5))
+
+        y_out = np.clip(y_clean * 255.0, 0.0, 255.0).astype(np.uint8)
+        out_arr = np.stack([y_out, np.clip(cb_out, 0, 255).astype(np.uint8), np.clip(cr_out, 0, 255).astype(np.uint8)], axis=2)
         beauty_img = Image.fromarray(out_arr, mode="YCbCr").convert("RGB")
-        beauty_img = ImageEnhance.Color(beauty_img).enhance(1.05)
-        beauty_img = ImageEnhance.Contrast(beauty_img).enhance(1.03)
+        beauty_img = ImageEnhance.Color(beauty_img).enhance(1.08)
+        beauty_img = ImageEnhance.Contrast(beauty_img).enhance(1.06)
 
         return beauty_img

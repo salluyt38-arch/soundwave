@@ -122,13 +122,13 @@ class FaceRestorationEngine:
 
         # 4. Clean Non-Skin Detail with Soft Tanh (Eyes, brows, beard, lips)
         non_skin = 1.0 - (skin_mask * 0.65)
-        detail_boost = soft_tanh_detail_boost(detail_y, gain=1.5, ceiling=0.06) * non_skin
+        detail_boost = soft_tanh_detail_boost(detail_y, gain=2.2, ceiling=0.15) * non_skin
         y_clean = y_retouched + detail_boost
 
         # 5. Ocular Catchlight Sparkle (Natural pupil highlights)
         if eye_enhancement:
-            eye_highlights = np.clip((y_clean - 0.80) / 0.15, 0.0, 1.0) * non_skin
-            y_clean = y_clean + (eye_highlights * 0.04)
+            eye_highlights = np.clip((y_clean - 0.72) / 0.18, 0.0, 1.0) * non_skin
+            y_clean = y_clean + (eye_highlights * 0.06)
 
         # 6. Lip Vermilion Natural Rose Polish
         if lip_enhancement:
