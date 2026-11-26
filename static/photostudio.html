@@ -147,11 +147,7 @@
           <span>Services</span>
         </a>
 
-        <!-- 1-Click Switch to APEX AI Photo Enhancer Pro -->
-        <a href="/apex.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black text-xs shadow-md shadow-cyan-500/20 hover:scale-105 transition" title="Open Next-Gen APEX AI Photo Studio">
-          <span>▲ APEX AI PRO</span>
-          <span class="text-[9px] bg-black/40 px-1.5 py-0.5 rounded text-cyan-200">NEW</span>
-        </a>
+
 
         <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-500 via-purple-600 to-pink-500 p-0.5 shadow-lg flex items-center justify-center shadow-purple-500/25">
           <div class="w-full h-full bg-[#0d131f] rounded-[14px] flex items-center justify-center text-xl">
@@ -558,6 +554,27 @@
                 </div>
               </button>
 
+            </div>
+          </div>
+
+          <!-- ADVANCED AI NEURAL TOOLS (MERGED DIRECTLY INTO ADOBE STUDIO) -->
+          <div class="pt-2.5 border-t border-white/10 space-y-1.5">
+            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Advanced AI Neural Tools</label>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <button onclick="runOldPhotoRestore()" class="p-2.5 rounded-xl border border-white/10 bg-slate-900/70 hover:bg-slate-800 hover:border-amber-400/50 text-left transition flex items-center gap-2">
+                <span class="text-base">🏛️</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">Old Photo Restore</div>
+                  <div class="text-[9px] text-slate-400">Scratches & Tears</div>
+                </div>
+              </button>
+              <button onclick="runColorize()" class="p-2.5 rounded-xl border border-white/10 bg-slate-900/70 hover:bg-slate-800 hover:border-pink-400/50 text-left transition flex items-center gap-2">
+                <span class="text-base">🎨</span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">B&W Colorize</div>
+                  <div class="text-[9px] text-slate-400">Deep AI Colorizer</div>
+                </div>
+              </button>
             </div>
           </div>
         </div>
@@ -980,6 +997,220 @@
       }
       clearInterval(aiTimerInterval);
       document.getElementById('aiProgressModal').classList.add('hidden');
+    }
+
+    // =============================================================
+    // OLD PHOTO RESTORATION (SCRATCHES, DAMAGE & HISTORICAL RECOVERY)
+    // =============================================================
+    async function runOldPhotoRestore() {
+      if (!originalImageObj && !currentWorkingBase64) {
+        alert("Please choose or upload a photo first!");
+        return;
+      }
+      const modal = document.getElementById('aiProgressModal');
+      const progressBar = document.getElementById('aiProgressBar');
+      const progressPct = document.getElementById('aiProgressPct');
+      const statusText = document.getElementById('aiProgressStatusText');
+
+      modal.classList.remove('hidden');
+      updateAIStep('stepSecurity', 'iconSecurity', 'active', '1. Scratch & Tear Scanning');
+      updateAIStep('stepRoute', 'iconRoute', 'pending', '2. Texture Inpainting Pipeline');
+      updateAIStep('stepEsrgan', 'iconEsrgan', 'pending', '3. Historical Detail Recovery');
+      updateAIStep('stepGfpgan', 'iconGfpgan', 'pending', '4. Archival Face Restoration');
+      updateAIStep('stepFinalize', 'iconFinalize', 'pending', '5. Contrast & Tone Recovery');
+
+      progressBar.style.width = '30%';
+      progressPct.textContent = '30%';
+      statusText.textContent = 'Scanning vintage photograph for scratches & tears...';
+
+      aiStartTime = Date.now();
+      const timerEl = document.getElementById('aiElapsedTimer');
+      if (aiTimerInterval) clearInterval(aiTimerInterval);
+      aiTimerInterval = setInterval(() => {
+        const sec = ((Date.now() - aiStartTime) / 1000).toFixed(1);
+        timerEl.textContent = `${sec}s`;
+      }, 100);
+
+      const maxDim = 1280;
+      const ow = originalImageObj.naturalWidth || 800;
+      const oh = originalImageObj.naturalHeight || 600;
+      let sendW = ow, sendH = oh;
+      if (ow > maxDim || oh > maxDim) {
+        if (ow > oh) { sendW = maxDim; sendH = Math.max(10, Math.round((oh * maxDim) / ow)); }
+        else { sendH = maxDim; sendW = Math.max(10, Math.round((ow * maxDim) / oh)); }
+      }
+      const c = document.createElement('canvas');
+      c.width = sendW; c.height = sendH;
+      c.getContext('2d').drawImage(originalImageObj, 0, 0, sendW, sendH);
+      const sendB64 = c.toDataURL('image/jpeg', 0.95);
+
+      try {
+        setTimeout(() => {
+          updateAIStep('stepSecurity', 'iconSecurity', 'done', '✓ 1. Scratches Identified');
+          updateAIStep('stepRoute', 'iconRoute', 'done', '✓ 2. Texture Inpainting Active');
+          updateAIStep('stepEsrgan', 'iconEsrgan', 'active', '3. Restoring Archival Details...');
+          progressBar.style.width = '65%';
+          progressPct.textContent = '65%';
+          statusText.textContent = 'Neural Defect Healing in progress...';
+        }, 500);
+
+        const response = await fetch('/api/old-photo-restore', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            image: sendB64,
+            remove_scratches: true,
+            colorize: false,
+            face_restore: true,
+            contrast_recovery: true
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok || (data.status !== 'completed' && data.status !== 'JobStatus.COMPLETED') || !data.image) {
+          throw new Error(data.error || 'Old photo restoration failed');
+        }
+
+        updateAIStep('stepEsrgan', 'iconEsrgan', 'done', '✓ 3. Archival Recovery Complete');
+        updateAIStep('stepGfpgan', 'iconGfpgan', 'done', '✓ 4. Vintage Faces Restored');
+        updateAIStep('stepFinalize', 'iconFinalize', 'done', '✓ 5. Historical Master Ready');
+        progressBar.style.width = '100%';
+        progressPct.textContent = '100%';
+        statusText.textContent = 'Restoration Finalized!';
+        clearInterval(aiTimerInterval);
+
+        const restoredImg = new Image();
+        restoredImg.crossOrigin = 'anonymous';
+        restoredImg.onload = function() {
+          aiEnhancedImageObj = restoredImg;
+          isAIActive = true;
+          document.getElementById('imgEnhanced').src = data.image;
+          const bLayer = document.getElementById('bokehBackgroundLayer');
+          if (bLayer) bLayer.src = data.image;
+          renderLiveFilters();
+
+          document.getElementById('aiActiveBadge').classList.remove('hidden');
+          document.getElementById('aiOverlayBadge').classList.remove('hidden');
+          document.getElementById('afterTagText').textContent = 'RESTORED';
+          document.getElementById('resBadge').textContent = `${restoredImg.naturalWidth} x ${restoredImg.naturalHeight}px (Archival Restored)`;
+          document.getElementById('aiOverlayText').textContent = `Old Photo Restoration • Scratches Removed & Face Healed`;
+          document.getElementById('currentFilterLabel').textContent = `Active: Vintage Archival Photo Restoration`;
+          updateSplitUI(50);
+          setTimeout(() => { modal.classList.add('hidden'); }, 600);
+        };
+        restoredImg.src = data.image;
+      } catch (err) {
+        clearInterval(aiTimerInterval);
+        console.error("Old photo restore error:", err);
+        alert(`Restoration Notice: ${err.message || 'Worker busy. Please retry.'}`);
+        modal.classList.add('hidden');
+      }
+    }
+
+    // =============================================================
+    // B&W PHOTO COLORIZATION (ORGANIC CHROMINANCE SYNTHESIS)
+    // =============================================================
+    async function runColorize() {
+      if (!originalImageObj && !currentWorkingBase64) {
+        alert("Please choose or upload a photo first!");
+        return;
+      }
+      const modal = document.getElementById('aiProgressModal');
+      const progressBar = document.getElementById('aiProgressBar');
+      const progressPct = document.getElementById('aiProgressPct');
+      const statusText = document.getElementById('aiProgressStatusText');
+
+      modal.classList.remove('hidden');
+      updateAIStep('stepSecurity', 'iconSecurity', 'active', '1. Chrominance Analysis');
+      updateAIStep('stepRoute', 'iconRoute', 'pending', '2. Deep AI Color Prior Model');
+      updateAIStep('stepEsrgan', 'iconEsrgan', 'pending', '3. Natural Skin & Sky Colorization');
+      updateAIStep('stepGfpgan', 'iconGfpgan', 'pending', '4. Color Harmony Polish');
+      updateAIStep('stepFinalize', 'iconFinalize', 'pending', '5. Vivid Spectrum Output');
+
+      progressBar.style.width = '30%';
+      progressPct.textContent = '30%';
+      statusText.textContent = 'Analyzing monochrome luminance channels...';
+
+      aiStartTime = Date.now();
+      const timerEl = document.getElementById('aiElapsedTimer');
+      if (aiTimerInterval) clearInterval(aiTimerInterval);
+      aiTimerInterval = setInterval(() => {
+        const sec = ((Date.now() - aiStartTime) / 1000).toFixed(1);
+        timerEl.textContent = `${sec}s`;
+      }, 100);
+
+      const maxDim = 1280;
+      const ow = originalImageObj.naturalWidth || 800;
+      const oh = originalImageObj.naturalHeight || 600;
+      let sendW = ow, sendH = oh;
+      if (ow > maxDim || oh > maxDim) {
+        if (ow > oh) { sendW = maxDim; sendH = Math.max(10, Math.round((oh * maxDim) / ow)); }
+        else { sendH = maxDim; sendW = Math.max(10, Math.round((ow * maxDim) / oh)); }
+      }
+      const c = document.createElement('canvas');
+      c.width = sendW; c.height = sendH;
+      c.getContext('2d').drawImage(originalImageObj, 0, 0, sendW, sendH);
+      const sendB64 = c.toDataURL('image/jpeg', 0.95);
+
+      try {
+        setTimeout(() => {
+          updateAIStep('stepSecurity', 'iconSecurity', 'done', '✓ 1. Luminance Mapped');
+          updateAIStep('stepRoute', 'iconRoute', 'done', '✓ 2. Deep Color Priors Synthesizing');
+          updateAIStep('stepEsrgan', 'iconEsrgan', 'active', '3. Colorizing Natural Spectra...');
+          progressBar.style.width = '70%';
+          progressPct.textContent = '70%';
+          statusText.textContent = 'Synthesizing organic natural colors...';
+        }, 500);
+
+        const response = await fetch('/api/colorize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            image: sendB64,
+            saturation: 1.15,
+            warmth: 1.05
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok || (data.status !== 'completed' && data.status !== 'JobStatus.COMPLETED') || !data.image) {
+          throw new Error(data.error || 'Colorization failed');
+        }
+
+        updateAIStep('stepEsrgan', 'iconEsrgan', 'done', '✓ 3. Colors Synthesized');
+        updateAIStep('stepGfpgan', 'iconGfpgan', 'done', '✓ 4. Palette Harmonized');
+        updateAIStep('stepFinalize', 'iconFinalize', 'done', '✓ 5. Full-Color Photo Ready');
+        progressBar.style.width = '100%';
+        progressPct.textContent = '100%';
+        statusText.textContent = 'Colorization Finalized!';
+        clearInterval(aiTimerInterval);
+
+        const colorizedImg = new Image();
+        colorizedImg.crossOrigin = 'anonymous';
+        colorizedImg.onload = function() {
+          aiEnhancedImageObj = colorizedImg;
+          isAIActive = true;
+          document.getElementById('imgEnhanced').src = data.image;
+          const bLayer = document.getElementById('bokehBackgroundLayer');
+          if (bLayer) bLayer.src = data.image;
+          renderLiveFilters();
+
+          document.getElementById('aiActiveBadge').classList.remove('hidden');
+          document.getElementById('aiOverlayBadge').classList.remove('hidden');
+          document.getElementById('afterTagText').textContent = 'COLORIZED';
+          document.getElementById('resBadge').textContent = `${colorizedImg.naturalWidth} x ${colorizedImg.naturalHeight}px (AI Colorized)`;
+          document.getElementById('aiOverlayText').textContent = `Deep AI Colorizer • Natural Color Synthesis`;
+          document.getElementById('currentFilterLabel').textContent = `Active: AI B&W Photo Colorization`;
+          updateSplitUI(50);
+          setTimeout(() => { modal.classList.add('hidden'); }, 600);
+        };
+        colorizedImg.src = data.image;
+      } catch (err) {
+        clearInterval(aiTimerInterval);
+        console.error("Colorize error:", err);
+        alert(`Colorization Notice: ${err.message || 'Worker busy. Please retry.'}`);
+        modal.classList.add('hidden');
+      }
     }
 
     // Telemetry Poller
