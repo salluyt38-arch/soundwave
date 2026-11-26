@@ -120,10 +120,10 @@ class ApexInferencePipeline:
             models_used.append("gfpgan_v1.4")
             models_used.append("codeformer_fidelity")
 
-        # 4. Super-Resolution Stage (2x or 4x)
+        # 4. Super-Resolution Stage (2x, 4x, or 8x)
         if scale > 1:
-            # Clamp input dimensions so 4x output stays within 5K ceiling
-            max_in_dim = 1600 if scale == 2 else 1280
+            scale = max(2, min(scale, 8))
+            max_in_dim = 1024 if scale >= 8 else (1600 if scale == 2 else 1280)
             if working_img.width > max_in_dim or working_img.height > max_in_dim:
                 working_img.thumbnail((max_in_dim, max_in_dim), Image.Resampling.LANCZOS)
 

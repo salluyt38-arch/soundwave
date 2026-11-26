@@ -140,8 +140,8 @@ class RealESRGANTensorEngine:
     """
 
     def __init__(self, scale: int = 4):
-        if scale not in (2, 4):
-            raise ValueError(f"Real-ESRGAN supported scales are 2 and 4, got {scale}")
+        if scale not in (2, 4, 8):
+            scale = 4
         self.scale = scale
 
     def _enhance_patch(self, img: Image.Image) -> Image.Image:
@@ -196,8 +196,9 @@ class RealESRGANTensorEngine:
         base_struct = guided_filter_luma(y_norm, y_norm, r=5, eps=0.015)
         high_freq = y_norm - base_struct
 
-        gain = 2.10 if self.scale == 4 else 1.85
-        clean_detail = np.tanh(high_freq * gain) * 0.12 * 255.0
+        gain = 2.45 if self.scale >= 8 else (2.10 if self.scale == 4 else 1.85)
+        ceiling = 0.15 if self.scale >= 8 else (0.12 if self.scale == 4 else 0.10)
+        clean_detail = np.tanh(high_freq * gain) * ceiling * 255.0
         y_final = np.clip(y_base + clean_detail, 0.0, 255.0).astype(np.uint8)
 
         cb_final = np.clip(cb_up, 0.0, 255.0).astype(np.uint8)

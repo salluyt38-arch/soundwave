@@ -78,8 +78,8 @@ class ImageInferencePipeline:
                 raise ValueError(f"Image dimensions exceed safe limits: {orig_w}x{orig_h}")
 
             # Professional high-resolution limit: Preserves full camera details & hair strands
-            # 4x upscales up to 5120px (True 5K Ultra-HD), 2x upscales up to 3200px (3.2K Quad-HD)
-            max_in_dim = 1280 if scale == 4 else 1600
+            # 8x upscales up to 8192px (True 16K Ultra-HD), 4x upscales up to 5120px (True 5K), 2x up to 3200px
+            max_in_dim = 1024 if scale >= 8 else (1280 if scale == 4 else 1600)
             if orig_w > max_in_dim or orig_h > max_in_dim:
                 img.thumbnail((max_in_dim, max_in_dim), Image.Resampling.LANCZOS)
                 orig_w, orig_h = img.size
@@ -92,8 +92,8 @@ class ImageInferencePipeline:
                 gfp_restorer = GFPGANFacialRestorer(fidelity_weight=0.85)
                 img = gfp_restorer.restore_face(img)
 
-            # 3. Stage 2: Real-ESRGAN Super-Resolution (2x or 4x with 256px tiling)
-            scale = 2 if scale == 2 else 4
+            # 3. Stage 2: Real-ESRGAN Super-Resolution (2x, 4x, or 8x with low-memory tiling)
+            scale = 8 if scale >= 8 else (2 if scale == 2 else 4)
             sr_engine = RealESRGANTensorEngine(scale=scale)
             final_img = sr_engine.enhance(img)
 
