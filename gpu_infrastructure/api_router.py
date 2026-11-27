@@ -213,25 +213,48 @@ def handle_ai_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
         handler.send_json({"status": "completed", "analysis": metrics})
         return True
 
-    # 2. Intelligent Auto-Enhance Pipeline (Autonomous Backend Master)
+    # 2. Intelligent Auto-Enhance Pipeline (Autonomous Backend Master V2)
     if path in ("/api/ai/auto-enhance", "/api/auto-enhance"):
         img, err = _extract_image_payload(body)
         if err:
             _send_json(handler, {"error": err, "status": "invalid_payload"}, status=400)
             return True
+
         scale = int(body.get("scale", 2))
         allow_face = str(body.get("face_restore", "true")).lower() == "true"
         bokeh_r = int(body.get("bokeh_blur", 0))
-        allow_beauty = str(body.get("beauty_pass", "true")).lower() == "true"
-        style_preset = str(body.get("style", "neutral")).lower()
+
+        # Advanced V2 Portrait & Colour Science Options
+        portrait_prof = str(body.get("portrait_profile", body.get("style", "universal"))).lower()
+        color_prof = str(body.get("color_profile", "natural_pro")).lower()
+
+        # Granular Sliders (0-100)
+        ai_clarity = int(body.get("ai_clarity", 80))
+        face_strength = int(body.get("face_restoration", body.get("face_strength", 80)))
+        detail_rec = int(body.get("detail_recovery", 85))
+        skin_tex = int(body.get("skin_texture", 85))
+        noise_red = int(body.get("noise_reduction", 0))
+        exposure_adj = int(body.get("exposure", 0))
+        color_fid = int(body.get("color_fidelity", 90))
+        sharp_val = int(body.get("sharpness", 80))
+        id_pres = int(body.get("identity_preservation", 85))
 
         enhanced, steps, telem = orchestrator.run_auto_enhance(
             img,
             target_scale=scale,
             allow_face_restore=allow_face,
             bokeh_radius=bokeh_r,
-            allow_beauty=allow_beauty,
-            style_preset=style_preset,
+            portrait_profile=portrait_prof,
+            color_profile=color_prof,
+            ai_clarity=ai_clarity,
+            face_restoration_strength=face_strength,
+            detail_recovery=detail_rec,
+            skin_texture_fidelity=skin_tex,
+            noise_reduction_strength=noise_red,
+            exposure_adj=exposure_adj,
+            color_fidelity=color_fid,
+            sharpness=sharp_val,
+            identity_preservation=id_pres,
         )
         b64 = _image_to_base64_data_url(enhanced)
         _send_json(handler, {
@@ -240,6 +263,8 @@ def handle_ai_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
             "pipeline_steps": steps,
             "quality_metrics": telem["benchmarks"],
             "analysis": telem["analysis"],
+            "portrait_profile": telem.get("portrait_profile", portrait_prof),
+            "color_profile": telem.get("color_profile", color_prof),
             "duration_sec": telem["duration_sec"],
         })
         return True
@@ -488,6 +513,93 @@ def handle_ai_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
             "processed_count": len(results),
             "results": results,
             "duration_sec": round(time.time() - start_time, 2),
+        })
+        return True
+
+    # 15. Men's & Women's Portrait Studio Pass
+    if path in ("/api/ai/portrait-studio", "/api/portrait-studio"):
+        img, err = _extract_image_payload(body)
+        if err:
+            _send_json(handler, {"error": err, "status": "invalid_payload"}, status=400)
+            return True
+        from .portrait_studio import PortraitProfile, PortraitStudioEngine
+        prof_str = str(body.get("profile", "universal")).lower()
+        try:
+            pp = PortraitProfile(prof_str)
+        except ValueError:
+            pp = PortraitProfile.UNIVERSAL
+        skin_tex = float(body.get("skin_texture", 85.0))
+        clarity = float(body.get("clarity", 75.0))
+        radiance = float(body.get("radiance", 20.0))
+        engine = PortraitStudioEngine()
+        p_img, p_met = engine.process_portrait(img, profile=pp, skin_texture_fidelity=skin_tex, feature_clarity=clarity, subtle_radiance=radiance)
+        b64 = _image_to_base64_data_url(p_img)
+        _send_json(handler, {
+            "status": "completed",
+            "image": b64,
+            "metrics": p_met,
+            "duration_sec": round(time.time() - start_time, 3),
+        })
+        return True
+
+    # 16. Professional Colour Science Pass
+    if path in ("/api/ai/color-science", "/api/color-science"):
+        img, err = _extract_image_payload(body)
+        if err:
+            _send_json(handler, {"error": err, "status": "invalid_payload"}, status=400)
+            return True
+        from .color_science import ColorProfile, ProfessionalColorEngine
+        prof_str = str(body.get("profile", "natural_pro")).lower()
+        try:
+            cp = ColorProfile(prof_str)
+        except ValueError:
+            cp = ColorProfile.NATURAL_PRO
+        intensity = float(body.get("intensity", 100.0))
+        c_engine = ProfessionalColorEngine()
+        c_img, c_met = c_engine.apply_profile(img, profile=cp, intensity=intensity, skin_protection=True)
+        b64 = _image_to_base64_data_url(c_img)
+        _send_json(handler, {
+            "status": "completed",
+            "image": b64,
+            "metrics": c_met,
+            "duration_sec": round(time.time() - start_time, 3),
+        })
+        return True
+
+    # 17. Advanced Lighting Engine Pass
+    if path in ("/api/ai/lighting", "/api/lighting"):
+        img, err = _extract_image_payload(body)
+        if err:
+            _send_json(handler, {"error": err, "status": "invalid_payload"}, status=400)
+            return True
+        from .lighting import AdvancedLightingEngine
+        exp_adj = float(body.get("exposure", 0.0))
+        hl_rec = float(body.get("highlight_recovery", 0.0))
+        sh_rec = float(body.get("shadow_recovery", 0.0))
+        hdr = str(body.get("hdr", "false")).lower() == "true"
+        l_engine = AdvancedLightingEngine()
+        l_img, l_met = l_engine.process(img, exposure_adj=exp_adj, highlight_recovery=hl_rec, shadow_recovery=sh_rec, hdr_tone_map=hdr)
+        b64 = _image_to_base64_data_url(l_img)
+        _send_json(handler, {
+            "status": "completed",
+            "image": b64,
+            "metrics": l_met,
+            "duration_sec": round(time.time() - start_time, 3),
+        })
+        return True
+
+    # 18. Scientific Quality Evaluation (PSNR, SSIM, LPIPS, Identity)
+    if path in ("/api/ai/quality/evaluate", "/api/quality/evaluate"):
+        orig_img, err1 = _extract_image_payload({"image": body.get("original", body.get("image", ""))})
+        enh_img, err2 = _extract_image_payload({"image": body.get("enhanced", body.get("candidate", ""))})
+        if err1 or err2 or not orig_img or not enh_img:
+            _send_json(handler, {"error": "Provide both 'original' and 'enhanced' images.", "status": "invalid_payload"}, status=400)
+            return True
+        from .quality_evaluator import AdvancedQualityEngine
+        eval_metrics = AdvancedQualityEngine.evaluate(orig_img, enh_img, duration_sec=round(time.time() - start_time, 2))
+        _send_json(handler, {
+            "status": "completed",
+            "evaluation": eval_metrics,
         })
         return True
 

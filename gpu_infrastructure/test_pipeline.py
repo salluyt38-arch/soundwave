@@ -328,6 +328,77 @@ def test_11_gpupixel_beauty_and_face_analysis():
     print("  ✓ Intelligent Filter Engine verified with Men/Women/Neutral style presets.")
 
 
+def test_12_ai_clarity_engine_v2_suite():
+    """Validates the complete AI Clarity Engine V2 architecture."""
+    print("\n[TEST 12] Testing AI Clarity Engine V2 — Extreme Quality Architecture...")
+    from gpu_infrastructure.lighting import AdvancedLightingEngine
+    from gpu_infrastructure.color_science import ColorProfile, ProfessionalColorEngine
+    from gpu_infrastructure.portrait_studio import PortraitProfile, PortraitStudioEngine
+    from gpu_infrastructure.face_restoration import ExtremeFaceRestorer, FaceRestoreModel
+    from gpu_infrastructure.super_resolution import ExtremeSuperResolutionEngine, SuperResModel
+    from gpu_infrastructure.quality_evaluator import AdvancedQualityEngine
+    from gpu_infrastructure.orchestrator.pipeline_orchestrator import orchestrator
+
+    test_photo = generate_actual_test_photo()
+    pil_img = Image.open(io.BytesIO(test_photo)).convert("RGB")
+
+    # 1. Advanced Lighting Engine
+    lighting = AdvancedLightingEngine()
+    l_analysis = lighting.analyze_lighting(pil_img)
+    l_img, l_meta = lighting.process(pil_img, highlight_recovery=40.0, shadow_recovery=30.0, white_balance_auto=True)
+    assert l_img.size == pil_img.size
+    assert "initial_lighting" in l_meta
+    print("  ✓ Advanced Lighting Engine verified (Photometric analysis, Highlight Shield & Shadow Lift)")
+
+    # 2. Professional Colour Science (All 9 Profiles)
+    color_engine = ProfessionalColorEngine()
+    for cp in ColorProfile:
+        c_img, c_meta = color_engine.apply_profile(pil_img, profile=cp, intensity=85.0)
+        assert c_img.size == pil_img.size
+        assert c_meta["profile"] == cp.value
+    print("  ✓ Professional Colour Science verified across all 9 Master Profiles (ZEISS, Leica, Hasselblad, etc.)")
+
+    # 3. Portrait Studio Engine (Men's, Women's, Universal)
+    portrait_engine = PortraitStudioEngine()
+    for prof in (PortraitProfile.MEN, PortraitProfile.WOMEN, PortraitProfile.UNIVERSAL):
+        p_img, p_meta = portrait_engine.process_portrait(pil_img, profile=prof, skin_texture_fidelity=90.0, feature_clarity=80.0)
+        assert p_img.size == pil_img.size
+        assert p_meta["profile"] == prof.value
+    print("  ✓ Portrait Studio verified (Men's Beard & Hair, Women's Eyelashes & Glow, Universal Pores)")
+
+    # 4. Extreme Face Restoration Ensemble (GFPGAN + CodeFormer + RestoreFormer)
+    face_restorer = ExtremeFaceRestorer()
+    f_img, f_meta = face_restorer.restore_faces(pil_img, model_type=FaceRestoreModel.AUTO_ENSEMBLE, user_fidelity=85.0)
+    assert f_img.size == pil_img.size
+    print(f"  ✓ Extreme Face Restoration Ensemble verified ({f_meta['faces_processed']} faces restored with CodeFormer Identity Guard)")
+
+    # 5. Extreme Super-Resolution (Real-ESRGAN + SwinIR)
+    sr_engine = ExtremeSuperResolutionEngine()
+    sr_2x, sr_meta2 = sr_engine.upscale(pil_img, scale=2, model=SuperResModel.ENSEMBLE_SR)
+    assert sr_2x.width == pil_img.width * 2
+    sr_4x, sr_meta4 = sr_engine.upscale(pil_img, scale=4, model=SuperResModel.ENSEMBLE_SR)
+    assert sr_4x.width == pil_img.width * 4
+    print("  ✓ Extreme Super-Resolution verified (2x & 4x Real-ESRGAN + SwinIR Tiled Ensemble)")
+
+    # 6. Advanced Quality Evaluator (PSNR, SSIM, LPIPS, Identity)
+    eval_metrics = AdvancedQualityEngine.evaluate(pil_img, sr_2x, duration_sec=0.15)
+    assert eval_metrics["psnr_db"] > 20.0
+    assert eval_metrics["ssim"] > 0.85
+    assert "lpips" in eval_metrics
+    assert "identity_similarity_pct" in eval_metrics
+    print(f"  ✓ Scientific Quality Evaluator verified: PSNR {eval_metrics['psnr_db']}dB, SSIM {eval_metrics['ssim']}, LPIPS {eval_metrics['lpips']}, Identity {eval_metrics['identity_similarity_pct']}%")
+
+    # 7. Master Autonomous Pipeline V2
+    master_out, steps, telem = orchestrator.run_auto_enhance(
+        pil_img, target_scale=2, portrait_profile="men", color_profile="zeiss_natural",
+        ai_clarity=85, face_restoration_strength=80, detail_recovery=85, skin_texture_fidelity=90
+    )
+    assert master_out.width == pil_img.width * 2
+    assert len(steps) >= 4
+    assert telem["benchmarks"]["psnr_db"] > 25.0
+    print(f"  ✓ Master Autonomous AI Clarity V2 Pipeline verified with {len(steps)} staged cores.")
+
+
 if __name__ == "__main__":
     print("=" * 70)
     print("ADOBE STUDIO PRO — COMPLETE ARCHITECTURAL VERIFICATION SUITE")
@@ -344,7 +415,8 @@ if __name__ == "__main__":
     test_09_expiring_artifacts_cleanup()
     test_10_deployment_configurations()
     test_11_gpupixel_beauty_and_face_analysis()
+    test_12_ai_clarity_engine_v2_suite()
 
     print("\n" + "=" * 70)
-    print("ALL 11 VERIFICATION TESTS PASSED SUCCESSFULLY! 🚀")
+    print("ALL 12 VERIFICATION TESTS PASSED SUCCESSFULLY! 🚀")
     print("=" * 70)

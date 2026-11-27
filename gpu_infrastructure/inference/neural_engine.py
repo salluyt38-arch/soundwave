@@ -230,6 +230,9 @@ class QualityValidator:
             "sharpness_gain_pct": round(((enh_sharpness - orig_sharpness) / max(0.001, orig_sharpness)) * 100, 1),
         }
 
+    # Backward compatibility / alias for pipeline orchestrator
+    validate_and_guard = guard_against_degradation
+
 
 class RealESRGANTensorEngine:
     """
