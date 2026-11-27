@@ -27,27 +27,24 @@ class SuperResolutionAdapter(BaseCapabilityAdapter):
         orig_w, orig_h = img.size
         max_dim = max(orig_w, orig_h)
 
-        # Determine effective scale up to 8192px max master dimension (zero input crushing)
-        if scale in (8, 500) or scale >= 8:
-            if max_dim * 8 <= 8192:
-                effective_scale = 8
-            elif max_dim * 4 <= 8192:
-                effective_scale = 4
-            elif max_dim * 2 <= 8192:
-                effective_scale = 2
-            else:
-                effective_scale = 1
-        elif scale == 4:
-            if max_dim * 4 <= 8192:
-                effective_scale = 4
-            elif max_dim * 2 <= 8192:
-                effective_scale = 2
-            else:
-                effective_scale = 1
-        elif scale == 2:
-            effective_scale = 2 if max_dim * 2 <= 8192 else 1
-        else:
+        # Determine effective scale up to 2560px max master dimension (zero input crushing & zero 502/OOM)
+        max_target_dim = 2560
+        if max_dim >= 2048:
             effective_scale = 1
+        else:
+            if scale in (8, 500) or scale >= 8:
+                if max_dim * 4 <= max_target_dim:
+                    effective_scale = 4
+                elif max_dim * 2 <= max_target_dim:
+                    effective_scale = 2
+                else:
+                    effective_scale = 1
+            elif scale == 4:
+                effective_scale = 4 if max_dim * 4 <= max_target_dim else (2 if max_dim * 2 <= max_target_dim else 1)
+            elif scale == 2:
+                effective_scale = 2 if max_dim * 2 <= max_target_dim else 1
+            else:
+                effective_scale = 1
 
         engine = RealESRGANTensorEngine(scale=effective_scale)
         enhanced = engine.enhance(img)

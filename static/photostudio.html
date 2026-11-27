@@ -1012,22 +1012,36 @@
         }, 1400);
 
         // Fetch from live backend GPU endpoint
-        const response = await fetch('/api/gpu/enhance', {
+        const payloadStr = JSON.stringify({
+          image: sendB64,
+          privacy: 'personal',
+          priority: 1, // High VIP
+          has_contributor_consent: true,
+          scale: scaleVal,
+          run_gfpgan: runGfpganVal,
+          face_fidelity: faceFidelityVal,
+          bokeh_blur: bokehVal,
+          output_format: 'png'
+        });
+
+        let response = await fetch('/api/gpu/enhance', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            image: sendB64,
-            privacy: 'personal',
-            priority: 1, // High VIP
-            has_contributor_consent: true,
-            scale: scaleVal,
-            run_gfpgan: runGfpganVal,
-            face_fidelity: faceFidelityVal,
-            bokeh_blur: bokehVal,
-            output_format: 'png'
-          }),
+          body: payloadStr,
           signal: aiAbortController.signal
         });
+
+        // Auto-retry once if container was waking up from sleep (HTTP 502/503)
+        if (response.status === 502 || response.status === 503 || response.status === 504) {
+          statusText.textContent = 'Cloud Worker Waking Up... Connecting (Auto-Retry)...';
+          await new Promise(r => setTimeout(r, 2000));
+          response = await fetch('/api/gpu/enhance', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payloadStr,
+            signal: aiAbortController.signal
+          });
+        }
 
         const resText = await response.text();
         let data = null;
