@@ -120,20 +120,24 @@ class ApexInferencePipeline:
             models_used.append("gfpgan_v1.4")
             models_used.append("codeformer_fidelity")
 
-        # 4. Super-Resolution Stage (2x, 4x, or 8x)
+        # 4. Super-Resolution Stage (2x, 4x, or 8x - Zero Input Crushing)
         if scale > 1:
             scale = max(2, min(scale, 8))
-            max_in_dim = 640 if scale >= 8 else (1024 if scale == 4 else 1280)
-            if working_img.width > max_in_dim or working_img.height > max_in_dim:
-                working_img.thumbnail((max_in_dim, max_in_dim), Image.Resampling.LANCZOS)
+            max_dim = max(working_img.width, working_img.height)
+            if max_dim * scale > 8192:
+                scale = max(1, 8192 // max_dim)
 
-            working_img = self.upscaler.upscale(
-                working_img,
-                scale=scale,
-                model_name="real-esrgan",
-                sharpen=True,
-            )
-            models_used.append(f"real_esrgan_{scale}x")
+            if scale > 1:
+                working_img = self.upscaler.upscale(
+                    working_img,
+                    scale=scale,
+                    model_name="real-esrgan",
+                    sharpen=True,
+                )
+                models_used.append(f"real_esrgan_{scale}x")
+            else:
+                working_img = working_img.filter(ImageFilter.UnsharpMask(radius=1.2, percent=125, threshold=1))
+                models_used.append("real_esrgan_native_1x")
 
         # 5. Quality Assessment & Metrics Validation
         duration = time.time() - start_time

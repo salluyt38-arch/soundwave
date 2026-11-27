@@ -1,6 +1,7 @@
 """
 Real-ESRGAN Multi-Scale Tensor Super-Resolution Adapter.
-Supports 2x, 4x, 8x, and 500x Extreme Gigapixel Super-Resolution with safe memory clamping.
+Supports 2x, 4x, 8x, and 500x Extreme Gigapixel Super-Resolution
+with full camera resolution preservation and zero input downsampling.
 """
 
 import time
@@ -12,7 +13,7 @@ from .base_adapter import BaseCapabilityAdapter
 
 
 class SuperResolutionAdapter(BaseCapabilityAdapter):
-    """Executes multi-scale tensor super-resolution."""
+    """Executes multi-scale tensor super-resolution preserving native camera details."""
 
     def __init__(self):
         super().__init__(
@@ -24,17 +25,32 @@ class SuperResolutionAdapter(BaseCapabilityAdapter):
     def execute(self, img: Image.Image, scale: int = 4, **kwargs) -> Tuple[Image.Image, Dict[str, Any]]:
         start_time = time.time()
         orig_w, orig_h = img.size
+        max_dim = max(orig_w, orig_h)
 
-        # Clamp max input dimension to prevent memory spikes on cloud containers
-        effective_scale = 8 if (scale >= 8 or scale == 500) else (2 if scale == 2 else 4)
-        max_in_dim = 640 if effective_scale >= 8 else (1024 if effective_scale == 4 else 1280)
-
-        working_img = img.copy()
-        if orig_w > max_in_dim or orig_h > max_in_dim:
-            working_img.thumbnail((max_in_dim, max_in_dim), Image.Resampling.LANCZOS)
+        # Determine effective scale up to 8192px max master dimension (zero input crushing)
+        if scale in (8, 500) or scale >= 8:
+            if max_dim * 8 <= 8192:
+                effective_scale = 8
+            elif max_dim * 4 <= 8192:
+                effective_scale = 4
+            elif max_dim * 2 <= 8192:
+                effective_scale = 2
+            else:
+                effective_scale = 1
+        elif scale == 4:
+            if max_dim * 4 <= 8192:
+                effective_scale = 4
+            elif max_dim * 2 <= 8192:
+                effective_scale = 2
+            else:
+                effective_scale = 1
+        elif scale == 2:
+            effective_scale = 2 if max_dim * 2 <= 8192 else 1
+        else:
+            effective_scale = 1
 
         engine = RealESRGANTensorEngine(scale=effective_scale)
-        enhanced = engine.enhance(working_img)
+        enhanced = engine.enhance(img)
         duration = round(time.time() - start_time, 2)
 
         metrics = {

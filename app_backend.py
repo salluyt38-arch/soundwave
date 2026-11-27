@@ -1538,6 +1538,10 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
             scale = int(body.get("scale", 4))
             bokeh_blur = int(body.get("bokeh_blur", 0))
             run_gfpgan = str(body.get("run_gfpgan", "true")).lower() == "true"
+            face_fidelity = float(body.get("face_fidelity", body.get("fidelity_weight", 0.80)))
+            output_format = str(body.get("output_format", "jpeg")).lower()
+            if output_format not in ("jpeg", "jpg", "png"):
+                output_format = "jpeg"
             is_async = str(body.get("async", "false")).lower() == "true"
 
             privacy = JobPrivacy.PERSONAL if privacy_str == "personal" else JobPrivacy.PUBLIC_TEST
@@ -1551,6 +1555,8 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
                 has_contributor_consent=consent,
                 scale=scale,
                 bokeh_blur=bokeh_blur,
+                face_fidelity=face_fidelity,
+                output_format=output_format,
             )
             job.model_pipeline = model_pipeline
 
@@ -1587,7 +1593,8 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
                 return True
 
             import base64
-            out_b64 = "data:image/jpeg;base64," + base64.b64encode(completed_job.result_bytes).decode("utf-8")
+            mime_type = "image/png" if output_format == "png" else "image/jpeg"
+            out_b64 = f"data:{mime_type};base64," + base64.b64encode(completed_job.result_bytes).decode("utf-8")
             handler.send_json({
                 "status": "completed",
                 "job_id": completed_job.job_id,

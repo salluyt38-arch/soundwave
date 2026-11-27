@@ -106,6 +106,8 @@ class EnhanceJob:
     model_pipeline: List[str] = field(default_factory=lambda: ["realesrgan", "gfpgan"])
     scale: int = 4                                   # 2x, 4x, 8x or 500x super-resolution
     bokeh_blur: int = 0                              # 0 to 25px background bokeh blur before super-resolution
+    face_fidelity: float = 0.80                      # 0.1 to 1.0 facial preservation weight (natural skin pores)
+    output_format: str = "jpeg"                      # "jpeg" (quality 98 master) or "png" (lossless)
     has_contributor_consent: bool = False            # Required before community workers can touch any image
     status: JobStatus = JobStatus.QUEUED
     assigned_worker_id: Optional[str] = None

@@ -198,10 +198,16 @@
           <span>Enhance Photo Now</span>
         </button>
 
-        <button onclick="downloadImage('png')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span>Download Ultra HD</span>
-        </button>
+        <div class="flex items-center gap-1.5">
+          <button onclick="downloadImage('png')" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1 shadow-md transition" title="Export Lossless 24-bit PNG with Zero Compression Artifacts">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>PNG (Lossless)</span>
+          </button>
+          <button onclick="downloadImage('jpg')" class="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center gap-1 shadow-md transition" title="Export Studio Master JPEG 98% with 4:4:4 Chroma">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>JPEG 98</span>
+          </button>
+        </div>
       </div>
 
     </div>
@@ -428,6 +434,22 @@
               <div class="flex items-center gap-1.5 text-emerald-300">
                 <span>✓</span>
                 <span>Contrast-Adaptive Sharpening (CAS for hair, jewelry & fabrics)</span>
+              </div>
+            </div>
+
+            <!-- Adjustable Face Fidelity (Pore Retention) Slider -->
+            <div class="pt-2 border-t border-purple-500/20 space-y-1.5">
+              <div class="flex items-center justify-between text-[11px]">
+                <span class="text-slate-300 font-bold">Face Fidelity & Skin Pores:</span>
+                <span id="txtFaceFidelity" class="text-purple-300 font-bold font-mono">80% (Natural)</span>
+              </div>
+              <input type="range" id="sliderFaceFidelity" min="30" max="100" value="80" step="5"
+                oninput="document.getElementById('txtFaceFidelity').textContent = this.value + '%' + (this.value >= 80 ? ' (Natural Pores)' : (this.value >= 60 ? ' (Balanced)' : ' (Glamour)'))"
+                class="w-full accent-purple-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer">
+              <div class="flex justify-between text-[9px] text-slate-400">
+                <span>Smooth 30%</span>
+                <span>Camera Pores 80%</span>
+                <span>Exact 100%</span>
               </div>
             </div>
           </div>
@@ -938,27 +960,21 @@
         timerEl.textContent = `${sec}s`;
       }, 100);
 
-      // Max input dimension for super-resolution (produces up to 5120x3840 5K Ultra HD!)
-      const maxUploadDim = 1280;
+      // Preserve Full Camera Resolution: Zero downsampling crushing
+      let sendB64 = currentWorkingBase64;
       const ow = originalImageObj.naturalWidth || 800;
       const oh = originalImageObj.naturalHeight || 600;
-      let sendW = ow;
-      let sendH = oh;
-      if (ow > maxUploadDim || oh > maxUploadDim) {
-        if (ow > oh) {
-          sendW = maxUploadDim;
-          sendH = Math.max(10, Math.round((oh * maxUploadDim) / ow));
-        } else {
-          sendH = maxUploadDim;
-          sendW = Math.max(10, Math.round((ow * maxUploadDim) / oh));
-        }
+      if (!sendB64 || !sendB64.startsWith('data:image/')) {
+        const c = document.createElement('canvas');
+        c.width = ow;
+        c.height = oh;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(originalImageObj, 0, 0, ow, oh);
+        sendB64 = c.toDataURL('image/png');
       }
-      const c = document.createElement('canvas');
-      c.width = sendW;
-      c.height = sendH;
-      const ctx = c.getContext('2d');
-      ctx.drawImage(originalImageObj, 0, 0, sendW, sendH);
-      const sendB64 = c.toDataURL('image/jpeg', 0.95);
+
+      const fidelitySlider = document.getElementById('sliderFaceFidelity');
+      const faceFidelityVal = fidelitySlider ? (parseFloat(fidelitySlider.value) / 100.0) : 0.80;
 
       aiAbortController = new AbortController();
 
@@ -1006,7 +1022,9 @@
             has_contributor_consent: true,
             scale: scaleVal,
             run_gfpgan: runGfpganVal,
-            bokeh_blur: bokehVal
+            face_fidelity: faceFidelityVal,
+            bokeh_blur: bokehVal,
+            output_format: 'png'
           }),
           signal: aiAbortController.signal
         });
@@ -2045,7 +2063,7 @@
         ctx.drawImage(activeImg, 0, 0, w, h);
       }
 
-      a.href = c.toDataURL(format === 'png' ? 'image/png' : 'image/jpeg', 0.96);
+      a.href = c.toDataURL(format === 'png' ? 'image/png' : 'image/jpeg', 0.98);
       a.download = `Adobe_Studio_Sallu_Enhanced_${Date.now()}.${ext}`;
       document.body.appendChild(a);
       a.click();

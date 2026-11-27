@@ -83,6 +83,8 @@ class SecureGPURouter:
         scale: int = 4,
         timeout_seconds: float = 45.0,
         bokeh_blur: int = 0,
+        face_fidelity: float = 0.80,
+        output_format: str = "jpeg",
     ) -> EnhanceJob:
         """
         Accepts and registers a new image enhancement job.
@@ -107,6 +109,8 @@ class SecureGPURouter:
             priority=priority,
             scale=scale,
             bokeh_blur=bokeh_blur,
+            face_fidelity=face_fidelity,
+            output_format=output_format,
             has_contributor_consent=has_contributor_consent,
             status=JobStatus.QUEUED,
             progress_percent=5,

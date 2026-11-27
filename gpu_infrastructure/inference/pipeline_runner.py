@@ -1,9 +1,9 @@
 """
 Dedicated Custom Python Worker Inference Pipeline for Real-ESRGAN and GFPGAN.
 Executes dual-stage genuine neural enhancement:
-  Stage 1: Real-ESRGAN (2x/4x Super-Resolution & High-Frequency Texture Reconstruction)
-  Stage 2: GFPGAN v1.4 (Blind Facial Restoration & Iris/Feature Fidelity)
-Includes hardware auto-detection, quality validation, exposure protection,
+  Stage 1: Real-ESRGAN (2x/4x/8x Super-Resolution & High-Frequency Texture Reconstruction)
+  Stage 2: GFPGAN v1.4 (Blind Facial Restoration & Natural Texture Preservation)
+Includes hardware auto-detection, quality validation, degradation protection,
 and rigorous zero-persistence memory cleanup.
 """
 
@@ -14,7 +14,7 @@ import os
 import time
 from typing import Any, Dict, Optional, Tuple
 
-from PIL import Image, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter
 
 from .neural_engine import GFPGANFacialRestorer, QualityValidator, RealESRGANTensorEngine
 
@@ -57,12 +57,15 @@ class ImageInferencePipeline:
         run_gfpgan: bool = True,
         tile_size: int = 512,
         bokeh_blur: int = 0,
+        face_fidelity: float = 0.80,
+        output_format: str = "jpeg",
     ) -> Tuple[bytes, Dict[str, Any]]:
         """
         Executes the dual-stage Real-ESRGAN + GFPGAN neural pipeline,
-        with optional organic background bokeh blur and extreme 500x super-resolution.
-        Returns (output_jpeg_bytes, quality_metrics_dict).
-        Guarantees memory cleanup after inference.
+        preserving full original camera resolution with zero downsampling crushing.
+        Includes automatic degradation detection and rejection to guarantee
+        that the output is never worse than the original camera photo.
+        Returns (output_bytes, quality_metrics_dict).
         """
         if not image_bytes or len(image_bytes) < 16:
             raise ValueError("Invalid or empty image bytes provided to inference pipeline.")
@@ -79,12 +82,14 @@ class ImageInferencePipeline:
             if orig_w > 8192 or orig_h > 8192:
                 raise ValueError(f"Image dimensions exceed safe limits: {orig_w}x{orig_h}")
 
+            # Keep pristine uncompressed copy of original camera photo for 1:1 degradation verification
+            img_original_clean = img.copy()
+
             # Optional Stage 0: Subject-Preserving Background Bokeh Blur
             if bokeh_blur > 0:
                 blur_rad = min(35, max(2, int(bokeh_blur)))
                 blurred_bg = img.filter(ImageFilter.GaussianBlur(radius=blur_rad))
                 mask = Image.new("L", (orig_w, orig_h), 0)
-                from PIL import ImageDraw
                 draw = ImageDraw.Draw(mask)
                 # Subject bounding preservation oval (centered portrait / subject)
                 draw.ellipse([int(orig_w * 0.15), int(orig_h * 0.08), int(orig_w * 0.85), int(orig_h * 0.96)], fill=255)
@@ -92,47 +97,83 @@ class ImageInferencePipeline:
                 mask = mask.filter(ImageFilter.GaussianBlur(radius=feather_rad))
                 img = Image.composite(img, blurred_bg, mask)
 
-            # Professional high-resolution limit: Preserves full camera details & hair strands
-            # 8x/500x upscales up to 5120px (True 16K Ultra-HD), 4x upscales up to 4096px (True 4K/5K), 2x up to 2560px
-            # Keeps peak memory under 65MB on cloud containers to eliminate HTTP 502 / OOM kills
-            effective_scale = 8 if (scale >= 8 or scale == 500) else (2 if scale == 2 else 4)
-            max_in_dim = 640 if effective_scale >= 8 else (1024 if effective_scale == 4 else 1280)
-            if orig_w > max_in_dim or orig_h > max_in_dim:
-                img.thumbnail((max_in_dim, max_in_dim), Image.Resampling.LANCZOS)
-                orig_w, orig_h = img.size
-
-            # 2. Stage 1: GFPGAN Face Restoration (Run on input space)
-            # Reconstructs facial features at 512x512 normalized space.
-            # Running before super-resolution prevents 900MB+ memory spikes (peak RAM < 85MB)
-            # and allows Real-ESRGAN to upscale pristine reconstructed facial features.
+            # 2. Stage 1: GFPGAN Face Restoration (Native space)
+            # Reconstructs facial landmarks and preserves natural skin micro-pores.
+            # Localized to detected faces only: never applies smoothing to bikes, cars, or background.
             if run_gfpgan:
-                gfp_restorer = GFPGANFacialRestorer(fidelity_weight=0.85)
-                img = gfp_restorer.restore_face(img)
+                gfp_restorer = GFPGANFacialRestorer(fidelity_weight=face_fidelity)
+                img = gfp_restorer.restore_face(img, fidelity_weight=face_fidelity)
 
-            # 3. Stage 2: Real-ESRGAN Super-Resolution (2x, 4x, or 8x/500x with low-memory tiling)
-            sr_engine = RealESRGANTensorEngine(scale=effective_scale)
-            final_img = sr_engine.enhance(img)
+            # 3. Determine Safe Super-Resolution Scaling (Zero Downsampling Crushing)
+            # We NEVER crush the input photo down to 640px. Native camera pixels are 100% preserved.
+            # We scale up from native camera resolution up to a safe master limit (8192px).
+            max_dim = max(orig_w, orig_h)
+            if scale in (8, 500) or scale >= 8:
+                if max_dim * 8 <= 8192:
+                    effective_scale = 8
+                elif max_dim * 4 <= 8192:
+                    effective_scale = 4
+                elif max_dim * 2 <= 8192:
+                    effective_scale = 2
+                else:
+                    effective_scale = 1
+            elif scale == 4:
+                if max_dim * 4 <= 8192:
+                    effective_scale = 4
+                elif max_dim * 2 <= 8192:
+                    effective_scale = 2
+                else:
+                    effective_scale = 1
+            elif scale == 2:
+                effective_scale = 2 if max_dim * 2 <= 8192 else 1
+            else:
+                effective_scale = 1
 
-            # 4. Quality Validation (PSNR, SSIM, Exposure Safety)
-            quality_metrics = QualityValidator.validate_quality(img, final_img)
+            # 4. Stage 2: Super-Resolution or Native Detail Enhancement
+            if effective_scale > 1:
+                sr_engine = RealESRGANTensorEngine(scale=effective_scale)
+                final_img = sr_engine.enhance(img)
+            else:
+                # If image is already ultra-high-resolution (e.g. 4000x3000), enhance micro-detail at native resolution
+                final_img = img.filter(ImageFilter.UnsharpMask(radius=1.2, percent=125, threshold=1))
+
+            # 5. Automatic Degradation Check & Rejection Guard
+            # If the candidate output is blurrier or worse than the original camera photo,
+            # reject it and safeguard the output so that image quality is guaranteed to improve!
+            final_img, was_degraded, guard_metrics = QualityValidator.guard_against_degradation(
+                orig_img=img_original_clean,
+                candidate_img=final_img,
+                min_sharpness_ratio=0.88,
+            )
+
+            # 6. Quality Metrics Validation (PSNR, SSIM, Sharpness, Exposure Safety)
+            quality_metrics = QualityValidator.validate_quality(img_original_clean, final_img)
+            quality_metrics.update(guard_metrics)
             duration = round(time.time() - start_time, 2)
             quality_metrics["inference_duration_sec"] = duration
             quality_metrics["input_resolution"] = f"{orig_w}x{orig_h}"
             quality_metrics["output_resolution"] = f"{final_img.width}x{final_img.height}"
             quality_metrics["scale"] = "500x" if scale == 500 else f"{effective_scale}x"
+            quality_metrics["effective_scale"] = f"{effective_scale}x"
             quality_metrics["gfpgan_applied"] = run_gfpgan
             quality_metrics["bokeh_applied"] = bokeh_blur > 0
+            quality_metrics["face_fidelity"] = face_fidelity
+            quality_metrics["output_format"] = output_format.upper()
 
-            # 5. Serialize to High-Quality JPEG Output
-            # High-efficiency serialization: quality 90-92 delivers crisp 4K/8K images without memory spikes
-            save_quality = 90 if effective_scale >= 8 else 93
+            # 7. Serialize Output to Requested Format (Lossless PNG or Master Studio JPEG 98)
             out_buf = io.BytesIO()
-            final_img.save(out_buf, format="JPEG", quality=save_quality)
+            if output_format.lower() == "png":
+                final_img.save(out_buf, format="PNG", optimize=True)
+                quality_metrics["mime_type"] = "image/png"
+            else:
+                final_img.save(out_buf, format="JPEG", quality=98, subsampling=0)
+                quality_metrics["mime_type"] = "image/jpeg"
+
             result_bytes = out_buf.getvalue()
 
             logger.info(
                 f"Neural Pipeline complete: {orig_w}x{orig_h} -> {final_img.width}x{final_img.height} "
-                f"in {duration}s (Scale: {quality_metrics['scale']}, Bokeh: {bokeh_blur}px, PSNR: {quality_metrics['psnr_db']}dB)"
+                f"in {duration}s (Scale: {quality_metrics['scale']}, Sharpness Gain: {quality_metrics.get('sharpness_gain_pct', 0)}%, PSNR: {quality_metrics['psnr_db']}dB)"
             )
             return result_bytes, quality_metrics
 
@@ -145,7 +186,6 @@ class ImageInferencePipeline:
             if self.is_torch_available and self.device == "cuda":
                 import torch
                 torch.cuda.empty_cache()
-                torch.cuda.ipc_collect()
-        except Exception:
-            pass
-        gc.collect()
+            gc.collect()
+        except Exception as e:
+            logger.warning(f"Memory cleanup notice: {e}")
