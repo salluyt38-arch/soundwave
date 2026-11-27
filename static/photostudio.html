@@ -197,10 +197,16 @@
         </button>
         <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="hidden" onchange="handleFileSelect(event)">
 
+        <!-- AUTONOMOUS BACKEND MASTER TOGGLE -->
+        <label class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-purple-950/60 border border-purple-500/40 text-xs font-bold text-purple-200 cursor-pointer hover:bg-purple-900/60 transition shadow-sm" title="When checked, dropping or selecting any photo automatically runs the complete backend AI enhancement pipeline.">
+          <input type="checkbox" id="chkAutoEnhanceOnUpload" checked class="accent-purple-500 cursor-pointer w-3.5 h-3.5 rounded">
+          <span>⚡ Auto-Enhance on Upload</span>
+        </label>
+
         <!-- HERO DEEP AI ENHANCE HEADER BUTTON -->
-        <button onclick="runDeepAIEnhance()" id="btnHeaderEnhance" class="enhanced-btn-ai-glow px-4 py-1.5 rounded-xl font-black text-white text-xs flex items-center gap-1.5 transition active:scale-95 shadow-lg shadow-purple-500/30">
+        <button onclick="runAutoEnhance()" id="btnHeaderEnhance" class="enhanced-btn-ai-glow px-4 py-1.5 rounded-xl font-black text-white text-xs flex items-center gap-1.5 transition active:scale-95 shadow-lg shadow-purple-500/30">
           <span class="text-amber-300 text-sm">⚡</span>
-          <span>Enhance Photo Now</span>
+          <span>Auto-Enhance Photo Now</span>
         </button>
 
         <!-- UNIVERSAL ALL-FORMAT EXPORT BUTTONS -->
@@ -1183,6 +1189,14 @@
         document.getElementById('resBadge').textContent = `${img.naturalWidth} x ${img.naturalHeight}px (Original Input)`;
         updateSplitUI(50);
         renderLiveFilters();
+
+        // ⚡ AUTONOMOUS BACKEND MASTER: User drops photo -> Backend automatically enhances!
+        const autoEnhanceCheckbox = document.getElementById('chkAutoEnhanceOnUpload');
+        if (!autoEnhanceCheckbox || autoEnhanceCheckbox.checked) {
+          setTimeout(() => {
+            if (originalImageObj && !isAIActive) runAutoEnhance();
+          }, 350);
+        }
       };
       img.src = src;
     }

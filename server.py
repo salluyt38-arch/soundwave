@@ -2839,9 +2839,20 @@ class MusicHandler(SimpleHTTPRequestHandler):
         except Exception as e:
             self.send_json({"error": str(e)}, status=500)
 
+    @staticmethod
+    def _robust_json_default(obj):
+        """Safely converts NumPy scalars, arrays, sets, and special objects into native JSON types."""
+        if hasattr(obj, "tolist"):
+            return obj.tolist()
+        if hasattr(obj, "item"):
+            return obj.item()
+        if isinstance(obj, (set, frozenset)):
+            return list(obj)
+        return str(obj)
+
     def send_json(self, data, status=200):
         try:
-            body = json.dumps(data).encode("utf-8")
+            body = json.dumps(data, default=self._robust_json_default).encode("utf-8")
             self.send_response(status)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Access-Control-Allow-Origin", "*")

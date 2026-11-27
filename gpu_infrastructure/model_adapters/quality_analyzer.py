@@ -55,23 +55,23 @@ class QualityAnalyzerAdapter(BaseCapabilityAdapter):
             # 1. Blur Detection (Variance of Laplacian)
             laplacian_var = float(cv2.Laplacian(gray, cv2.CV_64F).var())
             blur_score = round(laplacian_var, 2)
-            is_blurry = blur_score < 120.0
+            is_blurry = bool(blur_score < 120.0)
 
             # 2. Exposure & Low-Light
             mean_brightness = round(float(np.mean(gray)), 2)
             contrast_score = round(float(np.std(gray)), 2)
-            is_low_light = mean_brightness < 75.0 or (mean_brightness < 90.0 and contrast_score < 35.0)
+            is_low_light = bool(mean_brightness < 75.0 or (mean_brightness < 90.0 and contrast_score < 35.0))
 
             # 3. High-ISO Noise Estimation
             blurred = cv2.GaussianBlur(gray, (5, 5), 0)
             noise_arr = cv2.absdiff(gray, blurred)
             noise_score = round(float(np.mean(noise_arr)), 2)
-            is_noisy = noise_score > 8.5
+            is_noisy = bool(noise_score > 8.5)
 
             # 4. Color vs Monochrome Detection
-            diff_rg = np.mean(np.abs(arr[:, :, 0].astype(float) - arr[:, :, 1].astype(float)))
-            diff_gb = np.mean(np.abs(arr[:, :, 1].astype(float) - arr[:, :, 2].astype(float)))
-            is_monochrome = (diff_rg < 3.5) and (diff_gb < 3.5)
+            diff_rg = float(np.mean(np.abs(arr[:, :, 0].astype(float) - arr[:, :, 1].astype(float))))
+            diff_gb = float(np.mean(np.abs(arr[:, :, 1].astype(float) - arr[:, :, 2].astype(float))))
+            is_monochrome = bool((diff_rg < 3.5) and (diff_gb < 3.5))
 
             # 5. Face Detection
             if self.face_cascade and not self.face_cascade.empty():
@@ -107,18 +107,18 @@ class QualityAnalyzerAdapter(BaseCapabilityAdapter):
 
         metrics = {
             "resolution": f"{w}x{h}",
-            "blur_score": blur_score,
-            "is_blurry": is_blurry,
-            "mean_brightness": mean_brightness,
-            "contrast_score": contrast_score,
-            "is_low_light": is_low_light,
-            "noise_score": noise_score,
-            "is_noisy": is_noisy,
-            "is_monochrome": is_monochrome,
-            "face_count": len(faces_detected),
-            "face_boxes": faces_detected,
-            "detected_problems": detected_problems,
-            "analysis_duration_sec": duration,
+            "blur_score": float(blur_score),
+            "is_blurry": bool(is_blurry),
+            "mean_brightness": float(mean_brightness),
+            "contrast_score": float(contrast_score),
+            "is_low_light": bool(is_low_light),
+            "noise_score": float(noise_score),
+            "is_noisy": bool(is_noisy),
+            "is_monochrome": bool(is_monochrome),
+            "face_count": int(len(faces_detected)),
+            "face_boxes": [[int(coord) for coord in b] for b in faces_detected],
+            "detected_problems": [str(p) for p in detected_problems],
+            "analysis_duration_sec": float(duration),
         }
 
         return img, metrics

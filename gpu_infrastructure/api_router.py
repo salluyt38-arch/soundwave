@@ -65,6 +65,26 @@ def _image_to_base64_data_url(img: Image.Image, format: str = "JPEG", quality: i
     return f"data:{mime};base64,{b64}"
 
 
+def _sanitize_for_json(obj: Any) -> Any:
+    """Recursively converts NumPy scalars, arrays, sets, and non-primitive types into pure Python types."""
+    if isinstance(obj, dict):
+        return {str(k): _sanitize_for_json(v) for k, v in obj.items()}
+    elif isinstance(obj, (list, tuple)):
+        return [_sanitize_for_json(item) for item in obj]
+    elif hasattr(obj, "item"):
+        return obj.item()
+    elif hasattr(obj, "tolist"):
+        return obj.tolist()
+    elif isinstance(obj, (bool, int, float, str, type(None))):
+        return obj
+    return str(obj)
+
+
+def _send_json(handler: Any, data: Any, status: int = 200) -> None:
+    sanitized = _sanitize_for_json(data)
+    handler.send_json(sanitized, status=status)
+
+
 def handle_ai_get(handler: Any, path: str, query: Dict[str, list]) -> bool:
     """Dispatches GET /api/ai/* endpoints."""
     if path == "/api/ai/models":
@@ -193,21 +213,28 @@ def handle_ai_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
         handler.send_json({"status": "completed", "analysis": metrics})
         return True
 
-    # 2. Intelligent Auto-Enhance Pipeline
-    if path == "/api/ai/auto-enhance":
+    # 2. Intelligent Auto-Enhance Pipeline (Autonomous Backend Master)
+    if path in ("/api/ai/auto-enhance", "/api/auto-enhance"):
         img, err = _extract_image_payload(body)
         if err:
-            handler.send_json({"error": err, "status": "invalid_payload"}, status=400)
+            _send_json(handler, {"error": err, "status": "invalid_payload"}, status=400)
             return True
-        scale = int(body.get("scale", 4))
+        scale = int(body.get("scale", 2))
         allow_face = str(body.get("face_restore", "true")).lower() == "true"
         bokeh_r = int(body.get("bokeh_blur", 0))
+        allow_beauty = str(body.get("beauty_pass", "true")).lower() == "true"
+        style_preset = str(body.get("style", "neutral")).lower()
 
         enhanced, steps, telem = orchestrator.run_auto_enhance(
-            img, target_scale=scale, allow_face_restore=allow_face, bokeh_radius=bokeh_r
+            img,
+            target_scale=scale,
+            allow_face_restore=allow_face,
+            bokeh_radius=bokeh_r,
+            allow_beauty=allow_beauty,
+            style_preset=style_preset,
         )
         b64 = _image_to_base64_data_url(enhanced)
-        handler.send_json({
+        _send_json(handler, {
             "status": "completed",
             "image": b64,
             "pipeline_steps": steps,
