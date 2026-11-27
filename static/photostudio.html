@@ -1040,17 +1040,35 @@
         timerEl.textContent = `${sec}s`;
       }, 100);
 
-      // Preserve Full Camera Resolution: Zero downsampling crushing
+      // Preserve Full Camera Resolution (Up to Master 2560px Cloud Ceiling)
+      // Prevents massive 30MB base64 JSON payload drops and HTTP 502 edge timeouts
       let sendB64 = currentWorkingBase64;
       const ow = originalImageObj.naturalWidth || 800;
       const oh = originalImageObj.naturalHeight || 600;
-      if (!sendB64 || !sendB64.startsWith('data:image/')) {
+      const maxCloudDim = 2560;
+
+      let sendW = ow;
+      let sendH = oh;
+      if (ow > maxCloudDim || oh > maxCloudDim) {
+        if (ow >= oh) {
+          sendW = maxCloudDim;
+          sendH = Math.max(10, Math.round((oh * maxCloudDim) / ow));
+        } else {
+          sendH = maxCloudDim;
+          sendW = Math.max(10, Math.round((ow * maxCloudDim) / oh));
+        }
+      }
+
+      // Optimize payload to high-quality master photographic JPEG (0.95) if missing or overly large (> 4MB)
+      if (!sendB64 || !sendB64.startsWith('data:image/') || sendW !== ow || sendH !== oh || sendB64.length > 4 * 1024 * 1024) {
         const c = document.createElement('canvas');
-        c.width = ow;
-        c.height = oh;
+        c.width = sendW;
+        c.height = sendH;
         const ctx = c.getContext('2d');
-        ctx.drawImage(originalImageObj, 0, 0, ow, oh);
-        sendB64 = c.toDataURL('image/png');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(originalImageObj, 0, 0, sendW, sendH);
+        sendB64 = c.toDataURL('image/jpeg', 0.95);
       }
 
       const fidelitySlider = document.getElementById('sliderFaceFidelity');
@@ -1104,23 +1122,48 @@
           output_format: 'png'
         });
 
-        let response = await fetch('/api/gpu/enhance', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: payloadStr,
-          signal: aiAbortController.signal
-        });
+        // Progressive Auto-Connect Loop (Recovers seamlessly from Render cold starts, container swaps, and waking up)
+        let response = null;
+        let attempts = 0;
+        const maxAttempts = 4;
+        const retryDelays = [2000, 3500, 5000, 5000];
 
-        // Auto-retry once if container was waking up from sleep (HTTP 502/503)
-        if (response.status === 502 || response.status === 503 || response.status === 504) {
-          statusText.textContent = 'Cloud Worker Waking Up... Connecting (Auto-Retry)...';
-          await new Promise(r => setTimeout(r, 2000));
-          response = await fetch('/api/gpu/enhance', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: payloadStr,
-            signal: aiAbortController.signal
-          });
+        while (attempts < maxAttempts) {
+          attempts++;
+          try {
+            response = await fetch('/api/gpu/enhance', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: payloadStr,
+              signal: aiAbortController.signal
+            });
+
+            // If 200 OK, break immediately and proceed
+            if (response && response.ok) break;
+
+            // If 502/503/504 (Container waking up or reloading on Render)
+            if (response && (response.status === 502 || response.status === 503 || response.status === 504)) {
+              if (attempts < maxAttempts) {
+                const waitSec = (retryDelays[attempts - 1] / 1000).toFixed(0);
+                statusText.textContent = `Cloud Worker Waking Up... Auto-connecting in ${waitSec}s (${attempts}/${maxAttempts})...`;
+                await new Promise(r => setTimeout(r, retryDelays[attempts - 1]));
+                continue;
+              }
+            }
+            break;
+          } catch (netErr) {
+            if (netErr.name === 'AbortError') throw netErr;
+            if (attempts < maxAttempts) {
+              statusText.textContent = `Connecting to Worker... (${attempts}/${maxAttempts})...`;
+              await new Promise(r => setTimeout(r, 2500));
+              continue;
+            }
+            throw netErr;
+          }
+        }
+
+        if (!response) {
+          throw new Error("Unable to establish connection to Cloud AI Worker. Please check network and retry.");
         }
 
         const resText = await response.text();
@@ -1129,7 +1172,7 @@
           data = JSON.parse(resText);
         } catch (jsonErr) {
           if (response.status === 502 || response.status === 503 || response.status === 504) {
-            throw new Error(`Cloud GPU worker is waking up or busy (HTTP ${response.status}). Please tap Retry in a moment.`);
+            throw new Error(`Cloud GPU worker was waking up from sleep. It is ready now! Please tap Enhance Photo again.`);
           }
           throw new Error(`Server returned status ${response.status}. Please tap Retry.`);
         }
