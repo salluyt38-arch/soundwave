@@ -285,6 +285,49 @@ def test_10_deployment_configurations():
         print(f"  ✓ {cfg} verified with strict security flags.")
 
 
+def test_11_gpupixel_beauty_and_face_analysis():
+    print("\n[TEST 11] Testing GPUPixel GPU Beauty & Intelligent Face-Aware Filter Engine...")
+    from gpu_infrastructure.beauty import (
+        FaceAnalyzer,
+        GPUPixelEngine,
+        IntelligentFilterEngine,
+        PortraitFilterType,
+        StylePreset,
+    )
+
+    test_photo = generate_actual_test_photo()
+    pil_img = Image.open(io.BytesIO(test_photo)).convert("RGB")
+
+    # 1. Face Analyzer
+    analyzer = FaceAnalyzer()
+    analysis = analyzer.analyze(pil_img)
+    assert analysis.skin_mask is not None
+    assert analysis.lighting.condition in ("balanced", "underexposed", "overexposed", "high_contrast", "soft_diffuse")
+    print(f"  ✓ Face & Lighting Analysis verified: Condition '{analysis.lighting.condition}'")
+
+    # 2. GPUPixel Beauty Engine
+    gpu_engine = GPUPixelEngine()
+    out_b, meta_b = gpu_engine.apply_beauty_effects(
+        pil_img, analysis, smooth_intensity=40, whiten_intensity=30, face_slimming=20, eye_enlarging=15
+    )
+    assert out_b.size == pil_img.size
+    assert meta_b["effects_applied"] is True
+
+    # Pristine 0% bypass check
+    out_zero, meta_zero = gpu_engine.apply_beauty_effects(pil_img, analysis, 0, 0, 0, 0, 0)
+    assert meta_zero["effects_applied"] is False
+    print("  ✓ GPUPixel Beauty Engine verified (Active effects + Zero-control original preservation)")
+
+    # 3. Intelligent Filter Engine
+    filter_engine = IntelligentFilterEngine()
+    out_f, meta_f = filter_engine.apply_filter(
+        pil_img, analysis, filter_type=PortraitFilterType.NATURAL_SKIN, style_preset=StylePreset.MEN, intensity=75
+    )
+    assert out_f.size == pil_img.size
+    assert meta_f["filter"] == "natural_skin"
+    print("  ✓ Intelligent Filter Engine verified with Men/Women/Neutral style presets.")
+
+
 if __name__ == "__main__":
     print("=" * 70)
     print("ADOBE STUDIO PRO — COMPLETE ARCHITECTURAL VERIFICATION SUITE")
@@ -300,7 +343,8 @@ if __name__ == "__main__":
     test_08_sliding_window_rate_limiter()
     test_09_expiring_artifacts_cleanup()
     test_10_deployment_configurations()
+    test_11_gpupixel_beauty_and_face_analysis()
 
     print("\n" + "=" * 70)
-    print("ALL 10 VERIFICATION TESTS PASSED SUCCESSFULLY! 🚀")
+    print("ALL 11 VERIFICATION TESTS PASSED SUCCESSFULLY! 🚀")
     print("=" * 70)

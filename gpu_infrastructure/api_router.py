@@ -87,12 +87,100 @@ def handle_ai_get(handler: Any, path: str, query: Dict[str, list]) -> bool:
         handler.send_json(diag)
         return True
 
+    if path == "/api/ai/beauty/shaders":
+        from .beauty import GPUPixelEngine
+        handler.send_json({"status": "success", "shaders": GPUPixelEngine.get_webgl_shaders()})
+        return True
+
     return False
 
 
 def handle_ai_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
     """Dispatches POST /api/ai/* endpoints."""
     start_time = time.time()
+
+    # 0A. GPUPixel Face Analysis Endpoint
+    if path in ("/api/ai/face/analyze", "/api/face/analyze"):
+        img, err = _extract_image_payload(body)
+        if err:
+            handler.send_json({"error": err, "status": "invalid_payload"}, status=400)
+            return True
+        from .beauty import FaceAnalyzer
+        analyzer = FaceAnalyzer()
+        res = analyzer.analyze(img)
+        handler.send_json({
+            "status": "completed",
+            "analysis": res.to_dict(),
+            "duration_sec": round(time.time() - start_time, 3)
+        })
+        return True
+
+    # 0B. GPUPixel Beauty & Intelligent Face-Aware Filter Endpoint
+    if path in ("/api/ai/beauty/filter", "/api/beauty/filter"):
+        img, err = _extract_image_payload(body)
+        if err:
+            handler.send_json({"error": err, "status": "invalid_payload"}, status=400)
+            return True
+
+        from .beauty import FaceAnalyzer, GPUPixelEngine, IntelligentFilterEngine, PortraitFilterType, StylePreset
+
+        # 1. Face & Lighting Analysis
+        analyzer = FaceAnalyzer()
+        analysis = analyzer.analyze(img)
+
+        # 2. Extract Beauty Slider Params
+        smooth_val = int(body.get("smooth", 0))
+        whiten_val = int(body.get("whiten", 0))
+        slimming_val = int(body.get("slimming", 0))
+        eye_val = int(body.get("eye_enlarge", 0))
+        tone_val = int(body.get("tone_balance", 0))
+
+        # 3. Apply GPUPixel Beauty Effects
+        gpu_engine = GPUPixelEngine()
+        beauty_img, beauty_metrics = gpu_engine.apply_beauty_effects(
+            img, analysis,
+            smooth_intensity=smooth_val,
+            whiten_intensity=whiten_val,
+            face_slimming=slimming_val,
+            eye_enlarging=eye_val,
+            tone_balance=tone_val
+        )
+
+        # 4. Extract Filter & Style Preset Params
+        filter_str = str(body.get("filter", "")).strip().lower()
+        style_str = str(body.get("style", "neutral")).strip().lower()
+        intensity = int(body.get("intensity", 100))
+
+        final_img = beauty_img
+        filter_metrics = {}
+
+        if filter_str:
+            try:
+                ft = PortraitFilterType(filter_str)
+            except ValueError:
+                ft = PortraitFilterType.NATURAL_SKIN
+
+            try:
+                sp = StylePreset(style_str)
+            except ValueError:
+                sp = StylePreset.NEUTRAL
+
+            filt_engine = IntelligentFilterEngine()
+            final_img, filter_metrics = filt_engine.apply_filter(
+                beauty_img, analysis, filter_type=ft, style_preset=sp, intensity=intensity
+            )
+
+        fmt = str(body.get("format", "JPEG")).upper()
+        b64 = _image_to_base64_data_url(final_img, format=fmt)
+        handler.send_json({
+            "status": "completed",
+            "image": b64,
+            "beauty_metrics": beauty_metrics,
+            "filter_metrics": filter_metrics,
+            "analysis": analysis.to_dict(),
+            "duration_sec": round(time.time() - start_time, 3)
+        })
+        return True
 
     # 1. Quality Analysis Endpoint
     if path == "/api/ai/analyze":

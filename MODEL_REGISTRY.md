@@ -17,6 +17,8 @@ A rigorous audit of all upstream open-source AI models integrated into the APEX 
 | **LaMa** | Large Mask Inpainting & Object Removal | [advimman/lama](https://github.com/advimman/lama) | Apache-2.0 | **Yes** (Commercial Friendly) | CUDA / Host CPU |
 | **Colorful Image Colorization** | Deep Luminance-to-Chrominance B&W Colorization | [richzhang/colorization](https://github.com/richzhang/colorization) | BSD-2-Clause | **Yes** (Commercial Friendly) | CUDA / Host CPU |
 | **BasicSR** | Core Image Restoration & Super-Res Framework | [XPixelGroup/BasicSR](https://github.com/XPixelGroup/BasicSR) | Apache-2.0 | **Yes** (Commercial Friendly) | CUDA / Host CPU |
+| **GPUPixel** | Real-Time GPU Beauty & Camera Effects (Skin Smoothing, Whiten, Slimming, Eye Enlarge) | [pixpark/gpupixel](https://github.com/pixpark/gpupixel) | Apache-2.0 | **Yes** (Commercial Friendly) | WebGL 2.0 / OpenGL ES / Host CPU |
+| **MediaPipe / OpenCV** | 468-Point Face Mesh & Facial Boundary Segmentation | [google/mediapipe](https://github.com/google/mediapipe) / [opencv/opencv](https://github.com/opencv/opencv) | Apache-2.0 | **Yes** (Commercial Friendly) | WebAssembly / WebGL / Host CPU |
 | **OpenCV** | Morphological filtering, Telea/NS Inpainting, Haar cascades | [opencv/opencv](https://github.com/opencv/opencv) | Apache-2.0 | **Yes** (Commercial Friendly) | CUDA / Host CPU |
 | **Pillow** | Format encoding, EXIF orientation, resampling | [python-pillow/Pillow](https://github.com/python-pillow/Pillow) | HPND | **Yes** (Commercial Friendly) | Host CPU |
 

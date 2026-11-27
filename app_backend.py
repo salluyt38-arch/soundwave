@@ -355,7 +355,7 @@ def handle_app_get(handler: Any, path: str, query: Dict[str, list]) -> bool:
     # -------------------------------------------------------------
     # 0. STANDARDIZED /api/ai/* MODEL REGISTRY & TELEMETRY ENDPOINTS
     # -------------------------------------------------------------
-    if path.startswith("/api/ai/"):
+    if path.startswith("/api/ai/") or path.startswith("/api/beauty/"):
         try:
             from gpu_infrastructure.api_router import handle_ai_get
             if handle_ai_get(handler, path, query):
@@ -1419,7 +1419,7 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
     # -------------------------------------------------------------
     # 0. STANDARDIZED /api/ai/* INFERENCE ENDPOINTS
     # -------------------------------------------------------------
-    if path.startswith("/api/ai/"):
+    if path.startswith("/api/ai/") or path.startswith("/api/beauty/") or path.startswith("/api/face/"):
         try:
             from gpu_infrastructure.api_router import handle_ai_post
             if handle_ai_post(handler, path, body):

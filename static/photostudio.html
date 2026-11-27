@@ -624,6 +624,226 @@
             </div>
           </div>
 
+          <!-- CARD: GPUPIXEL GPU REAL-TIME BEAUTY SUITE -->
+          <div class="p-3.5 rounded-xl bg-slate-900/90 border border-pink-500/30 space-y-3 shadow-lg">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <div class="flex items-center gap-2">
+                <span class="text-base">✨</span>
+                <div>
+                  <h3 class="text-xs font-black uppercase tracking-wider text-pink-400">GPUPixel Beauty Engine</h3>
+                  <div class="text-[9px] text-slate-400">Real-Time GPU OpenGL/WebGL Shaders</div>
+                </div>
+              </div>
+              <button onclick="resetGPUPixelBeauty()" class="text-[10px] font-bold px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/10 transition" title="Reset all beauty effects">
+                ↺ Reset
+              </button>
+            </div>
+
+            <!-- Beauty Sliders Grid -->
+            <div class="space-y-2 text-xs">
+              <!-- 1. Skin Smoothing -->
+              <div class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <label class="text-[11px] font-bold text-slate-200 flex items-center gap-1.5">
+                    <span>🌸 Skin Smoothing</span>
+                  </label>
+                  <span id="txtGpuSmooth" class="font-mono text-pink-400 font-bold text-[11px]">0%</span>
+                </div>
+                <input type="range" id="sliderGpuSmooth" min="0" max="100" value="0" step="1" oninput="updateGPUPixelControl('smooth', this.value)" class="w-full accent-pink-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+              </div>
+
+              <!-- 2. Skin Whitening & Radiance -->
+              <div class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <label class="text-[11px] font-bold text-slate-200 flex items-center gap-1.5">
+                    <span>💡 Skin Radiance & Whitening</span>
+                  </label>
+                  <span id="txtGpuWhiten" class="font-mono text-amber-300 font-bold text-[11px]">0%</span>
+                </div>
+                <input type="range" id="sliderGpuWhiten" min="0" max="100" value="0" step="1" oninput="updateGPUPixelControl('whiten', this.value)" class="w-full accent-amber-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+              </div>
+
+              <!-- 3. Face Slimming -->
+              <div class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <label class="text-[11px] font-bold text-slate-200 flex items-center gap-1.5">
+                    <span>📐 Jawline Slimming</span>
+                  </label>
+                  <span id="txtGpuSlim" class="font-mono text-cyan-400 font-bold text-[11px]">0%</span>
+                </div>
+                <input type="range" id="sliderGpuSlim" min="0" max="100" value="0" step="1" oninput="updateGPUPixelControl('slimming', this.value)" class="w-full accent-cyan-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+              </div>
+
+              <!-- 4. Eye Enlargement -->
+              <div class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <label class="text-[11px] font-bold text-slate-200 flex items-center gap-1.5">
+                    <span>👁️ Eye Enlargement</span>
+                  </label>
+                  <span id="txtGpuEye" class="font-mono text-purple-400 font-bold text-[11px]">0%</span>
+                </div>
+                <input type="range" id="sliderGpuEye" min="0" max="100" value="0" step="1" oninput="updateGPUPixelControl('eye_enlarge', this.value)" class="w-full accent-purple-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+              </div>
+
+              <!-- 5. Tone & Color Balance -->
+              <div class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <label class="text-[11px] font-bold text-slate-200 flex items-center gap-1.5">
+                    <span>🎨 Tone & Color Balance</span>
+                  </label>
+                  <span id="txtGpuTone" class="font-mono text-emerald-400 font-bold text-[11px]">0%</span>
+                </div>
+                <input type="range" id="sliderGpuTone" min="0" max="100" value="0" step="1" oninput="updateGPUPixelControl('tone_balance', this.value)" class="w-full accent-emerald-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+              </div>
+            </div>
+
+            <button onclick="applyGPUPixelBake()" id="btnBakeBeauty" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md transition active:scale-95">
+              <span>✨ Apply High-Precision Beauty Pass</span>
+            </button>
+          </div>
+
+          <!-- CARD: INTELLIGENT FACE-AWARE FILTER SUITE -->
+          <div class="p-3.5 rounded-xl bg-slate-900/90 border border-sky-500/30 space-y-3 shadow-lg">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <div class="flex items-center gap-2">
+                <span class="text-base">🧠</span>
+                <div>
+                  <h3 class="text-xs font-black uppercase tracking-wider text-sky-400">Intelligent Filter Engine</h3>
+                  <div class="text-[9px] text-slate-400">Landmark & Skin-Aware Adaptive Processing</div>
+                </div>
+              </div>
+              <button onclick="resetAdaptiveFilters()" class="text-[10px] font-bold px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/10 transition">
+                ↺ Reset
+              </button>
+            </div>
+
+            <!-- Style Preset Selector (Men / Women / Neutral) -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label class="text-[11px] font-bold text-slate-300">Aesthetic Style Preset</label>
+                <span class="text-[9px] text-slate-400">Optional Preference</span>
+              </div>
+              <div class="grid grid-cols-3 gap-1.5 text-xs">
+                <button onclick="selectAestheticStyle('men')" id="style_men" class="style-preset-btn py-1.5 px-2 rounded-xl border border-white/10 bg-slate-900/60 hover:border-sky-400 text-center font-bold text-[11px] text-slate-200 transition">
+                  👨 Men Style
+                </button>
+                <button onclick="selectAestheticStyle('women')" id="style_women" class="style-preset-btn py-1.5 px-2 rounded-xl border border-white/10 bg-slate-900/60 hover:border-pink-400 text-center font-bold text-[11px] text-slate-200 transition">
+                  👩 Women Style
+                </button>
+                <button onclick="selectAestheticStyle('neutral')" id="style_neutral" class="style-preset-btn py-1.5 px-2 rounded-xl border border-purple-500/80 bg-purple-500/20 text-center font-bold text-[11px] text-white transition">
+                  ⚪ Neutral
+                </button>
+              </div>
+            </div>
+
+            <!-- 10 Adaptive Face-Aware Filters Grid -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label class="text-[11px] font-bold text-slate-300">Select Intelligent Filter</label>
+                <span id="activeAdaptiveFilterLabel" class="text-[10px] text-sky-300 font-mono">Natural Skin</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-xs max-h-52 overflow-y-auto pr-1">
+                <!-- Filter 1: Natural Skin -->
+                <button onclick="selectAdaptiveFilter('natural_skin')" id="af_natural_skin" class="af-card p-2 rounded-xl border border-sky-500/80 bg-sky-500/20 text-left transition hover:border-sky-400 flex items-center gap-2">
+                  <span class="text-base">🌿</span>
+                  <div>
+                    <div class="font-bold text-white text-[11px]">Natural Skin</div>
+                    <div class="text-[9px] text-sky-300">Preserves Pores</div>
+                  </div>
+                </button>
+                <!-- Filter 2: Smooth Portrait -->
+                <button onclick="selectAdaptiveFilter('smooth_portrait')" id="af_smooth_portrait" class="af-card p-2 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-sky-400 flex items-center gap-2">
+                  <span class="text-base">🌸</span>
+                  <div>
+                    <div class="font-bold text-white text-[11px]">Smooth Portrait</div>
+                    <div class="text-[9px] text-slate-400">Gentle Softening</div>
+                  </div>
+                </button>
+                <!-- Filter 3: HD Portrait -->
+                <button onclick="selectAdaptiveFilter('hd_portrait')" id="af_hd_portrait" class="af-card p-2 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-sky-400 flex items-center gap-2">
+                  <span class="text-base">💎</span>
+                  <div>
+                    <div class="font-bold text-white text-[11px]">HD Portrait</div>
+                    <div class="text-[9px] text-slate-400">Micro-Clarity</div>
+                  </div>
+                </button>
+                <!-- Filter 4: Cinematic -->
+                <button onclick="selectAdaptiveFilter('cinematic')" id="af_cinematic" class="af-card p-2 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-sky-400 flex items-center gap-2">
+                  <span class="text-base">🎬</span>
+                  <div>
+                    <div class="font-bold text-white text-[11px]">Cinematic</div>
+                    <div class="text-[9px] text-slate-400">35mm Film Depth</div>
+                  </div>
+                </button>
+                <!-- Filter 5: Studio Lighting -->
+                <button onclick="selectAdaptiveFilter('studio_lighting')" id="af_studio_lighting" class="af-card p-2 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-sky-400 flex items-center gap-2">
+                  <span class="text-base">💡</span>
+                  <div>
+                    <div class="font-bold text-white text-[11px]">Studio Lighting</div>
+                    <div class="text-[9px] text-slate-400">Soft Key Light</div>
+                  </div>
+                </button>
+                <!-- Filter 6: Professional -->
+                <button onclick="selectAdaptiveFilter('professional')" id="af_professional" class="af-card p-2 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-sky-400 flex items-center gap-2">
+                  <span class="text-base">💼</span>
+                  <div>
+                    <div class="font-bold text-white text-[11px]">Professional</div>
+                    <div class="text-[9px] text-slate-400">Studio Calibrated</div>
+                  </div>
+                </button>
+                <!-- Filter 7: Vintage -->
+                <button onclick="selectAdaptiveFilter('vintage')" id="af_vintage" class="af-card p-2 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-sky-400 flex items-center gap-2">
+                  <span class="text-base">🎞️</span>
+                  <div>
+                    <div class="font-bold text-white text-[11px]">Vintage</div>
+                    <div class="text-[9px] text-slate-400">Analog Warmth</div>
+                  </div>
+                </button>
+                <!-- Filter 8: Soft Glow -->
+                <button onclick="selectAdaptiveFilter('soft_glow')" id="af_soft_glow" class="af-card p-2 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-sky-400 flex items-center gap-2">
+                  <span class="text-base">✨</span>
+                  <div>
+                    <div class="font-bold text-white text-[11px]">Soft Glow</div>
+                    <div class="text-[9px] text-slate-400">Highlight Bloom</div>
+                  </div>
+                </button>
+                <!-- Filter 9: Natural Color -->
+                <button onclick="selectAdaptiveFilter('natural_color')" id="af_natural_color" class="af-card p-2 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-sky-400 flex items-center gap-2">
+                  <span class="text-base">🎨</span>
+                  <div>
+                    <div class="font-bold text-white text-[11px]">Natural Color</div>
+                    <div class="text-[9px] text-slate-400">Gamut Expansion</div>
+                  </div>
+                </button>
+                <!-- Filter 10: Ultra Detail -->
+                <button onclick="selectAdaptiveFilter('ultra_detail')" id="af_ultra_detail" class="af-card p-2 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-sky-400 flex items-center gap-2">
+                  <span class="text-base">🔍</span>
+                  <div>
+                    <div class="font-bold text-white text-[11px]">Ultra Detail</div>
+                    <div class="text-[9px] text-slate-400">Texture Boost</div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Intensity Slider -->
+            <div class="p-2.5 rounded-xl bg-slate-900/80 border border-white/10 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label class="text-[11px] font-bold text-slate-200">Adaptive Filter Intensity</label>
+                <span id="txtFilterIntensity" class="text-xs font-mono font-bold text-sky-400">80%</span>
+              </div>
+              <input type="range" id="sliderFilterIntensity" min="0" max="100" value="80" step="1" oninput="updateAdaptiveFilterIntensity(this.value)" class="w-full accent-sky-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+              <div class="flex justify-between text-[9px] text-slate-400">
+                <span>0% (Pristine Original)</span>
+                <span>100% (Full Adaptive Grade)</span>
+              </div>
+            </div>
+
+            <button onclick="applyAdaptiveFilterBake()" id="btnBakeFilter" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md transition active:scale-95">
+              <span>🧠 Apply Intelligent AI Filter Pass</span>
+            </button>
+          </div>
+
           <!-- ADVANCED AI NEURAL TOOLS (EXPANDED MODULAR SUITE) -->
           <div class="pt-2.5 border-t border-white/10 space-y-1.5">
             <div class="flex items-center justify-between">
@@ -2120,20 +2340,282 @@
       renderLiveFilters();
     }
 
+    // =============================================================
+    // GPUPIXEL BEAUTY & INTELLIGENT FACE-AWARE FILTER CONTROLLERS
+    // =============================================================
+    let gpuBeautyState = {
+      smooth: 0,
+      whiten: 0,
+      slimming: 0,
+      eye_enlarge: 0,
+      tone_balance: 0
+    };
+
+    let selectedAestheticStyle = 'neutral';
+    let selectedAdaptiveFilter = 'natural_skin';
+    let selectedFilterIntensity = 80;
+
+    const ADAPTIVE_FILTER_PRESETS = {
+      natural_skin: { name: 'Natural Skin', css: 'contrast(1.04) saturate(1.05)' },
+      smooth_portrait: { name: 'Smooth Portrait', css: 'contrast(1.02) brightness(1.02) saturate(1.04)' },
+      hd_portrait: { name: 'HD Portrait', css: 'contrast(1.12) brightness(1.01) saturate(1.08)' },
+      cinematic: { name: 'Cinematic', css: 'contrast(1.15) saturate(1.22) hue-rotate(-5deg) brightness(0.98)' },
+      studio_lighting: { name: 'Studio Lighting', css: 'brightness(1.06) contrast(1.08) saturate(1.04)' },
+      professional: { name: 'Professional', css: 'contrast(1.08) saturate(1.06)' },
+      vintage: { name: 'Vintage', css: 'sepia(0.24) contrast(1.10) saturate(1.12) brightness(0.96)' },
+      soft_glow: { name: 'Soft Glow', css: 'brightness(1.05) contrast(1.04) saturate(1.08)' },
+      natural_color: { name: 'Natural Color', css: 'saturate(1.24) contrast(1.06)' },
+      ultra_detail: { name: 'Ultra Detail', css: 'contrast(1.20) saturate(1.08)' }
+    };
+
+    function updateGPUPixelControl(key, val) {
+      val = parseInt(val) || 0;
+      gpuBeautyState[key] = val;
+
+      const txtMap = {
+        smooth: 'txtGpuSmooth',
+        whiten: 'txtGpuWhiten',
+        slimming: 'txtGpuSlim',
+        eye_enlarge: 'txtGpuEye',
+        tone_balance: 'txtGpuTone'
+      };
+      const el = document.getElementById(txtMap[key]);
+      if (el) el.textContent = `${val}%`;
+
+      renderLiveFilters();
+    }
+
+    function resetGPUPixelBeauty() {
+      gpuBeautyState = { smooth: 0, whiten: 0, slimming: 0, eye_enlarge: 0, tone_balance: 0 };
+      ['sliderGpuSmooth', 'sliderGpuWhiten', 'sliderGpuSlim', 'sliderGpuEye', 'sliderGpuTone'].forEach(id => {
+        const s = document.getElementById(id);
+        if (s) s.value = 0;
+      });
+      ['txtGpuSmooth', 'txtGpuWhiten', 'txtGpuSlim', 'txtGpuEye', 'txtGpuTone'].forEach(id => {
+        const t = document.getElementById(id);
+        if (t) t.textContent = '0%';
+      });
+      renderLiveFilters();
+    }
+
+    function selectAestheticStyle(style) {
+      selectedAestheticStyle = style;
+      ['style_men', 'style_women', 'style_neutral'].forEach(id => {
+        const b = document.getElementById(id);
+        if (!b) return;
+        b.className = "style-preset-btn py-1.5 px-2 rounded-xl border border-white/10 bg-slate-900/60 hover:border-sky-400 text-center font-bold text-[11px] text-slate-200 transition";
+      });
+      const activeBtn = document.getElementById(`style_${style}`);
+      if (activeBtn) {
+        activeBtn.className = "style-preset-btn py-1.5 px-2 rounded-xl border border-purple-500/80 bg-purple-500/20 text-center font-bold text-[11px] text-white transition";
+      }
+      renderLiveFilters();
+    }
+
+    function selectAdaptiveFilter(filterKey) {
+      selectedAdaptiveFilter = filterKey;
+      document.querySelectorAll('.af-card').forEach(el => {
+        el.className = "af-card p-2 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-sky-400 flex items-center gap-2";
+        const sub = el.querySelector('div div:last-child');
+        if (sub) sub.className = "text-[9px] text-slate-400";
+      });
+
+      const card = document.getElementById(`af_${filterKey}`);
+      if (card) {
+        card.className = "af-card p-2 rounded-xl border border-sky-500/80 bg-sky-500/20 text-left transition hover:border-sky-400 flex items-center gap-2";
+        const sub = card.querySelector('div div:last-child');
+        if (sub) sub.className = "text-[9px] text-sky-300";
+      }
+
+      const lbl = document.getElementById('activeAdaptiveFilterLabel');
+      if (lbl && ADAPTIVE_FILTER_PRESETS[filterKey]) {
+        lbl.textContent = ADAPTIVE_FILTER_PRESETS[filterKey].name;
+      }
+      renderLiveFilters();
+    }
+
+    function updateAdaptiveFilterIntensity(val) {
+      selectedFilterIntensity = parseInt(val) || 0;
+      const txt = document.getElementById('txtFilterIntensity');
+      if (txt) txt.textContent = `${selectedFilterIntensity}%`;
+      renderLiveFilters();
+    }
+
+    function resetAdaptiveFilters() {
+      selectedAdaptiveFilter = 'natural_skin';
+      selectedFilterIntensity = 80;
+      selectedAestheticStyle = 'neutral';
+      selectAestheticStyle('neutral');
+      selectAdaptiveFilter('natural_skin');
+      const s = document.getElementById('sliderFilterIntensity');
+      if (s) s.value = 80;
+      const t = document.getElementById('txtFilterIntensity');
+      if (t) t.textContent = '80%';
+      renderLiveFilters();
+    }
+
+    // High-Precision AI Backend Execution for GPUPixel Beauty
+    async function applyGPUPixelBake() {
+      if (!originalImageObj && !currentWorkingBase64) {
+        alert("Please upload or choose a photo first!");
+        return;
+      }
+      const btn = document.getElementById('btnBakeBeauty');
+      if (btn) { btn.disabled = true; btn.textContent = 'Processing GPU Beauty...'; }
+
+      try {
+        let sendB64 = currentWorkingBase64;
+        if (!sendB64 || !sendB64.startsWith('data:image/')) {
+          const c = document.createElement('canvas');
+          c.width = originalImageObj.naturalWidth;
+          c.height = originalImageObj.naturalHeight;
+          c.getContext('2d').drawImage(originalImageObj, 0, 0);
+          sendB64 = c.toDataURL('image/jpeg', 0.95);
+        }
+
+        const res = await fetch('/api/ai/beauty/filter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            image: sendB64,
+            smooth: gpuBeautyState.smooth,
+            whiten: gpuBeautyState.whiten,
+            slimming: gpuBeautyState.slimming,
+            eye_enlarge: gpuBeautyState.eye_enlarge,
+            tone_balance: gpuBeautyState.tone_balance,
+            filter: '',
+            style: selectedAestheticStyle,
+            intensity: 0
+          })
+        });
+
+        const data = await res.json();
+        if (data.status === 'completed' && data.image) {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => {
+            aiEnhancedImageObj = img;
+            document.getElementById('imgEnhanced').src = data.image;
+            isAIActive = true;
+            document.getElementById('aiActiveBadge').classList.remove('hidden');
+            document.getElementById('afterTagText').textContent = 'BEAUTY AI';
+            document.getElementById('currentFilterLabel').textContent = `Active: GPUPixel Beauty (Smooth: ${gpuBeautyState.smooth}%, Whiten: ${gpuBeautyState.whiten}%)`;
+            updateSplitUI(50);
+          };
+          img.src = data.image;
+        } else {
+          alert("Beauty filter processing notice: " + (data.error || "Please retry"));
+        }
+      } catch (err) {
+        console.error("Beauty bake error:", err);
+        alert("GPU Beauty connection error: " + err.message);
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '✨ Apply High-Precision Beauty Pass'; }
+      }
+    }
+
+    // High-Precision AI Backend Execution for Adaptive Filter Engine
+    async function applyAdaptiveFilterBake() {
+      if (!originalImageObj && !currentWorkingBase64) {
+        alert("Please upload or choose a photo first!");
+        return;
+      }
+      const btn = document.getElementById('btnBakeFilter');
+      if (btn) { btn.disabled = true; btn.textContent = 'Applying Adaptive AI Filter...'; }
+
+      try {
+        let sendB64 = currentWorkingBase64;
+        if (!sendB64 || !sendB64.startsWith('data:image/')) {
+          const c = document.createElement('canvas');
+          c.width = originalImageObj.naturalWidth;
+          c.height = originalImageObj.naturalHeight;
+          c.getContext('2d').drawImage(originalImageObj, 0, 0);
+          sendB64 = c.toDataURL('image/jpeg', 0.95);
+        }
+
+        const res = await fetch('/api/ai/beauty/filter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            image: sendB64,
+            smooth: gpuBeautyState.smooth,
+            whiten: gpuBeautyState.whiten,
+            slimming: gpuBeautyState.slimming,
+            eye_enlarge: gpuBeautyState.eye_enlarge,
+            tone_balance: gpuBeautyState.tone_balance,
+            filter: selectedAdaptiveFilter,
+            style: selectedAestheticStyle,
+            intensity: selectedFilterIntensity
+          })
+        });
+
+        const data = await res.json();
+        if (data.status === 'completed' && data.image) {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => {
+            aiEnhancedImageObj = img;
+            document.getElementById('imgEnhanced').src = data.image;
+            isAIActive = true;
+            document.getElementById('aiActiveBadge').classList.remove('hidden');
+            const filtName = ADAPTIVE_FILTER_PRESETS[selectedAdaptiveFilter] ? ADAPTIVE_FILTER_PRESETS[selectedAdaptiveFilter].name : selectedAdaptiveFilter;
+            document.getElementById('afterTagText').textContent = filtName.toUpperCase();
+            document.getElementById('currentFilterLabel').textContent = `Active: ${filtName} (${selectedFilterIntensity}%) • Style: ${selectedAestheticStyle}`;
+            updateSplitUI(50);
+          };
+          img.src = data.image;
+        } else {
+          alert("Filter processing notice: " + (data.error || "Please retry"));
+        }
+      } catch (err) {
+        console.error("Filter bake error:", err);
+        alert("Filter connection error: " + err.message);
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '🧠 Apply Intelligent AI Filter Pass'; }
+      }
+    }
+
     function renderLiveFilters() {
       const enhancedImg = document.getElementById('imgEnhanced');
       const bokehLayer = document.getElementById('bokehBackgroundLayer');
       if (!enhancedImg) return;
 
-      const cssFilter = liveFilterParams.filterCss && liveFilterParams.filterCss !== 'none' ? liveFilterParams.filterCss : '';
-      enhancedImg.style.filter = cssFilter;
+      // 1. Base Preset CSS or Adaptive Filter CSS
+      let baseCss = '';
+      if (liveFilterParams.filterCss && liveFilterParams.filterCss !== 'none') {
+        baseCss += liveFilterParams.filterCss + ' ';
+      }
+
+      // 2. Intelligent Adaptive Filter CSS
+      if (selectedAdaptiveFilter && ADAPTIVE_FILTER_PRESETS[selectedAdaptiveFilter] && selectedFilterIntensity > 0) {
+        baseCss += ADAPTIVE_FILTER_PRESETS[selectedAdaptiveFilter].css + ' ';
+      }
+
+      // 3. Style Preset Bias CSS
+      if (selectedAestheticStyle === 'men') {
+        baseCss += 'contrast(1.05) saturate(0.97) ';
+      } else if (selectedAestheticStyle === 'women') {
+        baseCss += 'brightness(1.03) saturate(1.05) sepia(0.04) ';
+      }
+
+      // 4. GPUPixel Beauty parameters (Whitening, Tone Balance)
+      if (gpuBeautyState.whiten > 0) {
+        const bLift = 1.0 + (gpuBeautyState.whiten / 100.0) * 0.16;
+        baseCss += `brightness(${bLift.toFixed(2)}) `;
+      }
+      if (gpuBeautyState.tone_balance > 0) {
+        const sLift = 1.0 + (gpuBeautyState.tone_balance / 100.0) * 0.12;
+        baseCss += `saturate(${sLift.toFixed(2)}) `;
+      }
+
+      enhancedImg.style.filter = baseCss.trim() || 'none';
 
       const bokeh = liveFilterParams.bokehBlur || 0;
       if (bokehLayer) {
         if (bokeh > 0) {
           bokehLayer.classList.remove('hidden');
           bokehLayer.style.display = 'block';
-          bokehLayer.style.filter = `blur(${bokeh}px) ${cssFilter}`;
+          bokehLayer.style.filter = `blur(${bokeh}px) ${baseCss}`;
           // Smooth portrait radial mask: center is 100% opaque, fades to transparent at edges
           enhancedImg.style.maskImage = 'radial-gradient(ellipse 52% 62% at 50% 48%, black 65%, transparent 100%)';
           enhancedImg.style.webkitMaskImage = 'radial-gradient(ellipse 52% 62% at 50% 48%, black 65%, transparent 100%)';
