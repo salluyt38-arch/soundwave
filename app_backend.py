@@ -1540,7 +1540,7 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
             run_gfpgan = str(body.get("run_gfpgan", "true")).lower() == "true"
             face_fidelity = float(body.get("face_fidelity", body.get("fidelity_weight", 0.80)))
             output_format = str(body.get("output_format", "jpeg")).lower()
-            if output_format not in ("jpeg", "jpg", "png"):
+            if output_format not in ("jpeg", "jpg", "png", "webp"):
                 output_format = "jpeg"
             is_async = str(body.get("async", "false")).lower() == "true"
 
@@ -1593,7 +1593,12 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
                 return True
 
             import base64
-            mime_type = "image/png" if output_format == "png" else "image/jpeg"
+            if output_format == "png":
+                mime_type = "image/png"
+            elif output_format == "webp":
+                mime_type = "image/webp"
+            else:
+                mime_type = "image/jpeg"
             out_b64 = f"data:{mime_type};base64," + base64.b64encode(completed_job.result_bytes).decode("utf-8")
             handler.send_json({
                 "status": "completed",

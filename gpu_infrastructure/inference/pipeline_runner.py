@@ -161,11 +161,15 @@ class ImageInferencePipeline:
             quality_metrics["face_fidelity"] = face_fidelity
             quality_metrics["output_format"] = output_format.upper()
 
-            # 7. Serialize Output to Requested Format (Lossless PNG or Master Studio JPEG 98)
+            # 7. Serialize Output to Requested Format (Lossless PNG, Master Studio JPEG 98, or WebP)
             out_buf = io.BytesIO()
-            if output_format.lower() == "png":
+            out_fmt = output_format.lower()
+            if out_fmt == "png":
                 final_img.save(out_buf, format="PNG", optimize=True)
                 quality_metrics["mime_type"] = "image/png"
+            elif out_fmt == "webp":
+                final_img.save(out_buf, format="WEBP", quality=98, method=6)
+                quality_metrics["mime_type"] = "image/webp"
             else:
                 final_img.save(out_buf, format="JPEG", quality=98, subsampling=0)
                 quality_metrics["mime_type"] = "image/jpeg"
