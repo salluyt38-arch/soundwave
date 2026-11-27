@@ -1577,12 +1577,29 @@ def handle_app_post(handler: Any, path: str, body: Dict[str, Any]) -> bool:
             completed_job = router.process_job_with_failover(job)
 
             if completed_job.status == JobStatus.GPU_UNAVAILABLE:
-                handler.send_json({
-                    "status": "gpu_unavailable",
-                    "error": completed_job.error_message,
-                    "summary": completed_job.to_summary_dict()
-                }, status=503)
-                return True
+                # Emergency direct in-process processing to guarantee zero 503 errors for users
+                try:
+                    from gpu_infrastructure.inference.pipeline_runner import ImageInferencePipeline
+                    direct_pipeline = ImageInferencePipeline(use_cuda=False)
+                    res_bytes, metrics = direct_pipeline.run_inference(
+                        image_bytes=raw_bytes,
+                        scale=scale,
+                        run_gfpgan=run_gfpgan,
+                        bokeh_blur=bokeh_blur,
+                        face_fidelity=face_fidelity,
+                        output_format=output_format,
+                    )
+                    completed_job.result_bytes = res_bytes
+                    completed_job.quality_metrics = metrics
+                    completed_job.status = JobStatus.COMPLETED
+                    completed_job.assigned_worker_id = "emergency-direct-core"
+                except Exception:
+                    handler.send_json({
+                        "status": "gpu_unavailable",
+                        "error": completed_job.error_message,
+                        "summary": completed_job.to_summary_dict()
+                    }, status=503)
+                    return True
 
             if completed_job.status == JobStatus.FAILED:
                 handler.send_json({

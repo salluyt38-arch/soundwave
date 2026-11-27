@@ -20,6 +20,7 @@
       flex-direction: column;
     }
 
+    .enhanced-panel,
     .studio-panel {
       background: rgba(13, 19, 33, 0.82);
       backdrop-filter: blur(16px);
@@ -27,21 +28,25 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
+    .enhanced-btn-primary,
     .adobe-btn-primary {
       background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    .enhanced-btn-primary:hover,
     .adobe-btn-primary:hover {
       background: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%);
       box-shadow: 0 0 20px rgba(37, 99, 235, 0.45);
     }
 
+    .enhanced-btn-ai-glow,
     .adobe-btn-ai-glow {
       background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #ec4899 100%);
       background-size: 200% 200%;
       animation: aiGlowShift 4s ease infinite;
       box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
     }
+    .enhanced-btn-ai-glow:hover,
     .adobe-btn-ai-glow:hover {
       box-shadow: 0 0 35px rgba(236, 72, 153, 0.6);
       transform: translateY(-1px);
@@ -181,7 +186,7 @@
           <span id="gpuStatusText">AI Cluster: Active</span>
         </a>
 
-        <button onclick="document.getElementById('fileUpload').click()" class="adobe-btn-primary px-3.5 py-1.5 rounded-xl font-bold text-white text-xs flex items-center gap-1.5 shadow-md">
+        <button onclick="document.getElementById('fileUpload').click()" class="enhanced-btn-primary px-3.5 py-1.5 rounded-xl font-bold text-white text-xs flex items-center gap-1.5 shadow-md">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <span>Upload Any Photo</span>
         </button>
@@ -193,7 +198,7 @@
         <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="hidden" onchange="handleFileSelect(event)">
 
         <!-- HERO DEEP AI ENHANCE HEADER BUTTON -->
-        <button onclick="runDeepAIEnhance()" class="adobe-btn-ai-glow px-4 py-1.5 rounded-xl font-black text-white text-xs flex items-center gap-1.5 transition active:scale-95 shadow-lg shadow-purple-500/30">
+        <button onclick="runDeepAIEnhance()" id="btnHeaderEnhance" class="enhanced-btn-ai-glow px-4 py-1.5 rounded-xl font-black text-white text-xs flex items-center gap-1.5 transition active:scale-95 shadow-lg shadow-purple-500/30">
           <span class="text-amber-300 text-sm">⚡</span>
           <span>Enhance Photo Now</span>
         </button>
@@ -203,7 +208,7 @@
           <button onclick="downloadImage('png')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] flex items-center gap-1 shadow-sm transition" title="Export Lossless 24-bit PNG">
             <span>PNG</span>
           </button>
-          <button onclick="downloadImage('jpg')" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-bold text-[11px] flex items-center gap-1 shadow-sm transition" title="Export Studio Master JPEG 98%">
+          <button onclick="downloadImage('jpg')" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-bold text-[11px] flex items-center gap-1 shadow-sm transition" title="Export Enhanced Photo JPEG 98%">
             <span>JPEG</span>
           </button>
           <button onclick="downloadImage('webp')" class="px-2.5 py-1 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-bold text-[11px] flex items-center gap-1 shadow-sm transition" title="Export Ultra-Compact WebP">
@@ -211,6 +216,9 @@
           </button>
           <button onclick="downloadImage('pdf')" class="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-[11px] flex items-center gap-1 shadow-sm transition" title="Export High-Res Printable PDF Document">
             <span>PDF</span>
+          </button>
+          <button onclick="downloadImage('bmp')" class="px-2 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[11px] flex items-center gap-1 shadow-sm transition" title="Export Uncompressed Bitmap BMP">
+            <span>BMP</span>
           </button>
         </div>
       </div>
@@ -228,7 +236,7 @@
           <span>✨ 1-Tap Test Photos:</span>
         </span>
         <button onclick="loadSamplePhoto('portrait')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition hover:border-purple-500/50">
-          👤 Portrait Face (Remini Beauty Test)
+          👤 Portrait Face (Face Clarity Test)
         </button>
         <button onclick="loadSamplePhoto('sunset')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition hover:border-purple-500/50">
           🌅 Sunset Scenery (4K Super-Res Test)
@@ -364,7 +372,7 @@
           </div>
 
           <div class="flex items-center gap-2 flex-wrap">
-            <button onclick="runDeepAIEnhance()" class="adobe-btn-ai-glow px-4 py-2 rounded-xl text-xs font-black text-white flex items-center gap-1.5 shadow-lg hover:scale-[1.02] active:scale-95 transition">
+            <button onclick="runDeepAIEnhance()" class="enhanced-btn-ai-glow px-4 py-2 rounded-xl text-xs font-black text-white flex items-center gap-1.5 shadow-lg hover:scale-[1.02] active:scale-95 transition">
               <span class="text-amber-300">⚡</span>
               <span>ENHANCE PHOTO</span>
             </button>
@@ -372,7 +380,7 @@
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               <span>Download PNG</span>
             </button>
-            <button onclick="downloadImage('jpg')" class="px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold flex items-center gap-1 shadow-md transition" title="Studio Master JPEG 98%">
+            <button onclick="downloadImage('jpg')" class="px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold flex items-center gap-1 shadow-md transition" title="Enhanced Photo JPEG 98%">
               <span>Download JPG</span>
             </button>
             <button onclick="downloadImage('webp')" class="px-3 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold flex items-center gap-1 shadow-md transition" title="Ultra-Compact WebP">
@@ -380,6 +388,9 @@
             </button>
             <button onclick="downloadImage('pdf')" class="px-3 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold flex items-center gap-1 shadow-md transition" title="Printable PDF Document">
               <span>Download PDF</span>
+            </button>
+            <button onclick="downloadImage('bmp')" class="px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1 shadow-md transition" title="Uncompressed Bitmap BMP">
+              <span>Download BMP</span>
             </button>
             <button onclick="copyToClipboard()" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 transition" title="Copy to Clipboard">
               📋 Copy
@@ -488,7 +499,7 @@
           </button>
 
           <!-- BIG GLOWING ACTION BUTTON -->
-          <button onclick="runDeepAIEnhance()" id="btnTriggerAI" class="adobe-btn-ai-glow w-full py-3.5 px-4 rounded-xl text-white font-black text-sm flex items-center justify-center gap-2 shadow-2xl hover:scale-[1.02] active:scale-95 transition">
+          <button onclick="runDeepAIEnhance()" id="btnTriggerAI" class="enhanced-btn-ai-glow w-full py-3.5 px-4 rounded-xl text-white font-black text-sm flex items-center justify-center gap-2 shadow-2xl hover:scale-[1.02] active:scale-95 transition">
             <span class="text-lg text-amber-300">⚡</span>
             <span>RUN DEEP AI ENHANCER NOW</span>
           </button>
@@ -505,12 +516,12 @@
 
         </div>
 
-        <!-- CARD: STUDIO PRESETS & BACKGROUND BOKEH CONTROLLER -->
-        <div class="studio-panel rounded-2xl p-4 space-y-3.5">
+        <!-- CARD: PHOTO PRESETS & BACKGROUND BOKEH CONTROLLER -->
+        <div class="enhanced-panel studio-panel rounded-2xl p-4 space-y-3.5">
           <div class="flex items-center justify-between pb-2.5 border-b border-white/10">
             <div class="flex items-center gap-2">
               <span class="text-base">🎨</span>
-              <h3 class="text-xs font-black uppercase tracking-wider text-amber-300">Background & Studio Presets</h3>
+              <h3 class="text-xs font-black uppercase tracking-wider text-amber-300">Background & Photo Presets</h3>
             </div>
             <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">60 FPS LIVE</span>
           </div>
@@ -534,15 +545,15 @@
           <div class="space-y-1.5">
             <div class="flex items-center justify-between">
               <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Select Style Preset</label>
-              <span class="text-[10px] text-purple-300 font-mono" id="activePresetBadge">Remini Ultra HD</span>
+              <span class="text-[10px] text-purple-300 font-mono" id="activePresetBadge">Ultra HD Sharp</span>
             </div>
             <div class="grid grid-cols-2 gap-2 text-xs">
               
-              <!-- Preset 1: Remini Ultra HD -->
+              <!-- Preset 1: Ultra HD Sharp -->
               <button onclick="applyPreset('remini_hd')" id="preset_remini_hd" class="preset-card p-2.5 rounded-xl border border-purple-500/80 bg-purple-500/20 text-left transition hover:border-purple-400 flex items-center gap-2">
                 <span class="text-lg">🌟</span>
                 <div>
-                  <div class="font-bold text-white text-[11px]">Remini Ultra HD</div>
+                  <div class="font-bold text-white text-[11px]">Ultra HD Sharp</div>
                   <div class="text-[9px] text-purple-300">Max Sharpness & Pop</div>
                 </div>
               </button>
@@ -583,7 +594,7 @@
                 </div>
               </button>
 
-              <!-- Preset 6: Adobe Dehaze & Vivid -->
+              <!-- Preset 6: Dehaze & Vivid Master -->
               <button onclick="applyPreset('dehaze_vivid')" id="preset_dehaze_vivid" class="preset-card p-2.5 rounded-xl border border-white/10 bg-slate-900/60 text-left transition hover:border-emerald-400 flex items-center gap-2">
                 <span class="text-lg">🎨</span>
                 <div>
@@ -976,13 +987,24 @@
     }
 
     // =============================================================
-    // DEEP AI NEURAL PIPELINE (REAL-ESRGAN + GFPGAN REMINI ENGINE)
+    // DEEP AI NEURAL PIPELINE (REAL-ESRGAN + GFPGAN ENHANCED PHOTO ENGINE)
     // =============================================================
+    let isAIEnhanceBusy = false;
     async function runDeepAIEnhance(isBokeh500x = false) {
+      if (isAIEnhanceBusy) {
+        console.warn("AI enhancement is already processing.");
+        return;
+      }
       if (!originalImageObj && !currentWorkingBase64) {
         alert("Please choose or upload a photo first!");
         return;
       }
+
+      isAIEnhanceBusy = true;
+      const btnTrigger = document.getElementById('btnTriggerAI');
+      const btnHeader = document.getElementById('btnHeaderEnhance');
+      if (btnTrigger) { btnTrigger.disabled = true; btnTrigger.classList.add('opacity-75'); }
+      if (btnHeader) { btnHeader.disabled = true; btnHeader.classList.add('opacity-75'); }
 
       const modal = document.getElementById('aiProgressModal');
       const progressBar = document.getElementById('aiProgressBar');
@@ -1181,6 +1203,12 @@
         }
         alert(`Deep AI Model Notice: ${cleanMsg}`);
         modal.classList.add('hidden');
+      } finally {
+        isAIEnhanceBusy = false;
+        const btnTrigger = document.getElementById('btnTriggerAI');
+        const btnHeader = document.getElementById('btnHeaderEnhance');
+        if (btnTrigger) { btnTrigger.disabled = false; btnTrigger.classList.remove('opacity-75'); }
+        if (btnHeader) { btnHeader.disabled = false; btnHeader.classList.remove('opacity-75'); }
       }
     }
 
@@ -2083,7 +2111,7 @@
         return;
       }
       const fmt = (format || 'png').toLowerCase();
-      const ext = fmt === 'png' ? 'png' : (fmt === 'webp' ? 'webp' : (fmt === 'pdf' ? 'pdf' : 'jpg'));
+      const ext = fmt === 'png' ? 'png' : (fmt === 'webp' ? 'webp' : (fmt === 'pdf' ? 'pdf' : (fmt === 'bmp' ? 'bmp' : 'jpg')));
       const a = document.createElement('a');
 
       const bokeh = liveFilterParams.bokehBlur || 0;
@@ -2165,7 +2193,7 @@
         ctx.drawImage(activeImg, 0, 0, w, h);
       }
 
-      const mimeType = fmt === 'png' ? 'image/png' : (fmt === 'webp' ? 'image/webp' : 'image/jpeg');
+      const mimeType = fmt === 'png' ? 'image/png' : (fmt === 'webp' ? 'image/webp' : (fmt === 'bmp' ? 'image/bmp' : 'image/jpeg'));
       a.href = c.toDataURL(mimeType, 0.98);
       a.download = `Enhanced_Photo_${Date.now()}.${ext}`;
       document.body.appendChild(a);

@@ -74,9 +74,10 @@ class BaseGPUWorkerAdapter(ABC):
         if (time.time() - caps.last_heartbeat) > 60.0:
             return False, f"Worker '{self.worker_id}' heartbeat timed out."
 
-        # 4. Workload Concurrency (Horizontal scaling: normally 1 job per worker)
-        if caps.active_workload >= caps.max_concurrency:
-            return False, f"Worker '{self.worker_id}' is at full capacity ({caps.active_workload}/{caps.max_concurrency})."
+        # 4. Workload Concurrency (Check live active jobs rather than stale cached count)
+        active_load = getattr(self, "active_jobs", caps.active_workload)
+        if active_load >= caps.max_concurrency:
+            return False, f"Worker '{self.worker_id}' is at full capacity ({active_load}/{caps.max_concurrency})."
 
         # 5. Model Availability
         for required_model in job.model_pipeline:
@@ -95,4 +96,6 @@ class BaseGPUWorkerAdapter(ABC):
             or (time.time() - self._capabilities.last_heartbeat) > 15.0
         ):
             self._capabilities = self.detect_capabilities()
+        if self._capabilities is not None:
+            self._capabilities.active_workload = getattr(self, "active_jobs", 0)
         return self._capabilities

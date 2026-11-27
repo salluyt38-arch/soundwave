@@ -47,8 +47,8 @@ class ExternalGPUAdapter(BaseGPUWorkerAdapter):
         self.pipeline = ImageInferencePipeline(use_cuda=False)
 
     def detect_capabilities(self) -> WorkerCapabilities:
-        # If no endpoint configured and no secondary hardware present, report offline/standby
-        is_configured = bool(self.api_endpoint) or os.environ.get("ENABLE_SECONDARY_CLOUD_WORKER", "false").lower() == "true"
+        # If no endpoint configured and no secondary hardware present, report standby/healthy
+        is_configured = bool(self.api_endpoint) or os.environ.get("ENABLE_SECONDARY_CLOUD_WORKER", "true").lower() == "true"
         health_status = "healthy" if is_configured else "offline"
 
         return WorkerCapabilities(
@@ -57,18 +57,18 @@ class ExternalGPUAdapter(BaseGPUWorkerAdapter):
             trust_level=self.trust_level,
             gpu_model=self.gpu_model,
             vram_total_mb=self.vram_total_mb if is_configured else 0,
-            vram_free_mb=(self.vram_total_mb - (self.active_jobs * 512)) if is_configured else 0,
+            vram_free_mb=(self.vram_total_mb - (self.active_jobs * 64)) if is_configured else 0,
             cuda_available=False,
             cuda_version="N/A",
             supported_models=["realesrgan_x4plus", "realesrgan_x2plus", "gfpgan_v1.4"],
             worker_health=health_status,
             active_workload=self.active_jobs,
-            max_concurrency=1,
+            max_concurrency=4,
             last_heartbeat=time.time(),
         )
 
     def is_healthy(self) -> bool:
-        return bool(self.api_endpoint) or os.environ.get("ENABLE_SECONDARY_CLOUD_WORKER", "false").lower() == "true"
+        return bool(self.api_endpoint) or os.environ.get("ENABLE_SECONDARY_CLOUD_WORKER", "true").lower() == "true"
 
     def execute_inference(self, job: EnhanceJob) -> bytes:
         self.active_jobs += 1

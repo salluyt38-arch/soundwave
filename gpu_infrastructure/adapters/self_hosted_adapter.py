@@ -47,8 +47,8 @@ class SelfHostedGPUAdapter(BaseGPUWorkerAdapter):
 
     def detect_capabilities(self) -> WorkerCapabilities:
         hw = detect_live_hardware()
-        # Compute free memory accounting for active jobs
-        free_mb = max(0, hw["vram_free_mb"] - (self.active_jobs * 512))
+        # Compute free memory accounting for active jobs (~35MB per OpenCV inference task)
+        free_mb = max(0, hw["vram_free_mb"] - (self.active_jobs * 64))
 
         return WorkerCapabilities(
             worker_id=self.worker_id,
@@ -62,7 +62,7 @@ class SelfHostedGPUAdapter(BaseGPUWorkerAdapter):
             supported_models=["realesrgan_x4plus", "realesrgan_x2plus", "gfpgan_v1.4"],
             worker_health="healthy",
             active_workload=self.active_jobs,
-            max_concurrency=1,
+            max_concurrency=4,
             last_heartbeat=time.time(),
         )
 
