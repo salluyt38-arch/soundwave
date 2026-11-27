@@ -2,15 +2,27 @@
 Intelligent Face-Aware Adaptive Filter Engine.
 Features 10 adaptive portrait filters and 3 user-selected aesthetic style presets.
 Adapts dynamically to facial landmarks, skin segmentation, lighting, and facial hair.
+Provides dual execution:
+  1. C++ OpenCV acceleration when installed.
+  2. Resilient Pure NumPy, SciPy, and PIL fallback for zero-dependency environments.
 """
 
 from enum import Enum
+import logging
 from typing import Any, Dict, Optional, Tuple
-import cv2
 import numpy as np
 from PIL import Image, ImageEnhance, ImageFilter
 
 from .face_analyzer import FaceAnalysisResult
+
+logger = logging.getLogger("gpu_infrastructure.beauty.adaptive_filter")
+
+try:
+    import cv2
+    CV_AVAILABLE = True
+except ImportError:
+    cv2 = None
+    CV_AVAILABLE = False
 
 
 class StylePreset(str, Enum):
@@ -108,30 +120,57 @@ class IntelligentFilterEngine:
 
     def _filter_natural_skin(self, rgb: np.ndarray, analysis: FaceAnalysisResult, style: StylePreset) -> np.ndarray:
         """1. Natural Skin: Subtle tone equalization preserving 100% micro-pores and facial hair."""
-        # Gentle skin guided filter
-        smooth = cv2.bilateralFilter(rgb, d=5, sigmaColor=25, sigmaSpace=15)
+        if CV_AVAILABLE and cv2 is not None:
+            smooth = cv2.bilateralFilter(rgb, d=5, sigmaColor=25, sigmaSpace=15)
+        else:
+            try:
+                from scipy import ndimage
+                smooth_f = ndimage.gaussian_filter(rgb.astype(np.float32), (1.5, 1.5, 0))
+                smooth = np.clip(smooth_f, 0, 255).astype(np.uint8)
+            except ImportError:
+                smooth = np.array(Image.fromarray(rgb).filter(ImageFilter.GaussianBlur(radius=1.5)))
+
         mask = (analysis.skin_mask.astype(np.float32) / 255.0)[:, :, np.newaxis]
-        # Only 40% subtle blend onto skin locus
         out = (rgb.astype(np.float32) * (1.0 - mask * 0.40) + smooth.astype(np.float32) * (mask * 0.40))
         return np.clip(out, 0, 255).astype(np.uint8)
 
     def _filter_smooth_portrait(self, rgb: np.ndarray, analysis: FaceAnalysisResult, style: StylePreset) -> np.ndarray:
         """2. Smooth Portrait: Edge-aware blemish reduction leaving eyes, lips, and hair pin-sharp."""
-        smooth = cv2.bilateralFilter(rgb, d=9, sigmaColor=50, sigmaSpace=35)
+        if CV_AVAILABLE and cv2 is not None:
+            smooth = cv2.bilateralFilter(rgb, d=9, sigmaColor=50, sigmaSpace=35)
+        else:
+            try:
+                from scipy import ndimage
+                smooth_f = ndimage.gaussian_filter(rgb.astype(np.float32), (3.0, 3.0, 0))
+                smooth = np.clip(smooth_f, 0, 255).astype(np.uint8)
+            except ImportError:
+                smooth = np.array(Image.fromarray(rgb).filter(ImageFilter.GaussianBlur(radius=3.0)))
+
         mask = (analysis.skin_mask.astype(np.float32) / 255.0)[:, :, np.newaxis]
         out = (rgb.astype(np.float32) * (1.0 - mask * 0.70) + smooth.astype(np.float32) * (mask * 0.70))
         return np.clip(out, 0, 255).astype(np.uint8)
 
     def _filter_hd_portrait(self, rgb: np.ndarray, analysis: FaceAnalysisResult, style: StylePreset) -> np.ndarray:
         """3. HD Portrait: High-frequency clarity boost with edge-preserving skin refinement."""
-        # Detail boost on features
         kernel = np.array([[0, -0.6, 0], [-0.6, 3.4, -0.6], [0, -0.6, 0]], dtype=np.float32)
-        sharpened = cv2.filter2D(rgb, -1, kernel)
+        if CV_AVAILABLE and cv2 is not None:
+            sharpened = cv2.filter2D(rgb, -1, kernel)
+            smooth_skin = cv2.bilateralFilter(rgb, d=7, sigmaColor=35, sigmaSpace=25)
+        else:
+            try:
+                from scipy import ndimage
+                sharpened = np.zeros_like(rgb)
+                for c in range(3):
+                    sharpened[:, :, c] = np.clip(ndimage.convolve(rgb[:, :, c].astype(np.float32), kernel), 0, 255).astype(np.uint8)
+                smooth_skin = np.clip(ndimage.gaussian_filter(rgb.astype(np.float32), (2.0, 2.0, 0)), 0, 255).astype(np.uint8)
+            except ImportError:
+                pil_im = Image.fromarray(rgb)
+                sharpened = np.array(pil_im.filter(ImageFilter.SHARPEN))
+                smooth_skin = np.array(pil_im.filter(ImageFilter.GaussianBlur(radius=2.0)))
+
         pres_mask = (analysis.feature_preservation_mask.astype(np.float32) / 255.0)[:, :, np.newaxis]
         skin_mask = (analysis.skin_mask.astype(np.float32) / 255.0)[:, :, np.newaxis]
 
-        # Sharpen features (eyes, eyebrows, beard, hair) while gently smoothing skin
-        smooth_skin = cv2.bilateralFilter(rgb, d=7, sigmaColor=35, sigmaSpace=25)
         out = (
             rgb.astype(np.float32) * (1.0 - pres_mask * 0.5 - skin_mask * 0.4)
             + sharpened.astype(np.float32) * (pres_mask * 0.5)
@@ -142,7 +181,6 @@ class IntelligentFilterEngine:
     def _filter_cinematic(self, rgb: np.ndarray, analysis: FaceAnalysisResult, style: StylePreset) -> np.ndarray:
         """4. Cinematic: 35mm film curve with teal-orange split-toning and rich shadow depth."""
         f_rgb = rgb.astype(np.float32) / 255.0
-        # Shadows push towards subtle teal (0.05 cyan/blue), highlights towards amber/warmth
         lum = 0.299 * f_rgb[:, :, 0] + 0.587 * f_rgb[:, :, 1] + 0.114 * f_rgb[:, :, 2]
         shadow_mask = np.clip(1.0 - lum * 1.8, 0.0, 1.0)[:, :, np.newaxis]
         highlight_mask = np.clip((lum - 0.5) * 2.0, 0.0, 1.0)[:, :, np.newaxis]
@@ -151,16 +189,11 @@ class IntelligentFilterEngine:
         f_rgb[:, :, 1] = np.clip(f_rgb[:, :, 1] + highlight_mask[:, :, 0] * 0.03 + shadow_mask[:, :, 0] * 0.02, 0, 1)
         f_rgb[:, :, 2] = np.clip(f_rgb[:, :, 2] - highlight_mask[:, :, 0] * 0.05 + shadow_mask[:, :, 0] * 0.07, 0, 1)
 
-        # Contrast S-Curve
         f_rgb = f_rgb ** 1.15
         return (f_rgb * 255.0).astype(np.uint8)
 
     def _filter_studio_lighting(self, rgb: np.ndarray, analysis: FaceAnalysisResult, style: StylePreset) -> np.ndarray:
         """5. Studio Lighting: Diffuse key-light illumination, soft fill, and shadow roll-off."""
-        lab = cv2.cvtColor(rgb, cv2.COLOR_RGB2LAB).astype(np.float32)
-        l_chan = lab[:, :, 0]
-
-        # Adapt lift based on detected lighting
         if analysis.lighting.condition == "underexposed":
             lift_amount = 28.0
         elif analysis.lighting.condition == "high_contrast":
@@ -168,64 +201,87 @@ class IntelligentFilterEngine:
         else:
             lift_amount = 14.0
 
-        # Fill shadows with smooth curve
-        shadow_fill = (1.0 - (l_chan / 255.0)) * lift_amount
-        lab[:, :, 0] = np.clip(l_chan + shadow_fill, 0, 255)
-
-        out = cv2.cvtColor(lab.astype(np.uint8), cv2.COLOR_LAB2RGB)
-        return out
+        if CV_AVAILABLE and cv2 is not None:
+            lab = cv2.cvtColor(rgb, cv2.COLOR_RGB2LAB).astype(np.float32)
+            l_chan = lab[:, :, 0]
+            shadow_fill = (1.0 - (l_chan / 255.0)) * lift_amount
+            lab[:, :, 0] = np.clip(l_chan + shadow_fill, 0, 255)
+            return cv2.cvtColor(lab.astype(np.uint8), cv2.COLOR_LAB2RGB)
+        else:
+            # Pure RGB luma shadow curve lift
+            lum = (0.299 * rgb[:, :, 0] + 0.587 * rgb[:, :, 1] + 0.114 * rgb[:, :, 2]) / 255.0
+            shadow_fill = (1.0 - lum)[:, :, np.newaxis] * lift_amount
+            return np.clip(rgb.astype(np.float32) + shadow_fill, 0, 255).astype(np.uint8)
 
     def _filter_professional(self, rgb: np.ndarray, analysis: FaceAnalysisResult, style: StylePreset) -> np.ndarray:
         """6. Professional: Neutral studio calibration with balanced color fidelity."""
-        # Unsharp micro-contrast mask
-        gaussian = cv2.GaussianBlur(rgb, (0, 0), 2.0)
-        unsharp = cv2.addWeighted(rgb, 1.35, gaussian, -0.35, 0)
-        # Slight vibrance lift
-        hsv = cv2.cvtColor(unsharp, cv2.COLOR_RGB2HSV).astype(np.float32)
-        hsv[:, :, 1] = np.clip(hsv[:, :, 1] * 1.08, 0, 255)
-        out = cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2RGB)
-        return out
+        if CV_AVAILABLE and cv2 is not None:
+            gaussian = cv2.GaussianBlur(rgb, (0, 0), 2.0)
+            unsharp = cv2.addWeighted(rgb, 1.35, gaussian, -0.35, 0)
+            hsv = cv2.cvtColor(unsharp, cv2.COLOR_RGB2HSV).astype(np.float32)
+            hsv[:, :, 1] = np.clip(hsv[:, :, 1] * 1.08, 0, 255)
+            return cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2RGB)
+        else:
+            pil_im = Image.fromarray(rgb)
+            unsharp_im = pil_im.filter(ImageFilter.UnsharpMask(radius=2, percent=135, threshold=3))
+            enhanced = ImageEnhance.Color(unsharp_im).enhance(1.08)
+            return np.array(enhanced)
 
     def _filter_vintage(self, rgb: np.ndarray, analysis: FaceAnalysisResult, style: StylePreset) -> np.ndarray:
         """7. Vintage: Subtle archival sepia warmth with analog black-point roll-off."""
-        # Sepia transformation matrix
         matrix = np.array(
             [[0.393, 0.769, 0.189], [0.349, 0.686, 0.168], [0.272, 0.534, 0.131]], dtype=np.float32
         )
-        sepia = cv2.transform(rgb, matrix)
-        # Lift black point slightly (faded shadows)
-        faded = cv2.addWeighted(sepia, 0.55, rgb, 0.45, 12)
-        return np.clip(faded, 0, 255).astype(np.uint8)
+        if CV_AVAILABLE and cv2 is not None:
+            sepia = cv2.transform(rgb, matrix)
+            faded = cv2.addWeighted(sepia, 0.55, rgb, 0.45, 12)
+            return np.clip(faded, 0, 255).astype(np.uint8)
+        else:
+            sepia = np.dot(rgb.astype(np.float32), matrix.T)
+            faded = 0.55 * sepia + 0.45 * rgb.astype(np.float32) + 12.0
+            return np.clip(faded, 0, 255).astype(np.uint8)
 
     def _filter_soft_glow(self, rgb: np.ndarray, analysis: FaceAnalysisResult, style: StylePreset) -> np.ndarray:
         """8. Soft Glow: Dreamy highlight bloom with structural edge retention."""
-        blur = cv2.GaussianBlur(rgb, (19, 19), 0)
-        # Screen blending for highlights
+        if CV_AVAILABLE and cv2 is not None:
+            blur = cv2.GaussianBlur(rgb, (19, 19), 0)
+        else:
+            blur = np.array(Image.fromarray(rgb).filter(ImageFilter.GaussianBlur(radius=8.0)))
+
         inv_rgb = 255.0 - rgb.astype(np.float32)
         inv_blur = 255.0 - blur.astype(np.float32)
         screened = 255.0 - (inv_rgb * inv_blur / 255.0)
-        # Soft blend (40% glow)
         glow = (rgb.astype(np.float32) * 0.60 + screened * 0.40)
         return np.clip(glow, 0, 255).astype(np.uint8)
 
     def _filter_natural_color(self, rgb: np.ndarray, analysis: FaceAnalysisResult, style: StylePreset) -> np.ndarray:
         """9. Natural Color: Color gamut expansion with skin tone chrominance protection."""
-        hsv = cv2.cvtColor(rgb, cv2.COLOR_RGB2HSV).astype(np.float32)
         skin_mask = (analysis.skin_mask.astype(np.float32) / 255.0)
 
-        # Boost saturation on non-skin areas (clothing, scenery) by 25%, skin areas by only 8%
-        sat_boost = 1.25 * (1.0 - skin_mask) + 1.08 * skin_mask
-        hsv[:, :, 1] = np.clip(hsv[:, :, 1] * sat_boost, 0, 255)
-        out = cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2RGB)
-        return out
+        if CV_AVAILABLE and cv2 is not None:
+            hsv = cv2.cvtColor(rgb, cv2.COLOR_RGB2HSV).astype(np.float32)
+            sat_boost = 1.25 * (1.0 - skin_mask) + 1.08 * skin_mask
+            hsv[:, :, 1] = np.clip(hsv[:, :, 1] * sat_boost, 0, 255)
+            return cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2RGB)
+        else:
+            pil_im = Image.fromarray(rgb)
+            boosted = np.array(ImageEnhance.Color(pil_im).enhance(1.22)).astype(np.float32)
+            skin_boosted = np.array(ImageEnhance.Color(pil_im).enhance(1.08)).astype(np.float32)
+            out = boosted * (1.0 - skin_mask[:, :, np.newaxis]) + skin_boosted * skin_mask[:, :, np.newaxis]
+            return np.clip(out, 0, 255).astype(np.uint8)
 
     def _filter_ultra_detail(self, rgb: np.ndarray, analysis: FaceAnalysisResult, style: StylePreset) -> np.ndarray:
         """10. Ultra Detail: Local contrast adaptation for textures, fabric, and hair."""
-        lab = cv2.cvtColor(rgb, cv2.COLOR_RGB2LAB)
-        clahe = cv2.createCLAHE(clipLimit=2.2, tileGridSize=(8, 8))
-        lab[:, :, 0] = clahe.apply(lab[:, :, 0])
-        out = cv2.cvtColor(lab, cv2.COLOR_LAB2RGB)
-        return out
+        if CV_AVAILABLE and cv2 is not None:
+            lab = cv2.cvtColor(rgb, cv2.COLOR_RGB2LAB)
+            clahe = cv2.createCLAHE(clipLimit=2.2, tileGridSize=(8, 8))
+            lab[:, :, 0] = clahe.apply(lab[:, :, 0])
+            return cv2.cvtColor(lab, cv2.COLOR_LAB2RGB)
+        else:
+            pil_im = Image.fromarray(rgb)
+            enhanced = ImageEnhance.Contrast(pil_im).enhance(1.20)
+            detailed = enhanced.filter(ImageFilter.UnsharpMask(radius=2, percent=150, threshold=2))
+            return np.array(detailed)
 
     # =========================================================================
     # USER-SELECTED AESTHETIC STYLE BIAS (MEN / WOMEN / NEUTRAL)
@@ -244,22 +300,18 @@ class IntelligentFilterEngine:
             return filtered_np
 
         skin_f = (analysis.skin_mask.astype(np.float32) / 255.0)[:, :, np.newaxis]
-        pres_f = (analysis.feature_preservation_mask.astype(np.float32) / 255.0)[:, :, np.newaxis]
 
         if style == StylePreset.MEN:
-            # Emphasize definition in preserved facial hair and jawline
             enhanced = filtered_np.astype(np.float32)
             # Matte skin finish: reduce high specularity highlights on skin
-            hsv = cv2.cvtColor(filtered_np, cv2.COLOR_RGB2HSV).astype(np.float32)
-            high_spec = (hsv[:, :, 2] > 220).astype(np.float32)[:, :, np.newaxis] * skin_f
+            max_c = np.max(filtered_np, axis=2)
+            high_spec = (max_c > 220).astype(np.float32)[:, :, np.newaxis] * skin_f
             enhanced -= high_spec * 12.0
-            # Crisp beard and eyebrows
             return np.clip(enhanced, 0, 255).astype(np.uint8)
 
         elif style == StylePreset.WOMEN:
-            # Subtle luminous warmth and soft highlight diffusion on skin
             enhanced = filtered_np.astype(np.float32)
-            # Gentle warmth boost on skin midtones (+3 red, +1.5 green)
+            # Gentle warmth boost on skin midtones (+3.5 red, +1.5 green)
             enhanced[:, :, 0] += skin_f[:, :, 0] * 3.5
             enhanced[:, :, 1] += skin_f[:, :, 0] * 1.5
             return np.clip(enhanced, 0, 255).astype(np.uint8)

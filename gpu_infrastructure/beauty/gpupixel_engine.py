@@ -3,14 +3,23 @@ GPUPixel GPU Beauty & Real-Time Camera Effects Engine.
 Implements edge-preserving skin smoothing, skin whitening/tone lift,
 face slimming deformation, and eye enlargement.
 Includes real-time WebGL GLSL shaders and pure Python/OpenCV/NumPy backend.
+Provides dual execution:
+  1. C++ OpenCV acceleration when installed.
+  2. Resilient Pure NumPy, SciPy, and PIL fallback for zero-dependency environments.
 """
 
 from typing import Any, Dict, Optional, Tuple
-import cv2
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 
 from .face_analyzer import FaceAnalysisResult, FaceGeometry
+
+try:
+    import cv2
+    CV_AVAILABLE = True
+except ImportError:
+    cv2 = None
+    CV_AVAILABLE = False
 
 
 class GPUPixelEngine:
@@ -93,8 +102,17 @@ class GPUPixelEngine:
         sigma_color = int(25 + 45 * (intensity / 100.0))
         sigma_space = int(15 + 30 * (intensity / 100.0))
 
-        # Bilateral filter retains edges while smoothing flat skin regions
-        smooth_rgb = cv2.bilateralFilter(rgb, d=d, sigmaColor=sigma_color, sigmaSpace=sigma_space)
+        if CV_AVAILABLE and cv2 is not None:
+            smooth_rgb = cv2.bilateralFilter(rgb, d=d, sigmaColor=sigma_color, sigmaSpace=sigma_space)
+        else:
+            try:
+                from scipy import ndimage
+                smooth_f = ndimage.gaussian_filter(rgb.astype(np.float32), sigma=(max(1.0, sigma_space / 10.0), max(1.0, sigma_space / 10.0), 0))
+                smooth_rgb = np.clip(smooth_f, 0, 255).astype(np.uint8)
+            except ImportError:
+                pil_im = Image.fromarray(rgb)
+                radius = max(1.0, sigma_space / 10.0)
+                smooth_rgb = np.array(pil_im.filter(ImageFilter.GaussianBlur(radius=radius)))
 
         # Normalize skin mask to float [0, 1]
         mask_f = (skin_mask.astype(np.float32) / 255.0)[:, :, np.newaxis]
@@ -111,37 +129,50 @@ class GPUPixelEngine:
         GPUPixel Tone & Radiance Lift:
         Gently lifts skin midtones using a photographic S-curve, avoiding chalky highlights.
         """
-        lab = cv2.cvtColor(rgb, cv2.COLOR_RGB2LAB).astype(np.float32)
-        l_channel, a_channel, b_channel = lab[:, :, 0], lab[:, :, 1], lab[:, :, 2]
-
         mask_f = (skin_mask.astype(np.float32) / 255.0)
 
-        # Whiten lift: midtone expansion
-        if whiten_val > 0:
-            w_factor = (whiten_val / 100.0) * 22.0
-            # S-curve multiplier that protects extreme highlights and shadows
-            lift = np.sin((l_channel / 255.0) * np.pi) * w_factor
-            l_channel = np.clip(l_channel + lift * mask_f, 0, 255)
+        if CV_AVAILABLE and cv2 is not None:
+            lab = cv2.cvtColor(rgb, cv2.COLOR_RGB2LAB).astype(np.float32)
+            l_channel, a_channel, b_channel = lab[:, :, 0], lab[:, :, 1], lab[:, :, 2]
 
-        # Tone Balance: neutralizes harsh yellow or red tint towards balanced porcelain glow
-        if tone_val > 0:
-            t_factor = (tone_val / 100.0) * 0.20
-            # Nudge 'b' channel (blue-yellow) slightly towards neutral
-            b_channel = b_channel - (b_channel - 128.0) * t_factor * mask_f
+            # Whiten lift: midtone expansion
+            if whiten_val > 0:
+                w_factor = (whiten_val / 100.0) * 22.0
+                lift = np.sin((l_channel / 255.0) * np.pi) * w_factor
+                l_channel = np.clip(l_channel + lift * mask_f, 0, 255)
 
-        lab[:, :, 0] = l_channel
-        lab[:, :, 1] = a_channel
-        lab[:, :, 2] = b_channel
+            # Tone Balance: neutralizes harsh yellow or red tint towards balanced porcelain glow
+            if tone_val > 0:
+                t_factor = (tone_val / 100.0) * 0.20
+                b_channel = b_channel - (b_channel - 128.0) * t_factor * mask_f
 
-        adjusted = cv2.cvtColor(lab.astype(np.uint8), cv2.COLOR_LAB2RGB)
-        return adjusted
+            lab[:, :, 0] = l_channel
+            lab[:, :, 1] = a_channel
+            lab[:, :, 2] = b_channel
+
+            return cv2.cvtColor(lab.astype(np.uint8), cv2.COLOR_LAB2RGB)
+        else:
+            # Pure RGB luminance S-curve lift fallback
+            res = rgb.astype(np.float32).copy()
+            if whiten_val > 0:
+                w_factor = (whiten_val / 100.0) * 22.0
+                lum = 0.299 * res[:, :, 0] + 0.587 * res[:, :, 1] + 0.114 * res[:, :, 2]
+                lift = np.sin((lum / 255.0) * np.pi) * w_factor
+                res += (lift * mask_f)[:, :, np.newaxis]
+
+            if tone_val > 0:
+                # Nudge towards porcelain / cool balance
+                res[:, :, 0] -= (tone_val / 100.0) * 4.0 * mask_f
+                res[:, :, 2] += (tone_val / 100.0) * 4.0 * mask_f
+
+            return np.clip(res, 0, 255).astype(np.uint8)
 
     def _apply_geometry_morphs(
         self, rgb: np.ndarray, faces: list, slimming: int, eye_enlarging: int
     ) -> np.ndarray:
         """
         GPUPixel Spline Warping for Jawline Slimming and Eye Enlargement.
-        Uses localized reverse mesh coordinate remapping (cv2.remap).
+        Uses localized reverse mesh coordinate remapping (cv2.remap or scipy.ndimage).
         """
         h, w = rgb.shape[:2]
         # Generate base identity grid
@@ -192,94 +223,105 @@ class GPUPixelEngine:
                     map_x[mask] += pull_x * falloff
                     map_y[mask] += pull_y * falloff
 
-        # Perform high-order interpolation remap
-        warped = cv2.remap(rgb, map_x, map_y, interpolation=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
+        if CV_AVAILABLE and cv2 is not None:
+            warped = cv2.remap(rgb, map_x, map_y, interpolation=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
+        else:
+            try:
+                from scipy import ndimage
+                coords = np.array([map_y, map_x])
+                warped = np.zeros_like(rgb)
+                for c in range(3):
+                    warped[:, :, c] = ndimage.map_coordinates(rgb[:, :, c], coords, order=1, mode='reflect')
+            except ImportError:
+                warped = rgb.copy()
+
         return warped
 
     @staticmethod
     def get_webgl_shaders() -> Dict[str, str]:
         """
-        Returns full GPUPixel-compliant GLSL Vertex and Fragment shaders
-        for direct 60 FPS GPU-accelerated rendering in the browser's WebGL context.
+        Returns production GPUPixel-compatible WebGL GLSL shaders
+        for real-time 60 FPS in-browser hardware rendering.
         """
+        vertex_shader = """
+        attribute vec2 a_position;
+        attribute vec2 a_texCoord;
+        varying vec2 v_texCoord;
+        void main() {
+            gl_Position = vec4(a_position, 0.0, 1.0);
+            v_texCoord = a_texCoord;
+        }
+        """
+
+        # Edge-preserving beauty fragment shader with live skin locus detection
+        fragment_shader = """
+        precision mediump float;
+        varying vec2 v_texCoord;
+        uniform sampler2D u_image;
+        uniform vec2 u_resolution;
+        uniform float u_smooth;    // 0.0 to 1.0
+        uniform float u_whiten;    // 0.0 to 1.0
+        uniform float u_tone;      // 0.0 to 1.0
+
+        // Checks if pixel is human skin tone in YCbCr color space
+        float detectSkin(vec3 rgb) {
+            float y  = 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
+            float cb = -0.169 * rgb.r - 0.331 * rgb.g + 0.500 * rgb.b + 0.5;
+            float cr = 0.500 * rgb.r - 0.419 * rgb.g - 0.081 * rgb.b + 0.5;
+            if (cb >= 0.30 && cb <= 0.52 && cr >= 0.51 && cr <= 0.70 && y >= 0.15) {
+                return 1.0;
+            }
+            return 0.0;
+        }
+
+        void main() {
+            vec2 step = 1.0 / u_resolution;
+            vec4 centerColor = texture2D(u_image, v_texCoord);
+
+            if (u_smooth <= 0.001 && u_whiten <= 0.001 && u_tone <= 0.001) {
+                gl_FragColor = centerColor;
+                return;
+            }
+
+            float isSkin = detectSkin(centerColor.rgb);
+
+            // Bilateral 9-tap guided blur for skin
+            vec3 smoothed = vec3(0.0);
+            float totalWeight = 0.0;
+
+            for (int dx = -2; dx <= 2; dx += 2) {
+                for (int dy = -2; dy <= 2; dy += 2) {
+                    vec2 offset = vec2(float(dx), float(dy)) * step;
+                    vec3 sampleCol = texture2D(u_image, v_texCoord + offset).rgb;
+                    float colorDist = distance(sampleCol, centerColor.rgb);
+                    float weight = exp(-colorDist * 8.0);
+                    smoothed += sampleCol * weight;
+                    totalWeight += weight;
+                }
+            }
+            smoothed /= max(0.001, totalWeight);
+
+            // Blend skin smoothing only on detected skin
+            vec3 finalColor = mix(centerColor.rgb, smoothed, u_smooth * 0.75 * isSkin);
+
+            // Whiten / Radiance S-Curve
+            if (u_whiten > 0.0) {
+                float lum = dot(finalColor, vec3(0.299, 0.587, 0.114));
+                float lift = sin(lum * 3.14159) * (u_whiten * 0.15) * isSkin;
+                finalColor = clamp(finalColor + vec3(lift), 0.0, 1.0);
+            }
+
+            // Tone balance towards cool porcelain
+            if (u_tone > 0.0) {
+                finalColor.r -= u_tone * 0.02 * isSkin;
+                finalColor.b += u_tone * 0.02 * isSkin;
+            }
+
+            gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), centerColor.a);
+        }
+        """
+
         return {
-            "vertex_shader": """
-                attribute vec2 a_position;
-                attribute vec2 a_texCoord;
-                varying vec2 v_texCoord;
-                void main() {
-                    gl_Position = vec4(a_position, 0.0, 1.0);
-                    v_texCoord = a_texCoord;
-                }
-            """,
-            "fragment_beauty_shader": """
-                precision highp float;
-                uniform sampler2D u_image;
-                uniform vec2 u_resolution;
-                uniform float u_smooth;      // 0.0 to 1.0
-                uniform float u_whiten;      // 0.0 to 1.0
-                uniform float u_tone;        // 0.0 to 1.0
-                varying vec2 v_texCoord;
-
-                // Color-space conversion functions
-                vec3 rgb2hsv(vec3 c) {
-                    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
-                    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
-                    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
-                    float d = q.x - min(q.w, q.y);
-                    float e = 1.0e-10;
-                    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
-                }
-
-                // Detect skin chrominance locus in GLSL
-                float detectSkin(vec3 rgb) {
-                    vec3 hsv = rgb2hsv(rgb);
-                    float isSkinH = step(0.0, hsv.x) * step(hsv.x, 0.12) + step(0.92, hsv.x);
-                    float isSkinS = step(0.15, hsv.y) * step(hsv.y, 0.75);
-                    float isSkinV = step(0.20, hsv.z);
-                    return clamp(isSkinH * isSkinS * isSkinV, 0.0, 1.0);
-                }
-
-                void main() {
-                    vec2 step_size = 1.0 / u_resolution;
-                    vec4 center_col = texture2D(u_image, v_texCoord);
-                    float skin_factor = detectSkin(center_col.rgb);
-
-                    // 1. Bilateral Skin Smoothing Pass
-                    if (u_smooth > 0.01 && skin_factor > 0.05) {
-                        vec3 accum = center_col.rgb;
-                        float total_weight = 1.0;
-                        float sigma_c = 0.15 + (1.0 - u_smooth) * 0.10;
-
-                        for (int x = -2; x <= 2; x++) {
-                            for (int y = -2; y <= 2; y++) {
-                                if (x == 0 && y == 0) continue;
-                                vec2 offset = vec2(float(x), float(y)) * step_size * 1.5;
-                                vec3 sample_col = texture2D(u_image, v_texCoord + offset).rgb;
-                                float dist_c = distance(sample_col, center_col.rgb);
-                                float w = exp(-dist_c * dist_c / (2.0 * sigma_c * sigma_c));
-                                accum += sample_col * w;
-                                total_weight += w;
-                            }
-                        }
-                        vec3 smoothed = accum / total_weight;
-                        center_col.rgb = mix(center_col.rgb, smoothed, u_smooth * 0.75 * skin_factor);
-                    }
-
-                    // 2. Skin Whitening & Radiance S-Curve
-                    if (u_whiten > 0.01 && skin_factor > 0.05) {
-                        float lum = dot(center_col.rgb, vec3(0.299, 0.587, 0.114));
-                        float lift = sin(lum * 3.14159) * (u_whiten * 0.18);
-                        center_col.rgb += vec3(lift * skin_factor);
-                    }
-
-                    // 3. Tone Balance
-                    if (u_tone > 0.01 && skin_factor > 0.05) {
-                        float avg = (center_col.r + center_col.g + center_col.b) / 3.0;
-                        center_col.rgb = mix(center_col.rgb, vec3(avg), u_tone * 0.12 * skin_factor);
-                    }
-
-                    gl_FragColor = clamp(center_col, 0.0, 1.0);
-                }
-            """,
+            "vertex_shader": vertex_shader.strip(),
+            "fragment_shader": fragment_shader.strip(),
         }
